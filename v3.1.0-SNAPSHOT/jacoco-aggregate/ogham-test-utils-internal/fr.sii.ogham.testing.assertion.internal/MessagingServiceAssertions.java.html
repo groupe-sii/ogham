@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessagingServiceAssertions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">MessagingServiceAssertions.java</span></div><h1>MessagingServiceAssertions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static fr.sii.ogham.testing.assertion.internal.CloudhopperAssertions.getCloudhopperSender;
+import static fr.sii.ogham.testing.assertion.internal.FreemarkerAssersions.getFreemarkerParsers;
+import static fr.sii.ogham.testing.assertion.internal.JavaMailAssertions.getJavaMailSender;
+import static fr.sii.ogham.testing.assertion.internal.SendGridAssertions.getSendGridSender;
+import static fr.sii.ogham.testing.assertion.internal.ThymeleafAssertions.getThymeleafParsers;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.service.MessagingService;
+
+/**
+ * Helper to make assertions on {@link MessagingService} instance created by a
+ * {@link MessagingBuilder}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MessagingServiceAssertions {
+	private final MessagingService messagingService;
+
+<span class="fc" id="L22">	public MessagingServiceAssertions(MessagingService messagingService) {</span>
+<span class="fc" id="L23">		this.messagingService = messagingService;</span>
+<span class="fc" id="L24">	}</span>
+
+	/**
+	 * Use it to ensure that SendGrid is configured as expected.
+	 * 
+	 * &lt;p&gt;
+	 * The version of SendGrid is automatically determined. If the automatic
+	 * detection doesn't work, use {@link #sendGrid(SendGridVersion)}
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * sendGrid()
+	 *   .apiKey(equalTo(&quot;foo&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return builder for fluent chaining
+	 */
+	public SendGridAssertions sendGrid() {
+<span class="fc" id="L45">		return new SendGridAssertions(this, getSendGridSender(messagingService));</span>
+	}
+
+	/**
+	 * Use it to ensure that SendGrid (for a particular version) is configured
+	 * as expected.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {code
+	 * sendGrid(SendGridVersion.V2)
+	 *   .apiKey(equalTo(&quot;foo&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @param sendGridVersion
+	 *            the SendGrid version to use
+	 * @return builder for fluent chaining
+	 */
+	public SendGridAssertions sendGrid(SendGridVersion sendGridVersion) {
+<span class="nc" id="L66">		return new SendGridAssertions(this, getSendGridSender(messagingService, sendGridVersion.getSenderClass()));</span>
+	}
+
+	/**
+	 * Use it to ensure that Thymeleaf is configured as expected.
+	 * 
+	 * &lt;p&gt;
+	 * All the ThymeleafParser instances are automatically retrieved
+	 * from {@link MessagingService}. You can then select which
+	 * ThymeleafParser to check by using fluent API.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * thymeleaf()
+	 *   .email()
+	 *     .engine(isA(SpringTemplateEngine.class))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder for fluent chaining
+	 */
+	public ThymeleafAssertions thymeleaf() {
+<span class="fc" id="L90">		return new ThymeleafAssertions(this, getThymeleafParsers(messagingService));</span>
+	}
+
+	/**
+	 * Use it to ensure that FreeMarker is configured as expected.
+	 * 
+	 * &lt;p&gt;
+	 * All the FreeMarkerParser instances are automatically retrieved
+	 * from {@link MessagingService}. You can then select which
+	 * FreeMarkerParser to check by using fluent API.
+	 * 
+	 * For example, to ensure that UTF-8 is used as default encoding for email
+	 * parser:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * freemarker()
+	 *   .email()
+	 *     .configuration()
+	 *       .defaultEncoding(equalTo(&quot;UTF-8&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder for fluent chaining
+	 */
+	public FreemarkerAssersions freemarker() {
+<span class="fc" id="L116">		return new FreemarkerAssersions(this, getFreemarkerParsers(messagingService));</span>
+	}
+
+	/**
+	 * Use it to ensure that JavaMailSender is configured as expected.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * javaMail()
+	 *   .host(equalTo(&quot;foo&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder for fluent chaining
+	 */
+	public JavaMailAssertions javaMail() {
+<span class="fc" id="L134">		return new JavaMailAssertions(this, getJavaMailSender(messagingService));</span>
+	}
+
+	/**
+	 * Use it to ensure that CloudhopperSMPPSender is configured as expected.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * cloudhopper()
+	 *   .host(equalTo(&quot;foo&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder for fluent chaining
+	 */
+	public CloudhopperAssertions cloudhopper() {
+<span class="fc" id="L152">		return new CloudhopperAssertions(this, getCloudhopperSender(messagingService));</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

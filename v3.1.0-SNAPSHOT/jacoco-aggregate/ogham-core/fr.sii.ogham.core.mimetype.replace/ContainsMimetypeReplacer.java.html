@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ContainsMimetypeReplacer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.mimetype.replace</a> &gt; <span class="el_source">ContainsMimetypeReplacer.java</span></div><h1>ContainsMimetypeReplacer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.mimetype.replace;
+
+import static java.util.Locale.ENGLISH;
+
+/**
+ * Eventually replaces a mimetype if it contains the provided string.
+ * 
+ * The matching may be case sensitive or case insensitive.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ContainsMimetypeReplacer implements MimetypeReplacer {
+	private final String contains;
+	private final boolean ignoreCase;
+	private final String replacement;
+
+	/**
+	 * Initializes with a matching string and a replacement to use if mathcing
+	 * string matches the mimetype.
+	 * 
+	 * The matching is case insensitive.
+	 * 
+	 * @param contains
+	 *            the matching string
+	 * @param replacement
+	 *            the replacement
+	 */
+	public ContainsMimetypeReplacer(String contains, String replacement) {
+<span class="nc" id="L30">		this(contains, true, replacement);</span>
+<span class="nc" id="L31">	}</span>
+
+	/**
+	 * Initializes with a matching string and a replacement to use if mathcing
+	 * string matches the mimetype.
+	 * 
+	 * The matching is case sensitive if ignoreCase is false and case
+	 * insensitive if ignoreCase is true.
+	 * 
+	 * @param contains
+	 *            the matching string
+	 * @param ignoreCase
+	 *            true to ignore case (case insensitive), false to respect case
+	 *            (case sensitive)
+	 * @param replacement
+	 *            the replacement
+	 */
+	public ContainsMimetypeReplacer(String contains, boolean ignoreCase, String replacement) {
+<span class="fc" id="L49">		super();</span>
+<span class="fc" id="L50">		this.contains = contains;</span>
+<span class="fc" id="L51">		this.ignoreCase = ignoreCase;</span>
+<span class="fc" id="L52">		this.replacement = replacement;</span>
+<span class="fc" id="L53">	}</span>
+
+	@Override
+	public String replace(String mimetype) {
+<span class="fc bfc" id="L57" title="All 4 branches covered.">		if (!ignoreCase &amp;&amp; mimetype.contains(contains)) {</span>
+<span class="fc" id="L58">			return replacement;</span>
+		}
+<span class="fc bfc" id="L60" title="All 4 branches covered.">		if (ignoreCase &amp;&amp; mimetype.toLowerCase(ENGLISH).contains(contains)) {</span>
+<span class="fc" id="L61">			return replacement;</span>
+		}
+<span class="fc" id="L63">		return mimetype;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

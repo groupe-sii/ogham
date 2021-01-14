@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentEmailAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">FluentEmailAssert.java</span></div><h1>FluentEmailAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAlternativePart;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAttachments;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getBodyPart;
+import static java.util.Arrays.asList;
+import static javax.mail.Message.RecipientType.CC;
+import static javax.mail.Message.RecipientType.TO;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import javax.mail.internet.InternetAddress;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.context.SingleMessageContext;
+import fr.sii.ogham.testing.assertion.filter.FileNamePredicate;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.assertion.util.EmailUtils;
+import fr.sii.ogham.testing.util.HasParent;
+
+@SuppressWarnings(&quot;squid:S1192&quot;)
+public class FluentEmailAssert&lt;P&gt; extends HasParent&lt;P&gt; {
+	/**
+	 * The list of messages that will be used for assertions
+	 */
+	private final List&lt;? extends Message&gt; actual;
+	private int index;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
+
+	public FluentEmailAssert(Message actual, int index, P parent, AssertionRegistry registry) {
+<span class="fc" id="L47">		this(Arrays.asList(actual), parent, registry);</span>
+<span class="fc" id="L48">		this.index = index;</span>
+<span class="fc" id="L49">	}</span>
+
+	public FluentEmailAssert(List&lt;? extends Message&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L52">		super(parent);</span>
+<span class="fc" id="L53">		this.actual = actual;</span>
+<span class="fc" id="L54">		this.registry = registry;</span>
+<span class="fc" id="L55">	}</span>
+
+	/**
+	 * Make assertions on the subject of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .subject(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the subject of the first message is exactly &quot;foobar&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .subject(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the subject of every message is exactly &quot;foobar&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on subject
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentEmailAssert&lt;P&gt; subject(Matcher&lt;? super String&gt; matcher) {
+		try {
+<span class="fc" id="L80">			String desc = &quot;subject of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L81">			int msgIdx = this.index;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L83">				final int idx = msgIdx;</span>
+<span class="fc" id="L84">				registry.register(() -&gt; assertThat(message.getSubject(), usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L85">				msgIdx++;</span>
+<span class="fc" id="L86">			}</span>
+<span class="fc" id="L87">			return this;</span>
+<span class="nc" id="L88">		} catch (MessagingException e) {</span>
+<span class="nc" id="L89">			throw new AssertionError(&quot;Failed to get subject of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the body of the message(s) using fluent API. The body
+	 * of the message is either:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The part of the message when it contains only one part&lt;/li&gt;
+	 * &lt;li&gt;The part with text or HTML mimetype if only one part with one of that
+	 * mimetype&lt;/li&gt;
+	 * &lt;li&gt;The second part with text or HTML mimetype if there are two text or
+	 * HTML parts&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .contentAsString(is(&quot;email body&quot;))
+	 *    .contentType(is(&quot;text/plain&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the body content of the first message is &quot;email body&quot; and
+	 * content-type of the first message is &quot;text/plain&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .contentAsString(is(&quot;email body&quot;))
+	 *    .contentType(is(&quot;text/plain&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the body content of every message is &quot;email body&quot; and
+	 * content-type of every message is &quot;text/plain&quot;.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; body() {
+		try {
+<span class="fc" id="L126">			int msgIdx = this.index;</span>
+<span class="fc" id="L127">			List&lt;PartWithContext&gt; bodies = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L129">				bodies.add(new PartWithContext(getBodyPart(message), &quot;body&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L130">				msgIdx++;</span>
+<span class="fc" id="L131">			}</span>
+<span class="fc" id="L132">			return new FluentPartAssert&lt;&gt;(bodies, this, registry);</span>
+<span class="nc" id="L133">		} catch (MessagingException e) {</span>
+<span class="nc" id="L134">			throw new AssertionError(&quot;Failed to get body of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the alternative part of the message(s) using fluent
+	 * API. The alternative is useful when sending HTML email that may be
+	 * unreadable on some email clients. For example, a smartphone will display
+	 * the 2 or 3 first lines as a summary. Many smartphones will take the HTML
+	 * message as-is and will display HTML tags instead of content of email.
+	 * Alternative is used to provide a textual visualization of the message
+	 * that will be readable by any system.
+	 * 
+	 * &lt;p&gt;
+	 * The alternative of the message is either:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;null if there is only one part&lt;/li&gt;
+	 * &lt;li&gt;null if there is only one text or HTML part&lt;/li&gt;
+	 * &lt;li&gt;the first part if there are more than one text or HTML part&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).alternative()
+	 *    .contentAsString(is(&quot;email alternative&quot;))
+	 *    .contentType(is(&quot;text/plain&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the body content of the first message is &quot;email
+	 * alternative&quot; and content-type of the first message is &quot;text/plain&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().alternative()
+	 *    .contentAsString(is(&quot;email alternative&quot;))
+	 *    .contentType(is(&quot;text/plain&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the body content of every message is &quot;email alternative&quot;
+	 * and content-type of every message is &quot;text/plain&quot;.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; alternative() {
+		try {
+<span class="fc" id="L177">			int msgIdx = this.index;</span>
+<span class="fc" id="L178">			List&lt;PartWithContext&gt; bodies = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L180">				bodies.add(new PartWithContext(getAlternativePart(message), &quot;alternative&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L181">				msgIdx++;</span>
+<span class="fc" id="L182">			}</span>
+<span class="fc" id="L183">			return new FluentPartAssert&lt;&gt;(bodies, this, registry);</span>
+<span class="nc" id="L184">		} catch (MessagingException e) {</span>
+<span class="nc" id="L185">			throw new AssertionError(&quot;Failed to get body of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the body of the message(s). The body of the message is
+	 * either:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The part of the message when it contains only one part&lt;/li&gt;
+	 * &lt;li&gt;The part with text or HTML mimetype if only one part with one of that
+	 * mimetype&lt;/li&gt;
+	 * &lt;li&gt;The second part with text or HTML mimetype if there are two text or
+	 * HTML parts&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .body(allOf(notNullValue(), instanceOf(MimeBodyPart.class))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the body of the first message is not null and is a
+	 * MimeBodyPart instance.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .body(allOf(notNullValue(), instanceOf(MimeBodyPart.class))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the body of every message is not null and is a
+	 * MimeBodyPart instance.
+	 * 
+	 * &lt;p&gt;
+	 * You can use the {@link #body()} variant to make more powerful assertions.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on body
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public &lt;T extends Part&gt; FluentEmailAssert&lt;P&gt; body(Matcher&lt;? super Part&gt; matcher) { // NOSONAR
+		try {
+<span class="fc" id="L227">			String desc = &quot;body of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L228">			int msgIdx = this.index;</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L230">				final int idx = msgIdx;</span>
+<span class="fc" id="L231">				registry.register(() -&gt; assertThat(getBodyPart(message), usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L232">				msgIdx++;</span>
+<span class="fc" id="L233">			}</span>
+<span class="fc" id="L234">			return this;</span>
+<span class="nc" id="L235">		} catch (MessagingException e) {</span>
+<span class="nc" id="L236">			throw new AssertionError(&quot;Failed to access attachments of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the alternative part of the message(s). The
+	 * alternative is useful when sending HTML email that may be unreadable on
+	 * some email clients. For example, a smartphone will display the 2 or 3
+	 * first lines as a summary. Many smartphones will take the HTML message
+	 * as-is and will display HTML tags instead of content of email. Alternative
+	 * is used to provide a textual visualization of the message that will be
+	 * readable by any system.
+	 * 
+	 * &lt;p&gt;
+	 * The alternative of the message is either:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;null if there is only one part&lt;/li&gt;
+	 * &lt;li&gt;null if there is only one text or HTML part&lt;/li&gt;
+	 * &lt;li&gt;the first part if there are more than one text or HTML part&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .alternative(allOf(notNullValue(), instanceOf(MimeBodyPart.class))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the alternative of the first message is not null and is a
+	 * MimeBodyPart instance.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .alternative(allOf(notNullValue(), instanceOf(MimeBodyPart.class))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the alternative of every message is not null and is a
+	 * MimeBodyPart instance.
+	 * 
+	 * &lt;p&gt;
+	 * You can use the {@link #alternative()} variant to make more powerful
+	 * assertions.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on alternative
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public &lt;T extends Part&gt; FluentEmailAssert&lt;P&gt; alternative(Matcher&lt;? super Part&gt; matcher) { // NOSONAR
+		try {
+<span class="fc" id="L285">			String desc = &quot;alternative of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L286">			int msgIdx = this.index;</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L288">				final int idx = msgIdx;</span>
+<span class="fc" id="L289">				registry.register(() -&gt; assertThat(getAlternativePart(message), usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L290">				msgIdx++;</span>
+<span class="fc" id="L291">			}</span>
+<span class="fc" id="L292">			return this;</span>
+<span class="nc" id="L293">		} catch (MessagingException e) {</span>
+<span class="nc" id="L294">			throw new AssertionError(&quot;Failed to access attachments of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the sender of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).from()
+	 *    .address(hasItems(&quot;noreply@sii.fr&quot;))
+	 *    .personal(hasItems(&quot;Groupe SII&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the sender email address of the first message is exactly
+	 * &quot;noreply@sii.fr&quot; and sender displayed address of the first message is
+	 * exactly &quot;Groupe SII&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().from()
+	 *    .address(hasItems(&quot;noreply@sii.fr&quot;))
+	 *    .personal(hasItems(&quot;Groupe SII&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the sender email address of every message is exactly
+	 * &quot;noreply@sii.fr&quot; and sender displayed address of every message is exactly
+	 * &quot;Groupe SII&quot;.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;FluentEmailAssert&lt;P&gt;&gt; from() {
+		try {
+<span class="fc" id="L325">			int msgIdx = this.index;</span>
+<span class="fc" id="L326">			List&lt;AddressesWithContext&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L328">				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getFrom()), &quot;from&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L329">				msgIdx++;</span>
+<span class="fc" id="L330">			}</span>
+<span class="fc" id="L331">			return new FluentAddressListAssert&lt;&gt;(addresses, this, registry);</span>
+<span class="nc" id="L332">		} catch (MessagingException e) {</span>
+<span class="nc" id="L333">			throw new AssertionError(&quot;Failed to get from field of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the sender of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .address(hasItems(&quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot;))
+	 *    .personal(hasItems(&quot;Foo&quot;, &quot;Bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of email addresses of direct recipients (TO) of
+	 * the first message are exactly &quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot;
+	 * and the list of displayed address of direct recipients (TO) of the first
+	 * message are exactly &quot;Foo&quot;, &quot;Bar&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .address(hasItems(&quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot;))
+	 *    .personal(hasItems(&quot;Foo&quot;, &quot;Bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of email addresses of direct recipients (TO) of
+	 * every message are exactly &quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot; and
+	 * the list of displayed address of direct recipients (TO) of every message
+	 * are exactly &quot;Foo&quot;, &quot;Bar&quot;.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;FluentEmailAssert&lt;P&gt;&gt; to() {
+		try {
+<span class="fc" id="L366">			int msgIdx = this.index;</span>
+<span class="fc" id="L367">			List&lt;AddressesWithContext&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L369">				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(TO)), &quot;to&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L370">				msgIdx++;</span>
+<span class="fc" id="L371">			}</span>
+<span class="fc" id="L372">			return new FluentAddressListAssert&lt;&gt;(addresses, this, registry);</span>
+<span class="nc" id="L373">		} catch (MessagingException e) {</span>
+<span class="nc" id="L374">			throw new AssertionError(&quot;Failed to get to field of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the sender of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).cc()
+	 *    .address(hasItems(&quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot;))
+	 *    .personal(hasItems(&quot;Foo&quot;, &quot;Bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of email addresses of copy recipients (CC) of the
+	 * first message are exactly &quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot; and
+	 * the list of displayed address of copy recipients (CC) of the first
+	 * message are exactly &quot;Foo&quot;, &quot;Bar&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().cc()
+	 *    .address(hasItems(&quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot;))
+	 *    .personal(hasItems(&quot;Foo&quot;, &quot;Bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of email addresses of copy recipients (CC) of
+	 * every message are exactly &quot;recipient1@sii.fr&quot;, &quot;recipient2@sii.fr&quot; and
+	 * the list of displayed address of copy recipients (CC) of every message
+	 * are exactly &quot;Foo&quot;, &quot;Bar&quot;.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;FluentEmailAssert&lt;P&gt;&gt; cc() {
+		try {
+<span class="fc" id="L407">			int msgIdx = this.index;</span>
+<span class="fc" id="L408">			List&lt;AddressesWithContext&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L410">				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(CC)), &quot;cc&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L411">				msgIdx++;</span>
+<span class="fc" id="L412">			}</span>
+<span class="fc" id="L413">			return new FluentAddressListAssert&lt;&gt;(addresses, this, registry);</span>
+<span class="nc" id="L414">		} catch (MessagingException e) {</span>
+<span class="nc" id="L415">			throw new AssertionError(&quot;Failed to get cc field of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the list of attachments of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .attachments(hasSize(1))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the number of attachments of the first message is exactly
+	 * 1.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .attachments(hasSize(1))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the number of attachments of every message is exactly 1.
+	 * 
+	 * &lt;p&gt;
+	 * You can use the {@link #attachment(String)} or
+	 * {@link #attachments(Predicate)} variants to make more powerful assertions
+	 * on a particular attachment.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on list of attachments
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public &lt;T extends Collection&lt;? extends BodyPart&gt;&gt; FluentEmailAssert&lt;P&gt; attachments(Matcher&lt;? super Collection&lt;? extends BodyPart&gt;&gt; matcher) { // NOSONAR
+		try {
+<span class="fc" id="L450">			String desc = &quot;attachments of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L451">			int msgIdx = this.index;</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L453">				final int idx = msgIdx;</span>
+<span class="fc" id="L454">				registry.register(() -&gt; assertThat(getAttachments(message), usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L455">				msgIdx++;</span>
+<span class="fc" id="L456">			}</span>
+<span class="fc" id="L457">			return this;</span>
+<span class="nc" id="L458">		} catch (MessagingException e) {</span>
+<span class="nc" id="L459">			throw new AssertionError(&quot;Failed to access attachments of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on a particular attachment of the message(s) using fluent
+	 * API. The attachment is identified by its filename.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).attachment(&quot;foo.pdf&quot;)
+	 *    .contentType(is(&quot;application/pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content-type of the attachment named &quot;foo.pdf&quot; of the
+	 * first message is exactly &quot;application/pdf&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().attachment(&quot;foo.pdf&quot;)
+	 *    .contentType(is(&quot;application/pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the content-type of attachment named &quot;foo.pdf&quot; of every
+	 * message is exactly &quot;application/pdf&quot;.
+	 * 
+	 * &lt;p&gt;
+	 * This is a shortcut to {@link #attachments(Predicate)} with
+	 * {@link FileNamePredicate};
+	 * 
+	 * @param filename
+	 *            the name of the attachment to make assertions on it
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; attachment(String filename) {
+<span class="fc" id="L492">		return attachment(By.filename(filename));</span>
+	}
+
+	/**
+	 * Make assertions on a particular attachment of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).attachment(0)
+	 *    .contentType(is(&quot;application/pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content-type of the first attachment of the first
+	 * message is exactly &quot;application/pdf&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().attachment(0)
+	 *    .contentType(is(&quot;application/pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content-type of the first attachment of every message
+	 * is exactly &quot;application/pdf&quot;.
+	 * 
+	 * @param index
+	 *            the index of the attachment
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; attachment(int index) {
+		try {
+<span class="fc" id="L520">			int msgIndex = this.index;</span>
+<span class="fc" id="L521">			List&lt;PartWithContext&gt; attachments = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L522" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L523">				List&lt;BodyPart&gt; found = getAttachments(message);</span>
+<span class="fc bfc" id="L524" title="All 2 branches covered.">				BodyPart attachment = index &gt;= found.size() ? null : found.get(index);</span>
+<span class="fc bfc" id="L525" title="All 2 branches covered.">				attachments.add(new PartWithContext(attachment, &quot;attachment with index &quot; + index + (attachment == null ? &quot; (/!\\ not found)&quot; : &quot;&quot;), new SingleMessageContext(msgIndex)));</span>
+<span class="fc" id="L526">				msgIndex++;</span>
+<span class="fc" id="L527">			}</span>
+<span class="fc" id="L528">			return new FluentPartAssert&lt;&gt;(attachments, this, registry);</span>
+<span class="nc" id="L529">		} catch (MessagingException e) {</span>
+<span class="nc" id="L530">			throw new AssertionError(&quot;Failed to get attachment with index &quot; + index + &quot; of messsage&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on a particular attachment of the message(s) using fluent
+	 * API. The attachment is identified using the provided finder method.
+	 * 
+	 * &lt;p&gt;
+	 * If several attachments are found, it fails. If you want to make the same
+	 * assertions on several attachments at once, use {@link #attachments(By)}
+	 * instead.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).attachment(By.filename(&quot;foo.pdf&quot;))
+	 *    .contentType(is(&quot;application/pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content-type of the attachment named &quot;foo.pdf&quot; of the
+	 * first message is exactly &quot;application/pdf&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().attachment(By.filename(&quot;foo.pdf&quot;))
+	 *    .contentType(is(&quot;application/pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that the content-type of attachment named &quot;foo.pdf&quot; of every
+	 * message is exactly &quot;application/pdf&quot;.
+	 * 
+	 * &lt;p&gt;
+	 * This is a shortcut to {@link #attachments(Predicate)} with
+	 * {@link FileNamePredicate};
+	 * 
+	 * @param by
+	 *            the finder method
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; attachment(By by) {
+<span class="fc" id="L568">		return attachments(by.toPredicate(), hasSize(lessThanOrEqualTo(1)));</span>
+	}
+
+	/**
+	 * Make assertions on a one or several attachments of the message(s) using
+	 * fluent API. The attachments are identified using provided finder method.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .attachments(By.contentId(&quot;cid2&quot;)).filename(endsWith(&quot;.pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if every attachment that have the Content-ID header set to
+	 * &quot;cid2&quot; of first message has a name ending with &quot;.pdf&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .attachments(By.contentId(&quot;cid2&quot;)).filename(endsWith(&quot;.pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if every attachment that have the Content-ID header set to
+	 * &quot;cid2&quot; of every messages has a name ending with &quot;.pdf&quot;.
+	 * 
+	 * 
+	 * @param by
+	 *            the finder method
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; attachments(By by) {
+<span class="nc" id="L597">		return attachments(by.toPredicate());</span>
+	}
+
+	/**
+	 * Make assertions on a one or several attachments of the message(s) using
+	 * fluent API. The attachments are identified using provided predicate.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .attachments(new PdfFilter()).filename(endsWith(&quot;.pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the name of every PDF attachments of the first message are
+	 * named &quot;foo.pdf&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .attachments(new PdfFilter()).filename(endsWith(&quot;.pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the name of every PDF attachments of every message are
+	 * named &quot;foo.pdf&quot;.
+	 * 
+	 * 
+	 * @param filter
+	 *            the filter used to find attachments
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; attachments(Predicate&lt;Part&gt; filter) {
+<span class="fc" id="L626">		return attachments(filter, null);</span>
+	}
+	
+	private FluentPartAssert&lt;FluentEmailAssert&lt;P&gt;&gt; attachments(Predicate&lt;Part&gt; filter, Matcher&lt;? super Collection&lt;? extends Part&gt;&gt; singleMessageAttachmentsMatcher) {
+		try {
+<span class="fc" id="L631">			int msgIdx = this.index;</span>
+<span class="fc" id="L632">			List&lt;PartWithContext&gt; attachments = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L633" title="All 2 branches covered.">			for (Message message : actual) {</span>
+<span class="fc" id="L634">				int matchingIdx = 0;</span>
+<span class="fc" id="L635">				boolean noneFound = true;</span>
+<span class="fc" id="L636">				List&lt;Part&gt; matchingAttachmentsForMessage = EmailUtils.&lt;Part&gt; getAttachments(message, filter);</span>
+<span class="fc" id="L637">				checkFoundAttachmentPerMessage(filter, singleMessageAttachmentsMatcher, msgIdx, matchingAttachmentsForMessage);</span>
+<span class="fc" id="L638">				contextualize(filter, msgIdx, attachments, matchingIdx, noneFound, matchingAttachmentsForMessage);</span>
+<span class="fc" id="L639">				msgIdx++;</span>
+<span class="fc" id="L640">			}</span>
+<span class="fc" id="L641">			return new FluentPartAssert&lt;&gt;(attachments, this, registry);</span>
+<span class="nc" id="L642">		} catch (MessagingException e) {</span>
+<span class="nc" id="L643">			throw new AssertionError(&quot;Failed to get attachment &quot; + filter + &quot; of messsage&quot;, e);</span>
+		}
+	}
+
+	private static void contextualize(Predicate&lt;Part&gt; filter, int msgIdx, List&lt;PartWithContext&gt; attachments, int matchingIdx, boolean noneFound, List&lt;Part&gt; matchingAttachmentsForMessage) {
+<span class="fc bfc" id="L648" title="All 2 branches covered.">		for (Part attachment : matchingAttachmentsForMessage) {</span>
+<span class="fc" id="L649">			noneFound = false;</span>
+<span class="fc" id="L650">			attachments.add(new PartWithContext(attachment, &quot;attachment &quot; + filter + &quot; (matching index: &quot; + matchingIdx + &quot;)&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L651">			matchingIdx++;</span>
+<span class="fc" id="L652">		}</span>
+<span class="fc bfc" id="L653" title="All 2 branches covered.">		if (noneFound) {</span>
+<span class="fc" id="L654">			attachments.add(new PartWithContext(null, &quot;attachment &quot; + filter + &quot; (/!\\ not found)&quot;, new SingleMessageContext(msgIdx)));</span>
+		}
+<span class="fc" id="L656">	}</span>
+
+	private void checkFoundAttachmentPerMessage(Predicate&lt;Part&gt; filter, Matcher&lt;? super Collection&lt;? extends Part&gt;&gt; singleMessageAttachmentsMatcher, int msgIdx,
+			List&lt;Part&gt; matchingAttachmentsForMessage) {
+<span class="fc bfc" id="L660" title="All 2 branches covered.">		if (singleMessageAttachmentsMatcher != null) {</span>
+<span class="fc" id="L661">			registry.register(() -&gt; assertThat(&quot;message &quot;+msgIdx+&quot; should have only one attachment &quot;+filter, matchingAttachmentsForMessage, singleMessageAttachmentsMatcher));</span>
+		}
+<span class="fc" id="L663">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

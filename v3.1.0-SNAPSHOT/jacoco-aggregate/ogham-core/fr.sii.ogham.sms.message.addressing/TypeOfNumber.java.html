@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TypeOfNumber.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.message.addressing</a> &gt; <span class="el_source">TypeOfNumber.java</span></div><h1>TypeOfNumber.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.message.addressing;
+
+/**
+ * TON as described in GSM 03.40.
+ * 
+ * @author cdejonghe
+ * 
+ */
+<span class="fc" id="L9">public enum TypeOfNumber {</span>
+	/** Unknown = 0. */
+<span class="fc" id="L11">	UNKNOWN((byte) 0),</span>
+	/** International = 1. */
+<span class="fc" id="L13">	INTERNATIONAL((byte) 1),</span>
+	/** National = 2. */
+<span class="fc" id="L15">	NATIONAL((byte) 2),</span>
+	/** Network Specific = 3. */
+<span class="fc" id="L17">	NETWORK_SPECIFIC((byte) 3),</span>
+	/** Subscriber Number = 4. */
+<span class="fc" id="L19">	SUBSCRIBER((byte) 4),</span>
+	/** Alphanumeric = 5. */
+<span class="fc" id="L21">	ALPHANUMERIC((byte) 5),</span>
+	/** Abbreviated = 6. */
+<span class="fc" id="L23">	ABBREVIATED((byte) 6);</span>
+
+	private byte value;
+
+<span class="fc" id="L27">	TypeOfNumber(byte value) {</span>
+<span class="fc" id="L28">		this.value = value;</span>
+<span class="fc" id="L29">	}</span>
+
+	/**
+	 * Get the byte value of the enum constant.
+	 * 
+	 * @return the byte value.
+	 */
+	public byte value() {
+<span class="fc" id="L37">		return value;</span>
+	}
+
+	/**
+	 * Get the TypeOfNumber based on the specified byte value
+	 * representation.
+	 * 
+	 * @param value
+	 *            is the int / binary value representation.
+	 * @return is the enum const related to the specified int value.
+	 * @throws IllegalArgumentException
+	 *             if there is no enum const associated with specified int
+	 *             value.
+	 */
+	public static TypeOfNumber valueOf(byte value) {
+<span class="nc bnc" id="L52" title="All 2 branches missed.">		for (TypeOfNumber current : values()) {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">			if (current.value == value) {</span>
+<span class="nc" id="L54">				return current;</span>
+			}
+		}
+<span class="nc" id="L57">		throw new IllegalArgumentException(&quot;Invalid value for TypeOfNumber : &quot; + value);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

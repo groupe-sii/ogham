@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ReadMethodAccessor.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">ReadMethodAccessor.java</span></div><h1>ReadMethodAccessor.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
+
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.getReadMethod;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import fr.sii.ogham.core.exception.util.InvalidPropertyException;
+
+/**
+ * Access object property using reflection
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;T&gt;
+ *            The type of the value
+ */
+public class ReadMethodAccessor&lt;T&gt; implements Accessor&lt;T&gt; {
+<span class="fc" id="L19">	private static final Object[] NULL_ARGUMENTS = {};</span>
+	private final Object bean;
+	private final String name;
+	private final Method readMethod;
+	private final Accessor&lt;T&gt; defaultAccessor;
+
+	/**
+	 * Initialize the accessor with the provided bean and property name.
+	 * 
+	 * &lt;p&gt;
+	 * The read {@link Method} is searched by reflection and using the property
+	 * name.
+	 * 
+	 * &lt;p&gt;
+	 * If no read method defined for the property, the {@link FieldAccessor} is
+	 * used.
+	 * 
+	 * @param bean
+	 *            the bean that will be accessed
+	 * @param name
+	 *            the name of the property to access
+	 */
+	public ReadMethodAccessor(Object bean, String name) {
+<span class="fc" id="L42">		this(bean, name, getReadMethod(bean, name), new FieldAccessor&lt;&gt;(bean, name));</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * Initialize the accessor with the provided bean and property name.
+	 * 
+	 * &lt;p&gt;
+	 * The read {@link Method} is directly provided in order to avoid reflection
+	 * scanning.
+	 * 
+	 * &lt;p&gt;
+	 * If no read method defined for the property, the {@link FieldAccessor} is
+	 * used.
+	 * 
+	 * @param bean
+	 *            the bean that will be accessed
+	 * @param name
+	 *            the name of the property to access
+	 * @param readMethod
+	 *            the getter method obtained through reflection that is used to
+	 *            access the property
+	 */
+	public ReadMethodAccessor(Object bean, String name, Method readMethod) {
+<span class="fc" id="L65">		this(bean, name, readMethod, new FieldAccessor&lt;&gt;(bean, name));</span>
+<span class="fc" id="L66">	}</span>
+
+	/**
+	 * Initialize the accessor with the provided bean and property name.
+	 * 
+	 * &lt;p&gt;
+	 * The read {@link Method} is directly provided in order to avoid reflection
+	 * scanning.
+	 * 
+	 * &lt;p&gt;
+	 * If no read method defined for the property, the
+	 * &lt;code&gt;defaultAccessor&lt;/code&gt; parameter is used.
+	 * 
+	 * @param bean
+	 *            the bean that will be accessed
+	 * @param name
+	 *            the name of the property to access
+	 * @param readMethod
+	 *            the getter method obtained through reflection that is used to
+	 *            access the property. May be null if no read method (no getter)
+	 *            exists in the bean class but the property exists
+	 * @param defaultAccessor
+	 *            the default accessor if read method is null. May be null if
+	 *            only read method is used
+	 */
+	public ReadMethodAccessor(Object bean, String name, Method readMethod, Accessor&lt;T&gt; defaultAccessor) {
+<span class="fc" id="L92">		super();</span>
+<span class="fc" id="L93">		this.bean = bean;</span>
+<span class="fc" id="L94">		this.name = name;</span>
+<span class="fc" id="L95">		this.readMethod = readMethod;</span>
+<span class="fc" id="L96">		this.defaultAccessor = defaultAccessor;</span>
+<span class="fc" id="L97">	}</span>
+
+	@Override
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public T getValue() {
+<span class="fc bfc" id="L102" title="All 4 branches covered.">		if (readMethod == null &amp;&amp; defaultAccessor == null) {</span>
+<span class="fc" id="L103">			throw new InvalidPropertyException(&quot;Can't get value for property '&quot; + name + &quot;' on bean '&quot; + getClassName() + &quot;': no getter and no default accessor provided.&quot;, bean, name);</span>
+		}
+<span class="fc bfc" id="L105" title="All 2 branches covered.">		if (readMethod == null) {</span>
+<span class="fc" id="L106">			return defaultAccessor.getValue();</span>
+		}
+
+		try {
+<span class="fc" id="L110">			return (T) readMethod.invoke(bean, NULL_ARGUMENTS);</span>
+<span class="nc" id="L111">		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassCastException e) {</span>
+<span class="nc" id="L112">			throw new InvalidPropertyException(&quot;Failed to get value for property '&quot; + name + &quot;' on bean '&quot; + getClassName() + &quot;'&quot;, bean, name, e);</span>
+		}
+	}
+
+	private String getClassName() {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">		return bean == null ? &quot;null&quot; : bean.getClass().getName();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ActivableAtRuntimeConditionProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.provider</a> &gt; <span class="el_source">ActivableAtRuntimeConditionProvider.java</span></div><h1>ActivableAtRuntimeConditionProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.provider;
+
+import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.FixedCondition;
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * If the source object implements {@link ActivableAtRuntime}, then this
+ * provider returns directly the condition of
+ * {@link ActivableAtRuntime#getCondition()}.
+ * 
+ * &lt;p&gt;
+ * If the object doesn't implement {@link ActivableAtRuntime}, then returns a
+ * condition that is always true.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L21">public class ActivableAtRuntimeConditionProvider implements ConditionProvider&lt;Object, Message&gt; {</span>
+
+	@Override
+	public Condition&lt;Message&gt; provide(Object source) {
+<span class="fc bfc" id="L25" title="All 2 branches covered.">		if (source instanceof ActivableAtRuntime) {</span>
+<span class="fc" id="L26">			return ((ActivableAtRuntime) source).getCondition();</span>
+		}
+<span class="fc" id="L28">		return new FixedCondition&lt;&gt;(true);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BeanUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">BeanUtils.java</span></div><h1>BeanUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConversionException;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.NestedNullException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.util.BeanException;
+import fr.sii.ogham.core.util.bean.MapBeanReadWrapper;
+import fr.sii.ogham.core.util.converter.EmailAddressConverter;
+import fr.sii.ogham.core.util.converter.SmsSenderConverter;
+import fr.sii.ogham.email.message.EmailAddress;
+import fr.sii.ogham.sms.message.Sender;
+
+/**
+ * Helper class for bean management:
+ * &lt;ul&gt;
+ * &lt;li&gt;Converts an object into a map&lt;/li&gt;
+ * &lt;li&gt;Fills a bean with values provided in a map&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;p&gt;
+ * This work can be done by several libraries. The aim of this class is to be
+ * able to change the implementation easily to use another library for example.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * For example, we could find which library is available in the classpath and
+ * use this library instead of forcing users to include Apache Commons BeanUtils
+ * library.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class BeanUtils {
+<span class="fc" id="L41">	private static final Logger LOG = LoggerFactory.getLogger(BeanUtils.class);</span>
+
+	static {
+<span class="fc" id="L44">		registerDefaultConverters();</span>
+<span class="fc" id="L45">	}</span>
+
+	/**
+	 * Register the following converters:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link EmailAddressConverter}&lt;/li&gt;
+	 * &lt;li&gt;{@link SmsSenderConverter}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * If a conversion error occurs it throws an exception.
+	 */
+	public static void registerDefaultConverters() {
+		// TODO: auto-detect converters in the classpath ?
+		// Add converter for being able to convert string address into
+		// EmailAddress
+<span class="fc" id="L60">		ConvertUtils.register(new EmailAddressConverter(), EmailAddress.class);</span>
+		// Add converter for being able to convert string into
+		// SMS sender
+<span class="fc" id="L63">		ConvertUtils.register(new SmsSenderConverter(), Sender.class);</span>
+<span class="fc" id="L64">		BeanUtilsBean.getInstance().getConvertUtils().register(true, false, 0);</span>
+<span class="fc" id="L65">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Convert a Java object into a map. Each property of the bean is added to
+	 * the map. The key of each entry is the name of the property. The value of
+	 * each entry is the value of the property.
+	 * 
+	 * &lt;p&gt;
+	 * There is no copy of values into a new map. Actually, the bean is wrapped
+	 * and access to properties is done lazily. Then a special map
+	 * implementation decorates the bean wrapper.
+	 * 
+	 * @param bean
+	 *            the bean to convert into a map
+	 * @return the bean as map
+	 */
+	public static Map&lt;String, Object&gt; convert(Object bean) {
+<span class="fc" id="L83">		return new MapBeanReadWrapper(bean);</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Fills a Java object with the provided values. The key of the map
+	 * corresponds to the name of the property to set. The value of the map
+	 * corresponds to the value to set on the Java object.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The keys can contain '.' to set nested values.
+	 * &lt;/p&gt;
+	 * Override parameter allows to indicate which source has higher priority:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If true, then all values provided in the map will be always set on
+	 * the bean&lt;/li&gt;
+	 * &lt;li&gt;If false then there are two cases:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If the property value of the bean is null, then the value that comes
+	 * from the map is used&lt;/li&gt;
+	 * &lt;li&gt;If the property value of the bean is not null, then this value is
+	 * unchanged and the value in the map is not used&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Skip unknown parameter allows to indicate if execution should fail or
+	 * not:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If true and a property provided in the map doesn't exist, then there
+	 * is no failure and no change is applied to the bean&lt;/li&gt;
+	 * &lt;li&gt;If false and a property provided in the map doesn't exist, then the
+	 * method fails immediately.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param bean
+	 *            the bean to populate
+	 * @param values
+	 *            the name/value pairs
+	 * @param options
+	 *            options used to
+	 * @throws BeanException
+	 *             when the bean couldn't be populated
+	 */
+	public static void populate(Object bean, Map&lt;String, Object&gt; values, Options options) throws BeanException {
+<span class="fc bfc" id="L127" title="All 2 branches covered.">		for (Entry&lt;String, Object&gt; entry : values.entrySet()) {</span>
+<span class="fc" id="L128">			populate(bean, entry, options);</span>
+<span class="fc" id="L129">		}</span>
+<span class="fc" id="L130">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Fills a Java object with the provided value. The key of the entry
+	 * corresponds to the name of the property to set. The value of the entry
+	 * corresponds to the value to set on the Java object.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The keys can contain '.' to set nested values.
+	 * &lt;/p&gt;
+	 * Override parameter allows to indicate which source has higher priority:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If true, then the value provided in the entry will be always set on
+	 * the bean&lt;/li&gt;
+	 * &lt;li&gt;If false then there are two cases:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If the property value of the bean is null, then the value that comes
+	 * from the entry is used&lt;/li&gt;
+	 * &lt;li&gt;If the property value of the bean is not null, then this value is
+	 * unchanged and the value in the entry is not used&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Skip unknown parameter allows to indicate if execution should fail or
+	 * not:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If true and a property provided in the entry doesn't exist, then
+	 * there is no failure and no change is applied to the bean&lt;/li&gt;
+	 * &lt;li&gt;If false and a property provided in the entry doesn't exist, then the
+	 * method fails immediately.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param bean
+	 *            the bean to populate
+	 * @param entry
+	 *            the name/value pair
+	 * @param options
+	 *            options used to
+	 * @throws BeanException
+	 *             when the bean couldn't be populated
+	 */
+	public static void populate(Object bean, Entry&lt;String, Object&gt; entry, Options options) throws BeanException {
+		try {
+<span class="fc" id="L174">			String property = org.apache.commons.beanutils.BeanUtils.getProperty(bean, entry.getKey());</span>
+<span class="fc bfc" id="L175" title="All 4 branches covered.">			if (options.isOverride() || property == null) {</span>
+<span class="fc" id="L176">				org.apache.commons.beanutils.BeanUtils.setProperty(bean, entry.getKey(), entry.getValue());</span>
+			}
+<span class="fc" id="L178">		} catch (NestedNullException | NoSuchMethodException e) {</span>
+<span class="fc" id="L179">			handleUnknown(bean, options, entry, e);</span>
+<span class="fc" id="L180">		} catch (ConversionException e) {</span>
+<span class="fc" id="L181">			handleConversion(bean, options, entry, e);</span>
+<span class="fc" id="L182">		} catch (IllegalAccessException | InvocationTargetException e) {</span>
+<span class="fc" id="L183">			handleInvocation(bean, options, entry, e);</span>
+<span class="fc" id="L184">		}</span>
+<span class="fc" id="L185">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Fills a Java object with the provided values. The key of the map
+	 * corresponds to the name of the property to set. The value of the map
+	 * corresponds to the value to set on the Java object.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The keys can contain '.' to set nested values.
+	 * &lt;/p&gt;
+	 * It doesn't override the value of properties of the bean that are not
+	 * null. For example, if the bean looks like:
+	 * 
+	 * &lt;pre&gt;
+	 * public class SampleBean {
+	 * 	private String foo = &amp;quot;foo&amp;quot;;
+	 * 	private String bar = null;
+	 * 
+	 * 	// ...
+	 * 	// getters and setters
+	 * 	// ...
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * If the map is:
+	 * 
+	 * &lt;pre&gt;
+	 * Map&amp;lt;String, Object&amp;gt; map = new HashMap&amp;lt;&amp;gt;();
+	 * map.put(&amp;quot;foo&amp;quot;, &amp;quot;newfoo&amp;quot;);
+	 * map.put(&amp;quot;bar&amp;quot;, &amp;quot;newbar&amp;quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the bean will be:
+	 * 
+	 * &lt;pre&gt;
+	 * System.out.println(bean.getFoo());
+	 * // foo
+	 * System.out.println(bean.getBar());
+	 * // newbar
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * It doesn't fail if a property doesn't exist or if the new value can't be
+	 * converted or property can't be accessed or set. The new value is just not
+	 * set.
+	 * &lt;/p&gt;
+	 * 
+	 * @param bean
+	 *            the bean to populate
+	 * @param values
+	 *            the name/value pairs
+	 * @throws BeanException
+	 *             when the bean couldn't be populated
+	 */
+	public static void populate(Object bean, Map&lt;String, Object&gt; values) throws BeanException {
+<span class="nc" id="L241">		populate(bean, values, new Options(false, true, true, true));</span>
+<span class="nc" id="L242">	}</span>
+
+	private static void handleUnknown(Object bean, Options options, Entry&lt;String, Object&gt; entry, Exception e) throws BeanException {
+<span class="fc bfc" id="L245" title="All 2 branches covered.">		if (options.isSkipUnknown()) {</span>
+<span class="fc" id="L246">			LOG.debug(&quot;skipping property {}: it doesn't exist or is not accessible&quot;, entry.getKey(), e);</span>
+		} else {
+<span class="fc" id="L248">			throw new BeanException(&quot;Failed to populate bean due to unknown property&quot;, bean, e);</span>
+		}
+<span class="fc" id="L250">	}</span>
+
+	private static void handleConversion(Object bean, Options options, Entry&lt;String, Object&gt; entry, ConversionException e) throws BeanException {
+<span class="fc bfc" id="L253" title="All 2 branches covered.">		if (options.isSkipConversionError()) {</span>
+<span class="fc" id="L254">			LOG.debug(&quot;skipping property {}: can't convert value&quot;, entry.getKey(), e);</span>
+		} else {
+<span class="fc" id="L256">			throw new BeanException(&quot;Failed to populate bean due to conversion error&quot;, bean, e);</span>
+		}
+<span class="fc" id="L258">	}</span>
+
+	private static void handleInvocation(Object bean, Options options, Entry&lt;String, Object&gt; entry, ReflectiveOperationException e) throws BeanException {
+<span class="fc bfc" id="L261" title="All 2 branches covered.">		if (options.isSkipInvocationError()) {</span>
+<span class="fc" id="L262">			LOG.debug(&quot;skipping property {}: can't set value&quot;, entry.getKey(), e);</span>
+		} else {
+<span class="fc" id="L264">			throw new BeanException(&quot;Failed to populate bean due to invalid setter call or security retrictions&quot;, bean, e);</span>
+		}
+<span class="fc" id="L266">	}</span>
+
+	/**
+	 * Populate options:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;strong&gt;override&lt;/strong&gt;: If true it overrides any previously set
+	 * value. If false it set the value only if previous value is not set
+	 * (null)&lt;/li&gt;
+	 * &lt;li&gt;&lt;strong&gt;skipUnknown&lt;/strong&gt;: If true and a property doesn't exist,
+	 * do no fail and log the error. If false and a property doesn't exist, it
+	 * fails&lt;/li&gt;
+	 * &lt;li&gt;&lt;strong&gt;skipConversionError&lt;/strong&gt;: If true and a property value
+	 * can't be set because of invalid value/type, do not fail and log the
+	 * error. If false and a property value can't be set because of invalid
+	 * value/type, it fails&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	public static class Options {
+		private final boolean override;
+		private final boolean skipUnknown;
+		private final boolean skipConversionError;
+		private final boolean skipInvocationError;
+
+		public Options(boolean override, boolean skipUnknown, boolean skipConversionError, boolean skipInvocationError) {
+<span class="fc" id="L293">			super();</span>
+<span class="fc" id="L294">			this.override = override;</span>
+<span class="fc" id="L295">			this.skipUnknown = skipUnknown;</span>
+<span class="fc" id="L296">			this.skipConversionError = skipConversionError;</span>
+<span class="fc" id="L297">			this.skipInvocationError = skipInvocationError;</span>
+<span class="fc" id="L298">		}</span>
+
+		public boolean isOverride() {
+<span class="fc" id="L301">			return override;</span>
+		}
+
+		public boolean isSkipUnknown() {
+<span class="fc" id="L305">			return skipUnknown;</span>
+		}
+
+		public boolean isSkipConversionError() {
+<span class="fc" id="L309">			return skipConversionError;</span>
+		}
+
+		public boolean isSkipInvocationError() {
+<span class="fc" id="L313">			return skipInvocationError;</span>
+		}
+	}
+
+	private BeanUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

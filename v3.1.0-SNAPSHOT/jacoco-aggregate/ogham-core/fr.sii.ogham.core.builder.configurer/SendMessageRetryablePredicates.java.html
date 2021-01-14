@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendMessageRetryablePredicates.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configurer</a> &gt; <span class="el_source">SendMessageRetryablePredicates.java</span></div><h1>SendMessageRetryablePredicates.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configurer;
+
+import static fr.sii.ogham.core.util.ExceptionUtils.fatalJvmError;
+import static fr.sii.ogham.core.util.ExceptionUtils.hasAnyCause;
+
+import java.util.function.Predicate;
+
+import fr.sii.ogham.core.exception.InvalidMessageException;
+import fr.sii.ogham.core.exception.filler.FillMessageException;
+import fr.sii.ogham.core.exception.handler.NoContentException;
+import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
+import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.exception.template.ContextException;
+import fr.sii.ogham.core.exception.template.EngineDetectionException;
+import fr.sii.ogham.core.exception.template.ParseException;
+import fr.sii.ogham.core.exception.util.BeanException;
+import fr.sii.ogham.core.util.ExceptionUtils;
+
+/**
+ * Predicate that skip retry if one of theses condition is met:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;The error is a JVM error that should not be ignored&lt;/li&gt;
+ * &lt;li&gt;If the error is due to a preparation error (not sending). In this case,
+ * retrying will result in the same behavior so it will fail again:
+ * &lt;ul&gt;
+ * &lt;li&gt;It is a parsing error&lt;/li&gt;
+ * &lt;li&gt;The message in not valid&lt;/li&gt;
+ * &lt;li&gt;A resource associated to the message can't be resolved&lt;/li&gt;
+ * &lt;li&gt;The mimetype of a resource couldn't be determined&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * In other situations, the message may be sent again.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class SendMessageRetryablePredicates {
+
+	private SendMessageRetryablePredicates() {
+		super();
+	}
+
+	/**
+	 * Predicate that skip retry if one of theses condition is met:
+	 * 
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The error is a JVM error that should not be ignored&lt;/li&gt;
+	 * &lt;li&gt;If the error is due to a preparation error (not sending). In this
+	 * case, retrying will result in the same behavior so it will fail again:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;It is a parsing error&lt;/li&gt;
+	 * &lt;li&gt;The message in not valid&lt;/li&gt;
+	 * &lt;li&gt;A resource associated to the message can't be resolved&lt;/li&gt;
+	 * &lt;li&gt;The mimetype of a resource couldn't be determined&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In other situations, the message may be sent again.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if the message can be sent again
+	 */
+	@SuppressWarnings(&quot;squid:S1126&quot;)
+	public static boolean canResendMessage(Throwable error) {
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">		if (fatalJvmError(error) || isMessagePreparationError(error)) {</span>
+<span class="fc" id="L76">			return false;</span>
+		}
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">		if (hasAnyCause(error, ExceptionUtils::fatalJvmError) || hasAnyCause(error, SendMessageRetryablePredicates::isMessagePreparationError)) {</span>
+<span class="fc" id="L79">			return false;</span>
+		}
+<span class="fc" id="L81">		return true;</span>
+	}
+
+	/**
+	 * Checks is raised during preparation of the message.
+	 * 
+	 * &lt;p&gt;
+	 * The error may be due to:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Either a parsing error&lt;/li&gt;
+	 * &lt;li&gt;Or the message in not valid&lt;/li&gt;
+	 * &lt;li&gt;Or a resource can't be resolved&lt;/li&gt;
+	 * &lt;li&gt;Or the mimetype of a resource couldn't be determined&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In these cases, retrying will always give the same result so there is no
+	 * point in retrying.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if the error is raised during preparation of the message
+	 */
+	public static boolean isMessagePreparationError(Throwable error) {
+		// @formatter:off
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		return parsingFailed(error) </span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">				|| messageIsInvalid(error) </span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">				|| resourceIsUnresolved(error) </span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">				|| mimetypeIsUndetectable(error)</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">				|| developerError(error);</span>
+		// @formatter:on
+	}
+
+	/**
+	 * Indicates if the error is raised during template parsing.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if it is a parsing error
+	 */
+	public static boolean parsingFailed(Throwable error) {
+		// @formatter:off
+<span class="pc bpc" id="L123" title="5 of 14 branches missed.">		return error instanceof ParseException </span>
+				|| error instanceof BeanException 
+				|| error instanceof EngineDetectionException 
+				|| error instanceof ContextException
+				|| error instanceof TemplateParsingFailedException 
+				|| error instanceof TemplateNotFoundException
+				|| error instanceof NoContentException;
+		// @formatter:on
+	}
+
+	/**
+	 * Indicates if the error is raised because the message is invalid.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if the message is invalid
+	 */
+	public static boolean messageIsInvalid(Throwable error) {
+		// @formatter:off
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">		return error instanceof InvalidMessageException </span>
+				|| error instanceof FillMessageException;
+		// @formatter:on
+	}
+
+	/**
+	 * Indicates if the error is raised because a resource can't be resolved.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if a resource can't be resolved
+	 */
+	public static boolean resourceIsUnresolved(Throwable error) {
+<span class="fc" id="L155">		return error instanceof ResourceResolutionException;</span>
+	}
+
+	/**
+	 * Indicates if the error is raised because a resource mimetype can't be
+	 * determined.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if a resource mimetype can't be determined
+	 */
+	public static boolean mimetypeIsUndetectable(Throwable error) {
+<span class="fc" id="L167">		return error instanceof MimeTypeDetectionException;</span>
+	}
+
+	/**
+	 * Indicates if the error is raised because the developer has misconfigured
+	 * or has used an illegal value ( {@link IllegalArgumentException},
+	 * {@link NullPointerException}, ...).
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if developer has used an illegal value
+	 */
+	public static boolean developerError(Throwable error) {
+		// @formatter:off
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">		return error instanceof IllegalArgumentException</span>
+				|| error instanceof NullPointerException;
+		// @formatter:on
+	}
+
+	/**
+	 * Predicate that skip retry if one of theses condition is met:
+	 * 
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The error is a JVM error that should not be ignored&lt;/li&gt;
+	 * &lt;li&gt;If the error is due to a preparation error (not sending). In this
+	 * case, retrying will result in the same behavior so it will fail again:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;It is a parsing error&lt;/li&gt;
+	 * &lt;li&gt;The message in not valid&lt;/li&gt;
+	 * &lt;li&gt;A resource associated to the message can't be resolved&lt;/li&gt;
+	 * &lt;li&gt;The mimetype of a resource couldn't be determined&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In other situations, the message may be sent again.
+	 * 
+	 * @return the predicate
+	 */
+	public static Predicate&lt;Throwable&gt; canResendMessage() {
+<span class="fc" id="L208">		return SendMessageRetryablePredicates::canResendMessage;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

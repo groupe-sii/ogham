@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>UpdateCurrentContextMerger.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-v2-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.v2.template.thymeleaf</a> &gt; <span class="el_source">UpdateCurrentContextMerger.java</span></div><h1>UpdateCurrentContextMerger.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.v2.template.thymeleaf;
+
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.thymeleaf.context.AbstractContext;
+import org.thymeleaf.context.IContext;
+
+import fr.sii.ogham.spring.template.thymeleaf.ContextMerger;
+
+/**
+ * Add additional variables to an existing Thymeleaf context. It only works if
+ * the {@link IContext} instance extends {@link AbstractContext}.
+ * 
+ * It updates the original context in place returning the same instance.
+ * 
+ * If you need to set variables on an instance that doesn't inherit from
+ * {@link AbstractContext}, you have to provide another implementation.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L24">public class UpdateCurrentContextMerger implements ContextMerger {</span>
+<span class="fc" id="L25">	private static final Logger LOG = LoggerFactory.getLogger(UpdateCurrentContextMerger.class);</span>
+
+	@Override
+	public IContext mergeVariables(IContext base, Map&lt;String, Object&gt; additionalVariables) {
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">		if (base instanceof AbstractContext) {</span>
+<span class="fc" id="L30">			((AbstractContext) base).setVariables(additionalVariables);</span>
+		} else {
+<span class="nc" id="L32">			LOG.debug(&quot;Not an AbstractContext =&gt; skip additional variables&quot;);</span>
+		}
+<span class="fc" id="L34">		return base;</span>
+	}
+
+	@Override
+	public IContext merge(IContext base, IContext other) {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">		for (String variableName : other.getVariableNames()) {</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">			if (base instanceof AbstractContext) {</span>
+<span class="fc" id="L41">				((AbstractContext) base).setVariable(variableName, other.getVariable(variableName));</span>
+			} else {
+<span class="nc" id="L43">				LOG.debug(&quot;Not an AbstractContext =&gt; skip additional variables&quot;);</span>
+			}
+<span class="fc" id="L45">		}</span>
+<span class="fc" id="L46">		return base;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

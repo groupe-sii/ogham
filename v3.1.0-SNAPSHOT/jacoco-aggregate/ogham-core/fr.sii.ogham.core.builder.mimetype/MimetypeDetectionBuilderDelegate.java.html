@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MimetypeDetectionBuilderDelegate.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.mimetype</a> &gt; <span class="el_source">MimetypeDetectionBuilderDelegate.java</span></div><h1>MimetypeDetectionBuilderDelegate.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.mimetype;
+
+import java.util.List;
+
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+
+/**
+ * Implementation that just delegates all operations to another builder.
+ * 
+ * &lt;p&gt;
+ * This is useful when a {@link MimetypeDetectionBuilder} is used for a
+ * particular parent and it must be inherited. As the parent types are not the
+ * same, you can't directly use the same reference. So this implementation wraps
+ * the original reference but as it is a new instance, it can have a different
+ * parent builder.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class MimetypeDetectionBuilderDelegate&lt;P&gt; extends AbstractParent&lt;P&gt; implements MimetypeDetectionBuilder&lt;P&gt; {
+	private final MimetypeDetectionBuilder&lt;?&gt; delegate;
+
+	/**
+	 * Wraps the delegate builder. The delegated builder parent is not used.
+	 * This instance uses the provided parent instead for chaining.
+	 * 
+	 * @param parent
+	 *            the new parent used for chaining
+	 * @param delegate
+	 *            the instance that will really be updated
+	 */
+	public MimetypeDetectionBuilderDelegate(P parent, MimetypeDetectionBuilder&lt;?&gt; delegate) {
+<span class="fc" id="L40">		super(parent);</span>
+<span class="fc" id="L41">		this.delegate = delegate;</span>
+<span class="fc" id="L42">	}</span>
+
+	@Override
+	public TikaBuilder&lt;MimetypeDetectionBuilder&lt;P&gt;&gt; tika() {
+<span class="nc" id="L46">		return new TikaBuilderDelegate&lt;&gt;(this, delegate.tika());</span>
+	}
+
+	@Override
+	public MimetypeDetectionBuilder&lt;P&gt; defaultMimetype(String mimetype) {
+<span class="nc" id="L51">		delegate.defaultMimetype(mimetype);</span>
+<span class="nc" id="L52">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilder&lt;MimetypeDetectionBuilder&lt;P&gt;, String&gt; defaultMimetype() {
+<span class="nc" id="L57">		return new ConfigurationValueBuilderDelegate&lt;&gt;(this, delegate.defaultMimetype());</span>
+	}
+
+
+	@Override
+	public ReplaceMimetypeBuilder&lt;MimetypeDetectionBuilder&lt;P&gt;&gt; replace() {
+<span class="nc" id="L63">		return new ReplaceMimetypeBuilderDelegate&lt;&gt;(this, delegate.replace());</span>
+	}
+
+	@Override
+	public MimetypeDetectionBuilder&lt;P&gt; allowed(List&lt;String&gt; mimetypes) {
+<span class="nc" id="L68">		delegate.allowed(mimetypes);</span>
+<span class="nc" id="L69">		return this;</span>
+	}
+
+	@Override
+	public MimetypeDetectionBuilder&lt;P&gt; allowed(String... mimetypes) {
+<span class="nc" id="L74">		delegate.allowed(mimetypes);</span>
+<span class="nc" id="L75">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilder&lt;MimetypeDetectionBuilder&lt;P&gt;, String[]&gt; allowed() {
+<span class="nc" id="L80">		return new ConfigurationValueBuilderDelegate&lt;&gt;(this, delegate.allowed());</span>
+	}
+
+	@Override
+	public MimeTypeProvider build() {
+<span class="fc" id="L85">		return delegate.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

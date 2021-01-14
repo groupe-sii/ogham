@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeLeafV3FirstSupportingTemplateResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v3</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3</a> &gt; <span class="el_source">ThymeLeafV3FirstSupportingTemplateResolver.java</span></div><h1>ThymeLeafV3FirstSupportingTemplateResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3;
+
+import java.util.Map;
+
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.TemplateResolution;
+
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.template.exception.NoResolverAdapterException;
+import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.exception.TemplateResolutionException;
+
+/**
+ * &lt;p&gt;
+ * Decorator resolver that is able to manage {@link ResourcePath}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * It delegates to a {@link FirstSupportingResourceResolver} the link between
+ * path, {@link ResourcePath} and {@link ResourceResolver}. each lookup to a
+ * dedicated {@link ResourceResolver}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * It delegates to a {@link FirstSupportingResolverAdapter} the link between
+ * {@link ResourceResolver} and the {@link ITemplateResolver} implementation to
+ * use with the given path.
+ * &lt;/p&gt;
+ * 
+ * @author Cyril Dejonghe
+ * @see FirstSupportingResourceResolver
+ * @see FirstSupportingResolverAdapter
+ *
+ */
+public class ThymeLeafV3FirstSupportingTemplateResolver implements ITemplateResolver {
+
+	private FirstSupportingResourceResolver resolver;
+	private FirstSupportingResolverAdapter resolverAdapter;
+
+	public ThymeLeafV3FirstSupportingTemplateResolver(FirstSupportingResourceResolver resolver, FirstSupportingResolverAdapter resolverAdapter) {
+<span class="fc" id="L45">		super();</span>
+<span class="fc" id="L46">		this.resolver = resolver;</span>
+<span class="fc" id="L47">		this.resolverAdapter = resolverAdapter;</span>
+<span class="fc" id="L48">	}</span>
+
+	@Override
+	public String getName() {
+<span class="fc" id="L52">		return &quot;ThymeLeafFirstSupportingTemplateResolver&quot;;</span>
+	}
+
+	@Override
+	public Integer getOrder() {
+<span class="fc" id="L57">		return 0;</span>
+	}
+
+	@Override
+	public TemplateResolution resolveTemplate(IEngineConfiguration configuration, String ownerTemplate, String template, Map&lt;String, Object&gt; templateResolutionAttributes) {
+		try {
+<span class="fc" id="L63">			ResourceResolver supportingResolver = resolver.getSupportingResolver(new UnresolvedPath(template));</span>
+<span class="fc" id="L64">			ITemplateResolver templateResolver = resolverAdapter.adapt(supportingResolver);</span>
+<span class="fc" id="L65">			ResolvedPath resourcePath = supportingResolver.resolve(new UnresolvedPath(template));</span>
+<span class="fc" id="L66">			String resolvedPath = resourcePath.getResolvedPath();</span>
+<span class="fc" id="L67">			TemplateResolution resolution = templateResolver.resolveTemplate(configuration, ownerTemplate, resolvedPath, templateResolutionAttributes);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">			if(!templateExists(resolution)) {</span>
+<span class="fc" id="L69">				throw new TemplateResolutionException(&quot;Failed to find template &quot;+template+&quot; (&quot;+resolvedPath+&quot;)&quot;, template, resourcePath);</span>
+			}
+<span class="fc" id="L71">			return resolution;</span>
+<span class="nc" id="L72">		} catch (NoResolverAdapterException e) {</span>
+<span class="nc" id="L73">			throw new ResolverAdapterNotFoundException(&quot;Unable to resolve template cause no adapter supporting template name '&quot; + template + &quot;' was found.&quot;, e);</span>
+
+		}
+	}
+
+	private static boolean templateExists(TemplateResolution resolution) {
+		// Thymeleaf can check existence of template but only if option is set.
+		// If set and the template doesn't exist, resolution will be null.
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">		if(resolution == null) {</span>
+<span class="nc" id="L82">			return false;</span>
+		}
+		// If option is not set, then check existence manually to be consistent
+		// with other template engines
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">		if(!resolution.isTemplateResourceExistenceVerified()) {</span>
+<span class="fc" id="L87">			return resolution.getTemplateResource().exists();</span>
+		}
+<span class="nc" id="L89">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

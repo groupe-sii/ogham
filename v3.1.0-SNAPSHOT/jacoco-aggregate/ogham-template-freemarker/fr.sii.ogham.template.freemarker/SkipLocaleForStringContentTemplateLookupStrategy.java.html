@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SkipLocaleForStringContentTemplateLookupStrategy.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker</a> &gt; <span class="el_source">SkipLocaleForStringContentTemplateLookupStrategy.java</span></div><h1>SkipLocaleForStringContentTemplateLookupStrategy.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker;
+
+import java.io.IOException;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolverRegistry;
+import fr.sii.ogham.template.exception.ResolverAdapterException;
+import fr.sii.ogham.template.freemarker.adapter.StringContentTemplateLoader;
+import fr.sii.ogham.template.freemarker.adapter.TemplateLoaderAdapter;
+import freemarker.cache.TemplateLoader;
+import freemarker.cache.TemplateLookupContext;
+import freemarker.cache.TemplateLookupResult;
+import freemarker.cache.TemplateLookupStrategy;
+
+/**
+ * Ogham special {@link TemplateLookupStrategy} that is used in order to skip
+ * {@link Locale} resolution for templates that are provided directly by a
+ * string and not by a path.
+ * 
+ * @see StringContentTemplateLoader
+ * @author Aurélien Baudet
+ *
+ */
+public class SkipLocaleForStringContentTemplateLookupStrategy extends TemplateLookupStrategy {
+<span class="fc" id="L30">	private static final Logger LOG = LoggerFactory.getLogger(SkipLocaleForStringContentTemplateLookupStrategy.class);</span>
+
+	private final TemplateLookupStrategy delegate;
+	private final ResourceResolverRegistry resolverRegistry;
+	private final TemplateLoaderAdapter adapter;
+
+	public SkipLocaleForStringContentTemplateLookupStrategy(TemplateLookupStrategy delegate, ResourceResolverRegistry resolverRegistry, TemplateLoaderAdapter adapter) {
+<span class="fc" id="L37">		super();</span>
+<span class="fc" id="L38">		this.delegate = delegate;</span>
+<span class="fc" id="L39">		this.resolverRegistry = resolverRegistry;</span>
+<span class="fc" id="L40">		this.adapter = adapter;</span>
+<span class="fc" id="L41">	}</span>
+
+	@Override
+	public TemplateLookupResult lookup(TemplateLookupContext ctx) throws IOException {
+		try {
+<span class="fc" id="L46">			ResourceResolver matchingResolver = resolverRegistry.getSupportingResolver(new UnresolvedPath(ctx.getTemplateName()));</span>
+			// no match, delegate to let delegate decide
+<span class="fc bfc" id="L48" title="All 2 branches covered.">			if (matchingResolver == null) {</span>
+<span class="nc" id="L49">				return delegate.lookup(ctx);</span>
+			}
+<span class="fc" id="L51">			TemplateLoader matchingAdapter = adapter.adapt(matchingResolver);</span>
+			// if it is a template content (directly a string)
+			// =&gt; skip locale resolution
+<span class="fc bfc" id="L54" title="All 2 branches covered.">			if (matchingAdapter instanceof StringContentTemplateLoader) {</span>
+<span class="fc" id="L55">				return ctx.lookupWithLocalizedThenAcquisitionStrategy(ctx.getTemplateName(), null);</span>
+			}
+			// standard Freemarker behavior
+<span class="fc" id="L58">			return delegate.lookup(ctx);</span>
+<span class="nc" id="L59">		} catch (ResolverAdapterException e) {</span>
+<span class="nc" id="L60">			LOG.debug(&quot;Failed to determine which Freemarker adapter to use for template name {}&quot;, ctx.getTemplateName(), e);</span>
+<span class="nc" id="L61">			return delegate.lookup(ctx);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

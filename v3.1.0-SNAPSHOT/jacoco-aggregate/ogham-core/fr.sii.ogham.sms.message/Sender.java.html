@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Sender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.message</a> &gt; <span class="el_source">Sender.java</span></div><h1>Sender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.message;
+
+/**
+ * Specialization of {@link Contact} that represents the sender of the SMS.
+ */
+public class Sender extends Contact {
+
+	/**
+	 * Initialize the contact with its name and its phone number.
+	 * 
+	 * @param name
+	 *            the name of the contact
+	 * @param phoneNumber
+	 *            the phone number for the contact
+	 */
+	public Sender(String name, PhoneNumber phoneNumber) {
+<span class="fc" id="L17">		super(name, phoneNumber);</span>
+<span class="fc" id="L18">	}</span>
+
+	/**
+	 * Initialize the contact with its name and its phone number.
+	 * &lt;p&gt;
+	 * No name is specified.
+	 * &lt;/p&gt;
+	 * 
+	 * @param phoneNumber
+	 *            the phone number for the contact
+	 */
+	public Sender(PhoneNumber phoneNumber) {
+<span class="fc" id="L30">		super(phoneNumber);</span>
+<span class="fc" id="L31">	}</span>
+
+	/**
+	 * Initialize the contact with its name and its phone number as string.
+	 * 
+	 * @param name
+	 *            the name of the contact
+	 * @param phoneNumber
+	 *            the phone number for the contact as string
+	 */
+	public Sender(String name, String phoneNumber) {
+<span class="nc" id="L42">		super(name, phoneNumber);</span>
+<span class="nc" id="L43">	}</span>
+
+	/**
+	 * Initialize the contact with its phone number as string.
+	 * &lt;p&gt;
+	 * No name is specified.
+	 * &lt;/p&gt;
+	 * 
+	 * @param phoneNumber
+	 *            the phone number for the contact
+	 */
+	public Sender(String phoneNumber) {
+<span class="fc" id="L55">		super(phoneNumber);</span>
+<span class="fc" id="L56">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,4007 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>ConfigurationValueBuilderHelper.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package fr.sii.ogham.core.builder.configuration;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static fr.sii.ogham.core.util.BuilderUtils.isExpression;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static java.util.Optional.empty;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.ArrayList;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.List;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.Optional;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.builder.configurer.Configurer;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.builder.context.BuildContext;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.fluent.AbstractParent;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * Helper that allow registration of properties and default value but also</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * registers the value set by the developer.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;p&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * If a value is explicitly set by developer, it means that the value is</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * hard-coded in its own code. This value can&#39;t be overridden by a property or</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * default value so the developer value always takes precedence.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * For example, Ogham could be configured like this:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * .port()</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *   .properties(&#34;mail.smtp.port&#34;, &#34;mail.port&#34;)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *   .devaultValue(25)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_29'/>
+29
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_29'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;/pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * The developer can configure Ogham using a configuration file in the classpath</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * to provide values for local development environment. Example of content of</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * the configuration file:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_36'/>
+36
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_36'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * mail.smtp.port = 557</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_37'/>
+37
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_37'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;/pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_38'/>
+38
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_38'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_39'/>
+39
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_39'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * The developer may want to test its code and may need to have a different port</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * value in test:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_41'/>
+41
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_41'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_42'/>
+42
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_42'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_43'/>
+43
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_43'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#38;#64;Test</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_44'/>
+44
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_44'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * public void testMail() {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_45'/>
+45
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_45'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *   MessagingBuilder builder = MessagingBuilder.standard();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_46'/>
+46
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_46'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *   builder</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_47'/>
+47
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_47'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *     .email().sender(JavaMailBuilder.class)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_48'/>
+48
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_48'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *       .port(10025)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_49'/>
+49
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_49'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *   ...</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_50'/>
+50
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_50'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;/pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_51'/>
+51
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_51'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_52'/>
+52
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_52'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * The value {@code 10025} must be the value available in the test regardless of</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_53'/>
+53
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_53'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * the value of the properties and default value.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_54'/>
+54
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_54'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_55'/>
+55
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_55'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;p&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_56'/>
+56
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_56'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;strong&#62;NOTE:&#60;/strong&#62; This class is for internal use (or extensions for</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_57'/>
+57
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_57'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * Ogham). The developer that uses Ogham should not see</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_58'/>
+58
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_58'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * {@link #setValue(Object)} and {@link #getValue()} methods.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_59'/>
+59
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_59'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_60'/>
+60
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_60'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_61'/>
+61
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_61'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @author Aur&#233;lien Baudet</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_62'/>
+62
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_62'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_63'/>
+63
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_63'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @param &#60;P&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_64'/>
+64
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_64'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *            the type of the parent</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_65'/>
+65
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_65'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @param &#60;V&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_66'/>
+66
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_66'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *            the type of the value</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_67'/>
+67
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_67'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_68'/>
+68
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_68'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class ConfigurationValueBuilderHelper&#60;P, V&#62; extends AbstractParent&#60;P&#62; implements ConfigurationValueBuilder&#60;P, V&#62; {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_69'/>
+69
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_69'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final Class&#60;V&#62; valueClass;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_70'/>
+70
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_70'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final BuildContext buildContext;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_71'/>
+71
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_71'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final List&#60;String&#62; properties;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_72'/>
+72
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_72'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private V defaultValue;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_73'/>
+73
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_73'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private V value;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_74'/>
+74
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_74'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private Optional&#60;V&#62; optionalValue;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_75'/>
+75
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_75'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_76'/>
+76
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_76'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_77'/>
+77
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_77'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * Initializes with the parent builder and the type of the value used for</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_78'/>
+78
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_78'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * conversion.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_79'/>
+79
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_79'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_80'/>
+80
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_80'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param parent</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_81'/>
+81
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_81'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            the parent builder</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_82'/>
+82
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_82'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param valueClass</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_83'/>
+83
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_83'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            the type of the value</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_84'/>
+84
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_84'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param buildContext</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_85'/>
+85
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_85'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            for registering instances and property evaluation</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_86'/>
+86
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_86'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_87'/>
+87
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_87'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public ConfigurationValueBuilderHelper(P parent, Class&#60;V&#62; valueClass, BuildContext buildContext) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_88'/>
+88
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_88'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;super(parent);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_89'/>
+89
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_89'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.valueClass = valueClass;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_90'/>
+90
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_90'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.buildContext = buildContext;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_91'/>
+91
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_91'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;properties = new ArrayList&#60;&#62;();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_92'/>
+92
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_92'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;optionalValue = empty();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_93'/>
+93
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_93'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_94'/>
+94
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_94'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_95'/>
+95
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_95'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_96'/>
+96
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_96'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public ConfigurationValueBuilderHelper&#60;P, V&#62; properties(String... properties) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_97'/>
+97
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_97'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;for (String property : properties) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_98'/>
+98
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_98'>8</a>
+<span>
+1. properties : negated conditional &rarr; NO_COVERAGE<br/>
+2. properties : negated conditional &rarr; KILLED<br/>
+3. properties : negated conditional &rarr; KILLED<br/>
+4. properties : negated conditional &rarr; KILLED<br/>
+5. properties : negated conditional &rarr; KILLED<br/>
+6. properties : negated conditional &rarr; KILLED<br/>
+7. properties : negated conditional &rarr; KILLED<br/>
+8. properties : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;if (!isExpression(property)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_99'/>
+99
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_99'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>&#9;&#9;&#9;&#9;property = &#34;${&#34; + property + &#34;}&#34;;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_100'/>
+100
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_100'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_101'/>
+101
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_101'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;this.properties.add(property);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_102'/>
+102
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_102'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_103'/>
+103
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_103'>8</a>
+<span>
+1. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; NO_COVERAGE<br/>
+2. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+3. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+4. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+5. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+6. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+7. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+8. properties : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return this;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_104'/>
+104
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_104'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_105'/>
+105
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_105'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_106'/>
+106
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_106'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_107'/>
+107
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_107'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public ConfigurationValueBuilderHelper&#60;P, V&#62; defaultValue(V value) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_108'/>
+108
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_108'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;defaultValue = value;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_109'/>
+109
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_109'>4</a>
+<span>
+1. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; SURVIVED<br/>
+2. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; NO_COVERAGE<br/>
+3. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+4. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return this;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_110'/>
+110
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_110'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_111'/>
+111
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_111'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_112'/>
+112
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_112'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_113'/>
+113
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_113'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public ConfigurationValueBuilderHelper&#60;P, V&#62; defaultValue(MayOverride&#60;V&#62; possibleNewValue) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_114'/>
+114
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_114'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;defaultValue = possibleNewValue.override(defaultValue);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_115'/>
+115
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_115'>8</a>
+<span>
+1. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; NO_COVERAGE<br/>
+2. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+3. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+4. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+5. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+6. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+7. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+8. defaultValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return this;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_116'/>
+116
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_116'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_117'/>
+117
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_117'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_118'/>
+118
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_118'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_119'/>
+119
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_119'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@SuppressWarnings(&#34;squid:S3553&#34;)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_120'/>
+120
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_120'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public ConfigurationValueBuilderHelper&#60;P, V&#62; value(Optional&#60;V&#62; optionalValue) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_121'/>
+121
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_121'>3</a>
+<span>
+1. value : negated conditional &rarr; NO_COVERAGE<br/>
+2. value : negated conditional &rarr; KILLED<br/>
+3. value : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (optionalValue.isPresent()) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_122'/>
+122
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_122'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;this.optionalValue = optionalValue;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_123'/>
+123
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_123'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_124'/>
+124
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_124'>3</a>
+<span>
+1. value : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::value &rarr; NO_COVERAGE<br/>
+2. value : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::value &rarr; KILLED<br/>
+3. value : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::value &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return this;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_125'/>
+125
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_125'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_126'/>
+126
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_126'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_127'/>
+127
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_127'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_128'/>
+128
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_128'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * If a value is explicitly set by developer, it means that the value is</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_129'/>
+129
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_129'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * hard-coded in its own code. This value can&#39;t be overridden by a property</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_130'/>
+130
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_130'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * or default value so the developer value always takes precedence.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_131'/>
+131
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_131'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_132'/>
+132
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_132'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * For example, Ogham could be configured like this:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_133'/>
+133
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_133'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_134'/>
+134
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_134'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_135'/>
+135
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_135'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * .port()</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_136'/>
+136
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_136'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *   .properties(&#34;mail.smtp.port&#34;, &#34;mail.port&#34;)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_137'/>
+137
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_137'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *   .devaultValue(25)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_138'/>
+138
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_138'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;/pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_139'/>
+139
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_139'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_140'/>
+140
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_140'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * The developer can configure Ogham using a configuration file in the</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_141'/>
+141
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_141'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * classpath to provide values for local development environment. Example of</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_142'/>
+142
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_142'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * content of the configuration file:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_143'/>
+143
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_143'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_144'/>
+144
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_144'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_145'/>
+145
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_145'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * mail.smtp.port = 557</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_146'/>
+146
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_146'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;/pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_147'/>
+147
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_147'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_148'/>
+148
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_148'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * The developer may want to test its code and may need to have a different</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_149'/>
+149
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_149'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * port value in test:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_150'/>
+150
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_150'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_151'/>
+151
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_151'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_152'/>
+152
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_152'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#38;#64;Test</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_153'/>
+153
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_153'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * public void testMail() {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_154'/>
+154
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_154'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *   MessagingBuilder builder = MessagingBuilder.standard();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_155'/>
+155
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_155'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *   builder</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_156'/>
+156
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_156'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *     .email().sender(JavaMailBuilder.class)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_157'/>
+157
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_157'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *       .port(10025)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_158'/>
+158
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_158'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *   ...</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_159'/>
+159
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_159'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;/pre&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_160'/>
+160
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_160'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_161'/>
+161
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_161'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * The value {@code 10025} must be the value available in the test</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_162'/>
+162
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_162'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * regardless of the value of the properties and default value.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_163'/>
+163
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_163'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_164'/>
+164
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_164'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;p&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_165'/>
+165
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_165'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;strong&#62;IMPORTANT:&#60;/strong&#62; {@link Configurer}s &#60;strong&#62;should</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_166'/>
+166
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_166'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * not&#60;/strong&#62; use this method directly because it prevents the possibility</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_167'/>
+167
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_167'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * to override the value from external configuration.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_168'/>
+168
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_168'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_169'/>
+169
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_169'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param value</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_170'/>
+170
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_170'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            the value set by the developer in its own code</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_171'/>
+171
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_171'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_172'/>
+172
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_172'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public void setValue(V value) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_173'/>
+173
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_173'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.value = value;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_174'/>
+174
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_174'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_175'/>
+175
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_175'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_176'/>
+176
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_176'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_177'/>
+177
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_177'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * Get the final value. The first non-null value is returned:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_178'/>
+178
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_178'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_179'/>
+179
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_179'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;ol&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_180'/>
+180
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_180'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If the a non-null value has been set using {@link #setValue(Object)},</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_181'/>
+181
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_181'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * this value is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_182'/>
+182
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_182'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If an optional value has been set using {@link #value(Optional)}, and</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_183'/>
+183
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_183'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * {@link Optional#isPresent()} returns true this value is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_184'/>
+184
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_184'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If property keys have been registered and one has been evaluated to a</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_185'/>
+185
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_185'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * non-null value, this value is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_186'/>
+186
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_186'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If a default value has been registered, the default value is</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_187'/>
+187
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_187'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_188'/>
+188
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_188'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;null is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_189'/>
+189
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_189'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;/ol&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_190'/>
+190
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_190'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_191'/>
+191
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_191'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @return the value</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_192'/>
+192
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_192'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_193'/>
+193
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_193'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public V getValue() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_194'/>
+194
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_194'>10</a>
+<span>
+1. getValue : negated conditional &rarr; TIMED_OUT<br/>
+2. getValue : negated conditional &rarr; KILLED<br/>
+3. getValue : negated conditional &rarr; KILLED<br/>
+4. getValue : negated conditional &rarr; KILLED<br/>
+5. getValue : negated conditional &rarr; KILLED<br/>
+6. getValue : negated conditional &rarr; KILLED<br/>
+7. getValue : negated conditional &rarr; KILLED<br/>
+8. getValue : negated conditional &rarr; KILLED<br/>
+9. getValue : negated conditional &rarr; KILLED<br/>
+10. getValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (value != null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_195'/>
+195
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_195'>11</a>
+<span>
+1. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+2. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+3. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+4. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+5. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+6. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+7. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+8. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+9. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+10. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+11. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return value;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_196'/>
+196
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_196'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_197'/>
+197
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_197'>10</a>
+<span>
+1. getValue : negated conditional &rarr; TIMED_OUT<br/>
+2. getValue : negated conditional &rarr; KILLED<br/>
+3. getValue : negated conditional &rarr; KILLED<br/>
+4. getValue : negated conditional &rarr; KILLED<br/>
+5. getValue : negated conditional &rarr; KILLED<br/>
+6. getValue : negated conditional &rarr; KILLED<br/>
+7. getValue : negated conditional &rarr; KILLED<br/>
+8. getValue : negated conditional &rarr; KILLED<br/>
+9. getValue : negated conditional &rarr; KILLED<br/>
+10. getValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (optionalValue.isPresent()) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_198'/>
+198
+</td>
+<td class='uncertain'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_198'>2</a>
+<span>
+1. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; NO_COVERAGE<br/>
+2. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; TIMED_OUT<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='uncertain'>&#9;&#9;&#9;return optionalValue.get();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_199'/>
+199
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_199'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_200'/>
+200
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_200'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;V prop = buildContext.evaluate(properties, valueClass);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_201'/>
+201
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_201'>9</a>
+<span>
+1. getValue : negated conditional &rarr; SURVIVED<br/>
+2. getValue : negated conditional &rarr; SURVIVED<br/>
+3. getValue : negated conditional &rarr; SURVIVED<br/>
+4. getValue : negated conditional &rarr; TIMED_OUT<br/>
+5. getValue : negated conditional &rarr; KILLED<br/>
+6. getValue : negated conditional &rarr; KILLED<br/>
+7. getValue : negated conditional &rarr; KILLED<br/>
+8. getValue : negated conditional &rarr; KILLED<br/>
+9. getValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (prop != null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_202'/>
+202
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_202'>8</a>
+<span>
+1. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+2. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; NO_COVERAGE<br/>
+3. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+4. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+5. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+6. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+7. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+8. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return prop;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_203'/>
+203
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_203'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_204'/>
+204
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_204'>9</a>
+<span>
+1. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+2. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+3. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+4. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+5. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; TIMED_OUT<br/>
+6. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+7. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+8. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+9. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return defaultValue;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_205'/>
+205
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_205'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_206'/>
+206
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_206'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_207'/>
+207
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_207'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_208'/>
+208
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_208'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * Get the final value. The first non-null value is returned:</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_209'/>
+209
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_209'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_210'/>
+210
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_210'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;ol&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_211'/>
+211
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_211'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If the a non-null value has been set using {@link #setValue(Object)},</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_212'/>
+212
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_212'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * this value is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_213'/>
+213
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_213'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If an optional value has been set using {@link #value(Optional)}, and</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_214'/>
+214
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_214'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * {@link Optional#isPresent()} returns true this value is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_215'/>
+215
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_215'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If property keys have been registered and one has been evaluated to a</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_216'/>
+216
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_216'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * non-null value, this value is returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_217'/>
+217
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_217'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;If a default value has been registered, the default value is</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_218'/>
+218
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_218'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * returned&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_219'/>
+219
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_219'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;li&#62;The default value provided as parameter is used&#60;/li&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_220'/>
+220
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_220'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * &#60;/ol&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_221'/>
+221
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_221'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_222'/>
+222
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_222'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param defaultValue</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_223'/>
+223
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_223'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            the default value to use if there isn&#39;t a non-null value</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_224'/>
+224
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_224'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @return the value</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_225'/>
+225
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_225'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_226'/>
+226
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_226'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public V getValue(V defaultValue) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_227'/>
+227
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_227'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;V configuredValue = getValue();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_228'/>
+228
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_228'>10</a>
+<span>
+1. getValue : negated conditional &rarr; TIMED_OUT<br/>
+2. getValue : negated conditional &rarr; KILLED<br/>
+3. getValue : negated conditional &rarr; KILLED<br/>
+4. getValue : negated conditional &rarr; KILLED<br/>
+5. getValue : negated conditional &rarr; KILLED<br/>
+6. getValue : negated conditional &rarr; KILLED<br/>
+7. getValue : negated conditional &rarr; KILLED<br/>
+8. getValue : negated conditional &rarr; KILLED<br/>
+9. getValue : negated conditional &rarr; KILLED<br/>
+10. getValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (configuredValue != null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_229'/>
+229
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_229'>10</a>
+<span>
+1. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; TIMED_OUT<br/>
+2. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+3. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+4. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+5. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+6. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+7. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+8. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+9. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+10. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return configuredValue;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_230'/>
+230
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_230'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_231'/>
+231
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_231'>11</a>
+<span>
+1. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED<br/>
+2. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; NO_COVERAGE<br/>
+3. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+4. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+5. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+6. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+7. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+8. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+9. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+10. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+11. getValue : replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return defaultValue;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_232'/>
+232
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_232'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_233'/>
+233
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_233'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_234'/>
+234
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_234'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_235'/>
+235
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_235'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * Returns true if a value, default value or properties have been set.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_236'/>
+236
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_236'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_237'/>
+237
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_237'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @return true if there is a value, default value or at least one property</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_238'/>
+238
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_238'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_239'/>
+239
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_239'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public boolean hasValueOrProperties() {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_240'/>
+240
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_240'>4</a>
+<span>
+1. hasValueOrProperties : replaced boolean return with true for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::hasValueOrProperties &rarr; NO_COVERAGE<br/>
+2. hasValueOrProperties : negated conditional &rarr; NO_COVERAGE<br/>
+3. hasValueOrProperties : negated conditional &rarr; NO_COVERAGE<br/>
+4. hasValueOrProperties : negated conditional &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>&#9;&#9;return value != null || !properties.isEmpty() || defaultValue != null;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_241'/>
+241
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_241'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_242'/>
+242
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_242'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_243'/>
+243
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_243'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_98'>98</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_98'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamall.it.configuration.SendGridConfigurationTest.asDeveloperIDefineApiKeyUsingProperties(oghamall.it.configuration.SendGridConfigurationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest.emailUsingFreemarkerTemplateShouldBeAbleToCallStaticMethods(oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.StaticMethodAccessTest.emailUsingFreemarkerTemplateAndStaticMethodAccessDisabledShouldFail(oghamspringbootv2autoconfigure.it.StaticMethodAccessTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_103'>103</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_103'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamPropertiesWithSpringPropsShouldUseOghamPropertiesPrecedence(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.oghamPropertyShouldOverride(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamcore.it.core.service.CleanupTest.manualCleanupShouldAutomaticallyCleanTheSenders(oghamcore.it.core.service.CleanupTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>properties<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamAloneShouldUseOghamProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::properties &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_109'>109</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_109'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.directValueShouldOverride(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_115'>115</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_115'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamcore.it.core.service.CleanupTest.manualCleanupShouldAutomaticallyCleanTheSenders(oghamcore.it.core.service.CleanupTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamjavamail.it.UnreadableAttachmentTest.attachmentUnreadable(oghamjavamail.it.UnreadableAttachmentTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamPropertiesWithSpringPropsShouldUseOghamPropertiesPrecedence(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>defaultValue<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamAloneShouldUseOghamProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::defaultValue &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_121'>121</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_121'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>value<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>value<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamWithJavaMailAutoConfigShouldUseSpringProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>value<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamWithJavaMailAutoConfigShouldUseSpringProperties(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_124'>124</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_124'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>value<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamPropertiesWithSpringPropsShouldUseOghamPropertiesPrecedence(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::value &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>value<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamAloneShouldUseOghamProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::value &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>value<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::value &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_194'>194</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_194'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.foundWithoutNamespace(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.nationalNumber(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.found(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.values(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.PartialConfigurationTest.splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured(oghamcloudhopper.it.PartialConfigurationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest.translateInternational(oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_195'>195</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_195'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.values(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest.translateInternational(oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.PartialConfigurationTest.splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured(oghamcloudhopper.it.PartialConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.found(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest.emailUsingFreemarkerTemplateShouldBeAbleToCallStaticMethods(oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.foundWithoutNamespace(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.nationalNumber(oghamovh.it.OvhSmsTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.StaticMethodAccessTest.smsUsingFreemarkerTemplateShouldBeAbleToCallStaticMethodsWithCustomVariableName(oghamspringbootv2autoconfigure.it.StaticMethodAccessTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_197'>197</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_197'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.notFound(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.notFound(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.PartialConfigurationTest.splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured(oghamcloudhopper.it.PartialConfigurationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.noMimetypeConfigurationCantSendEmail(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.nationalNumber(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.noOverrideWithEmptyProps(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_198'>198</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_198'/> 
+
+<p class='TIMED_OUT'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; TIMED_OUT</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_201'>201</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_201'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.configuration.SendGridConfigurationTest.asDeveloperIDefineApiKeyUsingProperties(oghamall.it.configuration.SendGridConfigurationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> negated conditional &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_202'>202</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_202'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.configuration.SendGridConfigurationTest.asDeveloperIDefineApiKeyUsingProperties(oghamall.it.configuration.SendGridConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_204'>204</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_204'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.SendTimeoutTest.sendResponseTimeout(oghamcloudhopper.it.SendTimeoutTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.sms.SmsCustomImplTest.simple(oghamall.it.sms.SmsCustomImplTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_228'>228</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_228'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.PartialConfigurationTest.splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured(oghamcloudhopper.it.PartialConfigurationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest.translateInternational(oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.builder.retry.RetryBuilderSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.notFound(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.notFound(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.JavaMailSmtpTest.missingRecipientIsInvalid(oghamjavamail.it.JavaMailSmtpTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_229'>229</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_229'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.notFound(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.notFound(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.PartialConfigurationTest.splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured(oghamcloudhopper.it.PartialConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.JavaMailSmtpTest.missingRecipientIsInvalid(oghamjavamail.it.JavaMailSmtpTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest.translateNull(oghamall.it.sms.message.addressing.translator.ReceiverPhoneNumberTranslatorTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.builder.retry.RetryBuilderSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.nationalNumber(oghamovh.it.OvhSmsTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_231'>231</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_231'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ExternalFileTest.fileUnreadable(oghamthymeleafv3.it.ExternalFileTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcloudhopper.it.PartialConfigurationTest.splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured(oghamcloudhopper.it.PartialConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.unconfiguredServiceCantSendSms(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamAloneShouldUseOghamProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamthymeleafv2.it.ExternalFileTest.fileNotFound(oghamthymeleafv2.it.ExternalFileTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamcore.it.core.builder.retry.RetryBuilderSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamPropertiesWithSpringPropsShouldUseOghamPropertiesPrecedence(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>getValue<br/><b>Killed by : </b>oghamjavamail.it.JavaMailSmtpTest.missingRecipientIsInvalid(oghamjavamail.it.JavaMailSmtpTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::getValue &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@3b3dcf26_240'>240</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@3b3dcf26_240'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>hasValueOrProperties<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/builder/configuration/ConfigurationValueBuilderHelper::hasValueOrProperties &rarr; NO_COVERAGE</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>hasValueOrProperties<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>hasValueOrProperties<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>hasValueOrProperties<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+</ul>
+
+<br/>
+
+Report generated by <a href='http://pitest.org'>PIT</a> OGHAM
+
+</body>
+</html>

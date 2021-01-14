@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamMimetypeProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.common</a> &gt; <span class="el_source">OghamMimetypeProperties.java</span></div><h1>OghamMimetypeProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.common;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+@ConfigurationProperties(&quot;ogham.mimetype&quot;)
+<span class="fc" id="L7">public class OghamMimetypeProperties {</span>
+	/**
+	 * Default mimetype if detection couldn't determine the mimetype
+	 */
+<span class="fc" id="L11">	private String defaultMimetype = &quot;application/octet-stream&quot;;</span>
+<span class="fc" id="L12">	@NestedConfigurationProperty</span>
+	private TikaProperties tika = new TikaProperties();
+
+	public String getDefaultMimetype() {
+<span class="fc" id="L16">		return defaultMimetype;</span>
+	}
+
+	public void setDefaultMimetype(String defaultMimetype) {
+<span class="fc" id="L20">		this.defaultMimetype = defaultMimetype;</span>
+<span class="fc" id="L21">	}</span>
+
+	public TikaProperties getTika() {
+<span class="fc" id="L24">		return tika;</span>
+	}
+
+	public void setTika(TikaProperties tika) {
+<span class="fc" id="L28">		this.tika = tika;</span>
+<span class="fc" id="L29">	}</span>
+
+<span class="fc" id="L31">	public static class TikaProperties {</span>
+		/**
+		 * If Tika detection returns an {@code application/octet-stream}, it may
+		 * means that detection was not enough accurate. In order to try other
+		 * registered implementations that are able to detect mimetypes, you can
+		 * set this to true.
+		 * 
+		 */
+<span class="fc" id="L39">		private boolean failIfOctetStream = true;</span>
+
+		public boolean isFailIfOctetStream() {
+<span class="fc" id="L42">			return failIfOctetStream;</span>
+		}
+
+		public void setFailIfOctetStream(boolean failIfOctetStream) {
+<span class="fc" id="L46">			this.failIfOctetStream = failIfOctetStream;</span>
+<span class="fc" id="L47">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

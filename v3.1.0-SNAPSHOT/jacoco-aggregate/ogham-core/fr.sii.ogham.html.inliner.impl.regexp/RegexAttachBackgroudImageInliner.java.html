@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RegexAttachBackgroudImageInliner.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner.impl.regexp</a> &gt; <span class="el_source">RegexAttachBackgroudImageInliner.java</span></div><h1>RegexAttachBackgroudImageInliner.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner.impl.regexp;
+
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
+import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.InlineModes.ATTACH;
+import static java.text.MessageFormat.format;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.id.generator.IdGenerator;
+import fr.sii.ogham.core.resource.ByteResource;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.html.inliner.ContentWithImages;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.ImageResource;
+import fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.InlineModes;
+
+/**
+ * Image inliner that loads the image and attaches it to the mail. The image is
+ * referenced using a content ID. The content ID is automatically generated.
+ * 
+ * &lt;p&gt;
+ * The inlining using attach mode is only applied if the attribute
+ * {@link CssImageInlinerConstants#INLINE_MODE_PROPERTY} is set to
+ * {@link InlineModes#ATTACH}.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RegexAttachBackgroudImageInliner implements ImageInliner {
+	private static final String CONTENT_ID = &quot;&lt;{0}&gt;&quot;;
+	private static final String URL_VALUE = &quot;cid:{0}&quot;;
+
+	private IdGenerator idGenerator;
+
+	public RegexAttachBackgroudImageInliner(IdGenerator idGenerator) {
+<span class="fc" id="L38">		super();</span>
+<span class="fc" id="L39">		this.idGenerator = idGenerator;</span>
+<span class="fc" id="L40">	}</span>
+
+	@Override
+	public ContentWithImages inline(String htmlContent, List&lt;ImageResource&gt; images) {
+<span class="fc" id="L44">		List&lt;Attachment&gt; attachments = new ArrayList&lt;&gt;(images.size());</span>
+<span class="fc" id="L45">		String inlined = CssImageInlineUtils.inline(htmlContent, images, ATTACH, decl -&gt; attachImage(decl.getUrl().getUrl(), decl.getImage(), attachments));</span>
+<span class="fc" id="L46">		return new ContentWithImages(inlined, attachments);</span>
+	}
+
+	private String attachImage(String url, ImageResource image, List&lt;Attachment&gt; attachments) {
+<span class="fc" id="L50">		Attachment alreadyAttached = getAttachmentForUrl(url, attachments);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		if (alreadyAttached != null) {</span>
+<span class="fc" id="L52">			String cid = alreadyAttached.getContentId();</span>
+<span class="fc" id="L53">			return format(URL_VALUE, cid.substring(1, cid.length() - 1));</span>
+		}
+<span class="fc" id="L55">		String contentId = idGenerator.generate(image.getName());</span>
+<span class="fc" id="L56">		Attachment attachment = new Attachment(new ByteResource(image.getName(), image.getContent()), url, INLINE, format(CONTENT_ID, contentId));</span>
+<span class="fc" id="L57">		attachments.add(attachment);</span>
+<span class="fc" id="L58">		return format(URL_VALUE, contentId);</span>
+	}
+
+	private static Attachment getAttachmentForUrl(String url, List&lt;Attachment&gt; attachments) {
+		// @formatter:off
+<span class="fc" id="L63">		return attachments.stream()</span>
+<span class="fc" id="L64">				.filter(a -&gt; url.equals(a.getDescription()))</span>
+<span class="fc" id="L65">				.findFirst()</span>
+<span class="fc" id="L66">				.orElse(null);</span>
+		// @formatter:on
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

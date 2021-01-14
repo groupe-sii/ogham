@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageInlineUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner.impl.jsoup</a> &gt; <span class="el_source">ImageInlineUtils.java</span></div><h1>ImageInlineUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner.impl.jsoup;
+
+import static fr.sii.ogham.html.inliner.ImageInlinerConstants.INLINED_ATTR;
+import static fr.sii.ogham.html.inliner.ImageInlinerConstants.INLINE_MODE_ATTR;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
+
+import fr.sii.ogham.html.inliner.ImageInlinerConstants;
+import fr.sii.ogham.html.inliner.ImageInlinerConstants.InlineMode;
+
+/**
+ * Helper class that factorizes code for classes that are using Jsoup inliners.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class ImageInlineUtils {
+	/**
+	 * Checks if inlining mode is allowed on the provided element.
+	 * 
+	 * @param img
+	 *            the image element to check if the actual inlining mode is
+	 *            allowed
+	 * @param mode
+	 *            the actual mode
+	 * @return true if this mode is allowed, false otherwise
+	 */
+	@SuppressWarnings(&quot;squid:S1126&quot;)
+	public static boolean isInlineModeAllowed(Node img, InlineMode mode) {
+		// if already inlined =&gt; reject (do not inline twice)
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		if (!img.attr(INLINED_ATTR).isEmpty()) {</span>
+<span class="fc" id="L36">			return false;</span>
+		}
+		// if inline mode defined but not the wanted mode =&gt; reject
+<span class="fc bfc" id="L39" title="All 4 branches covered.">		if (!img.attr(INLINE_MODE_ATTR).isEmpty() &amp;&amp; !mode.is(img.attr(INLINE_MODE_ATTR))) {</span>
+<span class="fc" id="L40">			return false;</span>
+		}
+		// if inline mode defined and matches the wanted mode =&gt; allow
+		// if no inline mode defined =&gt; allow (any mode allowed)
+<span class="fc" id="L44">		return true;</span>
+	}
+
+	/**
+	 * Remove attributes that are used only by Ogham:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link ImageInlinerConstants#INLINE_MODE_ATTR}&lt;/li&gt;
+	 * &lt;li&gt;{@link ImageInlinerConstants#INLINED_ATTR}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param html
+	 *            the html to clean
+	 * @return the cleaned html
+	 */
+	public static String removeOghamAttributes(String html) {
+<span class="fc" id="L59">		Document doc = Jsoup.parse(html);</span>
+<span class="fc" id="L60">		Elements imgs = doc.select(&quot;img&quot;);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (Element img : imgs) {</span>
+<span class="fc" id="L62">			img.removeAttr(INLINE_MODE_ATTR);</span>
+<span class="fc" id="L63">			img.removeAttr(INLINED_ATTR);</span>
+<span class="fc" id="L64">		}</span>
+<span class="fc" id="L65">		return doc.outerHtml();</span>
+	}
+
+	private ImageInlineUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RetryException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.exception.retry</a> &gt; <span class="el_source">RetryException.java</span></div><h1>RetryException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.exception.retry;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import fr.sii.ogham.core.retry.RetryExecutor;
+
+/**
+ * Retry strategies may fail for many possible reasons:
+ * &lt;ul&gt;
+ * &lt;li&gt;The action to retry has failed too many times (
+ * {@link MaximumAttemptsReachedException})&lt;/li&gt;
+ * &lt;li&gt;The action to retry has failed with an error that should not be ignored
+ * so the action should not be retried anymore&lt;/li&gt;
+ * &lt;li&gt;The retry strategy itself has failed&lt;/li&gt;
+ * &lt;li&gt;The thread has been interrupted&lt;/li&gt;
+ * &lt;li&gt;...&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * This is the general exception thrown by {@link RetryExecutor}s and it has
+ * subclasses to indicate the detailed reason.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @see MaximumAttemptsReachedException
+ * @see RetryExecutionFailureException
+ * @see RetryExecutionInterruptedException
+ * @see ExecutionFailedNotRetriedException
+ * @see UnrecoverableException
+ * @see ExecutionFailureWrapper
+ */
+public class RetryException extends Exception {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	public RetryException(String message, Throwable cause) {
+<span class="fc" id="L35">		super(message, cause);</span>
+<span class="fc" id="L36">	}</span>
+
+	public RetryException(String message) {
+<span class="nc" id="L39">		super(message);</span>
+<span class="nc" id="L40">	}</span>
+
+	public RetryException(Throwable cause) {
+<span class="fc" id="L43">		super(cause);</span>
+<span class="fc" id="L44">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

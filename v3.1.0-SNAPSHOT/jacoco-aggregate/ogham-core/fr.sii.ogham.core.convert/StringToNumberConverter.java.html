@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringToNumberConverter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.convert</a> &gt; <span class="el_source">StringToNumberConverter.java</span></div><h1>StringToNumberConverter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.convert;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import fr.sii.ogham.core.exception.convert.ConversionException;
+
+/**
+ * Converts a string to a number. It also handles {@link Byte}s. This class is
+ * copied from Spring.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L15">public class StringToNumberConverter implements SupportingConverter {</span>
+
+	@Override
+	public &lt;T&gt; T convert(Object source, Class&lt;T&gt; targetType) {
+<span class="fc" id="L19">		String text = (String) source;</span>
+<span class="fc" id="L20">		String trimmed = trimAllWhitespace(text);</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">		if(trimmed==null) {</span>
+<span class="fc" id="L22">			return null;</span>
+		}
+		try {
+<span class="fc" id="L25">			T value = convertNumber(trimmed, targetType);</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">			if(value==null) {</span>
+<span class="fc" id="L27">				throw new ConversionException(&quot;Cannot convert String [&quot; + text + &quot;] to target class [&quot; + targetType.getName() + &quot;]&quot;);</span>
+			}
+<span class="fc" id="L29">			return value;</span>
+<span class="fc" id="L30">		} catch(NumberFormatException e) {</span>
+<span class="fc" id="L31">			throw new ConversionException(&quot;Failed to convert &quot;+source+&quot; to &quot;+targetType.getSimpleName(), e);</span>
+		}
+	}
+
+	@Override
+	public boolean supports(Class&lt;?&gt; sourceType, Class&lt;?&gt; targetType) {
+<span class="fc bfc" id="L37" title="All 4 branches covered.">		return String.class.isAssignableFrom(sourceType) &amp;&amp; Number.class.isAssignableFrom(targetType);</span>
+	}
+	
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private &lt;T&gt; T convertNumber(String trimmed, Class&lt;T&gt; targetType) {	// NOSONAR: code from Spring
+<span class="fc bfc" id="L42" title="All 2 branches covered.">		if (Byte.class == targetType) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">			return (T) (isHexOrOctalNumber(trimmed) ? Byte.decode(trimmed) : Byte.valueOf(trimmed));</span>
+		}
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if (Short.class == targetType) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">			return (T) (isHexOrOctalNumber(trimmed) ? Short.decode(trimmed) : Short.valueOf(trimmed));</span>
+		}
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (Integer.class == targetType) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">			return (T) (isHexOrOctalNumber(trimmed) ? Integer.decode(trimmed) : Integer.valueOf(trimmed));</span>
+		}
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		if (Long.class == targetType) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">			return (T) (isHexOrOctalNumber(trimmed) ? Long.decode(trimmed) : Long.valueOf(trimmed));</span>
+		}
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		if (BigInteger.class == targetType) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			return (T) (isHexOrOctalNumber(trimmed) ? decodeBigInteger(trimmed) : new BigInteger(trimmed));</span>
+		}
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		if (Float.class == targetType) {</span>
+<span class="fc" id="L58">			return (T) Float.valueOf(trimmed);</span>
+		}
+<span class="fc bfc" id="L60" title="All 2 branches covered.">		if (Double.class == targetType) {</span>
+<span class="fc" id="L61">			return (T) Double.valueOf(trimmed);</span>
+		}
+<span class="fc bfc" id="L63" title="All 4 branches covered.">		if (BigDecimal.class == targetType || Number.class == targetType) {</span>
+<span class="fc" id="L64">			return (T) new BigDecimal(trimmed);</span>
+		}
+<span class="fc" id="L66">		return null;</span>
+	}
+
+	private static boolean isHexOrOctalNumber(String value) {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		int index = value.startsWith(&quot;-&quot;) ? 1 : 0;</span>
+<span class="fc bfc" id="L71" title="All 4 branches covered.">		return value.startsWith(&quot;#&quot;, index) || value.startsWith(&quot;0&quot;, index);</span>
+	}
+
+	private static String trimAllWhitespace(String str) {
+<span class="fc bfc" id="L75" title="All 4 branches covered.">		if (str == null || str.length() == 0) {</span>
+<span class="fc" id="L76">			return null;</span>
+		}
+<span class="fc" id="L78">		int len = str.length();</span>
+<span class="fc" id="L79">		StringBuilder sb = new StringBuilder(str.length());</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L81">			char c = str.charAt(i);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">			if (!Character.isWhitespace(c)) {</span>
+<span class="fc" id="L83">				sb.append(c);</span>
+			}
+		}
+<span class="fc" id="L86">		return sb.toString();</span>
+	}
+
+	private static BigInteger decodeBigInteger(String value) {
+<span class="fc" id="L90">		int radix = 10;</span>
+<span class="fc" id="L91">		int index = 0;</span>
+<span class="fc" id="L92">		boolean negative = false;</span>
+
+		// Handle minus sign, if present.
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if (value.startsWith(&quot;-&quot;)) {</span>
+<span class="fc" id="L96">			negative = true;</span>
+<span class="fc" id="L97">			index++;</span>
+		}
+
+		// Handle radix specifier, if present.
+<span class="fc bfc" id="L101" title="All 4 branches covered.">		if (value.startsWith(&quot;0x&quot;, index) || value.startsWith(&quot;0X&quot;, index)) {</span>
+<span class="fc" id="L102">			index += 2;</span>
+<span class="fc" id="L103">			radix = 16;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		} else if (value.startsWith(&quot;#&quot;, index)) {</span>
+<span class="fc" id="L105">			index++;</span>
+<span class="fc" id="L106">			radix = 16;</span>
+<span class="pc bpc" id="L107" title="2 of 4 branches missed.">		} else if (value.startsWith(&quot;0&quot;, index) &amp;&amp; value.length() &gt; 1 + index) {</span>
+<span class="fc" id="L108">			index++;</span>
+<span class="fc" id="L109">			radix = 8;</span>
+		}
+
+<span class="fc" id="L112">		BigInteger result = new BigInteger(value.substring(index), radix);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		return negative ? result.negate() : result;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

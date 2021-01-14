@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>3.0.0</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="..//javascripts/steps.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="..//javascripts/toc.js"></script>
+<script type="text/javascript" src="..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="..//styles/doc-styles.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_3_0_0">3.0.0</a>
+<ul class="sectlevel2">
+<li><a href="#_updates">Updates</a></li>
+<li><a href="#_api_changes">API changes</a></li>
+<li><a href="#_new_features">New features</a></li>
+<li><a href="#_internal_improvements">Internal improvements</a></li>
+</ul>
+</li>
+<li><a href="#_2_0_0_2018_01_03">2.0.0 / 2018-01-03</a>
+<ul class="sectlevel2">
+<li><a href="#_features">Features</a></li>
+<li><a href="#_internal">Internal</a></li>
+</ul>
+</li>
+<li><a href="#_1_1_0_2017_03_14">1.1.0 / 2017-03-14</a>
+<ul class="sectlevel2">
+<li><a href="#_features_2">Features</a></li>
+</ul>
+</li>
+<li><a href="#_1_0_0_2015_10_08">1.0.0 / 2015-10-08</a>
+<ul class="sectlevel2">
+<li><a href="#_features_3">Features</a></li>
+</ul>
+</li>
+<li><a href="#_0_0_1_2015_06_22">0.0.1 / 2015-06-22</a>
+<ul class="sectlevel2">
+<li><a href="#_features_4">Features</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_3_0_0"><a class="anchor" href="#_3_0_0"></a>3.0.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a major release that drops support of Java 7, upgrade all dependencies
+to be up-to-date with latest library, tools and Spring versions.</p>
+</div>
+<div class="paragraph">
+<p>There are also API and internal improvements.</p>
+</div>
+<div class="paragraph">
+<p>This version introduces breaking changes.
+See detailed migration guide to <a href="../migration-guide.html#v2.0.0-v3.0.0">upgrade from 2.0.0 to 3.0.0</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_updates"><a class="anchor" href="#_updates"></a>Updates</h3>
+<div class="sect3">
+<h4 id="_java_support"><a class="anchor" href="#_java_support"></a>Java support</h4>
+<div class="paragraph">
+<p>Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.</p>
+</div>
+<div class="paragraph">
+<p>Ogham now supports all Java versions from 8 and up to 14.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Newer Java versions</div>
+<div class="paragraph">
+<p>Ogham should support newer Java versions in the future without any changes.
+Currently, the latest tested version through compatibility checks is Java 14.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_spring_boot_support"><a class="anchor" href="#_spring_boot_support"></a>Spring Boot support</h4>
+<div class="paragraph">
+<p>Ogham 3.0+ drops support of Spring Boot 1.3.x.</p>
+</div>
+<div class="paragraph">
+<p>Ogham is compatible with Spring Boot 1.4.x+ and up to 2.3.x.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Compatibility check</div>
+<div class="paragraph">
+<p>Spring Boot is pluggable. You can start with the basic and add some additional
+features to your project easily.</p>
+</div>
+<div class="paragraph">
+<p>Ogham is also pluggable and also tries to use Spring Boot features when they
+are available.</p>
+</div>
+<div class="paragraph">
+<p>To ensure that everything works as expected with any version of Spring Boot,
+the CI runs automatic compatibility checks (tests to find possible classpath issues).</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#ci-improvements">automatically tested combinations</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Newer versions of Spring Boot</div>
+<div class="paragraph">
+<p>New Spring Boot versions may be supported. As no tests are made, it is not
+possible to guarantee that you don&#8217;t experience a classpath issue due to
+upgrade of Spring Boot dependencies and code.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Spring Boot 1.3.x</div>
+<div class="paragraph">
+<p>Ogham doesn&#8217;t support Spring Boot 1.3.x anymore. It doesn&#8217;t mean that Ogham
+doesn&#8217;t work with Spring Boot 1.3.x but it is no more tested through automatic
+compatibility checks.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_api_changes"><a class="anchor" href="#_api_changes"></a>API changes</h3>
+<div class="sect3">
+<h4 id="_fluent_builder_consistency_for_property_configuration"><a class="anchor" href="#_fluent_builder_consistency_for_property_configuration"></a>Fluent builder consistency for property configuration</h4>
+<div class="paragraph">
+<p>As Ogham is fully extensible, there could be an issue of priority due to registration
+order using previous Ogham version. Therefore a developer could set a configuration
+value in its code but it could be overridden by an external property. This could be
+particularly annoying in tests.</p>
+</div>
+<div class="paragraph">
+<p>Developers that use Ogham have now a dedicated method to set the value with the right
+type.</p>
+</div>
+<div class="paragraph">
+<p>For extension developers, all builders now have a consistent API for configuration
+of values and properties.
+They all use <code>ConfigurationValueBuilder</code> that provides the following methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>properties(String&#8230;&#8203;)</code> that lets extension developers register property names to
+configure the value externally.</p>
+</li>
+<li>
+<p><code>defaultValue(V)</code> for extension developers that want to set a default value.</p>
+</li>
+<li>
+<p><code>defaultValue(MayOverride&lt;V&gt;)</code> for extension developers to provide a
+value if no default value has been already set for example.</p>
+</li>
+<li>
+<p><code>value(Optional&lt;V&gt;)</code> for extension developers to set the value. It overrides any
+value that could be set through <code>properties()</code> or <code>defaultValue()</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rename_inlining_attributes"><a class="anchor" href="#_rename_inlining_attributes"></a>Rename inlining attributes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Rename attribute for image inlining (<code>ogham-inline-mode</code> &#8594; <code>data-inline-image</code>)</p>
+</li>
+<li>
+<p>Change attributes for CSS inlining to align with image inlining behavior:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>remove <code>data-skip-inline</code> attribute</p>
+</li>
+<li>
+<p>use <code>data-inline-styles</code> attribute and use the value to select strategy. Currently
+only <code>skip</code> exists but in future versions other may come.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_properties_consistency"><a class="anchor" href="#_properties_consistency"></a>Properties consistency</h4>
+<div class="paragraph">
+<p>Rename some properties to be more consistent:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.bcc</code> renamed to <code>ogham.email.bcc.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.cc</code> renamed to <code>ogham.email.cc.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.from</code> renamed to <code>ogham.email.from.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.sengrid.api-key</code> renamed to <code>ogham.email.sendgrid.api-key</code> (fix misspelling)</p>
+</li>
+<li>
+<p><code>ogham.email.subject</code> renamed to <code>ogham.email.subject.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.subject.text.first-line-prefix</code> renamed to <code>ogham.email.subject.extract-from-text.first-line-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.to</code> renamed to <code>ogham.email.to.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.bind-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.bind-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.connect-max-retry</code> renamed to <code>ogham.sms.cloudhopper.session.connect-retry.max-attempts</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.connect-retry-delay</code> renamed to <code>ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.connect-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.connect-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.request-expiry-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.request-expiry-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.response-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.response-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.session-name</code> renamed to <code>ogham.sms.cloudhopper.session.name</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.unbind-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.unbind-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.window-monitor-interval</code> renamed to <code>ogham.sms.cloudhopper.session.window-monitor-interval</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.window-size</code> renamed to <code>ogham.sms.cloudhopper.session.window-size</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.window-wait-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.window-wait-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.write-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.write-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.freemarker.prefix</code> renamed to <code>ogham.sms.freemarker.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.freemarker.suffix</code> renamed to <code>ogham.sms.freemarker.path-suffix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from-format-enable-alphanumeric</code> renamed to <code>ogham.sms.from.alphanumeric-code-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from-format-enable-international</code> renamed to <code>ogham.sms.from.international-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from-format-enable-shortcode</code> renamed to <code>ogham.sms.from.short-code-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from</code> renamed to <code>ogham.sms.from.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.sms.ovh.no-stop</code> renamed to <code>ogham.sms.ovh.options.no-stop</code></p>
+</li>
+<li>
+<p><code>ogham.sms.ovh.sms-coding</code> renamed to <code>ogham.sms.ovh.options.sms-coding</code></p>
+</li>
+<li>
+<p><code>ogham.sms.ovh.tag</code> renamed to <code>ogham.sms.ovh.options.tag</code></p>
+</li>
+<li>
+<p><code>ogham.sms.to-format-enable-international</code> renamed to <code>ogham.sms.to.international-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.to</code> renamed to <code>ogham.sms.to.default-value</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Align Spring property names to Ogham property names.</p>
+</div>
+<div class="paragraph">
+<p>Samples, tests and documentation are updated.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sms"><a class="anchor" href="#_sms"></a>SMS</h4>
+<div class="paragraph">
+<p>In previous version, a conversion from a Java charset into a Cloudhopper charset was configured
+using a static mapping using <code>ogham.sms.cloudhopper.default-app-charset</code> and
+<code>ogham.sms.cloudhopper.smpp-charset</code> properties.</p>
+</div>
+<div class="paragraph">
+<p>This behavior has been removed in favor to a better auto-detection mechanism. Therefore the
+<code>ogham.sms.cloudhopper.default-app-charset</code> and <code>ogham.sms.cloudhopper.smpp-charset</code> properties
+have been removed.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#new-message-encoding">new SMS encoding features</a> for more details
+about the new behavior.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_utilities"><a class="anchor" href="#_test_utilities"></a>Test utilities</h4>
+<div class="paragraph">
+<p>Rename <code>receivedMessages().forEach()</code> into <code>receivedMessages().every()</code> in test utilities (for
+both email and SMS).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_features"><a class="anchor" href="#_new_features"></a>New features</h3>
+<div class="sect3">
+<h4 id="_fluent_api_for_message_construction"><a class="anchor" href="#_fluent_api_for_message_construction"></a>Fluent API for message construction</h4>
+<div class="paragraph">
+<p>In previous version, developer had to search for implementations of the <code>Content</code>
+interface or read the whole documentation. This is great for extensibility but not
+for ease of use.</p>
+</div>
+<div class="paragraph">
+<p>The version 3.0 introduces a fluent API for content building. The aim is to guide
+developer using code autocomplete.</p>
+</div>
+<div class="paragraph">
+<p>The documentation and samples have been updated to use the fluent API.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../migration-guide.html#v2.0.0-v3.0.0#fluent-content-api">how to use new API</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auto_configuration_lifecycle"><a class="anchor" href="#_auto_configuration_lifecycle"></a>Auto-configuration lifecycle</h4>
+<div class="paragraph">
+<p>Ogham v3.0.0 introduces configuration phases in the configuration lifecycle
+for <code>MessagingBuilder.standard()</code> and <code>MessagingBuilder.minimal()</code> factories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ConfigurationPhase.AFTER_INIT</code> that is triggered as soon as the <code>MessagingBuilder</code>
+is created and instantiate all <code>MessagingConfigurer</code> classes found for that phase.</p>
+</li>
+<li>
+<p><code>ConfigurationPhase.BEFORE_BUILD</code> that is triggered when developer calls
+<code>MessagingBuilder.build()</code> method. It instantiates all <code>MessagingConfigurer</code> classes
+found for that phase.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#automatic-configuration">automatic configuration section</a>
+for more details about the concepts and how they interact together.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_css_inlining"><a class="anchor" href="#_css_inlining"></a>CSS inlining</h4>
+<div class="paragraph">
+<p>Ogham can inline CSS rules to apply styles directly on the HTML tags (see
+<a href="../user-manual.html#css-images-inlining">CSS and image inlining</a>).</p>
+</div>
+<div class="paragraph">
+<p>However, if a CSS file contains at-rules (<code>@</code> rules such as <code>@import</code>, <code>@media</code>,
+<code>@charset</code>, &#8230;&#8203;), the file was unparseable in previous versions.</p>
+</div>
+<div class="paragraph">
+<p>Since v3.0.0, the at-rules are simply ignored instead of failing. Therefore,
+the valid styles are inlined.</p>
+</div>
+<div class="paragraph">
+<p>Ogham can now also inline images that are referenced by the following CSS properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>background</code></p>
+</li>
+<li>
+<p><code>background-image</code></p>
+</li>
+<li>
+<p><code>list-style</code></p>
+</li>
+<li>
+<p><code>list-style-image</code></p>
+</li>
+<li>
+<p><code>cursor</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Images are inline only if <code>url()</code> points to a relative image.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_relative_resources"><a class="anchor" href="#_relative_resources"></a>Relative resources</h4>
+<div class="paragraph">
+<p>Ogham now supports relative resource resolution. A template can reference resources
+like CSS files and images. Relative resources also work for inclusion of template
+parts.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#resource-resolution">resource resolution section</a>
+for more details.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">CSS images inlining</div>
+<div class="paragraph">
+<p>As mentioned above, Ogham can also inline images that are referenced by CSS rules
+(such as <code>background-image</code>).
+During inlining, if a path to an image is relative to the CSS file, the path is
+updated to be relative to the template.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#css-images-inlining">CSS and image inlining</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_templating"><a class="anchor" href="#_templating"></a>Templating</h4>
+<div class="paragraph">
+<p>Ogham adds several properties to enable/disable cache for template parsing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.thymeleaf.cache</code>: enable/disable cache for email Thymeleaf templates</p>
+</li>
+<li>
+<p><code>ogham.sms.thymeleaf.cache</code>: enable/disable cache for SMS Thymeleaf templates</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is currently only available for Thymeleaf but Ogham also provides aliases
+for later support of template engines:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.template.cache</code>: enable/disable cache for email templates (any template
+engine)</p>
+</li>
+<li>
+<p><code>ogham.sms.template.cache</code>: enable/disable cache for SMS templates (any template
+engine)</p>
+</li>
+<li>
+<p><code>ogham.template.cache</code>: enable/disable cache for all templates</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sms_2"><a class="anchor" href="#_sms_2"></a>SMS</h4>
+<div class="paragraph">
+<p>There are many improvements for the SMPP protocol implementation.</p>
+</div>
+<div class="sect4">
+<h5 id="new-message-encoding"><a class="anchor" href="#new-message-encoding"></a>Message encoding</h5>
+<div class="paragraph">
+<p>Ogham now supports different encodings for SMPP messages. It means that a SMPP
+message can be sent using
+<a href="https://en.wikipedia.org/wiki/GSM_03.38">different character encodings</a>.</p>
+</div>
+<div class="paragraph">
+<p>Developer should not have to read about SMPP protocol and encodings to be able to
+send a simple SMS. That&#8217;s why Ogham provide automatic guessing to use the best
+encoding. It scans the characters used in the message to use the encoding
+that uses the minimum bytes while ensuring that received message is readable.
+The supported encodings are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>GSM 7-bit (packed)</p>
+</li>
+<li>
+<p>GSM 8-bit</p>
+</li>
+<li>
+<p>UCS-2</p>
+</li>
+<li>
+<p>Latin-1</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In addition to automatic guessing, Ogham also provides a way to define a
+default encoding (using either <code>ogham.sms.cloudhopper.encoder.default-charset</code> or
+<code>ogham.sms.smpp.encoder.default-charset</code> properties).
+It is also possible to disable automatic guessing or
+to enable/disable some encodings:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.cloudhopper.encoder.auto-guess.enable</code> (or its more general alias
+<code>ogham.sms.smpp.encoder.auto-guess.enable</code>) to enable/disable automatic guessing.</p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority</code> (or its more general alias
+<code>ogham.sms.smpp.encoder.gsm7bit-packed.priority</code>) to enable/disable and set priority
+of GSM 7-bit packed encoding.</p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.encoder.gsm8bit.priority</code> (or its more general alias
+<code>ogham.sms.smpp.encoder.gsm8bit.priority</code>) to enable/disable and set priority
+of GSM 8-bit encoding.</p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.encoder.ucs2.priority</code> (or its more general alias
+<code>ogham.sms.smpp.encoder.ucs2.priority</code>) to enable/disable and set priority
+of UCS-2 encoding.</p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.encoder.latin1.priority</code> (or its more general alias
+<code>ogham.sms.smpp.encoder.latin1.priority</code>) to enable/disable and set priority
+of Latin-1 encoding.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">GSM 7-bit packed disabled by default</div>
+<div class="paragraph">
+<p>As many SMPP services doesn&#8217;t correctly handle GSM 7-bit packed encoding, this
+encoding is disabled by default.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>SMPP protocol has a field name <a href="https://en.wikipedia.org/wiki/Data_Coding_Scheme">Data Coding Scheme</a>.
+to indicate how the recipient handset should process the received message.
+The value depends on the character table used to encode the text message.
+That&#8217;s why Ogham also automatically adapts the Data Coding Scheme value according to
+selected encoding (either using automatic guessing or manually specified).</p>
+</div>
+<div class="paragraph">
+<p>The automatic algorithm to determine the Data Coding Scheme value can be disabled using
+either <code>ogham.sms.cloudhopper.data-coding-scheme.auto.enable</code> or
+<code>ogham.sms.smpp.data-coding-scheme.auto.enable</code>. Developer can also provide
+a fixed value instead using either <code>ogham.sms.cloudhopper.data-coding-scheme.value</code>
+or <code>ogham.sms.smpp.data-coding-scheme.value</code>.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#message-encoding">SMS encoding section</a> for more details.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_carry_message_using_message_payload_field"><a class="anchor" href="#_carry_message_using_message_payload_field"></a>Carry message using <code>message_payload</code> field</h5>
+<div class="paragraph">
+<p>In initial SMPP protocol, the message text data is carried by <code>short message</code> field.
+Since SMPP v3.4, the message text data can be carried by <code>message_payload</code> TLV
+(Tag Value Length) field.</p>
+</div>
+<div class="paragraph">
+<p>Ogham lets developer choose which field to use to carry the text message using
+configuration properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.cloudhopper.user-data.use-short-message</code> (or its more general alias
+<code>ogham.sms.smpp.user-data.use-short-message</code>) to use <code>short message</code> standard field.</p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.user-data.use-tlv-message-payload</code> (or its more general
+alias <code>ogham.sms.smpp.user-data.use-tlv-message-payload</code>) to use
+<code>message_payload</code> field.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Short message by default</div>
+<div class="paragraph">
+<p>As <code>message_payload</code> may not be supported by all SMPP servers, Ogham uses
+<code>short message</code> field by default.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_automatic_split_of_messages"><a class="anchor" href="#_automatic_split_of_messages"></a>Automatic split of messages</h5>
+<div class="paragraph">
+<p>When a message is too long to fit in one SMS (140 octets including headers and payload),
+the message is automatically split into segments. The number of characters that can
+fit in one segment depends on the encoding.</p>
+</div>
+<div class="paragraph">
+<p>Once again, developer should not have to handle that complexity that&#8217;s why
+Ogham automatically uses the right algorithm to split correctly according
+to the encoding.</p>
+</div>
+<div class="paragraph">
+<p>If you are using <code>message_payload</code> field to carry the message text data (as
+mentioned above), you may need to disable automatic split of message using one
+of <code>ogham.sms.cloudhopper.split.enable</code>, <code>ogham.sms.smpp.split.enable</code> or
+<code>ogham.sms.split.enable</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_session_management"><a class="anchor" href="#_session_management"></a>Session management</h5>
+<div class="paragraph">
+<p>Ogham adds several algorithms to handle SMPP session:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>either create a new session for each message</p>
+</li>
+<li>
+<p>or reuse the current session if still opened</p>
+</li>
+<li>
+<p>or reuse existing session and actively maintain it opened</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#session-strategy">detailed explanations about session management</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Contribution</div>
+<div class="paragraph">
+<p>Many thanks to <a href="https://github.com/dainv85">dainv85</a> for his contribution
+to keep the session open.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_smsglobal"><a class="anchor" href="#_smsglobal"></a>SmsGlobal</h4>
+<div class="paragraph">
+<p>Ogham now provides automatic configuration for well-known services like SmsGlobal.</p>
+</div>
+<div class="paragraph">
+<p>SmsGlobal handles SMPP protocol. However, this service has some specific features.
+Therefore, Ogham detects that <code>smpp.smsglobal.com</code> is used as host and automatically
+apply a different configuration than the default one:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use <code>message_payload</code> TLV field to carry message text data</p>
+</li>
+<li>
+<p>Disable split as <code>message_payload</code> field is used</p>
+</li>
+<li>
+<p>Only enable GSM 8-bit and UCS-2 encodings as others are not supported</p>
+</li>
+<li>
+<p>Use a specific Data Coding Scheme value</p>
+</li>
+<li>
+<p>Automatically adapt SMPP port (1775 instead of 2775 by default)</p>
+</li>
+<li>
+<p>Use interface version 3.4 of the SMPP protocol</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_spring_integration"><a class="anchor" href="#_spring_integration"></a>Spring integration</h4>
+<div class="paragraph">
+<p>Ogham better integrates with Spring Boot features especially regarding templating
+features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ogham supports access to Spring beans from templates</p>
+</li>
+<li>
+<p>Ogham correctly handle Spring additional features in a web context</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_freemarker_integration"><a class="anchor" href="#_freemarker_integration"></a>FreeMarker integration</h4>
+<div class="paragraph">
+<p>Ogham supports calls to static methods from FreeMarker templates.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Static method calls</div>
+<div class="paragraph">
+<p>Calls to static methods is enabled by default. This can lead to
+<a href="https://freemarker.apache.org/docs/pgui_misc_beanwrapper.html#autoid_54">security risks</a>
+if templates can be modified by a person with malicious intents.</p>
+</div>
+<div class="paragraph">
+<p>Static method calls can be disabled using
+<code>ogham.freemarker.static-method-access.enable=false</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Change variable name for static method calls</div>
+<div class="paragraph">
+<p>The default variable name to access static method calls using FreeMarker is named
+<code>statics</code>.</p>
+</div>
+<div class="paragraph">
+<p>This can be changed by setting <code>ogham.freemarker.static-method-access.variable-name</code>
+property.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>FreeMarker now adds
+<a href="https://github.com/spring-projects/spring-boot/issues/15131"><code>.ftlh</code> extension</a> to
+activate HTML auto-escaping. Ogham now supports <code>.ftlh</code> extension.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sendgrid"><a class="anchor" href="#_sendgrid"></a>SendGrid</h4>
+<div class="paragraph">
+<p>SendGrid API v3 has changed, Ogham aligns to new SendGrid API and <code>sendgrid-java</code>
+features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.sendgrid.unit-testing</code> has been added</p>
+</li>
+<li>
+<p><code>ogham.email.sendgrid.username</code> is now deprecated</p>
+</li>
+<li>
+<p><code>ogham.email.sendgrid.password</code> is now deprecated</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Ogham now supports attachments through SendGrid.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auto_cleanup"><a class="anchor" href="#_auto_cleanup"></a>Auto-cleanup</h4>
+<div class="paragraph">
+<p>To release opened resources, Ogham provides automatic cleanup.
+The <code>MessagingService</code> is decorated with <code>CleanableMessagingService</code>
+to provide the additional <code>clean()</code> method. It also implements
+<code>Closable</code> interface for try-with-resource capabilities.</p>
+</div>
+<div class="listingblock">
+<div class="title">Manual cleanup</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// get Ogham instance</span>
+MessagingService service = builder.build();
+<span class="comment">// use Ogham to send messages</span>
+service.send(<span class="keyword">new</span> Email());
+service.send(<span class="keyword">new</span> Sms());
+...
+<span class="comment">// cleanup</span>
+((CleanableMessagingService) service).clean();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Auto-cleanup using try-with-resource</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">try</span> (CleanableMessagingService service = (CleanableMessagingService) builder.build()) {
+  service.send(<span class="keyword">new</span> Email());
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Auto-cleanup when unreferenced</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// get Ogham instance</span>
+MessagingService service = builder.build();
+<span class="comment">// use Ogham to send messages</span>
+service.send(<span class="keyword">new</span> Email());
+service.send(<span class="keyword">new</span> Sms());
+...
+<span class="comment">// unreference service</span>
+service = <span class="predefined-constant">null</span>;
+... after some time the JVM will call finalize() method to cleanup resources</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_miscellaneous"><a class="anchor" href="#_miscellaneous"></a>Miscellaneous</h4>
+<div class="paragraph">
+<p>Add some properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.mimetype.tika.fail-if-octet-stream</code>: Tika doesn&#8217;t fail if it can&#8217;t
+detect mimetype accurately. It returns <code>application/octet-stream</code> instead.
+As Ogham rely on an exception to try another detection algorithm, this property
+has been added to force to fail if Tika returns <code>octet-stream</code>. This is <code>true</code>
+by default.</p>
+</li>
+<li>
+<p><code>ogham.wrap-uncaught-exceptions.enable</code>: Ogham always throw checked exceptions.
+However, libraries that are used by Ogham may throw unchecked exceptions
+(<code>RuntimeException</code>). To avoid your application to fail unexpectedly due to
+uncaught error, Ogham catches <code>RuntimeException</code> and wrap them with a checked
+exception. This is <code>true</code> by default.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_utilities_2"><a class="anchor" href="#_test_utilities_2"></a>Test utilities</h4>
+<div class="paragraph">
+<p>Test utilities have been reorganized and new features have been added.</p>
+</div>
+<div class="sect4">
+<h5 id="_logging"><a class="anchor" href="#_logging"></a>Logging</h5>
+<div class="paragraph">
+<p>When running many tests, it may be difficult to find logs corresponding
+to a particular test. Especially in a Continuous Integration environment.</p>
+</div>
+<div class="paragraph">
+<p>Ogham provides rules and extensions to help visualize quickly start and
+end of a test:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>LoggingTestRule</code>: JUnit 4 rule</p>
+</li>
+<li>
+<p><code>LoggingTestExtension</code>: JUnit 5 extension</p>
+</li>
+<li>
+<p><code>LoggingTestExtension</code>: Spock extension</p>
+</li>
+</ul>
+</div>
+<div class="listingblock highlight-lines:2-4,13-17 irrelevant-lines:5-12">
+<div class="title">Example of test output</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>11:37:20.443 [main] INFO   -
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║MultiContentTranslatorTest.textTemplateNotFoundShouldSkipTheErrorAndReturnOneParsedContent        ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+11:37:20.445 [main] DEBUG f.s.o.c.t.c.MultiContentTranslator - Translate the sub content using templateParser
+11:37:20.458 [main] INFO  f.s.o.c.t.c.MultiContentTranslator - null =&gt; ignoring
+fr.sii.ogham.core.exception.handler.TemplateNotFoundException: null
+11:37:20.458 [main] DEBUG f.s.o.c.t.c.MultiContentTranslator - Translate the sub content using templateParser
+11:37:20.458 [main] DEBUG f.s.o.c.t.c.MultiContentTranslator - Sub content added
+11:37:20.458 [main] INFO   -
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│MultiContentTranslatorTest.textTemplateNotFoundShouldSkipTheErrorAndReturnOneParsedContent        │
+├──────────────────────────────────────────────────────────────────────────────────────────────────┤
+│SUCCESS                                                                                           │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_sms_3"><a class="anchor" href="#_sms_3"></a>SMS</h5>
+<div class="paragraph">
+<p>It is now possible to simulate a slow SMPP server by annotating the test with
+<code>@SmppServerConfig</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">Simulate slow SMPP bind response sent by the server</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="annotation">@Rule</span> <span class="directive">public</span> <span class="directive">final</span> SmppServerRule&lt;SubmitSm&gt; smppServer = <span class="keyword">new</span> JsmppServerRule();
+
+  <span class="annotation">@Test</span>
+  <span class="annotation">@SmppServerConfig</span>(slow = <span class="annotation">@Slow</span>(sendBindRespDelay = <span class="integer">500L</span>))       <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="directive">public</span> <span class="type">void</span> connectionTimeout() <span class="directive">throws</span> MessagingException {
+    <span class="comment">// send a SMS here</span>
+  }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This adds 500ms to the response of a bind request</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_make_several_assertions_at_once"><a class="anchor" href="#_make_several_assertions_at_once"></a>Make several assertions at once</h5>
+<div class="paragraph">
+<p>Instead of failing on first assertion, Ogham provides <code>OghamAssertions.assertAll</code>
+method to execute all assertions and make a complete report.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#assertall">details about assertAll</a>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_use_random_ports"><a class="anchor" href="#_use_random_ports"></a>Use random ports</h5>
+<div class="paragraph">
+<p>To test that emails or SMS are correctly received, Ogham starts local servers.
+To run all tests in parallel, using random ports are required (otherwise tests
+will fail indicating that port is already in use).</p>
+</div>
+<div class="paragraph">
+<p>Ogham provides JUnit rules to start on random ports:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Using <code>RandomPortGreenMailRule</code> (instead of <code>GreenMailRule</code>) for testing email
+in JUnit 4</p>
+</li>
+<li>
+<p>Using <code>JsmppServerRule</code> for testing SMS</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Ogham also provides extensions for Spring Boot tests:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>GreenMailRandomSmtpPortInitializer</code> for starting GreenMail on random port,
+make <code>GreenMailRule</code> instance injectable in the test (with <code>@Autowired</code>) and
+provide <code>greenmail.smtp.port</code> property that is usable in Spring test and application.</p>
+</li>
+<li>
+<p><code>JsmppServerInitializer</code> for starting JSMPPServer on random port,
+make <code>JsmppServerRule</code> instance injectable in the test (with <code>@Autowired</code>) and
+provide <code>jsmpp.server.port</code> property that is usable in Spring test and application.</p>
+</li>
+<li>
+<p><code>WireMockInitializer</code> for starting WireMockServer on random port,
+make <code>WireMockRule</code> instance injectable in the test (with <code>@Autowired</code>) and
+provide <code>wiremock.server.port</code> property that is usable in Spring test and application.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#random-ports">more details and samples</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_internal_improvements"><a class="anchor" href="#_internal_improvements"></a>Internal improvements</h3>
+<div class="sect3">
+<h4 id="_java_mail_structure"><a class="anchor" href="#_java_mail_structure"></a>Java Mail structure</h4>
+<div class="paragraph">
+<p>Improve Mime Message structures according to included parts.</p>
+</div>
+<div class="paragraph">
+<p>If the source email has only one textual content (text/html for
+example), the structure is now:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[text/html] (root/body)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has HTML content with embedded attachments
+(images for example), the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/related] (root/body)
+  [text/html]
+  [image/png]       (embedded image 1)
+  [image/gif]       (embedded image 2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has HTML content with attachments, the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/mixed]              (root)
+  [text/html]                  (body)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has HTML content with embedded attachments
+(images for example) and additional attachments, the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/mixed]              (root)
+  [multipart/related]          (body)
+    [text/html]
+    [image/png]                (embedded image 1)
+    [image/gif]                (embedded image 2)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has several textual contents (text/html and
+text/plain for example), the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/alternative]  (root/body)
+  [text/plain]           (alternative body)
+  [text/html]            (main body)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has several textual contents (text/html and
+text/plain for example) and embedded attachments (images for example),
+the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/related]          (root/body)
+  [multipart/alternative]
+    [text/plain]             (alternative body)
+    [text/html]              (main body)
+  [image/png]                (embedded image 1)
+  [image/gif]                (embedded image 2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has several textual contents (text/html and
+text/plain for example) and attachments, the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/mixed]              (root)
+  [multipart/alternative]      (body)
+    [text/plain]               (alternative body)
+    [text/html]                (main body)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the source email has several textual contents (text/html and
+text/plain for example), embedded attachment (images for example) and
+attachments, the structure is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>[multipart/mixed]              (root)
+  [multipart/related]          (body)
+    [multipart/alternative]
+      [text/plain]             (alternative body)
+      [text/html]              (main body)
+    [image/png]                (embedded image 1)
+    [image/gif]                (embedded image 2)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ci-improvements"><a class="anchor" href="#ci-improvements"></a>Continuous Integration</h4>
+<div class="paragraph">
+<p>As mentioned above, CI automatically performs many compatibility checks to ensure
+that Ogham is compatible with Java and Spring Boot versions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Include (or not) some Ogham features</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Sender implementations (Jakarta Mail, SendGrid, Cloudhopper, &#8230;&#8203;)</p>
+</li>
+<li>
+<p>Template engine integrations (Thymeleaf, FreeMarker, &#8230;&#8203;)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Include (or not) some Spring Boot features</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Web application</p>
+</li>
+<li>
+<p>Template engine (Thymeleaf, FreeMarker, &#8230;&#8203;)</p>
+</li>
+<li>
+<p>Spring Mail (Jakarta Mail)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Spring Boot versions</p>
+<div class="ulist">
+<ul>
+<li>
+<p>1.4.x</p>
+</li>
+<li>
+<p>1.5.x</p>
+</li>
+<li>
+<p>2.1.x</p>
+</li>
+<li>
+<p>2.2.x</p>
+</li>
+<li>
+<p>2.3.x</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Java versions</p>
+<div class="ulist">
+<ul>
+<li>
+<p>8 (Oracle and OpenJDK)</p>
+</li>
+<li>
+<p>9 (Oracle and OpenJDK)</p>
+</li>
+<li>
+<p>10 (OpenJDK)</p>
+</li>
+<li>
+<p>11 (Oracle and OpenJDK)</p>
+</li>
+<li>
+<p>12 (OpenJDK)</p>
+</li>
+<li>
+<p>13 (OpenJDK)</p>
+</li>
+<li>
+<p>14 (OpenJDK)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It means that Ogham checks compatibility over more than 2000 combinations.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_0_2018_01_03"><a class="anchor" href="#_2_0_0_2018_01_03"></a>2.0.0 / 2018-01-03</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_features"><a class="anchor" href="#_features"></a>Features</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>New builder API</p>
+</li>
+<li>
+<p>Only fluent API (remove all Email/SMS constructors)</p>
+</li>
+<li>
+<p>Follow Spring Boot starter conventions</p>
+</li>
+<li>
+<p>Better Spring Boot integration with existing module (spring-boot-start-mail, spring-boot-starter-thymeleaf, spring-boot-starter-freemarker, spring-boot-starter-sendgrid)</p>
+</li>
+<li>
+<p>Add possibility to create its own configurer</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_internal"><a class="anchor" href="#_internal"></a>Internal</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Split projects to separate core from implementations</p>
+</li>
+<li>
+<p>Creating a new implementation is easier</p>
+</li>
+<li>
+<p>Add annotations to indicate that an implementation needs some preconditions in order to work</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_1_0_2017_03_14"><a class="anchor" href="#_1_1_0_2017_03_14"></a>1.1.0 / 2017-03-14</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_features_2"><a class="anchor" href="#_features_2"></a>Features</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Support FreeMarker templates</p>
+</li>
+<li>
+<p>It is possible to mix Thymeleaf and FreeMarker templates</p>
+</li>
+<li>
+<p>Tested with Spring Boot 1.3.8+ latest releases (1.3.8, 1.4.5 and 1.5.2)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_0_0_2015_10_08"><a class="anchor" href="#_1_0_0_2015_10_08"></a>1.0.0 / 2015-10-08</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_features_3"><a class="anchor" href="#_features_3"></a>Features</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>[Add Spring integration with Spring Boot](usage/integration.html#integrate-with-spring-boot)</p>
+</li>
+<li>
+<p>[Add Spring integration using Java config or XML config](usage/integration.html#manual-integration-with-spring)</p>
+</li>
+<li>
+<p>Add fluent API</p>
+</li>
+<li>
+<p>Service now wrap all exceptions (even runtime exceptions) into checked exception</p>
+</li>
+<li>
+<p>Add OVH implementation for sending SMS</p>
+</li>
+<li>
+<p>Add basic i18n support</p>
+</li>
+<li>
+<p>Allow to configure different template prefixes/suffixes for each kind of message</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_0_1_2015_06_22"><a class="anchor" href="#_0_0_1_2015_06_22"></a>0.0.1 / 2015-06-22</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_features_4"><a class="anchor" href="#_features_4"></a>Features</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>[APIs for multi-implementation support](config/select-implementation.html)</p>
+</li>
+<li>
+<p>[APIs for multi-channel support](usage/index.html)</p>
+</li>
+<li>
+<p>[Send emails using Java Mail API (first implementation)](config/select-implementation.html#email)</p>
+</li>
+<li>
+<p>[Send SMS using Cloudhopper SMPP (first implementation)](config/select-implementation.html#sms)</p>
+</li>
+<li>
+<p>Integrate Thymeleaf as template engine (first integration)</p>
+</li>
+<li>
+<p>[Manage both html and text emails](usage/how-to-send-email.html#both-html-and-text)</p>
+</li>
+<li>
+<p>[Automatically fill email/sms with information from properties](config/properties.html)</p>
+</li>
+<li>
+<p>[Automatically fill subject for emails provided directly in template](usage/how-to-send-email.html#sending-email-with-subject-from-template)</p>
+</li>
+<li>
+<p>[Handle email attachments](usage/how-to-send-email.html#attachments)</p>
+</li>
+<li>
+<p>[Apply basic HTML transformations to make the email work on several email clients](features/hidden-complexity.html)</p>
+</li>
+<li>
+<p>Detect mimetype automatically</p>
+</li>
+<li>
+<p>Simple lookup management for finding templates and template resources</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

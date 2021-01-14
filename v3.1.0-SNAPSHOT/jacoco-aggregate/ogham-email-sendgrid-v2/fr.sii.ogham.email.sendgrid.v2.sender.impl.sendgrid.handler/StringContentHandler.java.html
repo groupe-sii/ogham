@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringContentHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler</a> &gt; <span class="el_source">StringContentHandler.java</span></div><h1>StringContentHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sendgrid.SendGrid;
+
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Content handler that puts plain text or HTML content into email to be sent
+ * through SendGrid. MIME type detection is delegated to an instance of
+ * {@link MimeTypeProvider}.
+ */
+public final class StringContentHandler implements SendGridContentHandler {
+
+<span class="fc" id="L23">	private static final Logger LOG = LoggerFactory.getLogger(StringContentHandler.class);</span>
+
+	private final MimeTypeProvider mimeProvider;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param mimeProvider
+	 *            an object in charge of determining the MIME type of the
+	 *            messages to send
+	 */
+<span class="fc" id="L34">	public StringContentHandler(final MimeTypeProvider mimeProvider) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		if (mimeProvider == null) {</span>
+<span class="fc" id="L36">			throw new IllegalArgumentException(&quot;[mimeProvider] cannot be null&quot;);</span>
+		}
+
+<span class="fc" id="L39">		this.mimeProvider = mimeProvider;</span>
+<span class="fc" id="L40">	}</span>
+
+	/**
+	 * Reads the content and adds it into the email. This method is expected to
+	 * update the content of the {@code email} parameter.
+	 * 
+	 * While the method signature accepts any {@link Content} instance as
+	 * parameter, the method will fail if anything other than a
+	 * {@link StringContent} is provided.
+	 * 
+	 * @param email
+	 *            the email to put the content in
+	 * @param content
+	 *            the unprocessed content
+	 * @throws ContentHandlerException
+	 *             the handler is unable to add the content to the email
+	 * @throws IllegalArgumentException
+	 *             the content provided is not of the right type
+	 */
+	@Override
+	public void setContent(final Email original, final SendGrid.Email email, final Content content) throws ContentHandlerException {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		if (email == null) {</span>
+<span class="fc" id="L62">			throw new IllegalArgumentException(&quot;[email] cannot be null&quot;);</span>
+		}
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		if (content == null) {</span>
+<span class="fc" id="L65">			throw new IllegalArgumentException(&quot;[content] cannot be null&quot;);</span>
+		}
+
+<span class="pc bpc" id="L68" title="1 of 4 branches missed.">		if (content instanceof MayHaveStringContent &amp;&amp; ((MayHaveStringContent) content).canProvideString()) {</span>
+<span class="fc" id="L69">			final String contentStr = ((MayHaveStringContent) content).asString();</span>
+
+			try {
+<span class="fc" id="L72">				final String mime = mimeProvider.detect(contentStr).toString();</span>
+<span class="fc" id="L73">				LOG.debug(&quot;Email content has detected type {}&quot;, mime);</span>
+<span class="fc" id="L74">				LOG.trace(&quot;content: {}&quot;, content);</span>
+<span class="fc" id="L75">				setMimeContent(email, contentStr, mime, content);</span>
+<span class="fc" id="L76">			} catch (MimeTypeDetectionException e) {</span>
+<span class="fc" id="L77">				throw new ContentHandlerException(&quot;Unable to set the email content&quot;, content, e);</span>
+<span class="fc" id="L78">			}</span>
+<span class="fc" id="L79">		} else {</span>
+<span class="fc" id="L80">			throw new IllegalArgumentException(&quot;This instance can only work with MayHaveStringContent instances, but was passed &quot; + content.getClass().getSimpleName());</span>
+		}
+
+<span class="fc" id="L83">	}</span>
+
+	private static void setMimeContent(final SendGrid.Email email, final String contentStr, final String mime, Content content) throws ContentHandlerException {
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		if (&quot;text/plain&quot;.equals(mime)) {</span>
+<span class="fc" id="L87">			email.setText(contentStr);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">		} else if (&quot;text/html&quot;.equals(mime)) {</span>
+<span class="fc" id="L89">			email.setHtml(contentStr);</span>
+		} else {
+<span class="fc" id="L91">			throw new ContentHandlerException(&quot;MIME type &quot; + mime + &quot; is not supported&quot;, content);</span>
+		}
+<span class="fc" id="L93">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

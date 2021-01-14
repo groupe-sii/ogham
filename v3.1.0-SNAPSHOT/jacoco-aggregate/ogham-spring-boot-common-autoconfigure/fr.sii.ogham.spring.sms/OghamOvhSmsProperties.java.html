@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamOvhSmsProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">OghamOvhSmsProperties.java</span></div><h1>OghamOvhSmsProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
+
+@ConfigurationProperties(&quot;ogham.sms.ovh&quot;)
+<span class="fc" id="L9">public class OghamOvhSmsProperties {</span>
+	/**
+	 * URL of the OVH SMS HTTP API
+	 */
+<span class="fc" id="L13">	private String url = &quot;https://www.ovh.com/cgi-bin/sms/http2sms.cgi&quot;;</span>
+	/**
+	 * The OVH account identifier
+	 */
+	private String account;
+	/**
+	 * THe OVH username
+	 */
+	private String login;
+	/**
+	 * The OVH password
+	 */
+	private String password;
+<span class="fc" id="L26">	@NestedConfigurationProperty</span>
+	private Options options = new Options();
+
+	public String getUrl() {
+<span class="fc" id="L30">		return url;</span>
+	}
+
+	public void setUrl(String url) {
+<span class="fc" id="L34">		this.url = url;</span>
+<span class="fc" id="L35">	}</span>
+
+	public String getAccount() {
+<span class="fc" id="L38">		return account;</span>
+	}
+
+	public void setAccount(String account) {
+<span class="fc" id="L42">		this.account = account;</span>
+<span class="fc" id="L43">	}</span>
+
+	public String getLogin() {
+<span class="fc" id="L46">		return login;</span>
+	}
+
+	public void setLogin(String login) {
+<span class="fc" id="L50">		this.login = login;</span>
+<span class="fc" id="L51">	}</span>
+
+	public String getPassword() {
+<span class="fc" id="L54">		return password;</span>
+	}
+
+	public void setPassword(String password) {
+<span class="fc" id="L58">		this.password = password;</span>
+<span class="fc" id="L59">	}</span>
+
+	public Options getOptions() {
+<span class="fc" id="L62">		return options;</span>
+	}
+
+	public void setOptions(Options options) {
+<span class="fc" id="L66">		this.options = options;</span>
+<span class="fc" id="L67">	}</span>
+
+<span class="fc" id="L69">	public static class Options {</span>
+		/**
+		 * Enable/disable &quot;STOP&quot; indication at the end of the message (useful to
+		 * disable for non-commercial SMS).
+		 */
+<span class="fc" id="L74">		private boolean noStop = true;</span>
+		/**
+		 * Set the message encoding: NORMAL for 7bit encoding and UTF_8 for 8bit
+		 * encoding.
+		 * 
+		 * If you use UTF-8, your SMS will have a maximum size of 70
+		 * characters instead of 160
+		 */
+		private SmsCoding smsCoding;
+		/**
+		 * Set a tag to mark sent messages (20 maximum character string)
+		 */
+		private String tag;
+
+		public boolean isNoStop() {
+<span class="fc" id="L89">			return noStop;</span>
+		}
+
+		public void setNoStop(boolean noStop) {
+<span class="fc" id="L93">			this.noStop = noStop;</span>
+<span class="fc" id="L94">		}</span>
+
+		public SmsCoding getSmsCoding() {
+<span class="fc" id="L97">			return smsCoding;</span>
+		}
+
+		public void setSmsCoding(SmsCoding smsCoding) {
+<span class="fc" id="L101">			this.smsCoding = smsCoding;</span>
+<span class="fc" id="L102">		}</span>
+
+		public String getTag() {
+<span class="fc" id="L105">			return tag;</span>
+		}
+
+		public void setTag(String tag) {
+<span class="fc" id="L109">			this.tag = tag;</span>
+<span class="fc" id="L110">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

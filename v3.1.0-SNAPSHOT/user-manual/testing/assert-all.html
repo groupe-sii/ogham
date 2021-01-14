@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Instead of failing immediately on first assertion, Ogham also provides a way
+to run all assertions without failing and report all failures at the end.
+Here is an example with email (it is exactly the same for SMS):</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:52-53,68">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.test</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.icegreen.greenmail.util.ServerSetupTest.SMTP</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertAll</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.emptyIterable</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.hasItems</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.nullValue</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.startsWith</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">org.junit.Before</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.junit4.GreenMailRule</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">AssertAllEmailTestSample</span> {
+  <span class="directive">private</span> MessagingService oghamService;
+
+  <span class="annotation">@Rule</span>
+  <span class="directive">public</span> <span class="directive">final</span> GreenMailRule greenMail = <span class="keyword">new</span> GreenMailRule(SMTP);
+
+  <span class="annotation">@Before</span>
+  <span class="directive">public</span> <span class="type">void</span> setUp() <span class="directive">throws</span> <span class="exception">IOException</span> {
+    oghamService = MessagingBuilder.standard()
+        .environment()
+          .properties()
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from.default-value</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Sender Name &lt;test.sender@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>)
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, SMTP.getBindAddress())
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.valueOf(SMTP.getPort()))
+            .and()
+          .and()
+        .build();
+  }
+
+  <span class="annotation">@Test</span>
+  <span class="directive">public</span> <span class="type">void</span> simple() <span class="directive">throws</span> MessagingException, javax.mail.MessagingException {
+    <span class="comment">// @formatter:off</span>
+    oghamService.send(<span class="keyword">new</span> Email()
+                .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple (assertAll)</span><span class="delimiter">&quot;</span></span>)
+                .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;html&gt;&lt;body&gt;Hello world!&lt;/body&gt;&lt;/html&gt;</span><span class="delimiter">&quot;</span></span>)
+                .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>));
+    assertAll(r -&gt;                                                       <i class="conum" data-value="1"></i><b>(1)</b>
+      assertThat(greenMail, r).receivedMessages()                      <i class="conum" data-value="2"></i><b>(2)</b>
+        .count(is(<span class="integer">1</span>))
+        .message(<span class="integer">0</span>)
+          .subject(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple (assertAll)</span><span class="delimiter">&quot;</span></span>))
+          .from()
+            .address(hasItems(<span class="string"><span class="delimiter">&quot;</span><span class="content">test.sender@sii.fr</span><span class="delimiter">&quot;</span></span>))
+            .personal(hasItems(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sender Name</span><span class="delimiter">&quot;</span></span>)).and()
+          .to()
+            .address(hasItems(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient@sii.fr</span><span class="delimiter">&quot;</span></span>))
+            .personal(hasItems(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name</span><span class="delimiter">&quot;</span></span>)).and()
+          .body()
+            .contentAsString(isSimilarHtml(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;html&gt;&lt;body&gt;Hello world!&lt;/body&gt;&lt;/html&gt;</span><span class="delimiter">&quot;</span></span>))
+            .contentType(startsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/html</span><span class="delimiter">&quot;</span></span>)).and()
+          .alternative(nullValue())
+          .attachments(emptyIterable())
+    );
+    <span class="comment">// @formatter:on</span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Wrap existing assertion with <code>OghamAssertions.assertAll</code>. The <code>r</code> parameter
+is then used to register failed assertions.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Pass the <code>r</code> parameter to existing <code>OghamAssertions.asserThat</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/AssertAllEmailTestSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>When some assertions fail, Ogham also does its best to present failures in a way
+that developer can quickly understand. If we make the following changes to
+the previous sample:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Change subject (send with <code>Simple (assertAll)</code>)</p>
+</li>
+<li>
+<p>Change from address check (<code>test.sender1@sii.fr</code> instead of <code>test.sender@sii.fr</code>)</p>
+</li>
+<li>
+<p>Change html body check (<code>Goodbye</code> instead of <code>Hello world!</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then the result is:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/tests-assertall-junit-trace.png" alt="tests assertall junit trace">
+</div>
+<div class="title">Figure 1. JUnit stacktrace view</div>
+</div>
+<div class="paragraph">
+<p>Double-clicking on the error opens the comparison view:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/tests-assertall-junit-comparison.png" alt="tests assertall junit comparison">
+</div>
+<div class="title">Figure 2. JUnit comparison view</div>
+</div>
+<div class="paragraph">
+<p>That way, you can quickly compare HTML results.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Why HTML can be compared but not others</div>
+<div class="paragraph">
+<p>Hamcrest matchers throw an <code>AssertionError</code> when an assertion fails.</p>
+</div>
+<div class="paragraph">
+<p>Ogham provides some additional matchers (like <code>isSimilarHtml</code>) that add
+additional information so a comparison can be easily done and a
+<code>org.junit.ComparisonFailure</code> is thrown instead (so JUnit eclipse plugin can
+handle it).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BodyBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.message.fluent</a> &gt; <span class="el_source">BodyBuilder.java</span></div><h1>BodyBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.message.fluent;
+
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Fluent API to build a content based on:
+ * &lt;ul&gt;
+ * &lt;li&gt;Either a single string&lt;/li&gt;
+ * &lt;li&gt;Or a single template string&lt;/li&gt;
+ * &lt;li&gt;Or a single template loaded from a path&lt;/li&gt;
+ * &lt;li&gt;Or two templates (HTML and text) loaded from a path&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @since 3.0.0
+ */
+public class BodyBuilder {
+	private final Email parent;
+	private final SingleContentBuilder&lt;Email&gt; singleBuilder;
+	private Content content;
+
+	/**
+	 * Initializes with the parent to go back to.
+	 * 
+	 * @param parent
+	 *            the parent instance
+	 */
+	public BodyBuilder(Email parent) {
+<span class="fc" id="L35">		super();</span>
+<span class="fc" id="L36">		this.parent = parent;</span>
+<span class="fc" id="L37">		this.singleBuilder = new SingleContentBuilder&lt;&gt;(parent);</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Set the content directly as a simple string.
+	 * 
+	 * &lt;p&gt;
+	 * The body will have only one part (only one main body and no alternative
+	 * body). It can be either HTML or textual.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param content
+	 *            the content as a string
+	 * @return the instance for fluent chaining
+	 */
+	public Email string(String content) {
+<span class="fc" id="L59">		return singleBuilder.string(content);</span>
+	}
+
+	/**
+	 * Set the content using a template (directly provided as a string). The
+	 * template contains variables that are evaluated against the bean object.
+	 * 
+	 * &lt;p&gt;
+	 * The body will have only one part (only one main body and no alternative
+	 * body). It can be either HTML or textual.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param template
+	 *            the template directly provided as a string
+	 * @param bean
+	 *            the object that contains the variables that are referenced in
+	 *            the template
+	 * @return the instance for fluent chaining
+	 */
+	public Email templateString(String template, Object bean) {
+<span class="fc" id="L85">		return singleBuilder.templateString(template, bean);</span>
+	}
+
+	/**
+	 * Set the content using a template (directly provided as a string). The
+	 * template contains variables that are evaluated against the evaluation
+	 * context. The context contains at least the values of the variables but
+	 * can also contain additional information for parsing the template.
+	 * 
+	 * &lt;p&gt;
+	 * The body will have only one part (only one main body and no alternative
+	 * body). It can be either HTML or textual.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param template
+	 *            the template directly provided as a string
+	 * @param context
+	 *            contains at least the variables that are referenced in the
+	 *            template and may contain additional information to parse the
+	 *            template
+	 * @return the instance for fluent chaining
+	 */
+	public Email templateString(String template, Context context) {
+<span class="nc" id="L114">		return singleBuilder.templateString(template, context);</span>
+	}
+
+	/**
+	 * Set the content using template(s) loaded from a path. The template(s)
+	 * contain variables that are evaluated against the bean object.
+	 * 
+	 * &lt;p&gt;
+	 * This method lets you provide both main body and alternative body using a
+	 * single path (without extension). For example:
+	 * 
+	 * You have two templates:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;A textual template located at
+	 * &lt;code&gt;/templates/email/register.txt&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;li&gt;An HTML template located at
+	 * &lt;code&gt;/templates/email/register.html&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * You can reference both templates with the same model:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .template(&quot;/templates/email/register&quot;, new RegistrationContext(...))}
+	 * &lt;/pre&gt;
+	 * 
+	 * Both templates will be parsed using the same evaluation context. The HTML
+	 * template will be used as the main body and the textual template will be
+	 * used as the alternative body (when the email client can't read the HTML
+	 * body).
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; the extensions varies according to template engine
+	 * that is used to parse the template.
+	 * 
+	 * &lt;p&gt;
+	 * This method is really convenient as if one template is missing (for
+	 * example, you have only written the HTML template but not the textual
+	 * template already), the found template is used as the main body (and the
+	 * email won't have the alternative part). This way you can later add the
+	 * missing template without changing your code.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variables that are referenced in
+	 *            the template
+	 * @return the instance for fluent chaining
+	 */
+	public Email template(String templatePath, Object bean) {
+<span class="fc" id="L170">		this.content = new MultiTemplateContent(templatePath, bean);</span>
+<span class="fc" id="L171">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using template(s) loaded from a path. The template(s)
+	 * contain variables that are evaluated against the bean object.
+	 * 
+	 * &lt;p&gt;
+	 * This method lets you provide both main body and alternative body using a
+	 * single path (without extension). For example:
+	 * 
+	 * You have two templates:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;A textual template located at
+	 * &lt;code&gt;/templates/email/register.txt&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;li&gt;An HTML template located at
+	 * &lt;code&gt;/templates/email/register.html&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * You can reference both templates with the same model:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .template(&quot;/templates/email/register&quot;, new RegistrationContext(...))}
+	 * &lt;/pre&gt;
+	 * 
+	 * Both templates will be parsed using the same evaluation context. The HTML
+	 * template will be used as the main body and the textual template will be
+	 * used as the alternative body (when the email client can't read the HTML
+	 * body).
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; the extensions varies according to template engine
+	 * that is used to parse the template.
+	 * 
+	 * &lt;p&gt;
+	 * This method is really convenient as if one template is missing (for
+	 * example, you have only written the HTML template but not the textual
+	 * template already), the found template is used as the main body (and the
+	 * email won't have the alternative part). This way you can later add the
+	 * missing template without changing your code.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variables that are referenced in
+	 *            the template
+	 * @return the instance for fluent chaining
+	 */
+	public Email template(ResourcePath templatePath, Object bean) {
+<span class="nc" id="L227">		this.content = new MultiTemplateContent(templatePath, bean);</span>
+<span class="nc" id="L228">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using template(s) loaded from a path. The template(s)
+	 * contain variables that are evaluated against the evaluation context. The
+	 * context contains at least the values of the variables but can also
+	 * contain additional information for parsing the template.
+	 * 
+	 * &lt;p&gt;
+	 * This method lets you provide both main body and alternative body using a
+	 * single path (without extension). For example:
+	 * 
+	 * You have two templates:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;A textual template located at
+	 * &lt;code&gt;/templates/email/register.txt&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;li&gt;An HTML template located at
+	 * &lt;code&gt;/templates/email/register.html&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * You can reference both templates with the same model:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .template(&quot;/templates/email/register&quot;, new RegistrationContext(...))}
+	 * &lt;/pre&gt;
+	 * 
+	 * Both templates will be parsed using the same evaluation context. The HTML
+	 * template will be used as the main body and the textual template will be
+	 * used as the alternative body (when the email client can't read the HTML
+	 * body).
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; the extensions varies according to template engine
+	 * that is used to parse the template.
+	 * 
+	 * &lt;p&gt;
+	 * This method is really convenient as if one template is missing (for
+	 * example, you have only written the HTML template but not the textual
+	 * template already), the found template is used as the main body (and the
+	 * email won't have the alternative part). This way you can later add the
+	 * missing template without changing your code.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param context
+	 *            contains at least the variables that are referenced in the
+	 *            template and may contain additional information to parse the
+	 *            template
+	 * @return the instance for fluent chaining
+	 */
+	public Email template(String templatePath, Context context) {
+<span class="fc" id="L287">		this.content = new MultiTemplateContent(templatePath, context);</span>
+<span class="fc" id="L288">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using template(s) loaded from a path. The template(s)
+	 * contain variables that are evaluated against the evaluation context. The
+	 * context contains at least the values of the variables but can also
+	 * contain additional information for parsing the template.
+	 * 
+	 * &lt;p&gt;
+	 * This method lets you provide both main body and alternative body using a
+	 * single path (without extension). For example:
+	 * 
+	 * You have two templates:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;A textual template located at
+	 * &lt;code&gt;/templates/email/register.txt&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;li&gt;An HTML template located at
+	 * &lt;code&gt;/templates/email/register.html&lt;/code&gt; in the classpath&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * You can reference both templates with the same model:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .template(&quot;/templates/email/register&quot;, new RegistrationContext(...))}
+	 * &lt;/pre&gt;
+	 * 
+	 * Both templates will be parsed using the same evaluation context. The HTML
+	 * template will be used as the main body and the textual template will be
+	 * used as the alternative body (when the email client can't read the HTML
+	 * body).
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; the extensions varies according to template engine
+	 * that is used to parse the template.
+	 * 
+	 * &lt;p&gt;
+	 * This method is really convenient as if one template is missing (for
+	 * example, you have only written the HTML template but not the textual
+	 * template already), the found template is used as the main body (and the
+	 * email won't have the alternative part). This way you can later add the
+	 * missing template without changing your code.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param context
+	 *            contains at least the variables that are referenced in the
+	 *            template and may contain additional information to parse the
+	 *            template
+	 * @return the instance for fluent chaining
+	 */
+	public Email template(ResourcePath templatePath, Context context) {
+<span class="nc" id="L347">		this.content = new MultiTemplateContent(templatePath, context);</span>
+<span class="nc" id="L348">		return parent;</span>
+	}
+
+	/**
+	 * Build the final {@link Content}.
+	 * 
+	 * {@link #template(ResourcePath, Context)} method (and variants) preempts
+	 * any call to {@link #string(String)},
+	 * {@link #templateString(String, Context)} and
+	 * {@link #templateString(String, Object)}.
+	 * 
+	 * @return the built content
+	 */
+	public Content build() {
+<span class="fc bfc" id="L362" title="All 2 branches covered.">		if (content != null) {</span>
+<span class="fc" id="L363">			return content;</span>
+		}
+<span class="fc" id="L365">		return singleBuilder.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

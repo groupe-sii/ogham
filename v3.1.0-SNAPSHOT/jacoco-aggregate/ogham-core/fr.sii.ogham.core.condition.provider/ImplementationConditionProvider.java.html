@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImplementationConditionProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.provider</a> &gt; <span class="el_source">ImplementationConditionProvider.java</span></div><h1>ImplementationConditionProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.provider;
+
+import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.condition.AndCondition;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * The aim is to look at the object and get defined conditions. Conditions may
+ * be defined by several ways:
+ * &lt;ul&gt;
+ * &lt;li&gt;By using annotations (see {@link RequiredClass},
+ * {@link RequiredProperty}, {@link RequiredClasses} and
+ * {@link RequiredProperties})&lt;/li&gt;
+ * &lt;li&gt;By implementing {@link ActivableAtRuntime} interface&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * If both are defined, the final condition is a and between conditions bring by
+ * annotations and condition returned by
+ * {@link ActivableAtRuntime#getCondition()} method.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ImplementationConditionProvider implements ConditionProvider&lt;Object, Message&gt; {
+	private final AnnotationConditionProvider&lt;Message&gt; annotationProvider;
+	private final ActivableAtRuntimeConditionProvider runtimeProvider;
+
+	/**
+	 * Initializes with a {@link PropertyResolver} instance. The
+	 * {@link PropertyResolver} is used by the
+	 * {@link AnnotationConditionProvider} (specifically by
+	 * {@link RequiredPropertiesAnnotationProvider} and
+	 * {@link RequiredPropertyAnnotationProvider}) to check existence of
+	 * properties.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to check existence of properties
+	 */
+	public ImplementationConditionProvider(PropertyResolver propertyResolver) {
+<span class="fc" id="L48">		super();</span>
+<span class="fc" id="L49">		annotationProvider = new AnnotationConditionProvider&lt;&gt;(propertyResolver);</span>
+<span class="fc" id="L50">		runtimeProvider = new ActivableAtRuntimeConditionProvider();</span>
+<span class="fc" id="L51">	}</span>
+
+	@Override
+	public Condition&lt;Message&gt; provide(Object source) {
+<span class="fc" id="L55">		AndCondition&lt;Message&gt; mainCondition = new AndCondition&lt;&gt;();</span>
+<span class="fc" id="L56">		mainCondition.and(annotationProvider.provide(source.getClass()));</span>
+<span class="fc" id="L57">		mainCondition.and(runtimeProvider.provide(source));</span>
+<span class="fc" id="L58">		return mainCondition;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

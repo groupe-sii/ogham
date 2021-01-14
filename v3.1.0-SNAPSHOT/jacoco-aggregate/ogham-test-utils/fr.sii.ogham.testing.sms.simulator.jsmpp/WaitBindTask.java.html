@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WaitBindTask.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">WaitBindTask.java</span></div><h1>WaitBindTask.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeoutException;
+
+import org.jsmpp.PDUStringException;
+import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.InterfaceVersion;
+import org.jsmpp.session.BindRequest;
+import org.jsmpp.session.SMPPServerSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.testing.sms.simulator.config.Credentials;
+
+class WaitBindTask implements Runnable {
+	private static final int WAIT_DURATION = 1000;
+
+<span class="fc" id="L21">	private static final Logger LOG = LoggerFactory.getLogger(WaitBindTask.class);</span>
+
+	private final SMPPServerSession serverSession;
+	private final List&lt;Credentials&gt; serverCredentials;
+
+<span class="fc" id="L26">	public WaitBindTask(SMPPServerSession serverSession, List&lt;Credentials&gt; serverCredentials) {</span>
+<span class="fc" id="L27">		this.serverSession = serverSession;</span>
+<span class="fc" id="L28">		this.serverCredentials = serverCredentials;</span>
+<span class="fc" id="L29">	}</span>
+
+	public void run() {
+		try {
+<span class="fc" id="L33">			BindRequest bindRequest = serverSession.waitForBind(WAIT_DURATION);</span>
+<span class="fc" id="L34">			LOG.info(&quot;Accepting bind for session {}, interface version {}&quot;, serverSession.getSessionId(), InterfaceVersion.IF_34);</span>
+<span class="fc" id="L35">			bind(bindRequest);</span>
+<span class="nc" id="L36">		} catch (IllegalStateException e) {</span>
+<span class="nc" id="L37">			LOG.error(&quot;System error&quot;, e);</span>
+<span class="nc" id="L38">		} catch (TimeoutException e) {</span>
+<span class="nc" id="L39">			LOG.warn(&quot;Wait for bind has reach timeout&quot;, e);</span>
+<span class="fc" id="L40">		} catch (IOException e) {</span>
+<span class="fc" id="L41">			LOG.error(&quot;Failed accepting bind request for session {}&quot;, serverSession.getSessionId(), e);</span>
+<span class="pc" id="L42">		}</span>
+<span class="fc" id="L43">	}</span>
+
+	private void bind(BindRequest bindRequest) throws IOException {
+		try {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">			if (checkPassword(bindRequest)) {</span>
+<span class="fc" id="L48">				bindRequest.accept(bindRequest.getSystemId(), InterfaceVersion.IF_34);</span>
+			} else {
+<span class="fc" id="L50">				bindRequest.reject(SMPPConstant.STAT_ESME_RINVPASWD);</span>
+			}
+<span class="nc" id="L52">		} catch (PDUStringException e) {</span>
+<span class="nc" id="L53">			LOG.error(&quot;Invalid system id&quot;, e);</span>
+<span class="nc" id="L54">			bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);</span>
+<span class="fc" id="L55">		}</span>
+<span class="fc" id="L56">	}</span>
+
+	private boolean checkPassword(BindRequest bindRequest) {
+		// no credentials registered =&gt; allow requests
+<span class="pc bpc" id="L60" title="1 of 4 branches missed.">		if (serverCredentials == null || serverCredentials.isEmpty()) {</span>
+<span class="fc" id="L61">			return true;</span>
+		}
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		for (Credentials creds : serverCredentials) {</span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">			if (Objects.equals(creds.getSystemId(), bindRequest.getSystemId()) &amp;&amp; Objects.equals(creds.getPassword(), bindRequest.getPassword())) {</span>
+<span class="fc" id="L65">				return true;</span>
+			}
+<span class="fc" id="L67">		}</span>
+<span class="fc" id="L68">		return false;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

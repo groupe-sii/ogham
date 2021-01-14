@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JsoupBase64ImageInliner.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner.impl.jsoup</a> &gt; <span class="el_source">JsoupBase64ImageInliner.java</span></div><h1>JsoupBase64ImageInliner.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner.impl.jsoup;
+
+import static fr.sii.ogham.html.inliner.ImageInlinerConstants.INLINED_ATTR;
+import static fr.sii.ogham.html.inliner.ImageInlinerConstants.InlineModes.BASE64;
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.isInlineModeAllowed;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import fr.sii.ogham.core.util.Base64Utils;
+import fr.sii.ogham.html.inliner.ContentWithImages;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.ImageInlinerConstants;
+import fr.sii.ogham.html.inliner.ImageInlinerConstants.InlineModes;
+import fr.sii.ogham.html.inliner.ImageResource;
+
+/**
+ * Image inliner that reads the image and converts it into a base64 string. The
+ * string is then included directly in the HTML content using the src attribute
+ * of img tag.
+ * 
+ * &lt;p&gt;
+ * The inlining using base64 is only applied if the attribute
+ * {@link ImageInlinerConstants#INLINE_MODE_ATTR} is set to
+ * {@link InlineModes#BASE64}.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L37">public class JsoupBase64ImageInliner implements ImageInliner {</span>
+	private static final String SRC_ATTR = &quot;src&quot;;
+	private static final String IMG_SELECTOR = &quot;img[src=\&quot;{0}\&quot;]&quot;;
+	private static final String BASE64_URI = &quot;data:{0};base64,{1}&quot;;
+
+	@Override
+	public ContentWithImages inline(String htmlContent, List&lt;ImageResource&gt; images) {
+<span class="fc" id="L44">		Document doc = Jsoup.parse(htmlContent);</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		for (ImageResource image : images) {</span>
+<span class="fc" id="L46">			Elements imgs = getImagesToInline(doc, image);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">			for (Element img : imgs) {</span>
+<span class="fc" id="L48">				img.attr(SRC_ATTR, MessageFormat.format(BASE64_URI, image.getMimetype(), Base64Utils.encodeToString(image.getContent())));</span>
+<span class="fc" id="L49">				img.attr(INLINED_ATTR, true);</span>
+<span class="fc" id="L50">			}</span>
+<span class="fc" id="L51">		}</span>
+<span class="fc" id="L52">		return new ContentWithImages(doc.outerHtml(), new ArrayList&lt;&gt;(0));</span>
+	}
+
+	private static Elements getImagesToInline(Document doc, ImageResource image) {
+<span class="fc" id="L56">		Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getSrcUrl()));</span>
+<span class="fc" id="L57">		Elements found = new Elements();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		for (Element img : imgs) {</span>
+			// only apply inlining if mode matches
+<span class="fc bfc" id="L60" title="All 2 branches covered.">			if (isInlineModeAllowed(img, BASE64)) {</span>
+<span class="fc" id="L61">				found.add(img);</span>
+			}
+<span class="fc" id="L63">		}</span>
+<span class="fc" id="L64">		return found;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

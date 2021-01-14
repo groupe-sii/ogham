@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurableSMPPServerSessionListener.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">ConfigurableSMPPServerSessionListener.java</span></div><h1>ConfigurableSMPPServerSessionListener.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import java.io.IOException;
+
+import org.jsmpp.DefaultPDUReader;
+import org.jsmpp.DefaultPDUSender;
+import org.jsmpp.PDUReader;
+import org.jsmpp.PDUSender;
+import org.jsmpp.SynchronizedPDUSender;
+import org.jsmpp.session.SMPPServerSession;
+import org.jsmpp.session.SMPPServerSessionListener;
+import org.jsmpp.session.ServerResponseDeliveryListener;
+import org.jsmpp.session.connection.Connection;
+import org.jsmpp.session.connection.ServerConnection;
+import org.jsmpp.session.connection.ServerConnectionFactory;
+import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
+
+import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
+
+/**
+ * Override default {@link SMPPServerSessionListener}.
+ * 
+ * 
+ * Need to copy code because of visibility of fields.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ConfigurableSMPPServerSessionListener extends SMPPServerSessionListener {
+	protected final ServerDelays delays;
+	protected ServerResponseDeliveryListener responseDeliveryListener;
+	protected final ServerConnection serverConn;
+
+	public ConfigurableSMPPServerSessionListener(int port, ServerDelays delays, int timeout, int backlog, ServerConnectionFactory serverConnFactory) throws IOException {
+<span class="nc" id="L35">		super(port, timeout, backlog, new NullServerConnectionFactory());</span>
+<span class="nc" id="L36">		this.delays = delays;</span>
+<span class="nc" id="L37">		serverConn = serverConnFactory.listen(port, timeout, backlog);</span>
+<span class="nc" id="L38">	}</span>
+
+	public ConfigurableSMPPServerSessionListener(int port, ServerDelays delays, int timeout, ServerConnectionFactory serverConnFactory) throws IOException {
+<span class="nc" id="L41">		super(port, timeout, new NullServerConnectionFactory());</span>
+<span class="nc" id="L42">		this.delays = delays;</span>
+<span class="nc" id="L43">		serverConn = serverConnFactory.listen(port, timeout);</span>
+<span class="nc" id="L44">	}</span>
+
+	public ConfigurableSMPPServerSessionListener(int port, ServerDelays delays, ServerConnectionFactory serverConnFactory) throws IOException {
+<span class="fc" id="L47">		super(port, new NullServerConnectionFactory());</span>
+<span class="fc" id="L48">		this.delays = delays;</span>
+<span class="fc" id="L49">		serverConn = serverConnFactory.listen(port);</span>
+<span class="fc" id="L50">	}</span>
+
+	public ConfigurableSMPPServerSessionListener(int port, ServerDelays delays) throws IOException {
+<span class="fc" id="L53">		this(port, delays, new ServerSocketConnectionFactory());</span>
+<span class="fc" id="L54">	}</span>
+
+	@Override
+	public SMPPServerSession accept() throws IOException {
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		if (delays == null) {</span>
+<span class="fc" id="L59">			Connection conn = serverConn.accept();</span>
+<span class="fc" id="L60">			conn.setSoTimeout(getInitiationTimer());</span>
+<span class="fc" id="L61">			return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree());</span>
+		}
+<span class="fc" id="L63">		Connection conn = serverConn.accept();</span>
+<span class="fc" id="L64">		conn.setSoTimeout(getInitiationTimer());</span>
+<span class="fc" id="L65">		return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), createPduSender(), createPduReader());</span>
+	}
+
+	@Override
+	public void setResponseDeliveryListener(ServerResponseDeliveryListener responseDeliveryListener) {
+<span class="nc" id="L70">		super.setResponseDeliveryListener(responseDeliveryListener);</span>
+<span class="nc" id="L71">		this.responseDeliveryListener = responseDeliveryListener;</span>
+<span class="nc" id="L72">	}</span>
+
+	protected PDUSender createPduSender() {
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">		if (delays == null) {</span>
+<span class="nc" id="L76">			return new SynchronizedPDUSender(new DefaultPDUSender());</span>
+		}
+<span class="fc" id="L78">		return new SlowPduSender(new SynchronizedPDUSender(new DefaultPDUSender()), delays);</span>
+	}
+
+	protected PDUReader createPduReader() {
+<span class="fc" id="L82">		return new DefaultPDUReader();</span>
+	}
+
+	@Override
+	public int getTimeout(int timeout) throws IOException {
+<span class="nc" id="L87">		return serverConn.getSoTimeout();</span>
+	}
+
+	@Override
+	public void setTimeout(int timeout) throws IOException {
+<span class="nc" id="L92">		serverConn.setSoTimeout(timeout);</span>
+<span class="nc" id="L93">	}</span>
+
+	@Override
+	public void close() throws IOException {
+<span class="fc" id="L97">		serverConn.close();</span>
+<span class="fc" id="L98">	}</span>
+
+	private static class NullServerConnectionFactory implements ServerConnectionFactory {
+		@Override
+		public ServerConnection listen(int port) throws IOException {
+<span class="fc" id="L103">			return null;</span>
+		}
+
+		@Override
+		public ServerConnection listen(int port, int timeout) throws IOException {
+<span class="nc" id="L108">			return null;</span>
+		}
+
+		@Override
+		public ServerConnection listen(int port, int timeout, int backlog) throws IOException {
+<span class="nc" id="L113">			return null;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MapBeanReadWrapper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">MapBeanReadWrapper.java</span></div><h1>MapBeanReadWrapper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import fr.sii.ogham.core.exception.util.InvalidPropertyException;
+
+/**
+ * Wraps a bean and exposes as a Map.
+ * 
+ * The Map is indexed by the property names defined in the bean and allow to
+ * access the value using the Map insterface.
+ * 
+ * This implementation doesn't support update methods (remove, clear, put...)
+ * and doesn't support access to values directly (values, containsValue).
+ * 
+ * This implementation delegates access to real bean properties through a
+ * {@link SimpleBeanReadWrapper} instance (by default). You can
+ * override this default wrapper using the constructor
+ * {@link #MapBeanReadWrapper(BeanReadWrapper)}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MapBeanReadWrapper implements BeanReadWrapper, Map&lt;String, Object&gt; {
+	private final BeanReadWrapper delegate;
+
+	/**
+	 * Initializes the wrapper for the provided bean.
+	 * 
+	 * {@link SimpleBeanReadWrapper} is used to access bean
+	 * properties.
+	 * 
+	 * @param bean
+	 *            the bean to wrap
+	 */
+	public MapBeanReadWrapper(Object bean) {
+<span class="fc" id="L42">		this(bean, true);</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * Initializes the wrapper for the provided bean.
+	 * 
+	 * {@link SimpleBeanReadWrapper} is used to access bean
+	 * properties.
+	 * 
+	 * @param bean
+	 *            the bean to wrap
+	 * @param failOnMissingProperty
+	 *            if false null is returned if the property doesn't exist, if
+	 *            true an {@link InvalidPropertyException} is thrown if the
+	 *            property doesn't exist
+	 */
+	public MapBeanReadWrapper(Object bean, boolean failOnMissingProperty) {
+<span class="fc" id="L59">		this(new SimpleBeanReadWrapper(bean, failOnMissingProperty));</span>
+<span class="fc" id="L60">	}</span>
+
+	/**
+	 * Point of extension by providing custom bean wrapper.
+	 * 
+	 * @param delegate
+	 *            the bean wrapper that access bean properties
+	 */
+	public MapBeanReadWrapper(BeanReadWrapper delegate) {
+<span class="fc" id="L69">		super();</span>
+<span class="fc" id="L70">		this.delegate = delegate;</span>
+<span class="fc" id="L71">	}</span>
+
+	@Override
+	public int size() {
+<span class="fc" id="L75">		return getProperties().size();</span>
+	}
+
+	@Override
+	public boolean isEmpty() {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		return size() == 0;</span>
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		for (String prop : getProperties()) {</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">			if (prop.equals(key)) {</span>
+<span class="fc" id="L87">				return true;</span>
+			}
+<span class="fc" id="L89">		}</span>
+<span class="fc" id="L90">		return false;</span>
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+<span class="nc" id="L95">		throw new UnsupportedOperationException(&quot;containsValue not implemented&quot;);</span>
+	}
+
+	@Override
+	public Object get(Object key) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">		if (key == null) {</span>
+<span class="fc" id="L101">			throw new IllegalArgumentException(&quot;key must not be null&quot;);</span>
+		}
+<span class="fc" id="L103">		return getPropertyValue(key.toString());</span>
+	}
+
+	@Override
+	public Object put(String key, Object value) {
+<span class="nc" id="L108">		throw new UnsupportedOperationException(&quot;put not implemented&quot;);</span>
+	}
+
+	@Override
+	public Object remove(Object key) {
+<span class="nc" id="L113">		throw new UnsupportedOperationException(&quot;remove not implemented&quot;);</span>
+	}
+
+	@Override
+	public void putAll(Map&lt;? extends String, ? extends Object&gt; m) {
+<span class="nc" id="L118">		throw new UnsupportedOperationException(&quot;putAll not implemented&quot;);</span>
+	}
+
+	@Override
+	public void clear() {
+<span class="nc" id="L123">		throw new UnsupportedOperationException(&quot;clear not implemented&quot;);</span>
+	}
+
+	@Override
+	public Set&lt;String&gt; keySet() {
+<span class="fc" id="L128">		return new HashSet&lt;&gt;(delegate.getProperties());</span>
+	}
+
+	@Override
+	public Collection&lt;Object&gt; values() {
+<span class="nc" id="L133">		throw new UnsupportedOperationException(&quot;values not implemented&quot;);</span>
+	}
+
+	@Override
+	public Set&lt;Entry&lt;String, Object&gt;&gt; entrySet() {
+<span class="fc" id="L138">		Set&lt;Entry&lt;String, Object&gt;&gt; entries = new TreeSet&lt;&gt;();</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">		for (String prop : getProperties()) {</span>
+<span class="fc" id="L140">			entries.add(new MapBeanReadWrapperEntry(delegate, prop));</span>
+<span class="fc" id="L141">		}</span>
+<span class="fc" id="L142">		return entries;</span>
+	}
+
+	@Override
+	public Object getPropertyValue(String name) {
+<span class="fc" id="L147">		return delegate.getPropertyValue(name);</span>
+	}
+
+	@Override
+	public List&lt;String&gt; getProperties() {
+<span class="fc" id="L152">		return delegate.getProperties();</span>
+	}
+
+	@Override
+	public Object getWrappedBean() {
+<span class="nc" id="L157">		return delegate.getWrappedBean();</span>
+	}
+
+	/**
+	 * Specific Entry implementation that delegates to a real bean wrapper in order
+	 * to access bean properties.
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	public static class MapBeanReadWrapperEntry implements Entry&lt;String, Object&gt;, Comparable&lt;MapBeanReadWrapperEntry&gt; {
+		private final BeanReadWrapper delegate;
+		private final String key;
+
+		public MapBeanReadWrapperEntry(BeanReadWrapper delegate, String key) {
+<span class="fc" id="L172">			super();</span>
+<span class="fc" id="L173">			this.delegate = delegate;</span>
+<span class="fc" id="L174">			this.key = key;</span>
+<span class="fc" id="L175">		}</span>
+
+		@Override
+		public String getKey() {
+<span class="fc" id="L179">			return key;</span>
+		}
+
+		@Override
+		public Object getValue() {
+<span class="fc" id="L184">			return delegate.getPropertyValue(key);</span>
+		}
+
+		@Override
+		public Object setValue(Object value) {
+<span class="nc" id="L189">			throw new UnsupportedOperationException(&quot;entry.setValue not implemented&quot;);</span>
+		}
+
+		@Override
+		public int compareTo(MapBeanReadWrapperEntry o) {
+<span class="fc" id="L194">			return key.compareTo(o.getKey());</span>
+		}
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L199">			int prime = 31;</span>
+<span class="nc" id="L200">			int result = 1;</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">			result = prime * result + ((key == null) ? 0 : key.hashCode());</span>
+<span class="nc" id="L202">			return result;</span>
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc bnc" id="L207" title="All 2 branches missed.">			if (this == obj) {</span>
+<span class="nc" id="L208">				return true;</span>
+			}
+<span class="nc bnc" id="L210" title="All 2 branches missed.">			if (obj == null) {</span>
+<span class="nc" id="L211">				return false;</span>
+			}
+<span class="nc bnc" id="L213" title="All 2 branches missed.">			if (obj.getClass() != getClass()) {</span>
+<span class="nc" id="L214">				return false;</span>
+			}
+<span class="nc" id="L216">			MapBeanReadWrapperEntry other = (MapBeanReadWrapperEntry) obj;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">			if (key == null) {</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">				if (other.key != null) {</span>
+<span class="nc" id="L219">					return false;</span>
+				}
+<span class="nc bnc" id="L221" title="All 2 branches missed.">			} else if (!key.equals(other.key)) {</span>
+<span class="nc" id="L222">				return false;</span>
+			}
+<span class="nc" id="L224">			return true;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

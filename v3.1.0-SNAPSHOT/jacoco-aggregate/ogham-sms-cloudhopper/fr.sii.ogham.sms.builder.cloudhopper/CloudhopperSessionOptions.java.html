@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperSessionOptions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">CloudhopperSessionOptions.java</span></div><h1>CloudhopperSessionOptions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ReuseSessionOptions;
+
+/**
+ * Intermediate object that carries configured options.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L13">public class CloudhopperSessionOptions {</span>
+	private String sessionName;
+	private Long bindTimeout;
+	private Long connectTimeout;
+	private Long requestExpiryTimeout;
+	private Long windowMonitorInterval;
+	private Integer windowSize;
+	private Long windowWaitTimeout;
+	private Long writeTimeout;
+	private Long responseTimeout;
+	private Long unbindTimeout;
+	private RetryExecutor connectRetry;
+	private ReuseSessionOptions reuseSession;
+	private KeepAliveOptions keepAlive;
+
+	public String getSessionName() {
+<span class="fc" id="L29">		return sessionName;</span>
+	}
+
+	public void setSessionName(String sessionName) {
+<span class="nc" id="L33">		this.sessionName = sessionName;</span>
+<span class="nc" id="L34">	}</span>
+
+	public Long getBindTimeout() {
+<span class="fc" id="L37">		return bindTimeout;</span>
+	}
+
+	public void setBindTimeout(Long bind) {
+<span class="fc" id="L41">		this.bindTimeout = bind;</span>
+<span class="fc" id="L42">	}</span>
+
+	public Long getConnectTimeout() {
+<span class="fc" id="L45">		return connectTimeout;</span>
+	}
+
+	public void setConnectTimeout(Long connect) {
+<span class="fc" id="L49">		this.connectTimeout = connect;</span>
+<span class="fc" id="L50">	}</span>
+
+	public Long getRequestExpiryTimeout() {
+<span class="fc" id="L53">		return requestExpiryTimeout;</span>
+	}
+
+	public void setRequestExpiryTimeout(Long requestExpiry) {
+<span class="fc" id="L57">		this.requestExpiryTimeout = requestExpiry;</span>
+<span class="fc" id="L58">	}</span>
+
+	public Long getWindowMonitorInterval() {
+<span class="fc" id="L61">		return windowMonitorInterval;</span>
+	}
+
+	public void setWindowMonitorInterval(Long windowMonitorInterval) {
+<span class="fc" id="L65">		this.windowMonitorInterval = windowMonitorInterval;</span>
+<span class="fc" id="L66">	}</span>
+
+	public Integer getWindowSize() {
+<span class="fc" id="L69">		return windowSize;</span>
+	}
+
+	public void setWindowSize(Integer windowSize) {
+<span class="fc" id="L73">		this.windowSize = windowSize;</span>
+<span class="fc" id="L74">	}</span>
+
+	public Long getWindowWaitTimeout() {
+<span class="fc" id="L77">		return windowWaitTimeout;</span>
+	}
+
+	public void setWindowWaitTimeout(Long windowWait) {
+<span class="fc" id="L81">		this.windowWaitTimeout = windowWait;</span>
+<span class="fc" id="L82">	}</span>
+
+	public Long getWriteTimeout() {
+<span class="fc" id="L85">		return writeTimeout;</span>
+	}
+
+	public void setWriteTimeout(Long write) {
+<span class="fc" id="L89">		this.writeTimeout = write;</span>
+<span class="fc" id="L90">	}</span>
+
+	public Long getResponseTimeout() {
+<span class="fc" id="L93">		return responseTimeout;</span>
+	}
+
+	public void setResponseTimeout(Long response) {
+<span class="fc" id="L97">		this.responseTimeout = response;</span>
+<span class="fc" id="L98">	}</span>
+
+	public Long getUnbindTimeout() {
+<span class="fc" id="L101">		return unbindTimeout;</span>
+	}
+
+	public void setUnbindTimeout(Long unbind) {
+<span class="fc" id="L105">		this.unbindTimeout = unbind;</span>
+<span class="fc" id="L106">	}</span>
+
+	public RetryExecutor getConnectRetry() {
+<span class="fc" id="L109">		return connectRetry;</span>
+	}
+
+	public void setConnectRetry(RetryExecutor connectRetry) {
+<span class="fc" id="L113">		this.connectRetry = connectRetry;</span>
+<span class="fc" id="L114">	}</span>
+
+	public ReuseSessionOptions getReuseSession() {
+<span class="fc" id="L117">		return reuseSession;</span>
+	}
+
+	public void setReuseSession(ReuseSessionOptions reuseSession) {
+<span class="fc" id="L121">		this.reuseSession = reuseSession;</span>
+<span class="fc" id="L122">	}</span>
+
+	public KeepAliveOptions getKeepAlive() {
+<span class="fc" id="L125">		return keepAlive;</span>
+	}
+
+	public void setKeepAlive(KeepAliveOptions keepAlive) {
+<span class="fc" id="L129">		this.keepAlive = keepAlive;</span>
+<span class="fc" id="L130">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

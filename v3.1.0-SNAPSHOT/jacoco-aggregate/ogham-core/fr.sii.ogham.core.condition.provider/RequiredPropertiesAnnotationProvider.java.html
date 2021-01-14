@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RequiredPropertiesAnnotationProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.provider</a> &gt; <span class="el_source">RequiredPropertiesAnnotationProvider.java</span></div><h1>RequiredPropertiesAnnotationProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.provider;
+
+import static fr.sii.ogham.core.condition.fluent.Conditions.alwaysTrue;
+
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.condition.AndCondition;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.fluent.Conditions;
+import fr.sii.ogham.core.env.PropertyResolver;
+
+/**
+ * Provider that handle {@link RequiredProperties} annotation to provide a
+ * condition.
+ * 
+ * It delegates handling of {@link RequiredProperty} to
+ * {@link RequiredPropertyAnnotationProvider}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;T&gt;
+ *            the kind of the object under conditions
+ */
+public class RequiredPropertiesAnnotationProvider&lt;T&gt; implements ConditionProvider&lt;RequiredProperties, T&gt; {
+	private final PropertyResolver propertyResolver;
+	private final RequiredPropertyAnnotationProvider&lt;T&gt; delegate;
+
+	public RequiredPropertiesAnnotationProvider(PropertyResolver propertyResolver) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.propertyResolver = propertyResolver;</span>
+<span class="fc" id="L31">		this.delegate = new RequiredPropertyAnnotationProvider&lt;&gt;(propertyResolver);</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public Condition&lt;T&gt; provide(RequiredProperties annotation) {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">		if (annotation == null) {</span>
+<span class="fc" id="L37">			return alwaysTrue();</span>
+		} else {
+<span class="fc" id="L39">			AndCondition&lt;T&gt; mainCondition = new AndCondition&lt;&gt;();</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">			for (String requiredProperties : annotation.value()) {</span>
+<span class="fc" id="L41">				mainCondition = mainCondition.and(Conditions.&lt;T&gt; requiredProperty(propertyResolver, requiredProperties));</span>
+			}
+<span class="fc bfc" id="L43" title="All 2 branches covered.">			for (RequiredProperty subAnnotation : annotation.props()) {</span>
+<span class="fc" id="L44">				mainCondition = mainCondition.and(delegate.provide(subAnnotation));</span>
+			}
+<span class="fc" id="L46">			return mainCondition;</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

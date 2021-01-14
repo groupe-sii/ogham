@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LookupAwareRelativePathResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.path</a> &gt; <span class="el_source">LookupAwareRelativePathResolver.java</span></div><h1>LookupAwareRelativePathResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.path;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import fr.sii.ogham.core.util.ResourceUtils;
+
+/**
+ * Resolve the given path against the base path by using the following rules:
+ * 
+ * &lt;p&gt;
+ * If the &lt;b&gt;relative path&lt;/b&gt; is not absolute (doesn't start with /) and the
+ * &lt;b&gt;base path&lt;/b&gt; ends with / then the &lt;b&gt;relative path&lt;/b&gt; is &lt;b&gt;appended&lt;/b&gt;
+ * to the &lt;b&gt;base path&lt;/b&gt;.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the &lt;b&gt;relative path&lt;/b&gt; is not absolute (doesn't start with /) and the
+ * &lt;b&gt;base path&lt;/b&gt; doesn't end with / then the &lt;b&gt;relative path&lt;/b&gt;
+ * &lt;b&gt;replaces&lt;/b&gt; the last part of the &lt;b&gt;base path&lt;/b&gt;.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the &lt;b&gt;relative path&lt;/b&gt; is absolute (starts with /) then the &lt;b&gt;relative
+ * path&lt;/b&gt; is is used.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the &lt;b&gt;relative path&lt;/b&gt; has lookup prefix (like &quot;classpath:&quot;) then this
+ * lookup prefix is used.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the &lt;b&gt;relative path&lt;/b&gt; has no lookup prefix then the lookup prefix of
+ * &lt;b&gt;base path&lt;/b&gt; is used (if any).
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the &lt;b&gt;relative path&lt;/b&gt; has different lookup prefix than &lt;b&gt;base path&lt;/b&gt;
+ * lookup then relative path is considered like an absolute path.
+ * &lt;/p&gt;
+ * 
+ * &lt;table&gt;
+ * &lt;caption&gt;Exemple of results&lt;/caption&gt; &lt;thead&gt;
+ * &lt;tr&gt;
+ * &lt;th&gt;description&lt;/th&gt;
+ * &lt;th&gt;base path&lt;/th&gt;
+ * &lt;th&gt;relative path&lt;/th&gt;
+ * &lt;th&gt;result&lt;/th&gt;
+ * &lt;/tr&gt;
+ * &lt;/thead&gt; &lt;tbody&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;resolve as child&lt;/td&gt;
+ * &lt;td&gt;classpath:/template/&lt;/td&gt;
+ * &lt;td&gt;images/foo.png&lt;/td&gt;
+ * &lt;td&gt;classpath:/template/images/foo.png&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;resolve as sibling&lt;/td&gt;
+ * &lt;td&gt;classpath:/template/register.html&lt;/td&gt;
+ * &lt;td&gt;images/foo.png&lt;/td&gt;
+ * &lt;td&gt;classpath:/template/images/foo.png&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;resolve as sibling&lt;/td&gt;
+ * &lt;td&gt;classpath:/template&lt;/td&gt;
+ * &lt;td&gt;images/foo.png&lt;/td&gt;
+ * &lt;td&gt;classpath:/images/foo.png&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;absolute path&lt;/td&gt;
+ * &lt;td&gt;/template/&lt;/td&gt;
+ * &lt;td&gt;/images/foo.png&lt;/td&gt;
+ * &lt;td&gt;/images/foo.png&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;absolute path (keep lookup)&lt;/td&gt;
+ * &lt;td&gt;classpath:/template/&lt;/td&gt;
+ * &lt;td&gt;/images/foo.png&lt;/td&gt;
+ * &lt;td&gt;classpath:/images/foo.png&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;different lookups&lt;/td&gt;
+ * &lt;td&gt;classpath:/template/&lt;/td&gt;
+ * &lt;td&gt;file:images/foo.png&lt;/td&gt;
+ * &lt;td&gt;file:images/foo.png&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;/tbody&gt;
+ * &lt;/table&gt;
+ * 
+ * &lt;p&gt;
+ * This implementation that requires the list of known lookups.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class LookupAwareRelativePathResolver implements RelativePathResolver {
+	private final List&lt;LookupMetadata&gt; lookupsMeta;
+
+	/**
+	 * Initializes with the list of known lookups (indexed by type).
+	 * 
+	 * @param lookupsIndexedByType
+	 *            the lookups indexed by type
+	 */
+	public LookupAwareRelativePathResolver(Map&lt;String, List&lt;String&gt;&gt; lookupsIndexedByType) {
+<span class="fc" id="L107">		super();</span>
+<span class="fc" id="L108">		this.lookupsMeta = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		for (Entry&lt;String, List&lt;String&gt;&gt; entry : lookupsIndexedByType.entrySet()) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">			for (String lookup : entry.getValue()) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">				if (!lookup.isEmpty()) {</span>
+<span class="fc" id="L112">					lookupsMeta.add(new LookupMetadata(lookup, entry.getKey()));</span>
+				}
+<span class="fc" id="L114">			}</span>
+<span class="fc" id="L115">		}</span>
+<span class="fc" id="L116">	}</span>
+
+	@Override
+	public RelativePath resolve(ResourcePath source, ResourcePath relativePath) {
+<span class="fc" id="L120">		return new RelativePath(source, relativePath, getMergedPath(source, relativePath));</span>
+	}
+
+	@Override
+	public RelativePath resolve(ResourcePath source, String relativePath) {
+<span class="fc" id="L125">		return resolve(source, new UnresolvedPath(relativePath));</span>
+	}
+
+	private String getMergedPath(ResourcePath source, ResourcePath relativePath) {
+<span class="fc" id="L129">		String relativeLookup = getLookup(relativePath.getOriginalPath());</span>
+<span class="fc" id="L130">		String sourceLookup = getLookup(source.getOriginalPath());</span>
+		// not the same lookup
+		// =&gt; not the same system to load
+		// =&gt; not relative
+<span class="fc bfc" id="L134" title="All 4 branches covered.">		if (relativeLookup != null &amp;&amp; !isSameLookupType(relativeLookup, sourceLookup)) {</span>
+<span class="fc" id="L135">			return relativePath.getOriginalPath();</span>
+		}
+		// if path points to a directory
+		// =&gt; append the relative path
+		// if path points to a file
+		// =&gt; replace file by the relative path
+<span class="fc bfc" id="L141" title="All 2 branches covered.">		Path merged = Paths.get(withoutLookup(source instanceof ResolvedPath ? ((ResolvedPath) source).getResolvedPath() : source.getOriginalPath()));</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		if (isDirectory(source.getOriginalPath())) {</span>
+<span class="fc" id="L143">			merged = merged.resolve(withoutLookup(relativePath.getOriginalPath()));</span>
+		} else {
+<span class="fc" id="L145">			merged = merged.resolveSibling(withoutLookup(relativePath.getOriginalPath()));</span>
+		}
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		if (relativeLookup != null) {</span>
+<span class="fc" id="L148">			return relativeLookup + ResourceUtils.toResourcePath(merged);</span>
+		}
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		if (sourceLookup != null) {</span>
+<span class="fc" id="L151">			return sourceLookup + ResourceUtils.toResourcePath(merged);</span>
+		}
+<span class="fc" id="L153">		return ResourceUtils.toResourcePath(merged);</span>
+	}
+
+	private boolean isSameLookupType(String relativeLookup, String sourceLookup) {
+<span class="fc" id="L157">		LookupMetadata relativeMeta = getLookupMeta(relativeLookup);</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if (relativeMeta == null) {</span>
+<span class="nc" id="L159">			return false;</span>
+		}
+<span class="fc" id="L161">		return relativeMeta.isSameType(getLookupMeta(sourceLookup));</span>
+	}
+
+	private LookupMetadata getLookupMeta(String lookup) {
+<span class="fc bfc" id="L165" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">			if (meta.getLookup().equals(lookup)) {</span>
+<span class="fc" id="L167">				return meta;</span>
+			}
+<span class="fc" id="L169">		}</span>
+<span class="fc" id="L170">		return null;</span>
+	}
+
+	private static boolean isDirectory(String path) {
+<span class="fc" id="L174">		return path.endsWith(&quot;/&quot;);</span>
+	}
+
+	private String withoutLookup(String path) {
+<span class="fc bfc" id="L178" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
+<span class="pc bpc" id="L179" title="1 of 4 branches missed.">			if (!meta.getLookup().isEmpty() &amp;&amp; path.startsWith(meta.getLookup())) {</span>
+<span class="fc" id="L180">				return path.substring(meta.getLookup().length());</span>
+			}
+<span class="fc" id="L182">		}</span>
+<span class="fc" id="L183">		return path;</span>
+	}
+
+	private String getLookup(String path) {
+<span class="fc bfc" id="L187" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">			if (!meta.getLookup().isEmpty() &amp;&amp; path.startsWith(meta.getLookup())) {</span>
+<span class="fc" id="L189">				return meta.getLookup();</span>
+			}
+<span class="fc" id="L191">		}</span>
+<span class="fc" id="L192">		return null;</span>
+	}
+
+	private static class LookupMetadata {
+		private final String lookup;
+		private final String type;
+
+		public LookupMetadata(String lookup, String type) {
+<span class="fc" id="L200">			super();</span>
+<span class="fc" id="L201">			this.lookup = lookup;</span>
+<span class="fc" id="L202">			this.type = type;</span>
+<span class="fc" id="L203">		}</span>
+
+		public boolean isSameType(LookupMetadata lookupMeta) {
+<span class="fc bfc" id="L206" title="All 2 branches covered.">			if (lookupMeta == null) {</span>
+<span class="fc" id="L207">				return false;</span>
+			}
+<span class="fc" id="L209">			return type.equals(lookupMeta.getType());</span>
+		}
+
+		public String getLookup() {
+<span class="fc" id="L213">			return lookup;</span>
+		}
+
+		public String getType() {
+<span class="fc" id="L217">			return type;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

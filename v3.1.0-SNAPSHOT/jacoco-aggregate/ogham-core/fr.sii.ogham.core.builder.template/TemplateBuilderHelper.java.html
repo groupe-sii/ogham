@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TemplateBuilderHelper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.template</a> &gt; <span class="el_source">TemplateBuilderHelper.java</span></div><h1>TemplateBuilderHelper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.template;
+
+import static fr.sii.ogham.core.util.BuilderUtils.instantiateBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.priority.ImplementationPriorityProvider;
+import fr.sii.ogham.core.builder.priority.PriorityProvider;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.template.detector.FixedEngineDetector;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
+import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser.TemplateImplementation;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.core.util.PriorizedList;
+import fr.sii.ogham.template.common.adapter.FailIfNotFoundVariantResolver;
+import fr.sii.ogham.template.common.adapter.FailIfNotFoundWithTestedPathsVariantResolver;
+import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
+import fr.sii.ogham.template.common.adapter.NullVariantResolver;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
+
+/**
+ * Helps to configure a {@link TemplateParser} builder.
+ * 
+ * &lt;p&gt;
+ * It registers and uses {@link Builder}s to instantiate and configure
+ * {@link TemplateParser} specialized implementations.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * It also configures how to handle missing variant (either fail or do nothing).
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder used by custom
+ *            {@link TemplateParser} {@link Builder}
+ */
+public class TemplateBuilderHelper&lt;P&gt; {
+<span class="fc" id="L53">	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilderHelper.class);</span>
+
+	private final P parent;
+	private final List&lt;Builder&lt;? extends TemplateParser&gt;&gt; templateBuilders;
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;TemplateBuilderHelper&lt;P&gt;, Boolean&gt; missingVariantFailValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;TemplateBuilderHelper&lt;P&gt;, Boolean&gt; listPossiblePathsValueBuilder;
+	private final PriorityProvider&lt;TemplateParser&gt; priorityProvider;
+	private VariantResolver missingResolver;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling and() method of any registered {@link TemplateParser}
+	 * {@link Builder}. The {@link EnvironmentBuilder} is used to evaluate
+	 * properties at build time (used by {@link TemplateParser}
+	 * {@link Builder}s).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public TemplateBuilderHelper(P parent, BuildContext buildContext) {
+<span class="fc" id="L76">		super();</span>
+<span class="fc" id="L77">		this.parent = parent;</span>
+<span class="fc" id="L78">		this.buildContext = buildContext;</span>
+<span class="fc" id="L79">		templateBuilders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L80">		missingVariantFailValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L81">		listPossiblePathsValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L82">		priorityProvider = new ImplementationPriorityProvider&lt;&gt;(buildContext);</span>
+<span class="fc" id="L83">	}</span>
+
+	/**
+	 * Indicates if some {@link TemplateParser} {@link Builder}s have been
+	 * registered
+	 * 
+	 * @return true if at least one builder has been registered
+	 */
+	public boolean hasRegisteredTemplates() {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">		return !templateBuilders.isEmpty();</span>
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * &lt;p&gt;
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #failIfMissingVariant()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code failIfMissingVariant(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param fail
+	 *            fail if a variant is missing
+	 * @return this instance for fluent chaining
+	 */
+	public TemplateBuilderHelper&lt;P&gt; failIfMissingVariant(Boolean fail) {
+<span class="nc" id="L137">		missingVariantFailValueBuilder.setValue(fail);</span>
+<span class="nc" id="L138">		return this;</span>
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * &lt;p&gt;
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #failIfMissingVariant(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;TemplateBuilderHelper&lt;P&gt;, Boolean&gt; failIfMissingVariant() {
+<span class="fc" id="L185">		return missingVariantFailValueBuilder;</span>
+	}
+
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #listPossiblePaths()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code listPossiblePaths(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable/disable tracking of possible paths for template
+	 *            variants
+	 * @return this instance for fluent chaining
+	 */
+	public TemplateBuilderHelper&lt;P&gt; listPossiblePaths(Boolean enable) {
+<span class="nc" id="L225">		listPossiblePathsValueBuilder.setValue(enable);</span>
+<span class="nc" id="L226">		return this;</span>
+	}
+
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #listPossiblePaths(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;TemplateBuilderHelper&lt;P&gt;, Boolean&gt; listPossiblePaths() {
+<span class="fc" id="L267">		return listPossiblePathsValueBuilder;</span>
+	}
+
+	/**
+	 * Provide custom resolver that will handle a missing variant.
+	 * 
+	 * @param resolver
+	 *            the custom resolver
+	 */
+	public void missingVariant(VariantResolver resolver) {
+<span class="nc" id="L277">		this.missingResolver = resolver;</span>
+<span class="nc" id="L278">	}</span>
+
+	/**
+	 * Registers and configures a {@link TemplateParser} through a dedicated
+	 * builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .register(ThymeleafEmailBuilder.class)
+	 *     .detector(new ThymeleafEngineDetector());
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may implement {@link VariantBuilder} to handle
+	 * template {@link Variant}s (used for {@link MultiTemplateContent} that
+	 * provide a single path to templates with different extensions for
+	 * example).
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may also implement {@link DetectorBuilder} in order
+	 * to indicate which kind of templates your {@link TemplateParser} is able
+	 * to parse. If your template parse is able to parse any template file you
+	 * are using, you may not need to implement {@link DetectorBuilder}.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with two arguments:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The type of the parent builder ({@code &amp;lt;P&amp;gt;})&lt;/li&gt;
+	 * &lt;li&gt;The {@link EnvironmentBuilder} instance&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * If you don't care about chaining, just provide a default constructor.
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;B&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public &lt;B extends Builder&lt;? extends TemplateParser&gt;&gt; B register(Class&lt;B&gt; builderClass) {
+		// if already registered =&gt; provide same instance
+<span class="fc bfc" id="L323" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">			if (builderClass.isAssignableFrom(builder.getClass())) {</span>
+<span class="fc" id="L325">				return (B) builder;</span>
+			}
+<span class="fc" id="L327">		}</span>
+		// create the builder instance
+<span class="fc" id="L329">		B builder = instantiateBuilder(builderClass, parent, buildContext);</span>
+<span class="fc" id="L330">		templateBuilders.add(builder);</span>
+<span class="fc" id="L331">		return builder;</span>
+	}
+
+	/**
+	 * Build the template parser according to options previously enabled. If
+	 * only one template engine has been activated then the parser will be this
+	 * template engine parser. If there are several activated engines, then the
+	 * builder will generate an {@link AutoDetectTemplateParser}. This kind of
+	 * parser is able to detect which parser to use according to the provided
+	 * template at runtime. The auto-detection is delegated to each defined
+	 * {@link TemplateEngineDetector} associated with each engine.
+	 * 
+	 * @return the template parser instance
+	 * @throws BuildException
+	 *             when template parser couldn't be initialized
+	 */
+	public TemplateParser buildTemplateParser() {
+		// TODO: handle enable?
+<span class="fc" id="L349">		List&lt;TemplateImplementation&gt; impls = buildTemplateParserImpls();</span>
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">		if (impls.isEmpty()) {</span>
+			// if no template parser available =&gt; exception
+<span class="nc" id="L352">			throw new BuildException(&quot;No parser available. Either disable template features or register a template engine&quot;);</span>
+		}
+<span class="fc bfc" id="L354" title="All 2 branches covered.">		if (impls.size() == 1) {</span>
+			// if no detector defined or only one available parser =&gt; do not use
+			// auto detection
+<span class="fc" id="L357">			TemplateParser parser = impls.get(0).getParser();</span>
+<span class="fc" id="L358">			LOG.info(&quot;Using single template engine: {}&quot;, parser);</span>
+<span class="fc" id="L359">			return parser;</span>
+		}
+<span class="fc" id="L361">		LOG.info(&quot;Using auto detection mechanism&quot;);</span>
+<span class="fc" id="L362">		LOG.debug(&quot;Auto detection mechanisms: {}&quot;, impls);</span>
+<span class="fc" id="L363">		return buildContext.register(new AutoDetectTemplateParser(impls));</span>
+	}
+
+	/**
+	 * Instantiates and configures the variant resolution. Variant resolution is
+	 * a chain of resolvers. The first resolver that is able to resolve a
+	 * variant is used. If no resolver is able to resolve a variant, it uses the
+	 * default variant resolver (see {@link #failIfMissingVariant(Boolean)} and
+	 * {@link #missingVariant(VariantResolver)}).
+	 * 
+	 * @return the variant resolver
+	 */
+	public VariantResolver buildVariant() {
+<span class="fc" id="L376">		FirstExistingResourceVariantResolver variantResolver = buildContext.register(new FirstExistingResourceVariantResolver(buildDefaultVariantResolver()));</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">			if (builder instanceof VariantBuilder) {</span>
+<span class="fc" id="L379">				variantResolver.addVariantResolver(((VariantBuilder&lt;?&gt;) builder).buildVariant());</span>
+			}
+<span class="fc" id="L381">		}</span>
+<span class="fc" id="L382">		return variantResolver;</span>
+	}
+
+	@SuppressWarnings(&quot;squid:S5411&quot;)
+	private VariantResolver buildDefaultVariantResolver() {
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">		if (missingResolver != null) {</span>
+<span class="nc" id="L388">			return missingResolver;</span>
+		}
+<span class="fc bfc" id="L390" title="All 2 branches covered.">		if (missingVariantFailValueBuilder.getValue(false)) {</span>
+<span class="fc" id="L391">			return buildFailingVariantResolver();</span>
+		}
+<span class="fc" id="L393">		return buildContext.register(new NullVariantResolver());</span>
+	}
+
+	@SuppressWarnings(&quot;squid:S5411&quot;)
+	private VariantResolver buildFailingVariantResolver() {
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">		if (!listPossiblePathsValueBuilder.getValue(false)) {</span>
+<span class="nc" id="L399">			return buildContext.register(new FailIfNotFoundVariantResolver());</span>
+		}
+<span class="fc" id="L401">		FailIfNotFoundWithTestedPathsVariantResolver failResolver = new FailIfNotFoundWithTestedPathsVariantResolver();</span>
+<span class="fc bfc" id="L402" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">			if (builder instanceof VariantBuilder) {</span>
+<span class="fc" id="L404">				failResolver.addVariantResolver(((VariantBuilder&lt;?&gt;) builder).buildVariant());</span>
+			}
+<span class="fc" id="L406">		}</span>
+<span class="fc" id="L407">		return buildContext.register(failResolver);</span>
+	}
+
+	private List&lt;TemplateImplementation&gt; buildTemplateParserImpls() {
+<span class="fc" id="L411">		PriorizedList&lt;TemplateImplementation&gt; impls = new PriorizedList&lt;&gt;();</span>
+<span class="fc bfc" id="L412" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+			TemplateEngineDetector detector;
+<span class="fc bfc" id="L414" title="All 2 branches covered.">			if (builder instanceof DetectorBuilder) {</span>
+<span class="fc" id="L415">				detector = ((DetectorBuilder&lt;?&gt;) builder).buildDetector();</span>
+			} else {
+<span class="fc" id="L417">				detector = buildContext.register(new FixedEngineDetector(true));</span>
+			}
+<span class="fc" id="L419">			TemplateParser templateParser = builder.build();</span>
+<span class="fc" id="L420">			impls.register(new TemplateImplementation(detector, templateParser), priorityProvider.provide(templateParser));</span>
+<span class="fc" id="L421">		}</span>
+<span class="fc" id="L422">		return impls.getOrdered();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

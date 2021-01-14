@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>StringResourceResolver.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package fr.sii.ogham.core.resource.resolver;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static java.nio.charset.StandardCharsets.UTF_8;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.List;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.exception.resource.ResourceResolutionException;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.resource.Resource;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.resource.SimpleResource;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.resource.path.ResolvedPath;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.resource.path.ResolvedString;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.resource.path.ResourcePath;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * Resource resolver that just wraps the resource string into a {@link Resource}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @author Aur&#233;lien Baudet</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class StringResourceResolver extends AbstractPrefixedLookupPathResolver {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public StringResourceResolver(List&#60;String&#62; lookups) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;super(lookups);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public StringResourceResolver(String... lookups) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;super(lookups);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_29'/>
+29
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_29'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;protected Resource getResource(ResolvedPath resourcePath) throws ResourceResolutionException {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;// no lookup used</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_33'/>
+33
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_33'>3</a>
+<span>
+1. getResource : negated conditional &rarr; NO_COVERAGE<br/>
+2. getResource : negated conditional &rarr; KILLED<br/>
+3. getResource : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if(resourcePath instanceof ResolvedString) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_34'/>
+34
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_34'>2</a>
+<span>
+1. getResource : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; NO_COVERAGE<br/>
+2. getResource : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return new SimpleResource(((ResolvedString) resourcePath).getContent().getBytes(UTF_8));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_36'/>
+36
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_36'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;// when lookup is used</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_37'/>
+37
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_37'>3</a>
+<span>
+1. getResource : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; NO_COVERAGE<br/>
+2. getResource : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; KILLED<br/>
+3. getResource : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return new SimpleResource(resourcePath.getResolvedPath().getBytes(UTF_8));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_38'/>
+38
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_38'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_39'/>
+39
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_39'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_41'/>
+41
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_41'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public boolean supports(ResourcePath path) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_42'/>
+42
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_42'>21</a>
+<span>
+1. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; NO_COVERAGE<br/>
+2. supports : negated conditional &rarr; NO_COVERAGE<br/>
+3. supports : negated conditional &rarr; NO_COVERAGE<br/>
+4. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; TIMED_OUT<br/>
+5. supports : negated conditional &rarr; TIMED_OUT<br/>
+6. supports : negated conditional &rarr; TIMED_OUT<br/>
+7. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED<br/>
+8. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED<br/>
+9. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED<br/>
+10. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED<br/>
+11. supports : replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED<br/>
+12. supports : negated conditional &rarr; KILLED<br/>
+13. supports : negated conditional &rarr; KILLED<br/>
+14. supports : negated conditional &rarr; KILLED<br/>
+15. supports : negated conditional &rarr; KILLED<br/>
+16. supports : negated conditional &rarr; KILLED<br/>
+17. supports : negated conditional &rarr; KILLED<br/>
+18. supports : negated conditional &rarr; KILLED<br/>
+19. supports : negated conditional &rarr; KILLED<br/>
+20. supports : negated conditional &rarr; KILLED<br/>
+21. supports : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return path instanceof ResolvedString || super.supports(path);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_43'/>
+43
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_43'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_44'/>
+44
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_44'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_45'/>
+45
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_45'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_46'/>
+46
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_46'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public ResolvedPath resolve(ResourcePath path) {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_47'/>
+47
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_47'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;// no lookup used</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_48'/>
+48
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_48'>5</a>
+<span>
+1. resolve : negated conditional &rarr; NO_COVERAGE<br/>
+2. resolve : negated conditional &rarr; KILLED<br/>
+3. resolve : negated conditional &rarr; KILLED<br/>
+4. resolve : negated conditional &rarr; KILLED<br/>
+5. resolve : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (path instanceof ResolvedString) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_49'/>
+49
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_49'>3</a>
+<span>
+1. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; NO_COVERAGE<br/>
+2. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; SURVIVED<br/>
+3. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (ResolvedString) path;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_50'/>
+50
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_50'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_51'/>
+51
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_51'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;// when lookup is used</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_52'/>
+52
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_52'>5</a>
+<span>
+1. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; NO_COVERAGE<br/>
+2. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED<br/>
+3. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED<br/>
+4. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED<br/>
+5. resolve : replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return super.resolve(path);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_53'/>
+53
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_53'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_54'/>
+54
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_54'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2e510454_55'/>
+55
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_55'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_33'>33</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_33'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.string(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.thymeleafHtmlStringFreemarkerTextString(oghamall.it.email.EmailMultiTemplateTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_34'>34</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_34'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>oghamall.it.email.FluentEmailTest.bodyTemplateString(oghamall.it.email.FluentEmailTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_37'>37</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_37'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.thymeleafHtmlStringFreemarkerTextString(oghamall.it.email.EmailMultiTemplateTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getResource<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.string(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::getResource &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_42'>42</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_42'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamall.it.html.translator.JsoupInlineCssTranslatorTest.unreadableCss(oghamall.it.html.translator.JsoupInlineCssTranslatorTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.notFound(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.notFound(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.none(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/resource/resolver/StringResourceResolver::supports &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamall.it.html.translator.JsoupInlineCssTranslatorTest.unreadableCss(oghamall.it.html.translator.JsoupInlineCssTranslatorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.none(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.notFound(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.notFound(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>15.<span><b>15</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafDetectorTest.notFound(oghamthymeleafv3.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>16.<span><b>16</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamall.it.html.translator.JsoupInlineCssTranslatorTest.unreadableCss(oghamall.it.html.translator.JsoupInlineCssTranslatorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>17.<span><b>17</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamthymeleafv2.it.ThymeleafDetectorTest.notFound(oghamthymeleafv2.it.ThymeleafDetectorTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>18.<span><b>18</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='NO_COVERAGE'><span class='pop'>19.<span><b>19</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>20.<span><b>20</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.none(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>21.<span><b>21</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_48'>48</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_48'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamall.it.email.FluentEmailTest.bodyTemplateString(oghamall.it.email.FluentEmailTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.string(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_49'>49</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_49'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamall.it.email.FluentEmailTest.bodyTemplateString(oghamall.it.email.FluentEmailTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; SURVIVED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2e510454_52'>52</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2e510454_52'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamall.it.email.FluentEmailTest.bodyTemplateString(oghamall.it.email.FluentEmailTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>oghamcore.it.core.resource.resolver.FirstSupportingResolverTest.string(oghamcore.it.core.resource.resolver.FirstSupportingResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>resolve<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/resource/resolver/StringResourceResolver::resolve &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+</ul>
+
+<br/>
+
+Report generated by <a href='http://pitest.org'>PIT</a> OGHAM
+
+</body>
+</html>

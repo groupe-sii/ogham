@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BuilderUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">BuilderUtils.java</span></div><h1>BuilderUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringJoiner;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.convert.Converter;
+import fr.sii.ogham.core.convert.DefaultConverter;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.fluent.Parent;
+import fr.sii.ogham.email.builder.EmailBuilder;
+
+/**
+ * Helper class for {@link Builder} implementations. It separates the builder
+ * implementations from the environment.
+ * 
+ * @author Aurélien Baudet
+ * @see Builder
+ */
+public final class BuilderUtils {
+	private static Converter converter;
+
+	/**
+	 * Provide the default properties. For now, it provides only
+	 * {@link System#getProperties()}. But according to the environment or the
+	 * future of the module, properties may come from other source.
+	 * 
+	 * @return the default properties
+	 */
+	public static Properties getDefaultProperties() {
+<span class="fc" id="L36">		return System.getProperties();</span>
+	}
+
+	/**
+	 * If the property value is an expression ({@code &quot;${property.key}&quot;}), then
+	 * it is evaluated to get the value of &quot;property.key&quot;. If the value is not
+	 * an expression, the value is returned and converted to the result class.
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the resulting property
+	 * @param property
+	 *            the property that may be an expression
+	 * @param propertyResolver
+	 *            the property resolver used to find property value (if it is an
+	 *            expression)
+	 * @param resultClass
+	 *            the result class
+	 * @return the resulting value of the expression, the value or null
+	 */
+	public static &lt;T&gt; T evaluate(String property, PropertyResolver propertyResolver, Class&lt;T&gt; resultClass) {
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		if (isExpression(property)) {</span>
+<span class="fc" id="L57">			return propertyResolver.getProperty(getPropertyKey(property), resultClass);</span>
+		}
+<span class="nc" id="L59">		return getConverter().convert(property, resultClass);</span>
+	}
+
+	/**
+	 * Evaluate a list of properties that may contain expressions. It internally
+	 * calls {@link #evaluate(String, PropertyResolver, Class)}. It tries on
+	 * first property in the list. If {@code null} value is returned then the
+	 * next property is tried and so on until one property returns a non-null
+	 * value.
+	 * 
+	 * &lt;p&gt;
+	 * If all properties return null, it returns null.
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of resulting value
+	 * @param properties
+	 *            the list of properties to try in sequence
+	 * @param propertyResolver
+	 *            the property resolver used to find property value (if it is an
+	 *            expression)
+	 * @param resultClass
+	 *            the result class
+	 * @return the resulting value or null
+	 */
+	public static &lt;T&gt; T evaluate(List&lt;String&gt; properties, PropertyResolver propertyResolver, Class&lt;T&gt; resultClass) {
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">		if (properties == null) {</span>
+<span class="nc" id="L85">			return null;</span>
+		}
+<span class="fc bfc" id="L87" title="All 2 branches covered.">		for (String prop : properties) {</span>
+<span class="fc" id="L88">			T value = evaluate(prop, propertyResolver, resultClass);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">			if (value != null) {</span>
+<span class="fc" id="L90">				return value;</span>
+			}
+<span class="fc" id="L92">		}</span>
+<span class="fc" id="L93">		return null;</span>
+	}
+
+	/**
+	 * Get the property of inside the expression
+	 * 
+	 * @param expression
+	 *            the property expression
+	 * @return the property key
+	 */
+	public static String getPropertyKey(String expression) {
+<span class="fc" id="L104">		return expression.substring(2, expression.length() - 1);</span>
+	}
+
+	/**
+	 * Indicates if the property is the form of an expression
+	 * (&quot;${property.key}&quot;) or not.
+	 * 
+	 * @param property
+	 *            the property that may be an expression
+	 * @return true if it is an expression, false otherwise
+	 */
+	public static boolean isExpression(String property) {
+<span class="pc bpc" id="L116" title="3 of 6 branches missed.">		return property != null &amp;&amp; property.startsWith(&quot;${&quot;) &amp;&amp; property.endsWith(&quot;}&quot;);</span>
+	}
+
+	/**
+	 * Change the converter used by ByulderUtils
+	 * 
+	 * @param converter
+	 *            the new converter
+	 */
+	public static void setConverter(Converter converter) {
+<span class="nc" id="L126">		BuilderUtils.converter = converter;</span>
+<span class="nc" id="L127">	}</span>
+
+	// @formatter:off
+	/**
+	 * Utility method used to dynamically instantiate a builder instance.
+	 * 
+	 * &lt;p&gt;
+	 * If you want fluent chaining, your builder class &lt;strong&gt;MUST&lt;/strong&gt;
+	 * declare parent of type {@code P} as first parameter. The builder can
+	 * implement {@link Parent} or even extend {@link AbstractParent}. For
+	 * example, if builder is a child of {@link EmailBuilder}:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * class MyBuilder extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;Foo&gt; {
+	 *   public MyBuilder(EmailBuilder parent) {
+	 *     super(parent);
+	 *   }
+	 * }
+	 * }&lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * You may need {@link BuildContext} in order to be able to evaluate
+	 * properties in your {@link Builder#build()} method. Just declare a
+	 * parameter of type {@link BuildContext} either as first parameter if
+	 * you don't want fluent chaining:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * class MyBuilder implements Builder&lt;Foo&gt; {
+	 *   public MyBuilder(BuildContext buildContext) {
+	 *     this.buildContext = buildContext;
+	 *   }
+	 * }
+	 * }&lt;/pre&gt;
+	 * 
+	 * or as second parameter if you want fluent chaining:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * class MyBuilder extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;Foo&gt; {
+	 *   public MyBuilder(EmailBuilder parent, BuildContext buildContext) {
+	 *     super(parent);
+	 *     this.buildContext = buildContext;
+	 *   }
+	 * }
+	 * }&lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * If you need none of these features, you still have to provide a public
+	 * default constructor.
+	 * 
+	 * &lt;p&gt;
+	 * If several constructors exist, the following order is used (first
+	 * matching constructor is used):
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@code contructor(P parent, BuildContext buildContext)}&lt;/li&gt;
+	 * &lt;li&gt;{@code contructor(P parent}&lt;/li&gt;
+	 * &lt;li&gt;{@code contructor(BuildContext buildContext)}&lt;/li&gt;
+	 * &lt;li&gt;{@code contructor(}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param &lt;T&gt;
+	 *            The type of the built object
+	 * @param &lt;B&gt;
+	 *            The type of the builder that builds T
+	 * @param &lt;P&gt;
+	 *            The type of the parent builder (used for fluent chaining)
+	 * @param builderClass
+	 *            The builder class to instantiate
+	 * @param parent
+	 *            The parent builder for fluent chaining
+	 * @param buildContext
+	 *            The current build context
+	 * @return the builder instance
+	 * @throws BuildException
+	 *             when builder can't be instantiated
+	 */
+	// @formatter:on
+	@SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
+	public static &lt;T, B extends Builder&lt;? extends T&gt;, P&gt; B instantiateBuilder(Class&lt;B&gt; builderClass, P parent, BuildContext buildContext) throws BuildException {
+		try {
+<span class="fc" id="L211">			return instantiate(builderClass, parent, buildContext);</span>
+<span class="fc" id="L212">		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | IllegalArgumentException e) {</span>
+<span class="fc" id="L213">			throw new BuildException(&quot;Can't instantiate builder from class &quot; + builderClass.getSimpleName(), e);</span>
+		}
+	}
+
+	/**
+	 * Build the instance using the provided builder.
+	 * 
+	 * &lt;p&gt;
+	 * If builder is {@code null}, it returns {@code null}.
+	 * 
+	 * &lt;p&gt;
+	 * If builder is not {@code null}, the value of {@link Builder#build()} is
+	 * used. The returned value may be {@code null}.
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the built instance
+	 * @param builder
+	 *            the builder
+	 * @return the built instance or null if builder is null or if it returns
+	 *         null
+	 */
+	public static &lt;T&gt; T build(Builder&lt;T&gt; builder) {
+<span class="fc bfc" id="L235" title="All 2 branches covered.">		if (builder == null) {</span>
+<span class="fc" id="L236">			return null;</span>
+		}
+<span class="fc" id="L238">		return builder.build();</span>
+	}
+
+	private static &lt;T, B extends Builder&lt;? extends T&gt;, P&gt; B instantiate(Class&lt;B&gt; builderClass, P parent, BuildContext buildContext)
+			throws InstantiationException, IllegalAccessException, InvocationTargetException {
+		try {
+<span class="fc" id="L244">			return builderClass.getConstructor(parent.getClass(), BuildContext.class).newInstance(parent, buildContext);</span>
+<span class="fc" id="L245">		} catch (NoSuchMethodException e) {</span>
+			// skip
+		}
+		try {
+<span class="nc" id="L249">			return builderClass.getConstructor(parent.getClass()).newInstance(parent);</span>
+<span class="fc" id="L250">		} catch (NoSuchMethodException e) {</span>
+			// skip
+		}
+		try {
+<span class="nc" id="L254">			return builderClass.getConstructor(BuildContext.class).newInstance(buildContext);</span>
+<span class="fc" id="L255">		} catch (NoSuchMethodException e) {</span>
+			// skip
+		}
+		try {
+<span class="fc" id="L259">			return builderClass.getConstructor().newInstance();</span>
+<span class="fc" id="L260">		} catch (NoSuchMethodException e) {</span>
+			// skip
+		}
+<span class="fc" id="L263">		StringJoiner joiner = new StringJoiner(&quot;\n- &quot;, &quot;\n- &quot;, &quot;\n&quot;);</span>
+<span class="fc" id="L264">		joiner.add(&quot;constructor(&quot; + parent.getClass().getName() + &quot;, &quot; + BuildContext.class.getName() + &quot;)\n   if you want fluent chaining and inherit current build context&quot;);</span>
+<span class="fc" id="L265">		joiner.add(&quot;constructor(&quot; + parent.getClass().getName() + &quot;)\n   if you want fluent chaining&quot;);</span>
+<span class="fc" id="L266">		joiner.add(&quot;constructor(&quot; + BuildContext.class.getName() + &quot;)\n   if you don't want fluent chaining but inherit current build context&quot;);</span>
+<span class="fc" id="L267">		joiner.add(&quot;constructor()\n   if you don't want fluent chaining and inherit current build context&quot;);</span>
+<span class="fc" id="L268">		throw new BuildException(&quot;No matching constructor found. The builder implementation must provide one of following constructors:&quot; + joiner.toString());</span>
+	}
+
+	private static Converter getConverter() {
+<span class="nc bnc" id="L272" title="All 2 branches missed.">		if (converter == null) {</span>
+<span class="nc" id="L273">			converter = new DefaultConverter();</span>
+		}
+<span class="nc" id="L275">		return converter;</span>
+	}
+
+	private BuilderUtils() {
+		super();
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstMatchingMimetypeReplacer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.mimetype.replace</a> &gt; <span class="el_source">FirstMatchingMimetypeReplacer.java</span></div><h1>FirstMatchingMimetypeReplacer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.mimetype.replace;
+
+import java.util.List;
+
+/**
+ * Delegates mimetype replacement to registered replacers.
+ * 
+ * The first replacer is applied. If the mimetype has been replaced, then no
+ * other replacer is called and the replaced mimetype is returned. If the first
+ * replacer hasn't replaced the mimetype, the second replacer is applied and so
+ * on until one replace has replaced the mimetype.
+ * 
+ * If no replacer has replaced the mimetype, the original mimetype is returned.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FirstMatchingMimetypeReplacer implements MimetypeReplacer {
+	private final List&lt;MimetypeReplacer&gt; delegates;
+
+	/**
+	 * Initialize with the list of delegate replacers that are applied in order.
+	 * 
+	 * @param delegates
+	 *            the replacers to apply
+	 */
+	public FirstMatchingMimetypeReplacer(List&lt;MimetypeReplacer&gt; delegates) {
+<span class="fc" id="L28">		super();</span>
+<span class="fc" id="L29">		this.delegates = delegates;</span>
+<span class="fc" id="L30">	}</span>
+
+	@Override
+	public String replace(String mimetype) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		for (MimetypeReplacer replacer : delegates) {</span>
+<span class="fc" id="L35">			String replaced = replacer.replace(mimetype);</span>
+			// if replacement has been applied
+<span class="fc bfc" id="L37" title="All 2 branches covered.">			if (!replaced.equals(mimetype)) {</span>
+<span class="fc" id="L38">				return replaced;</span>
+			}
+<span class="fc" id="L40">		}</span>
+<span class="fc" id="L41">		return mimetype;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

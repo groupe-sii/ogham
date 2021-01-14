@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessageException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.exception</a> &gt; <span class="el_source">MessageException.java</span></div><h1>MessageException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.exception;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * Base exception related to a message that is about to be sent.
+ * It provides the message that couldn't be sent for any reason.
+ * 
+ * This exception has subclasses that indicate the reason of the failure.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MessageException extends MessagingException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final transient Message message;
+
+	public MessageException(String message, Message msg, Throwable cause) {
+<span class="fc" id="L22">		super(message, cause);</span>
+<span class="fc" id="L23">		this.message = msg;</span>
+<span class="fc" id="L24">	}</span>
+
+	public MessageException(String message, Message msg) {
+<span class="fc" id="L27">		super(message);</span>
+<span class="fc" id="L28">		this.message = msg;</span>
+<span class="fc" id="L29">	}</span>
+
+	public MessageException(Throwable cause, Message msg) {
+<span class="nc" id="L32">		super(cause);</span>
+<span class="nc" id="L33">		this.message = msg;</span>
+<span class="nc" id="L34">	}</span>
+
+	public Message getOghamMessage() {
+<span class="fc" id="L37">		return message;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

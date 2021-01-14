@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MimeTypeDetectionException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.exception.mimetype</a> &gt; <span class="el_source">MimeTypeDetectionException.java</span></div><h1>MimeTypeDetectionException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.exception.mimetype;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+/**
+ * Ogham is able to automatically detect mimetype of a resource. The detection
+ * mechanism may fail in many cases:
+ * &lt;ul&gt;
+ * &lt;li&gt;Resource is unreadable&lt;/li&gt;
+ * &lt;li&gt;The guessed mimetype is invalid&lt;/li&gt;
+ * &lt;li&gt;Detector is unable to correctly determine the mimetype&lt;/li&gt;
+ * &lt;li&gt;The detected mimetype is not allowed&lt;/li&gt;
+ * &lt;li&gt;...&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * This is a general exception and it has subclasses to indicate additional
+ * information about the failure.
+ * 
+ * @author Aurélien Baudet
+ * 
+ * @see InvalidMimetypeException
+ * @see NoMimetypeDetectorException
+ * @see UnallowedMimeTypeException
+ *
+ */
+public class MimeTypeDetectionException extends MimeTypeException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	public MimeTypeDetectionException(String message, Throwable cause) {
+<span class="fc" id="L30">		super(message, cause);</span>
+<span class="fc" id="L31">	}</span>
+
+	public MimeTypeDetectionException(String message) {
+<span class="fc" id="L34">		super(message);</span>
+<span class="fc" id="L35">	}</span>
+
+	public MimeTypeDetectionException(Throwable cause) {
+<span class="nc" id="L38">		super(cause);</span>
+<span class="nc" id="L39">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

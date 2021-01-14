@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EqualsBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">EqualsBuilder.java</span></div><h1>EqualsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import static fr.sii.ogham.core.util.StringUtils.capitalize;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import fr.sii.ogham.core.exception.util.FieldAccessException;
+
+/**
+ * &lt;p&gt;
+ * Assists in implementing Object.equals(Object) methods. This code is an
+ * abstraction of {@link org.apache.commons.lang3.builder.EqualsBuilder}
+ * provided by Apache Commons Lang. The aim is not to be sticked with Apache
+ * Commons Lang and to be able to use another library or to adapt the library to
+ * use according of libraries that are in the classpath.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This class provides methods to build a good equals method for any class. It
+ * follows rules laid out in Effective Java , by Joshua Bloch. In particular the
+ * rule for comparing doubles, floats, and arrays can be tricky. Also, making
+ * sure that equals() and hashCode() are consistent can be difficult.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * Two Objects that compare as equals must generate the same hash code, but two
+ * Objects with the same hash code do not have to be equal.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * All relevant fields should be included in the calculation of equals. Derived
+ * fields may be ignored. In particular, any field used in generating a hash
+ * code must be used in the equals method, and vice versa.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * Typical use for the code is as follows:
+ * &lt;/p&gt;
+ * 
+ * &lt;pre&gt;&lt;code&gt;
+ * public boolean equals(Object obj) {
+ * 	return new EqualsBuilder(this, obj)
+ * 			.appendSuper(super.equals(obj))
+ * 			.appendFields(&amp;quot;field1&amp;quot;, &amp;quot;field2&amp;quot;, &amp;quot;field3&amp;quot;)
+ * 			.equals();
+ * }
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * &lt;p&gt;
+ * Alternatively, there is a method that uses reflection to determine the fields
+ * to test. Because these fields are usually private, the method,
+ * reflectionEquals, uses AccessibleObject.setAccessible to change the
+ * visibility of the fields. This will fail under a security manager, unless the
+ * appropriate permissions are set up correctly. It is also slower than testing
+ * explicitly. Non-primitive fields are compared using equals().
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * A typical invocation for this method would look like:
+ * &lt;/p&gt;
+ * 
+ * &lt;pre&gt;
+ * public boolean equals(Object obj) {
+ * 	return EqualsBuilder.reflectionEquals(this, obj);
+ * }
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class EqualsBuilder {
+	/**
+	 * The current object
+	 */
+	private Object object;
+
+	/**
+	 * The other object to compare the object
+	 */
+	private Object other;
+
+	/**
+	 * The equality result
+	 */
+	private boolean equals;
+
+	/**
+	 * The delegate implementation (currently Apache Commons but could be
+	 * anything)
+	 */
+	private org.apache.commons.lang3.builder.EqualsBuilder delegate;
+
+	/**
+	 * Are the two objects referencing the same instance
+	 */
+	private boolean same;
+
+	/**
+	 * Initialize the builder. This version doesn't check if:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;the other object is null&lt;/li&gt;
+	 * &lt;li&gt;the other object is the same as the current object&lt;/li&gt;
+	 * &lt;li&gt;the two object classes are identical&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+	public EqualsBuilder() {
+<span class="nc" id="L108">		super();</span>
+<span class="nc" id="L109">		delegate = new org.apache.commons.lang3.builder.EqualsBuilder();</span>
+<span class="nc" id="L110">		equals = true;</span>
+<span class="nc" id="L111">		same = false;</span>
+<span class="nc" id="L112">	}</span>
+
+	/**
+	 * Initialize the builder. This version checks if:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;the other object is null&lt;/li&gt;
+	 * &lt;li&gt;the other object is the same as the current object&lt;/li&gt;
+	 * &lt;li&gt;the two object classes are identical&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Using this version lets you use the shortcut
+	 * {@link #appendFields(String...)}
+	 * &lt;/p&gt;
+	 * 
+	 * @param object
+	 *            the current object
+	 * @param other
+	 *            the other object
+	 */
+	public EqualsBuilder(Object object, Object other) {
+<span class="fc" id="L133">		super();</span>
+<span class="fc" id="L134">		this.object = object;</span>
+<span class="fc" id="L135">		this.other = other;</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">		same = object == other;</span>
+<span class="fc bfc" id="L137" title="All 6 branches covered.">		equals = same || (other != null &amp;&amp; object.getClass() == other.getClass());</span>
+<span class="fc" id="L138">		delegate = new org.apache.commons.lang3.builder.EqualsBuilder();</span>
+<span class="fc" id="L139">	}</span>
+
+	/**
+	 * Test if two Objects are equal using their equals method.
+	 * 
+	 * @param objectFieldValue
+	 *            the value of a field of the object
+	 * @param otherFieldValue
+	 *            the value of a field of the other object
+	 * @return used to chain calls
+	 */
+	public EqualsBuilder append(Object objectFieldValue, Object otherFieldValue) {
+<span class="nc bnc" id="L151" title="All 4 branches missed.">		if (equals &amp;&amp; !same) {</span>
+<span class="nc" id="L152">			delegate.append(objectFieldValue, otherFieldValue);</span>
+		}
+<span class="nc" id="L154">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Test if the two previously registered objects have the same value for
+	 * each provided field name.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Because these fields are usually private, this method uses
+	 * AccessibleObject.setAccessible to change the visibility of the fields.
+	 * This will fail under a security manager, unless the appropriate
+	 * permissions are set up correctly. It is also slower than testing
+	 * explicitly. Non-primitive fields are compared using equals().
+	 * &lt;/p&gt;
+	 * 
+	 * @param fields
+	 *            the name of fields to compare between the previously
+	 *            registered objects
+	 * @return used to chain calls
+	 * @throws IllegalStateException
+	 *             when calling this method but you haven't used the constructor
+	 *             {@link #EqualsBuilder(Object, Object)}
+	 * @throws FieldAccessException
+	 *             when the field is not accessible or cannot be read
+	 */
+	public EqualsBuilder appendFields(String... fields) {
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">		if (object == null) {</span>
+<span class="nc" id="L183">			throw new IllegalStateException(&quot;You can't use this method if you didn't use the constructor with object and other parameters&quot;);</span>
+		}
+<span class="fc bfc" id="L185" title="All 4 branches covered.">		if (equals &amp;&amp; !same) {</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">			for (String field : fields) {</span>
+				try {
+<span class="fc" id="L188">					delegate.append(getFieldValue(object, field), getFieldValue(other, field));</span>
+<span class="nc" id="L189">				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {</span>
+<span class="nc" id="L190">					throw new FieldAccessException(&quot;Failed to access field &quot; + field, e);</span>
+<span class="fc" id="L191">				}</span>
+			}
+		}
+<span class="fc" id="L194">		return this;</span>
+	}
+
+	/**
+	 * Adds the result of super.equals() to this builder.
+	 * 
+	 * @param superEquals
+	 *            the result of calling super.equals()
+	 * @return used to chain calls
+	 */
+	public EqualsBuilder appendSuper(boolean superEquals) {
+<span class="nc bnc" id="L205" title="All 4 branches missed.">		if (equals &amp;&amp; !same) {</span>
+<span class="nc" id="L206">			delegate.appendSuper(superEquals);</span>
+		}
+<span class="nc" id="L208">		return this;</span>
+	}
+
+	/**
+	 * Returns true if the fields that have been checked are all equal.
+	 * 
+	 * @return true if objects are equal, false otherwise
+	 */
+	public boolean isEqual() {
+<span class="fc bfc" id="L217" title="All 6 branches covered.">		return same || (equals &amp;&amp; delegate.isEquals());</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * This method uses reflection to determine if the two Objects are equal.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If a getter exists, it uses the getter otherwise direct access to the
+	 * field is used. It uses AccessibleObject.setAccessible to gain access to
+	 * private fields. This means that it will throw a security exception if run
+	 * under a security manager, if the permissions are not set up correctly. It
+	 * is also not as efficient as testing explicitly. Non-primitive fields are
+	 * compared using equals().
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Transient members will be not be tested, as they are likely derived
+	 * fields, and not part of the value of the Object.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Static fields will not be tested. Superclass fields will be included.
+	 * &lt;/p&gt;
+	 * 
+	 * @param object
+	 *            this object
+	 * @param other
+	 *            the other object
+	 * @param excludeFields
+	 *            array of field names to exclude from testing
+	 * @return true if the two Objects have tested equals.
+	 */
+	public static boolean reflectionsEquals(Object object, Object other, String... excludeFields) {
+<span class="nc" id="L252">		return org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals(object, other, excludeFields);</span>
+	}
+
+	private static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException, InvocationTargetException {
+<span class="fc" id="L256">		Method getter = findMethod(object, &quot;is&quot; + capitalize(fieldName));</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">		if (getter == null) {</span>
+<span class="fc" id="L258">			getter = findMethod(object, &quot;get&quot; + capitalize(fieldName));</span>
+		}
+<span class="fc bfc" id="L260" title="All 2 branches covered.">		if (getter != null) {</span>
+<span class="fc" id="L261">			return getter.invoke(object);</span>
+		}
+<span class="fc" id="L263">		Field field = getField(object, fieldName);</span>
+<span class="fc" id="L264">		field.setAccessible(true);</span>
+<span class="fc" id="L265">		return field.get(object);</span>
+	}
+
+	private static Method findMethod(Object object, String methodName) {
+		try {
+<span class="fc" id="L270">			return object.getClass().getMethod(methodName);</span>
+<span class="fc" id="L271">		} catch (NoSuchMethodException e) {</span>
+<span class="fc" id="L272">			return null;</span>
+		}
+	}
+
+	private static Field getField(Object object, String fieldName) throws NoSuchFieldException {
+<span class="fc" id="L277">		Class&lt;?&gt; clazz = object.getClass();</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">		while (clazz != null) {</span>
+<span class="fc" id="L279">			Field[] fields = clazz.getDeclaredFields();</span>
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">			for (Field f : fields) {</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">				if (fieldName.equals(f.getName())) {</span>
+<span class="fc" id="L282">					return f;</span>
+				}
+			}
+<span class="nc" id="L285">			clazz = clazz.getSuperclass();</span>
+<span class="nc" id="L286">		}</span>
+<span class="nc" id="L287">		throw new NoSuchFieldException(&quot;Field &quot; + fieldName + &quot; not found on object &quot; + object.getClass());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

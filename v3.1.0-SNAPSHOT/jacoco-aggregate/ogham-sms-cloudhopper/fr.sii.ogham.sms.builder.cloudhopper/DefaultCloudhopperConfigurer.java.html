@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultCloudhopperConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">DefaultCloudhopperConfigurer.java</span></div><h1>DefaultCloudhopperConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_AUTO_DATA_CODING_SCHEME_ENABLED;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_AUTO_GUESS_ENABLED;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_BIND_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_BIND_TYPE;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CHARSET;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CONNECT_MAX_RETRIES;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CONNECT_RETRY_DELAY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CONNECT_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_ENQUIRE_LINK_INTERVAL;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_ENQUIRE_LINK_RESPONSE_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_ENQUIRE_LINK_REUSE_RESPONSE_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_GSM7BIT_PACKED_ENCODING_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_GSM8_ENCODING_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_INTERFACE_VERSION;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_KEEP_ALIVE_CONNECT_AT_STARTUP;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_KEEP_ALIVE_ENABLED;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_KEEP_ALIVE_MAX_CONSECUTIVE_TIMEOUTS;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_LAST_INTERACTION_EXPIRATION_DELAY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_LATIN1_ENCODING_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_REQUEST_EXPIRY_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_REUSE_SESSION_ENABLED;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_SMPP_PORT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_SPLIT_ENABLED;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_UCS2_ENCODING_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_USE_SHORT_MESSAGE;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_USE_TLV_MESSAGE_PAYLOAD;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WINDOW_MONITOR_INTERVAL;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WINDOW_SIZE;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WINDOW_WAIT_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WRITE_TIMEOUT;
+import static fr.sii.ogham.sms.builder.cloudhopper.CloudhopperRetryablePredicates.canResendMessage;
+import static fr.sii.ogham.sms.builder.cloudhopper.CloudhopperRetryablePredicates.canRetryConnecting;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
+
+/**
+ * Default configurer for Cloudhoppder that is automatically applied every time
+ * a {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 40000 in order to be applied after
+ * templating configurers.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if {@code com.cloudhopper.smpp.SmppClient} is
+ * present in the classpath. If not present, Cloudhopper implementation is not
+ * registered at all.
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link BuildContext}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures SMPP protocol:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.host&quot; or &quot;ogham.sms.smpp.host&quot;
+ * property if defined for SMPP server host address (IP or hostname)&lt;/li&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.port&quot; or &quot;ogham.sms.smpp.port&quot;
+ * property if defined for SMPP server port. Default port is 25&lt;/li&gt;
+ * &lt;li&gt;It uses &quot;ogham.sms.cloudhopper.interface-version&quot; property if defined for
+ * the version of the protocol. Default is &quot;3.4&quot;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures authentication:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.system-id&quot; or
+ * &quot;ogham.sms.smpp.system-id&quot; property if defined for to identify an ESME (
+ * External Short Message Entity) or an SMSC (Short Message Service Centre) at
+ * bind time&lt;/li&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.password&quot; or
+ * &quot;ogham.sms.smpp.password&quot; property if defined for an optional password&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures text message encoding:
+ * &lt;ul&gt;
+ * &lt;li&gt;It enables &lt;a href=&quot;https://en.wikipedia.org/wiki/GSM_03.38&quot;&gt;GSM
+ * 03.38&lt;/a&gt; encoding support. It automatically guess the supported encoding in
+ * order to use the minimum octets for the text message:
+ * &lt;ul&gt;
+ * &lt;li&gt;It can encode using GSM 7-bit default alphabet if the message contains
+ * only characters defined in the table. Message is packed so the message can
+ * have a maximum length of 160 characters instead of 140.&lt;br&gt;
+ * It uses one of &quot;ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority&quot; or
+ * &quot;ogham.sms.encoder.gsm7bit-packed.priority&quot; to set priority of GSM 7-bit
+ * encoding.&lt;br&gt;
+ * Default priority is set to 0 (disabled by default because most of providers
+ * don't support it).&lt;/li&gt;
+ * &lt;li&gt;It encodes using GSM 8-bit data encoding if the message contains only
+ * characters that can be encoded on one octet.&lt;br&gt;
+ * It uses one of &quot;ogham.sms.cloudhopper.encoder.gsm8bit.priority&quot; or
+ * &quot;ogham.sms.encoder.gsm8bit.priority&quot; to set priority of GSM 8-bit
+ * encoding.&lt;br&gt;
+ * Default priority is set to 99000.&lt;/li&gt;
+ * &lt;li&gt;It encodes using UCS-2 encoding if the message contains special
+ * characters (Unicode characters) that can't be encoded on one octet. Each
+ * character is encoded on two octets.&lt;br&gt;
+ * It uses one of &quot;ogham.sms.cloudhopper.encoder.ucs2.priority&quot; or
+ * &quot;ogham.sms.encoder.ucs2.priority&quot; to set priority of GSM 8-bit encoding.&lt;br&gt;
+ * Default priority is set to 98000.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;If for any reason the message can't be encoded with standard encoding or
+ * auto-guess is disabled, the default behavior is used:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses &quot;ogham.sms.cloudhopper.encoder.default-charset&quot; property to
+ * encode messages using &quot;GSM&quot; (8-bit) charset&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures message splitting:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses {@link GsmMessageSplitter} to split messages according to encoding:
+ * &lt;ul&gt;
+ * &lt;li&gt;If message is encoded using GSM 7-bit alphabet (7 bits per character),
+ * one message of 160 characters can fit in a single segment of 140 octets (160
+ * characters * 7 / 8). If the message is over 160 characters, the message is
+ * split in 140 octet segments including a 6 octet header meaning that each
+ * segment can transport 153 characters ((140 - 6) * 8 / 7) and a partial
+ * character (remaining octet).&lt;/li&gt;
+ * &lt;li&gt;If message is encoded using GSM 8-bit alphabet (1 octet per character),
+ * one message of 140 characters can fit in a single segment of 140 octets. If
+ * the message is over 140 characters, the message is split in 140 octet
+ * segments including a 6 octet header meaning that each segment can transport
+ * 134 characters (140 - 6).&lt;/li&gt;
+ * &lt;li&gt;If message is encoded using UCS-2 alphabet (2 octets per character), one
+ * message of 70 characters can fit in a single segment of 140 octets (70
+ * characters * 2). If the message is over 70 characters, the message is split
+ * in 140 octet segments including a 6 octet header meaning that each segment
+ * can transport 67 characters ((140 - 6) / 2).&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures session management:
+ * &lt;ul&gt;
+ * &lt;li&gt;Timeouts through properties&lt;/li&gt;
+ * &lt;li&gt;The window management through properties&lt;/li&gt;
+ * &lt;li&gt;The connection retry handling through properties&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class DefaultCloudhopperConfigurer {
+<span class="fc" id="L166">	private static final Logger LOG = LoggerFactory.getLogger(DefaultCloudhopperConfigurer.class);</span>
+
+	@ConfigurerFor(targetedBuilder = &quot;standard&quot;, priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
+<span class="fc" id="L169">	public static class CloudhopperConfigurer implements MessagingConfigurer {</span>
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">			if (!canUseCloudhopper()) {</span>
+<span class="nc" id="L173">				LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="nc" id="L174">				return;</span>
+			}
+<span class="fc" id="L176">			LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+			// add additional checks to indicate that a message should not be
+			// retried in some circumstances
+<span class="fc" id="L179">			msgBuilder.sms().autoRetry().retryable(canResendMessage()::and);</span>
+			// configure message sender
+<span class="fc" id="L181">			CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);</span>
+			// @formatter:off
+<span class="fc" id="L183">			builder</span>
+<span class="fc" id="L184">				.systemId().properties(&quot;${ogham.sms.cloudhopper.system-id}&quot;, &quot;${ogham.sms.smpp.system-id}&quot;).and()</span>
+<span class="fc" id="L185">				.password().properties(&quot;${ogham.sms.cloudhopper.password}&quot;, &quot;${ogham.sms.smpp.password}&quot;).and()</span>
+<span class="fc" id="L186">				.host().properties(&quot;${ogham.sms.cloudhopper.host}&quot;, &quot;${ogham.sms.smpp.host}&quot;).and()</span>
+<span class="fc" id="L187">				.port().properties(&quot;${ogham.sms.cloudhopper.port}&quot;, &quot;${ogham.sms.smpp.port}&quot;).defaultValue(overrideIfNotSet(DEFAULT_SMPP_PORT)).and()</span>
+<span class="fc" id="L188">				.bindType().properties(&quot;${ogham.sms.cloudhopper.bind-type}&quot;, &quot;${ogham.sms.smpp.bind-type}&quot;).defaultValue(overrideIfNotSet(DEFAULT_BIND_TYPE)).and()</span>
+<span class="fc" id="L189">				.systemType().properties(&quot;${ogham.sms.cloudhopper.system-type}&quot;, &quot;${ogham.sms.smpp.system-type}&quot;).and()</span>
+<span class="fc" id="L190">				.interfaceVersion().properties(&quot;${ogham.sms.cloudhopper.interface-version}&quot;).defaultValue(overrideIfNotSet(DEFAULT_INTERFACE_VERSION)).and()</span>
+<span class="fc" id="L191">				.userData()</span>
+<span class="fc" id="L192">					.useShortMessage().properties(&quot;${ogham.sms.cloudhopper.user-data.use-short-message}&quot;, &quot;${ogham.sms.smpp.user-data.use-short-message}&quot;).defaultValue(overrideIfNotSet(DEFAULT_USE_SHORT_MESSAGE)).and()</span>
+<span class="fc" id="L193">					.useTlvMessagePayload().properties(&quot;${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}&quot;, &quot;${ogham.sms.smpp.user-data.use-tlv-message-payload}&quot;).defaultValue(overrideIfNotSet(DEFAULT_USE_TLV_MESSAGE_PAYLOAD)).and()</span>
+<span class="fc" id="L194">					.and()</span>
+<span class="fc" id="L195">				.encoder()</span>
+					// packed algorithm disabled by default because it is not supported by most of providers
+<span class="fc" id="L197">					.gsm7bitPacked().properties(&quot;${ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority}&quot;, &quot;${ogham.sms.smpp.encoder.gsm7bit-packed.priority}&quot;).defaultValue(overrideIfNotSet(DEFAULT_GSM7BIT_PACKED_ENCODING_PRIORITY)).and()</span>
+<span class="fc" id="L198">					.gsm8bit().properties(&quot;${ogham.sms.cloudhopper.encoder.gsm8bit.priority}&quot;, &quot;${ogham.sms.smpp.encoder.gsm8bit.priority}&quot;).defaultValue(overrideIfNotSet(DEFAULT_GSM8_ENCODING_PRIORITY)).and()</span>
+<span class="fc" id="L199">					.latin1().properties(&quot;${ogham.sms.cloudhopper.encoder.latin1.priority}&quot;, &quot;${ogham.sms.smpp.encoder.latin1.priority}&quot;).defaultValue(overrideIfNotSet(DEFAULT_LATIN1_ENCODING_PRIORITY)).and()</span>
+<span class="fc" id="L200">					.ucs2().properties(&quot;${ogham.sms.cloudhopper.encoder.ucs2.priority}&quot;, &quot;${ogham.sms.smpp.encoder.ucs2.priority}&quot;).defaultValue(overrideIfNotSet(DEFAULT_UCS2_ENCODING_PRIORITY)).and()</span>
+<span class="fc" id="L201">					.autoGuess().properties(&quot;${ogham.sms.cloudhopper.encoder.auto-guess.enable}&quot;, &quot;${ogham.sms.smpp.encoder.auto-guess.enable}&quot;).defaultValue(overrideIfNotSet(DEFAULT_AUTO_GUESS_ENABLED)).and()</span>
+<span class="fc" id="L202">					.fallback().properties(&quot;${ogham.sms.cloudhopper.encoder.default-charset}&quot;, &quot;${ogham.sms.smpp.encoder.default-charset}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CHARSET)).and()</span>
+<span class="fc" id="L203">					.and()</span>
+<span class="fc" id="L204">				.splitter()</span>
+<span class="fc" id="L205">					.enable().properties(&quot;${ogham.sms.cloudhopper.split.enable}&quot;, &quot;${ogham.sms.smpp.split.enable}&quot;, &quot;${ogham.sms.split.enable}&quot;).defaultValue(overrideIfNotSet(DEFAULT_SPLIT_ENABLED)).and()</span>
+<span class="fc" id="L206">					.referenceNumber()</span>
+<span class="fc" id="L207">						.random()</span>
+<span class="fc" id="L208">						.and()</span>
+<span class="fc" id="L209">					.and()</span>
+<span class="fc" id="L210">				.dataCodingScheme()</span>
+<span class="fc" id="L211">					.auto().properties(&quot;${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}&quot;, &quot;${ogham.sms.smpp.data-coding-scheme.auto.enable}&quot;).defaultValue(overrideIfNotSet(DEFAULT_AUTO_DATA_CODING_SCHEME_ENABLED)).and()</span>
+<span class="fc" id="L212">					.value().properties(&quot;${ogham.sms.cloudhopper.data-coding-scheme.value}&quot;, &quot;${ogham.sms.smpp.data-coding-scheme.value}&quot;).and()</span>
+<span class="fc" id="L213">					.and()</span>
+<span class="fc" id="L214">				.session()</span>
+<span class="fc" id="L215">					.sessionName().properties(&quot;${ogham.sms.cloudhopper.session.name}&quot;).and()</span>
+<span class="fc" id="L216">					.bindTimeout().properties(&quot;${ogham.sms.cloudhopper.session.bind-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_BIND_TIMEOUT)).and()</span>
+<span class="fc" id="L217">					.connectTimeout().properties(&quot;${ogham.sms.cloudhopper.session.connect-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CONNECT_TIMEOUT)).and()</span>
+<span class="fc" id="L218">					.requestExpiryTimeout().properties(&quot;${ogham.sms.cloudhopper.session.request-expiry-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_REQUEST_EXPIRY_TIMEOUT)).and()</span>
+<span class="fc" id="L219">					.windowMonitorInterval().properties(&quot;${ogham.sms.cloudhopper.session.window-monitor-interval}&quot;).defaultValue(overrideIfNotSet(DEFAULT_WINDOW_MONITOR_INTERVAL)).and()</span>
+<span class="fc" id="L220">					.windowSize().properties(&quot;${ogham.sms.cloudhopper.session.window-size}&quot;).defaultValue(overrideIfNotSet(DEFAULT_WINDOW_SIZE)).and()</span>
+<span class="fc" id="L221">					.windowWait().properties(&quot;${ogham.sms.cloudhopper.session.window-wait-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_WINDOW_WAIT_TIMEOUT)).and()</span>
+<span class="fc" id="L222">					.writeTimeout().properties(&quot;${ogham.sms.cloudhopper.session.write-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_WRITE_TIMEOUT)).and()</span>
+<span class="fc" id="L223">					.responseTimeout().properties(&quot;${ogham.sms.cloudhopper.session.response-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_RESPONSE_TIMEOUT)).and()</span>
+<span class="fc" id="L224">					.unbindTimeout().properties(&quot;${ogham.sms.cloudhopper.session.unbind-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_UNBIND_TIMEOUT)).and()</span>
+<span class="fc" id="L225">					.reuseSession()</span>
+<span class="fc" id="L226">						.enable().properties(&quot;${ogham.sms.cloudhopper.session.reuse-session.enable}&quot;).defaultValue(overrideIfNotSet(DEFAULT_REUSE_SESSION_ENABLED)).and()</span>
+<span class="fc" id="L227">						.lastInteractionExpiration().properties(&quot;${ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay}&quot;).defaultValue(overrideIfNotSet(DEFAULT_LAST_INTERACTION_EXPIRATION_DELAY)).and()</span>
+<span class="fc" id="L228">						.responseTimeout().properties(&quot;${ogham.sms.cloudhopper.session.reuse-session.response-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_ENQUIRE_LINK_REUSE_RESPONSE_TIMEOUT)).and()</span>
+<span class="fc" id="L229">						.and()</span>
+<span class="fc" id="L230">					.keepAlive()</span>
+<span class="fc" id="L231">						.enable().properties(&quot;${ogham.sms.cloudhopper.session.keep-alive.enable}&quot;).defaultValue(overrideIfNotSet(DEFAULT_KEEP_ALIVE_ENABLED)).and()</span>
+<span class="fc" id="L232">						.interval().properties(&quot;${ogham.sms.cloudhopper.session.keep-alive.request-interval}&quot;).defaultValue(overrideIfNotSet(DEFAULT_ENQUIRE_LINK_INTERVAL)).and()</span>
+<span class="fc" id="L233">						.responseTimeout().properties(&quot;${ogham.sms.cloudhopper.session.keep-alive.response-timeout}&quot;).defaultValue(overrideIfNotSet(DEFAULT_ENQUIRE_LINK_RESPONSE_TIMEOUT)).and()</span>
+<span class="fc" id="L234">						.connectAtStartup().properties(&quot;${ogham.sms.cloudhopper.session.keep-alive.connect-at-startup}&quot;).defaultValue(overrideIfNotSet(DEFAULT_KEEP_ALIVE_CONNECT_AT_STARTUP)).and()</span>
+<span class="fc" id="L235">						.maxConsecutiveTimeouts().properties(&quot;${ogham.sms.cloudhopper.session.keep-alive.max-consecutive-timeouts}&quot;).defaultValue(overrideIfNotSet(DEFAULT_KEEP_ALIVE_MAX_CONSECUTIVE_TIMEOUTS)).and()</span>
+<span class="fc" id="L236">						.and()</span>
+<span class="fc" id="L237">					.connectRetry()</span>
+<span class="fc" id="L238">						.retryable(canRetryConnecting())</span>
+<span class="fc" id="L239">						.fixedDelay()</span>
+<span class="fc" id="L240">							.maxRetries().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.max-attempts}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()</span>
+<span class="fc" id="L241">							.delay().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CONNECT_RETRY_DELAY)).and()</span>
+<span class="fc" id="L242">							.and()</span>
+<span class="fc" id="L243">						.exponentialDelay()</span>
+<span class="fc" id="L244">							.maxRetries().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.max-attempts}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()</span>
+<span class="fc" id="L245">							.initialDelay().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.exponential-initial-delay}&quot;).and()</span>
+<span class="fc" id="L246">							.and()</span>
+<span class="fc" id="L247">						.perExecutionDelay()</span>
+<span class="fc" id="L248">							.maxRetries().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.max-attempts}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()</span>
+<span class="fc" id="L249">							.delays().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.per-execution-delays}&quot;).and()</span>
+<span class="fc" id="L250">							.and()</span>
+<span class="fc" id="L251">						.fixedInterval()</span>
+<span class="fc" id="L252">							.maxRetries().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.max-attempts}&quot;).defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()</span>
+<span class="fc" id="L253">							.interval().properties(&quot;${ogham.sms.cloudhopper.session.connect-retry.execution-interval}&quot;);</span>
+			// @formatter:on
+<span class="fc" id="L255">		}</span>
+
+		private static boolean canUseCloudhopper() {
+<span class="fc" id="L258">			return ClasspathUtils.exists(&quot;com.cloudhopper.smpp.SmppClient&quot;);</span>
+		}
+	}
+
+	private DefaultCloudhopperConfigurer() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

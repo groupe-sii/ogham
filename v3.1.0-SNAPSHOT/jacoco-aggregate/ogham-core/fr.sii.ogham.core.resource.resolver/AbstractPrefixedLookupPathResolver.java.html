@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractPrefixedLookupPathResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.resolver</a> &gt; <span class="el_source">AbstractPrefixedLookupPathResolver.java</span></div><h1>AbstractPrefixedLookupPathResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.resolver;
+
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+
+/**
+ * ResourceResolver using a list of supported lookups to compute a simple
+ * {@link ResolvedResourcePath} where resolved path is simply the given path
+ * without the lookup. Eg : classpath resource &quot;classpath:/package/file&quot; to
+ * resolved path is &quot;package/file&quot;.
+ * 
+ * @author Cyril Dejonghe
+ *
+ */
+public abstract class AbstractPrefixedLookupPathResolver implements ResourceResolver {
+	private List&lt;String&gt; lookups;
+
+	protected AbstractPrefixedLookupPathResolver(List&lt;String&gt; lookups) {
+<span class="fc" id="L27">		super();</span>
+<span class="fc" id="L28">		this.lookups = lookups;</span>
+<span class="fc" id="L29">	}</span>
+
+	protected AbstractPrefixedLookupPathResolver(String... lookups) {
+<span class="fc" id="L32">		this(new ArrayList&lt;&gt;(asList(lookups)));</span>
+<span class="fc" id="L33">	}</span>
+
+	@Override
+	public boolean supports(ResourcePath path) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		return getLookup(path) != null;</span>
+	}
+
+	public String getLookup(ResourcePath path) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		for (String lookup : lookups) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">			if (path.getOriginalPath().startsWith(lookup)) {</span>
+<span class="fc" id="L43">				return lookup;</span>
+			}
+<span class="fc" id="L45">		}</span>
+<span class="fc" id="L46">		return null;</span>
+	}
+
+	/**
+	 * Find the resource using the resource path (or its name).
+	 * 
+	 * @param resourcePath
+	 *            the path of the resource
+	 * @return the found resource
+	 * @throws ResourceResolutionException
+	 *             when the resource couldn't be found
+	 */
+	protected abstract Resource getResource(ResolvedPath resourcePath) throws ResourceResolutionException;
+
+	@Override
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+<span class="fc" id="L62">		return getResource(resolve(path));</span>
+	}
+
+	@Override
+	public ResolvedPath resolve(ResourcePath path) {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		if (path instanceof ResolvedPath) {</span>
+<span class="fc" id="L68">			return (ResolvedPath) path;</span>
+		}
+<span class="fc" id="L70">		ResolvedPath result = null;</span>
+<span class="fc" id="L71">		String lookup = getLookup(path);</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">		if (lookup != null) {</span>
+<span class="fc" id="L73">			result = new ResolvedResourcePath(path, lookup, path.getOriginalPath().substring(lookup.length()));</span>
+		}
+<span class="fc" id="L75">		return result;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>IdenticalHtmlMatcher.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.hamcrest</a> &gt; <span class="el_source">IdenticalHtmlMatcher.java</span></div><h1>IdenticalHtmlMatcher.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.hamcrest;
+
+import java.util.function.Consumer;
+
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.junit.ComparisonFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+
+/**
+ * Check if the HTML is identical to the expected. The HTML strings are parsed
+ * into {@link Document}s. Two documents are considered to be &quot;identical&quot; if
+ * they contain the same elements and attributes in the same order.
+ * 
+ * &lt;p&gt;
+ * This matcher is a {@link ExpectedValueProvider} for knowing the original expected
+ * value. Thanks to this information, {@link OghamAssertions} will generate a
+ * {@link ComparisonFailure} with the expected string and actual string in order
+ * to be able to visualize the differences on sources directly in the IDE.
+ * 
+ * &lt;p&gt;
+ * See {@link HtmlUtils} for more information about &quot;identical&quot; HTML.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class IdenticalHtmlMatcher extends AbstractHtmlDiffMatcher {
+<span class="fc" id="L32">	private static final Logger LOG = LoggerFactory.getLogger(IdenticalHtmlMatcher.class);</span>
+	
+	public IdenticalHtmlMatcher(String expected) {
+<span class="fc" id="L35">		this(expected, LOG::warn);</span>
+<span class="fc" id="L36">	}</span>
+
+	public IdenticalHtmlMatcher(String expected, Consumer&lt;String&gt; printer) {
+<span class="fc" id="L39">		super(expected, printer, &quot;identical&quot;);</span>
+<span class="fc" id="L40">	}</span>
+
+	@Override
+	protected boolean matches(DetailedDiff diff) {
+<span class="fc" id="L44">		return diff.identical();</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L49">		return &quot;isIdenticalHtml('&quot;+expected+&quot;')&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

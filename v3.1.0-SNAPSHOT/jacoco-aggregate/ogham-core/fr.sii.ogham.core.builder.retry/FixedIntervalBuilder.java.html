@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FixedIntervalBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.retry</a> &gt; <span class="el_source">FixedIntervalBuilder.java</span></div><h1>FixedIntervalBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.retry;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.retry.RetryStrategy;
+import fr.sii.ogham.core.retry.SimpleRetryExecutor;
+
+/**
+ * Configures retry handling based on a fixed interval (based on first execution
+ * start date).
+ * 
+ * Retry several times with a fixed interval between each try until the maximum
+ * attempts is reached. The interval is based on the first execution start date.
+ * 
+ * For example:
+ * 
+ * &lt;pre&gt;
+ * .fixedInterval()
+ *    .interval(500)
+ *    .maxRetries(5)
+ * &lt;/pre&gt;
+ * 
+ * Means that a retry will be attempted every 500ms until 5 attempts are reached
+ * (inclusive). For example, you want to connect to an external system at t1=0
+ * and the connection timeout (100ms) is triggered at t2=100ms. Using this retry
+ * will provide the following behavior:
+ * 
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;0: connect&lt;/li&gt;
+ * &lt;li&gt;100: timeout&lt;/li&gt;
+ * &lt;li&gt;500: connect&lt;/li&gt;
+ * &lt;li&gt;600: timeout&lt;/li&gt;
+ * &lt;li&gt;1000: connect&lt;/li&gt;
+ * &lt;li&gt;1100: timeout&lt;/li&gt;
+ * &lt;li&gt;1500: connect&lt;/li&gt;
+ * &lt;li&gt;1600: timeout&lt;/li&gt;
+ * &lt;li&gt;2000: connect&lt;/li&gt;
+ * &lt;li&gt;2100: timeout&lt;/li&gt;
+ * &lt;li&gt;2500: connect&lt;/li&gt;
+ * &lt;li&gt;2600: timeout&lt;/li&gt;
+ * &lt;li&gt;fail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * &lt;strong&gt;NOTE:&lt;/strong&gt; The provided date doesn't take the duration of the
+ * execution in account. If an execution takes 1s to execute while retry delay
+ * is set to 500ms, there may have several executions in parallel. However, this
+ * totally depends on the {@link RetryExecutor} implementation. For example
+ * {@link SimpleRetryExecutor} won't run several executions in parallel. In this
+ * case, it will execute the action as soon as the previous one has failed
+ * therefore the delay may not be complied.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class FixedIntervalBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements Builder&lt;RetryStrategy&gt; {
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;FixedIntervalBuilder&lt;P&gt;, Integer&gt; maxRetriesValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;FixedIntervalBuilder&lt;P&gt;, Long&gt; intervalValueBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public FixedIntervalBuilder(P parent, BuildContext buildContext) {
+<span class="fc" id="L84">		super(parent);</span>
+<span class="fc" id="L85">		this.buildContext = buildContext;</span>
+<span class="fc" id="L86">		maxRetriesValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);</span>
+<span class="fc" id="L87">		intervalValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L88">	}</span>
+
+	/**
+	 * Set the maximum number of attempts.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #maxRetries()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code maxRetries(10)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param maxRetries
+	 *            the maximum number of attempts
+	 * @return this instance for fluent chaining
+	 */
+	public FixedIntervalBuilder&lt;P&gt; maxRetries(Integer maxRetries) {
+<span class="fc" id="L125">		this.maxRetriesValueBuilder.setValue(maxRetries);</span>
+<span class="fc" id="L126">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum number of attempts.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #maxRetries(Integer)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;FixedIntervalBuilder&lt;P&gt;, Integer&gt; maxRetries() {
+<span class="fc" id="L166">		return maxRetriesValueBuilder;</span>
+	}
+
+	/**
+	 * Set the interval between two executions (in milliseconds).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #interval()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .interval(5000L)
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .interval(5000L)
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code interval(5000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param interval
+	 *            the time between two attempts
+	 * @return this instance for fluent chaining
+	 */
+	public FixedIntervalBuilder&lt;P&gt; interval(Long interval) {
+<span class="fc" id="L204">		intervalValueBuilder.setValue(interval);</span>
+<span class="fc" id="L205">		return this;</span>
+	}
+
+	/**
+	 * Set the interval between two executions (in milliseconds).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #interval(Long)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .interval(5000L)
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 5000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;FixedIntervalBuilder&lt;P&gt;, Long&gt; interval() {
+<span class="fc" id="L245">		return intervalValueBuilder;</span>
+	}
+
+	@Override
+	public RetryStrategy build() {
+<span class="fc" id="L250">		int evaluatedMaxRetries = buildMaxRetries();</span>
+<span class="fc" id="L251">		long evaluatedInterval = buildInterval();</span>
+<span class="fc bfc" id="L252" title="All 4 branches covered.">		if (evaluatedMaxRetries == 0 || evaluatedInterval == 0) {</span>
+<span class="fc" id="L253">			return null;</span>
+		}
+<span class="fc" id="L255">		return buildContext.register(new FixedIntervalRetry(evaluatedMaxRetries, evaluatedInterval));</span>
+	}
+
+	private int buildMaxRetries() {
+<span class="fc" id="L259">		return maxRetriesValueBuilder.getValue(0);</span>
+	}
+
+	private long buildInterval() {
+<span class="fc" id="L263">		return intervalValueBuilder.getValue(0L);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

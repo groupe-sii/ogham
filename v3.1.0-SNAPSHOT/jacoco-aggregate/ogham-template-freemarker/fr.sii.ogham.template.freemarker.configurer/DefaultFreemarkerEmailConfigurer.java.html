@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFreemarkerEmailConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.configurer</a> &gt; <span class="el_source">DefaultFreemarkerEmailConfigurer.java</span></div><h1>DefaultFreemarkerEmailConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.configurer;
+
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.message.content.EmailVariant;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
+import freemarker.template.TemplateExceptionHandler;
+
+/**
+ * Default configurer for Freemarker template engine that is automatically
+ * applied every time a {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()} or {@link MessagingBuilder#minimal()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 80000 in order to be applied after global
+ * configurer but before any sender implementation.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if {@code freemarker.template.Configuration}
+ * and {@code freemarker.template.Template} are present in the classpath. If not
+ * present, template engine is not registered at all.
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link BuildContext}).
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * It also copies resource resolution configuration of
+ * {@link DefaultMessagingConfigurer} to inherit resource resolution lookups
+ * (see {@link ResourceResolutionBuilder}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures template prefix/suffix paths:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses the first property that has a value for classpath resolution prefix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.classpath.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.classpath.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Uses the first property that has a value for classpath resolution suffix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.classpath.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.classpath.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Uses the first property that has a value for file resolution prefix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.file.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.file.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Uses the first property that has a value for file resolution suffix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.file.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.file.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.freemarker.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.email.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures email alternative content:
+ * &lt;ul&gt;
+ * &lt;li&gt;Automatically loads HTML template if extension is .html.ftl&lt;/li&gt;
+ * &lt;li&gt;Automatically loads text template if extension is .txt.ftl&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures encoding:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses &quot;ogham.freemarker.default-encoding&quot; property value as charset for
+ * template parsing if defined. Default charset is UTF-8&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures template detection:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses {@link FreeMarkerTemplateDetector} to detect if templates are
+ * parseable by Freemarker&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures static method access from templates:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses property value of ${ogham.freemarker.static-method-access.enable} if
+ * provided to enable/disable static method access from templates (default is
+ * enabled is nothing is configured)&lt;/li&gt;
+ * &lt;li&gt;Uses property value of
+ * ${ogham.freemarker.static-method-access.variable-name} if provided to set the
+ * name used to access static methods from templates (default is 'statics')&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class DefaultFreemarkerEmailConfigurer {
+<span class="fc" id="L123">	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerEmailConfigurer.class);</span>
+
+	@ConfigurerFor(targetedBuilder = { &quot;minimal&quot;, &quot;standard&quot; }, priority = DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY)
+	public static class FreemakerConfigurer implements MessagingConfigurer {
+		private final MessagingConfigurerAdapter delegate;
+
+		public FreemakerConfigurer() {
+<span class="fc" id="L130">			this(new DefaultMessagingConfigurer());</span>
+<span class="fc" id="L131">		}</span>
+
+		public FreemakerConfigurer(MessagingConfigurerAdapter delegate) {
+<span class="fc" id="L134">			super();</span>
+<span class="fc" id="L135">			this.delegate = delegate;</span>
+<span class="fc" id="L136">		}</span>
+
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">			if (!canUseFreemaker()) {</span>
+<span class="fc" id="L141">				LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="fc" id="L142">				return;</span>
+			}
+<span class="fc" id="L144">			LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="fc" id="L145">			FreemarkerEmailBuilder builder = msgBuilder.email().template(FreemarkerEmailBuilder.class);</span>
+			// apply default resource resolution configuration
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">			if (delegate != null) {</span>
+<span class="fc" id="L148">				delegate.configure(builder);</span>
+			}
+			// @formatter:off
+<span class="fc" id="L151">			builder</span>
+<span class="fc" id="L152">				.classpath()</span>
+<span class="fc" id="L153">					.pathPrefix()</span>
+<span class="fc" id="L154">						.properties(&quot;${ogham.email.freemarker.classpath.path-prefix}&quot;, </span>
+									&quot;${ogham.email.template.classpath.path-prefix}&quot;, 
+									&quot;${ogham.email.freemarker.path-prefix}&quot;, 
+									&quot;${ogham.email.template.path-prefix}&quot;, 
+									&quot;${ogham.template.path-prefix}&quot;)
+<span class="fc" id="L159">						.and()</span>
+<span class="fc" id="L160">					.pathSuffix()</span>
+<span class="fc" id="L161">						.properties(&quot;${ogham.email.freemarker.classpath.path-suffix}&quot;, </span>
+									&quot;${ogham.email.template.classpath.path-suffix}&quot;, 
+									&quot;${ogham.email.freemarker.path-suffix}&quot;, 
+									&quot;${ogham.email.template.path-suffix}&quot;, 
+									&quot;${ogham.template.path-suffix}&quot;)
+<span class="fc" id="L166">						.and()</span>
+<span class="fc" id="L167">					.and()</span>
+<span class="fc" id="L168">				.file()</span>
+<span class="fc" id="L169">					.pathPrefix()</span>
+<span class="fc" id="L170">						.properties(&quot;${ogham.email.freemarker.file.path-prefix}&quot;, </span>
+									&quot;${ogham.email.template.file.path-prefix}&quot;, 
+									&quot;${ogham.email.freemarker.path-prefix}&quot;, 
+									&quot;${ogham.email.template.path-prefix}&quot;, 
+									&quot;${ogham.template.path-prefix}&quot;)
+<span class="fc" id="L175">						.and()</span>
+<span class="fc" id="L176">					.pathSuffix()</span>
+<span class="fc" id="L177">						.properties(&quot;${ogham.email.freemarker.file.path-suffix}&quot;, </span>
+									&quot;${ogham.email.template.file.path-suffix}&quot;, 
+									&quot;${ogham.email.freemarker.path-suffix}&quot;, 
+									&quot;${ogham.email.template.path-suffix}&quot;, 
+									&quot;${ogham.template.path-suffix}&quot;)
+<span class="fc" id="L182">						.and()</span>
+<span class="fc" id="L183">					.and()</span>
+<span class="fc" id="L184">				.string()</span>
+<span class="fc" id="L185">					.and()</span>
+<span class="fc" id="L186">				.variant(EmailVariant.HTML, &quot;html.ftl&quot;)</span>
+<span class="fc" id="L187">				.variant(EmailVariant.HTML, &quot;html.ftlh&quot;)</span>
+<span class="fc" id="L188">				.variant(EmailVariant.TEXT, &quot;txt.ftl&quot;)</span>
+<span class="fc" id="L189">				.variant(EmailVariant.TEXT, &quot;txt.ftlh&quot;)</span>
+<span class="fc" id="L190">				.configuration()</span>
+<span class="fc" id="L191">					.defaultEncoding().properties(&quot;${ogham.freemarker.default-encoding}&quot;).defaultValue(overrideIfNotSet(&quot;UTF-8&quot;)).and()</span>
+<span class="fc" id="L192">					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)</span>
+<span class="fc" id="L193">					.enableStaticMethodAccess().properties(&quot;${ogham.freemarker.static-method-access.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L194">					.staticMethodAccessVariableName().properties(&quot;${ogham.freemarker.static-method-access.variable-name}&quot;).defaultValue(overrideIfNotSet(&quot;statics&quot;));</span>
+			// @formatter:on
+<span class="fc" id="L196">		}</span>
+
+		private static boolean canUseFreemaker() {
+<span class="pc bpc" id="L199" title="1 of 4 branches missed.">			return ClasspathUtils.exists(&quot;freemarker.template.Configuration&quot;) &amp;&amp; ClasspathUtils.exists(&quot;freemarker.template.Template&quot;);</span>
+		}
+	}
+
+	private DefaultFreemarkerEmailConfigurer() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

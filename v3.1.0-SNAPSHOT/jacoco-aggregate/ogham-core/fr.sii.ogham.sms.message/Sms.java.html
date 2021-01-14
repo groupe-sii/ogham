@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Sms.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.message</a> &gt; <span class="el_source">Sms.java</span></div><h1>Sms.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.message;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.capability.HasContentFluent;
+import fr.sii.ogham.core.message.capability.HasRecipients;
+import fr.sii.ogham.core.message.capability.HasRecipientsFluent;
+import fr.sii.ogham.core.message.capability.HasToFluent;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
+import fr.sii.ogham.core.util.Loggable;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+import fr.sii.ogham.core.util.StringUtils;
+
+/**
+ * SMS message that contains the following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;The content of the SMS (see {@link Content} and sub classes for more
+ * information)&lt;/li&gt;
+ * &lt;li&gt;The sender information (name and phone number). Name is optional&lt;/li&gt;
+ * &lt;li&gt;The list of recipients (name and phone number). Name is optional&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class Sms implements Message, HasContentFluent&lt;Sms&gt;, HasRecipients&lt;Recipient&gt;, HasRecipientsFluent&lt;Sms, Recipient&gt;, HasToFluent&lt;Sms&gt;, Loggable {
+	/**
+	 * The number of the sender
+	 */
+	private Sender from;
+
+	/**
+	 * The list of recipients of the SMS
+	 */
+	private List&lt;Recipient&gt; recipients;
+
+	/**
+	 * The content of the SMS
+	 */
+	private Content content;
+
+	private final SingleContentBuilder&lt;Sms&gt; messageBuilder;
+
+	public Sms() {
+<span class="fc" id="L51">		super();</span>
+<span class="fc" id="L52">		recipients = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L53">		messageBuilder = new SingleContentBuilder&lt;&gt;(this);</span>
+<span class="fc" id="L54">	}</span>
+
+	// ----------------------- Getter/Setters -----------------------//
+
+	/**
+	 * Get the sender of the SMS
+	 * 
+	 * @return SMS sender
+	 */
+	public Sender getFrom() {
+<span class="fc" id="L64">		return from;</span>
+	}
+
+	/**
+	 * Set the sender of the SMS
+	 * 
+	 * @param from
+	 *            SMS sender to set
+	 */
+	public void setFrom(Sender from) {
+<span class="fc" id="L74">		this.from = from;</span>
+<span class="fc" id="L75">	}</span>
+
+	/**
+	 * Set the sender phone number of the SMS as string.
+	 * 
+	 * @param phoneNumber
+	 *            SMS sender phone number to set
+	 */
+	public void setFrom(String phoneNumber) {
+<span class="nc" id="L84">		setFrom(new Sender(phoneNumber));</span>
+<span class="nc" id="L85">	}</span>
+
+	/**
+	 * Get the recipients (to) of the SMS
+	 * 
+	 * @return SMS recipients
+	 */
+	public List&lt;Recipient&gt; getRecipients() {
+<span class="fc" id="L93">		return recipients;</span>
+	}
+
+	/**
+	 * Set the recipients (to) of the SMS
+	 * 
+	 * @param to
+	 *            SMS recipients
+	 */
+	public void setRecipients(List&lt;Recipient&gt; to) {
+<span class="nc" id="L103">		this.recipients = to;</span>
+<span class="nc" id="L104">	}</span>
+
+	@Override
+	public Content getContent() {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">		if (content != null) {</span>
+<span class="fc" id="L109">			return content;</span>
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		if (messageBuilder != null) {</span>
+<span class="fc" id="L114">			return messageBuilder.build();</span>
+		}
+<span class="fc" id="L116">		return null;</span>
+	}
+
+	@Override
+	public void setContent(Content content) {
+<span class="fc" id="L121">		this.content = content;</span>
+<span class="fc" id="L122">	}</span>
+
+	// ----------------------- Fluent API -----------------------//
+
+	/**
+	 * Set the content of the message.
+	 * 
+	 * &lt;p&gt;
+	 * You can use this method to explicitly set a particular {@link Content}
+	 * instance. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .content(new TemplateContent(&quot;path/to/template&quot;, obj));
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If you prefer, you can instead use the fluent API to set the message of
+	 * the SMS:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .message().template(&quot;path/to/template&quot;, obj)
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent chaining
+	 * @see #message()
+	 */
+	public Sms content(Content content) {
+<span class="fc" id="L155">		setContent(content);</span>
+<span class="fc" id="L156">		return this;</span>
+	}
+
+	/**
+	 * Set the content of the message. This is a shortcut to
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .content(new StringContent(content))}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If you prefer, you can instead use the fluent API to set the message of
+	 * the SMS:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .message().string(content)
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent chaining
+	 * @see #message()
+	 */
+	public Sms content(String content) {
+<span class="fc" id="L183">		return content(new StringContent(content));</span>
+	}
+
+	/**
+	 * Set the message of the SMS.
+	 * 
+	 * &lt;p&gt;
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * &lt;p&gt;
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)} or {@link #setContent(Content)} then this method
+	 * has no effect.
+	 * 
+	 * @return the builder for building text part
+	 * @since 3.0.0
+	 */
+	public SingleContentBuilder&lt;Sms&gt; message() {
+<span class="fc" id="L202">		return messageBuilder;</span>
+	}
+
+	/**
+	 * Set the sender.
+	 * 
+	 * @param from
+	 *            the sender
+	 * @return this instance for fluent chaining
+	 */
+	public Sms from(Sender from) {
+<span class="fc" id="L213">		setFrom(from);</span>
+<span class="fc" id="L214">		return this;</span>
+	}
+
+	/**
+	 * Set the list of recipients of the message
+	 *
+	 * @param recipients
+	 *            the list of recipients of the message to set
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	public Sms recipients(List&lt;Recipient&gt; recipients) {
+<span class="nc" id="L226">		setRecipients(recipients);</span>
+<span class="nc" id="L227">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient for the message
+	 *
+	 * @param recipients
+	 *            one or several recipient to add
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	public Sms recipient(Recipient... recipients) {
+<span class="fc" id="L239">		this.recipients.addAll(Arrays.asList(recipients));</span>
+<span class="fc" id="L240">		return this;</span>
+	}
+
+	/**
+	 * Set the sender using the phone number as string.
+	 * 
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent chaining
+	 */
+	public Sms from(String phoneNumber) {
+<span class="fc" id="L251">		return from(null, phoneNumber);</span>
+	}
+
+	/**
+	 * Set the sender using the phone number.
+	 * 
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent chaining
+	 */
+	public Sms from(PhoneNumber phoneNumber) {
+<span class="nc" id="L262">		return from(null, phoneNumber);</span>
+	}
+
+	/**
+	 * Set the sender using the phone number as string.
+	 * 
+	 * @param name
+	 *            the name of the sender
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent chaining
+	 */
+	public Sms from(String name, String phoneNumber) {
+<span class="fc" id="L275">		return from(name, new PhoneNumber(phoneNumber));</span>
+	}
+
+	/**
+	 * Set the sender using the phone number.
+	 * 
+	 * @param name
+	 *            the name of the sender
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent chaining
+	 */
+	public Sms from(String name, PhoneNumber phoneNumber) {
+<span class="fc" id="L288">		return from(new Sender(name, phoneNumber));</span>
+	}
+
+	/**
+	 * Add a recipient specifying the phone number.
+	 * 
+	 * @param numbers
+	 *            one or several recipient numbers
+	 * @return this instance for fluent chaining
+	 */
+	public Sms to(PhoneNumber... numbers) {
+<span class="fc bfc" id="L299" title="All 2 branches covered.">		for (PhoneNumber number : numbers) {</span>
+<span class="fc" id="L300">			to((String) null, number);</span>
+		}
+<span class="fc" id="L302">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient specifying the phone number as string.
+	 * 
+	 * @param numbers
+	 *            one or several recipient numbers
+	 * @return this instance for fluent chaining
+	 */
+	public Sms to(String... numbers) {
+<span class="fc bfc" id="L313" title="All 2 branches covered.">		for (String num : numbers) {</span>
+<span class="fc" id="L314">			to(new Recipient(num));</span>
+		}
+<span class="fc" id="L316">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient specifying the name and the phone number.
+	 * 
+	 * @param name
+	 *            the name of the recipient
+	 * @param number
+	 *            the number of the recipient
+	 * @return this instance for fluent chaining
+	 */
+	public Sms to(String name, PhoneNumber number) {
+<span class="fc" id="L329">		to(new Recipient(name, number));</span>
+<span class="fc" id="L330">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient.
+	 * 
+	 * @param recipients
+	 *            one or several recipients to add
+	 * @return this instance for fluent chaining
+	 */
+	public Sms to(Recipient... recipients) {
+<span class="fc" id="L341">		recipient(recipients);</span>
+<span class="fc" id="L342">		return this;</span>
+	}
+
+	// ----------------------- Utilities -----------------------//
+
+	/**
+	 * Converts a list of phone numbers to a list of recipients.
+	 * 
+	 * @param to
+	 *            the list of phone numbers
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(PhoneNumber[] to) {
+<span class="nc" id="L355">		Recipient[] addresses = new Recipient[to.length];</span>
+<span class="nc" id="L356">		int i = 0;</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">		for (PhoneNumber t : to) {</span>
+<span class="nc" id="L358">			addresses[i] = new Recipient(t);</span>
+<span class="nc" id="L359">			i++;</span>
+		}
+<span class="nc" id="L361">		return addresses;</span>
+	}
+
+	/**
+	 * Converts a list of string to a list of recipients.
+	 * 
+	 * @param to
+	 *            the list of phone numbers as string
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(String[] to) {
+<span class="nc" id="L372">		Recipient[] addresses = new Recipient[to.length];</span>
+<span class="nc" id="L373">		int i = 0;</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">		for (String t : to) {</span>
+<span class="nc" id="L375">			addresses[i] = new Recipient(t);</span>
+<span class="nc" id="L376">			i++;</span>
+		}
+<span class="nc" id="L378">		return addresses;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L383">		return toString(false);</span>
+	}
+
+	@Override
+	public String toLogString() {
+<span class="nc" id="L388">		return toString(true);</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L393">		return new HashCodeBuilder().append(from, recipients, getContent()).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L398">		return new EqualsBuilder(this, obj).appendFields(&quot;from&quot;, &quot;recipients&quot;, &quot;content&quot;).isEqual();</span>
+	}
+
+	private String toString(boolean includeContent) {
+<span class="fc" id="L402">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L403">		builder.append(&quot;Sms message\r\nFrom: &quot;).append(from);</span>
+<span class="fc" id="L404">		builder.append(&quot;\r\nTo: &quot;).append(StringUtils.join(recipients, &quot;, &quot;));</span>
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">		builder.append(&quot;\r\n----------------------------------\r\n&quot;).append(includeContent ? getContent() : &quot;&lt;Content skipped&gt;&quot;);</span>
+<span class="fc" id="L406">		builder.append(&quot;\r\n==================================\r\n&quot;);</span>
+<span class="fc" id="L407">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

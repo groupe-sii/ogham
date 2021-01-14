@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TypeOfNumber.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.bean</a> &gt; <span class="el_source">TypeOfNumber.java</span></div><h1>TypeOfNumber.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.bean;
+
+/**
+ * Type of Number based on SMPP version 3.4.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L9">public enum TypeOfNumber {</span>
+<span class="fc" id="L10">	UNKNOWN((byte) 0x00), </span>
+<span class="fc" id="L11">	INTERNATIONAL((byte) 0x01), </span>
+<span class="fc" id="L12">	NATIONAL((byte) 0x02), </span>
+<span class="fc" id="L13">	NETWORK_SPECIFIC((byte) 0x03), </span>
+<span class="fc" id="L14">	SUBSCRIBER_NUMBER((byte) 0x04), </span>
+<span class="fc" id="L15">	ALPHANUMERIC((byte) 0x05), </span>
+<span class="fc" id="L16">	ABBREVIATED((byte) 0x06);</span>
+
+	private final byte value;
+
+<span class="fc" id="L20">	TypeOfNumber(byte value) {</span>
+<span class="fc" id="L21">		this.value = value;</span>
+<span class="fc" id="L22">	}</span>
+
+	/**
+	 * Get the byte value of the enum constant.
+	 * 
+	 * @return the byte value.
+	 */
+	public byte value() {
+<span class="fc" id="L30">		return value;</span>
+	}
+
+	/**
+	 * Get the {@link TypeOfNumber} based on the specified byte value
+	 * representation.
+	 * 
+	 * @param value
+	 *            is the byte value representation.
+	 * @return is the enum const related to the specified byte value.
+	 * @throws IllegalArgumentException
+	 *             if there is no enum const associated with specified byte
+	 *             value.
+	 */
+	public static TypeOfNumber valueOf(byte value) {
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">		for (TypeOfNumber val : values()) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">			if (val.value == value) {</span>
+<span class="fc" id="L47">				return val;</span>
+			}
+		}
+<span class="nc" id="L50">		throw new IllegalArgumentException(&quot;No enum const TypeOfNumber with value &quot; + value);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

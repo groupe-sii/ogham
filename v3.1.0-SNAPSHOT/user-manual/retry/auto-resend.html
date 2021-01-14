@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Fixed delay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_fixed_delay">Fixed delay</a></li>
+<li><a href="#_exponential_delay">Exponential delay</a></li>
+<li><a href="#_per_execution_delay">Per execution delay</a></li>
+<li><a href="#retry-fixed-interval">Fixed interval</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some messages may fail while sending (due to network error for example).
+Ogham provides a mechanism to automatically resend a message when it fails
+under some circumstances.</p>
+</div>
+<div class="paragraph">
+<p>Ogham provides several strategies for retry management:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>fixedDelay()</code>: Wait for a fixed delay between each attempt (wait for the end of the last execution
+before start waiting)</p>
+</li>
+<li>
+<p><code>fixedInterval()</code>: Retry on fixed interval (do not wait for the end of the last execution)</p>
+</li>
+<li>
+<p><code>exponentialDelay()</code>: Wait for a delay that will be doubled between each attempt
+(wait for the end of the last execution before start waiting)</p>
+</li>
+<li>
+<p><code>perExecutionDelay()</code>: Use a specific delay for each execution (for example:
+100ms after the first execution, 500ms after the second, 8000ms after the third,
+&#8230;&#8203;)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To enable one of these strategies, don&#8217;t change your code. You just need to
+update Ogham configuration.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Default configuration</div>
+<div class="paragraph">
+<p>Default Ogham configuration (using <code>MessagingBuiler.standard()</code> or <code>MessagingBuilder.minimal()</code>)
+doesn&#8217;t enable automatic re-send of messages.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Skip retry for some errors</div>
+<div class="paragraph">
+<p>To prevent retrying for nothing, Ogham analyze the raised error (and associated causes) to skip retry.
+This happens if the exception (or cause) met one this condition:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the error is a JVM error (instance of <code>Error</code>). This kind of errors should not be ignored.</p>
+</li>
+<li>
+<p>If the preparation of the message has failed (template parsing, associated resource not found,
+mimetype detection failed, message is not valid, &#8230;&#8203;). This kind of error will always give the same
+result.</p>
+</li>
+<li>
+<p>If the developer used an invalid value (<code>null</code>, illegal argument, &#8230;&#8203;). If the value is invalid,
+there is no point in retrying.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is the default configuration for all kind of messages (email, SMS, &#8230;&#8203;). In addition to general
+exceptions, each sender implementation may register other conditions (like Cloudhopper for example
+that skip exceptions for SMS preparation).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Add custom rule to skip retry</div>
+<div class="paragraph">
+<p>You may need to skip retry for some other exceptions. Ogham lets you
+<a href="../../user-manual.html#skip-custom-exceptions">register custom conditions</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Several strategies configured</div>
+<div class="paragraph">
+<p>Even if several strategies are configured, only one can be used. Therefore, Ogham defines the following
+priority for the strategies (uses the first one that is fully configured):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>perExecutionDelay()</code></p>
+</li>
+<li>
+<p><code>exponentialDelay()</code></p>
+</li>
+<li>
+<p><code>fixedInterval()</code></p>
+</li>
+<li>
+<p><code>fixedDelay()</code></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Using interval</div>
+<div class="paragraph">
+<p>When using a strategy based on interval (not waiting for the end of the last execution), there
+may have unexpected behaviors: the current execution may not be finished while a new retry is started.
+This may lead to several messages sent with the same content for example (in case the execution
+succeeds but take longer that configured interval).</p>
+</div>
+<div class="paragraph">
+<p><a href="../../user-manual.html#retry-fixed-interval">More explanation below</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fixed_delay"><a class="anchor" href="#_fixed_delay"></a>Fixed delay</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It retries several times with a fixed delay to wait after the last execution
+failure until the maximum attempts is reached.</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 1. How it works</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title">Message sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent twice but can be sent the third time.
+The delay is configured to 5 seconds.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-a06f51132cf94cbf725435783306e458.png" alt="diag a06f51132cf94cbf725435783306e458" width="891" height="787">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title">Message can&#8217;t be sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent and the maximum attempts
+is reached. The delay is configured to 5 seconds. The maximum attempts is configured to 4.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-147807c30d86cdff96b0084161d8d76a.png" alt="diag 147807c30d86cdff96b0084161d8d76a" width="912" height="1099">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 2. Enable re-send of email with fixed delay</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicClasspathPropertiesSample</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)      <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+            .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">BasicClasspathPropertiesSample</span><span class="delimiter">&quot;</span></span>)
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicClasspathPropertiesSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-3 highlight-lines:4-5">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=&lt;your server host&gt;
+mail.smtp.port=&lt;your server port&gt;
+ogham.email.from.default-value=&lt;email address to display <span class="keyword">for</span> the sender user&gt;
+ogham.email.send-retry.max-attempts=<span class="integer">10</span>                 <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.email.send-retry.delay-between-attempts=<span class="integer">5000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the delay (<code>5 seconds</code>) to wait for executing the next attempt after
+the execution failure</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 3. Enable re-send of SMS with fixed delay</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSampleExternalProperties</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    <span class="comment">// Load properties from file that is in classpath (src/main/resources/sms.properties)</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sms.properties</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the sms using fluent API</span>
+    service.send(<span class="keyword">new</span> Sms()
+            .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-5 highlight-lines:6-7">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">ogham.sms.smpp.host=&lt;your server host&gt;
+ogham.sms.smpp.port=&lt;your server port&gt;
+ogham.sms.smpp.system-id=&lt;your server system ID&gt;
+ogham.sms.smpp.password=&lt;your server password&gt;
+ogham.sms.from.default-value=&lt;phone number to display <span class="keyword">for</span> the sender&gt;
+ogham.sms.send-retry.max-attempts=<span class="integer">10</span>                 <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.sms.send-retry.delay-between-attempts=<span class="integer">5000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the delay (<code>5 seconds</code>) to wait for executing the next attempt after
+the execution failure</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exponential_delay"><a class="anchor" href="#_exponential_delay"></a>Exponential delay</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Retry several times with an initial delay to wait after the last execution
+failure. The following delays are doubled until the maximum attempts is
+reached.</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 4. How it works</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title">Message sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent twice but can be sent the third time.
+The initial delay is configured to 5 seconds.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-1081b15e5b4d6c663f43a3c231b3036c.png" alt="diag 1081b15e5b4d6c663f43a3c231b3036c" width="891" height="787">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title">Message can&#8217;t be sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent and the maximum attempts
+is reached. The initial delay is configured to 5 seconds. The maximum attempts is configured to 4.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-54e47c9bc8234ed61ccf076d78778170.png" alt="diag 54e47c9bc8234ed61ccf076d78778170" width="912" height="1099">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 5. Enable re-send of email with exponential delay</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicClasspathPropertiesSample</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)      <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+            .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">BasicClasspathPropertiesSample</span><span class="delimiter">&quot;</span></span>)
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicClasspathPropertiesSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-3 highlight-lines:4-5">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=&lt;your server host&gt;
+mail.smtp.port=&lt;your server port&gt;
+ogham.email.from.default-value=&lt;email address to display <span class="keyword">for</span> the sender user&gt;
+ogham.email.send-retry.max-attempts=<span class="integer">10</span>                    <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.email.send-retry.exponential-initial-delay=<span class="integer">5000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the initial delay to <code>5 seconds</code>. After each failing attempts, the delay is doubled</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 6. Enable re-send of SMS with exponential delay</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSampleExternalProperties</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    <span class="comment">// Load properties from file that is in classpath (src/main/resources/sms.properties)</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sms.properties</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the sms using fluent API</span>
+    service.send(<span class="keyword">new</span> Sms()
+            .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-5 highlight-lines:6-7">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">ogham.sms.smpp.host=&lt;your server host&gt;
+ogham.sms.smpp.port=&lt;your server port&gt;
+ogham.sms.smpp.system-id=&lt;your server system ID&gt;
+ogham.sms.smpp.password=&lt;your server password&gt;
+ogham.sms.from.default-value=&lt;phone number to display <span class="keyword">for</span> the sender&gt;
+ogham.sms.send-retry.max-attempts=<span class="integer">10</span>                    <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.sms.send-retry.exponential-initial-delay=<span class="integer">5000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the initial delay to <code>5 seconds</code>. After each failing attempts, the delay is doubled</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_per_execution_delay"><a class="anchor" href="#_per_execution_delay"></a>Per execution delay</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Retry several times with a fixed delay to wait after the last execution
+failure until the maximum attempts is reached. A specific delay is used between each execution.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">More attempts than configured delays</div>
+<div class="paragraph">
+<p>If there are more attempts than the configured delays, the
+last delay is used for each remaining attempts.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 7. How it works</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title">Message sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent twice but can be sent the third time.
+The configured delays are: 5 seconds and 25 seconds.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-e9cd46f72cc85592656b913b1391eb70.png" alt="diag e9cd46f72cc85592656b913b1391eb70" width="891" height="787">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title">Message can&#8217;t be sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent and the maximum attempts
+is reached. The maximum attempts is configured to 4.
+The configured delays are: 5 seconds, 25 seconds and 32 seconds.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-5f16fae08764dcaeaf866c6a040922d1.png" alt="diag 5f16fae08764dcaeaf866c6a040922d1" width="912" height="1099">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 8. Enable re-send of email with per excecution delay</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicClasspathPropertiesSample</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)      <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+            .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">BasicClasspathPropertiesSample</span><span class="delimiter">&quot;</span></span>)
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicClasspathPropertiesSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-3 highlight-lines:4-5">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=&lt;your server host&gt;
+mail.smtp.port=&lt;your server port&gt;
+ogham.email.from.default-value=&lt;email address to display <span class="keyword">for</span> the sender user&gt;
+ogham.email.send-retry.max-attempts=<span class="integer">10</span>                           <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.email.send-retry.per-execution-delays=<span class="integer">5000</span>,<span class="integer">25000</span>,<span class="integer">32000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the delays: <code>5 seconds</code> after first failure, <code>25 seconds</code> after second failure and
+<code>32 seconds</code> after third execution</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 9. Enable re-send of SMS with per execution delay</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSampleExternalProperties</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    <span class="comment">// Load properties from file that is in classpath (src/main/resources/sms.properties)</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sms.properties</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the sms using fluent API</span>
+    service.send(<span class="keyword">new</span> Sms()
+            .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-5 highlight-lines:6-7">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">ogham.sms.smpp.host=&lt;your server host&gt;
+ogham.sms.smpp.port=&lt;your server port&gt;
+ogham.sms.smpp.system-id=&lt;your server system ID&gt;
+ogham.sms.smpp.password=&lt;your server password&gt;
+ogham.sms.from.default-value=&lt;phone number to display <span class="keyword">for</span> the sender&gt;
+ogham.sms.send-retry.max-attempts=<span class="integer">10</span>                           <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.sms.send-retry.per-execution-delays=<span class="integer">5000</span>,<span class="integer">25000</span>,<span class="integer">32000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the delays: <code>5 seconds</code> after first failure, <code>25 seconds</code> after second failure and
+<code>32 seconds</code> after third execution</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="retry-fixed-interval"><a class="anchor" href="#retry-fixed-interval"></a>Fixed interval</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It retries several times with a fixed interval until the maximum attempts is reached.
+It doesn&#8217;t wait for the end of the previous execution.</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 10. How it works</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title">Message sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent twice but can be sent the third time.
+The interval is configured to 5 seconds.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 3 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-f931fe62484350584168ca1628d85119.png" alt="diag f931fe62484350584168ca1628d85119" width="891" height="703">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title">Message can&#8217;t be sent</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent and the maximum attempts
+is reached. The delay is configured to 5 seconds. The maximum attempts is configured to 4.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-a8c3dd7e1465f4fa21dc72fdc61d96f4.png" alt="diag a8c3dd7e1465f4fa21dc72fdc61d96f4" width="912" height="973">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title">Small interval</div>
+<div class="content">
+<div class="paragraph">
+<p>This diagram shows what happens if the message can&#8217;t be sent and the execution takes longer than
+the configured interval. The delay is configured to 4 seconds. The maximum attempts is configured to 4.</p>
+</div>
+<div class="paragraph">
+<p>For the explanation, the server returns a response after 10 seconds (timeout).</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The following diagram is theoretical. It totally depends on
+<a href="../../user-manual.doc.html#retry-executor">RetryExecutor implementation</a>. The strategy just indicates
+<strong>when</strong> the next retry <strong>should</strong> happen in theory.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>SimpleRetryExecutor</code> is used and everything runs in a single thread. So it waits for
+the end of the execution even if interval is elapsed. Therefore in this particular case, the interval
+may not be respected.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-1dc3c3c9a3dfcae0564a271efd08953d.png" alt="diag 1dc3c3c9a3dfcae0564a271efd08953d" width="1516" height="1398">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 11. Enable re-send of email with fixed interval</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicClasspathPropertiesSample</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)      <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+            .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">BasicClasspathPropertiesSample</span><span class="delimiter">&quot;</span></span>)
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicClasspathPropertiesSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-3 highlight-lines:4-5">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=&lt;your server host&gt;
+mail.smtp.port=&lt;your server port&gt;
+ogham.email.from.default-value=&lt;email address to display <span class="keyword">for</span> the sender user&gt;
+ogham.email.send-retry.max-attempts=<span class="integer">10</span>                 <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.email.send-retry.delay-between-attempts=<span class="integer">5000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the delay (<code>5 seconds</code>) to wait for executing the next attempt after
+the execution failure</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 12. Enable re-send of SMS with fixed interval</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSampleExternalProperties</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    <span class="comment">// Load properties from file that is in classpath (src/main/resources/sms.properties)</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sms.properties</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the sms using fluent API</span>
+    service.send(<span class="keyword">new</span> Sms()
+            .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-5 highlight-lines:6-7">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">ogham.sms.smpp.host=&lt;your server host&gt;
+ogham.sms.smpp.port=&lt;your server port&gt;
+ogham.sms.smpp.system-id=&lt;your server system ID&gt;
+ogham.sms.smpp.password=&lt;your server password&gt;
+ogham.sms.from.default-value=&lt;phone number to display <span class="keyword">for</span> the sender&gt;
+ogham.sms.send-retry.max-attempts=<span class="integer">10</span>                 <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.sms.send-retry.delay-between-attempts=<span class="integer">5000</span>     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the maximum attempts to <code>10</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the delay (<code>5 seconds</code>) to wait for executing the next attempt after
+the execution failure</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

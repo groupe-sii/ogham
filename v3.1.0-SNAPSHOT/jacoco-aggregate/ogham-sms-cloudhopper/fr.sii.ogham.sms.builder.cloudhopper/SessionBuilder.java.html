@@ -1,0 +1,1014 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SessionBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">SessionBuilder.java</span></div><h1>SessionBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.retry.RetryBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ReuseSessionOptions;
+
+/**
+ * Configures Cloudhopper session management (timeouts, retry, session name...).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SessionBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;CloudhopperSessionOptions&gt; {
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; bindValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; connectValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; requestExpiryValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; windowMonitorInvervalValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; windowWaitValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Integer&gt; windowSizeValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; writeValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; responseValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, Long&gt; unbindValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SessionBuilder, String&gt; sessionNameValueBuilder;
+	private RetryBuilder&lt;SessionBuilder&gt; connectRetryBuilder;
+	private ReuseSessionBuilder reuseSessionBuilder;
+	private KeepAliveBuilder keepAliveBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public SessionBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L50">		super(parent);</span>
+<span class="fc" id="L51">		this.buildContext = buildContext;</span>
+<span class="fc" id="L52">		bindValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L53">		connectValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L54">		requestExpiryValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L55">		windowMonitorInvervalValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L56">		windowWaitValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L57">		windowSizeValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);</span>
+<span class="fc" id="L58">		writeValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L59">		responseValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L60">		unbindValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L61">		sessionNameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L62">	}</span>
+
+	/**
+	 * A name for the session (used to name threads).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #sessionName()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .sessionName(&quot;my-name&quot;)
+	 * .sessionName()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-name&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .sessionName(&quot;my-name&quot;)
+	 * .sessionName()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-name&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code sessionName(&quot;my-name&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param name
+	 *            the name for the session
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder sessionName(String name) {
+<span class="nc" id="L99">		sessionNameValueBuilder.setValue(name);</span>
+<span class="nc" id="L100">		return this;</span>
+	}
+
+	/**
+	 * A name for the session (used to name threads).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .sessionName()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-name&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #sessionName(String)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .sessionName(&quot;my-name&quot;)
+	 * .sessionName()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-name&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-name&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, String&gt; sessionName() {
+<span class="fc" id="L140">		return sessionNameValueBuilder;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for the success
+	 * of a bind attempt to the SMSC. Defaults to 5000.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #bindTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .bindTimeout(1000L)
+	 * .bindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .bindTimeout(1000L)
+	 * .bindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code bindTimeout(1000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the timeout value in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder bindTimeout(Long timeout) {
+<span class="nc" id="L179">		bindValueBuilder.setValue(timeout);</span>
+<span class="nc" id="L180">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for the success
+	 * of a bind attempt to the SMSC. Defaults to 5000.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .bindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #bindTimeout(Long)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .bindTimeout(1000L)
+	 * .bindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 1000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; bindTimeout() {
+<span class="fc" id="L221">		return bindValueBuilder;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for a
+	 * establishing the connection. Defaults to 10000.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #connectTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .connectTimeout(1000L)
+	 * .connectTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .connectTimeout(1000L)
+	 * .connectTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code connectTimeout(1000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the timeout in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder connectTimeout(Long timeout) {
+<span class="nc" id="L260">		connectValueBuilder.setValue(timeout);</span>
+<span class="nc" id="L261">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for a
+	 * establishing the connection. Defaults to 10000.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .connectTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #connectTimeout(Long)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .connectTimeout(1000L)
+	 * .connectTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 1000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; connectTimeout() {
+<span class="fc" id="L302">		return connectValueBuilder;</span>
+	}
+
+	/**
+	 * Configures how to handle a connection that fails. You can configure if
+	 * retry should be done when a connection to the server couldn't be
+	 * established. The builder lets you define the retry behavior.
+	 * 
+	 * For now, only a {@link FixedDelayRetry} is handled. The
+	 * {@link FixedDelayRetry} needs a delay between two tries and a maximum
+	 * attempts. In the future, we could handle different strategies if needed
+	 * like retrying with an exponential delay for example.
+	 * 
+	 * If you don't configure it, no retry is applied at all.
+	 * 
+	 * @return the builder to configure the retry handling
+	 */
+	public RetryBuilder&lt;SessionBuilder&gt; connectRetry() {
+<span class="fc bfc" id="L320" title="All 2 branches covered.">		if (connectRetryBuilder == null) {</span>
+<span class="fc" id="L321">			connectRetryBuilder = new RetryBuilder&lt;&gt;(this, buildContext);</span>
+		}
+<span class="fc" id="L323">		return connectRetryBuilder;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait for an endpoint to respond
+	 * to a request before it expires. Defaults to disabled (-1).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #requestExpiryTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .requestExpiryTimeout(1000L)
+	 * .requestExpiryTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .requestExpiryTimeout(1000L)
+	 * .requestExpiryTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code requestExpiryTimeout(1000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the timeout in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder requestExpiryTimeout(Long timeout) {
+<span class="nc" id="L362">		requestExpiryValueBuilder.setValue(timeout);</span>
+<span class="nc" id="L363">		return this;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait for an endpoint to respond
+	 * to a request before it expires. Defaults to disabled (-1).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .requestExpiryTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #requestExpiryTimeout(Long)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .requestExpiryTimeout(1000L)
+	 * .requestExpiryTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 1000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; requestExpiryTimeout() {
+<span class="fc" id="L404">		return requestExpiryValueBuilder;</span>
+	}
+
+	/**
+	 * Sets the amount of time (milliseconds) between executions of monitoring
+	 * the window for requests that expire. It's recommended that this generally
+	 * either matches or is half the value of requestExpiryTimeout. Therefore,
+	 * at worst a request would could take up 1.5X the requestExpiryTimeout to
+	 * clear out. Defaults to -1 (disabled).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #windowMonitorInterval()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .windowMonitorInterval(1000L)
+	 * .windowMonitorInterval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .windowMonitorInterval(1000L)
+	 * .windowMonitorInterval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code windowMonitorInterval(1000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the tiemout in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowMonitorInterval(Long timeout) {
+<span class="nc" id="L446">		windowMonitorInvervalValueBuilder.setValue(timeout);</span>
+<span class="nc" id="L447">		return this;</span>
+	}
+
+	/**
+	 * Sets the amount of time (milliseconds) between executions of monitoring
+	 * the window for requests that expire. It's recommended that this generally
+	 * either matches or is half the value of requestExpiryTimeout. Therefore,
+	 * at worst a request would could take up 1.5X the requestExpiryTimeout to
+	 * clear out. Defaults to -1 (disabled).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .windowMonitorInterval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #windowMonitorInterval(Long)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .windowMonitorInterval(1000L)
+	 * .windowMonitorInterval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(-1L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 1000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; windowMonitorInterval() {
+<span class="fc" id="L491">		return windowMonitorInvervalValueBuilder;</span>
+	}
+
+	/**
+	 * Sets the maximum number of requests permitted to be outstanding
+	 * (unacknowledged) at a given time. Must be &amp;gt; 0. Defaults to 1.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #windowSize()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .windowSize(5)
+	 * .windowSize()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .windowSize(5)
+	 * .windowSize()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code windowSize(5)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param size
+	 *            the window size
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowSize(Integer size) {
+<span class="nc" id="L530">		windowSizeValueBuilder.setValue(size);</span>
+<span class="nc" id="L531">		return this;</span>
+	}
+
+	/**
+	 * Sets the maximum number of requests permitted to be outstanding
+	 * (unacknowledged) at a given time. Must be &amp;gt; 0. Defaults to 1.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .windowSize()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #windowSize(Integer)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .windowSize(5)
+	 * .windowSize()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 5} is used regardless of the value of the properties and
+	 * default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Integer&gt; windowSize() {
+<span class="fc" id="L572">		return windowSizeValueBuilder;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait until a slot opens up in
+	 * the sendWindow. Defaults to 60000.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #windowWait()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .windowWait(10000L)
+	 * .windowWait()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .windowWait(10000L)
+	 * .windowWait()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code windowWait(10000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param duration
+	 *            the amount of time in milliseconds to wait until a slot opens
+	 *            up
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowWait(Long duration) {
+<span class="nc" id="L612">		windowWaitValueBuilder.setValue(duration);</span>
+<span class="nc" id="L613">		return this;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait until a slot opens up in
+	 * the sendWindow. Defaults to 60000.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .windowWait()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #windowWait(Long)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .windowWait(10000L)
+	 * .windowWait()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; windowWait() {
+<span class="fc" id="L654">		return windowWaitValueBuilder;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for bytes to be
+	 * written when creating a new SMPP session. Defaults to 0 (no timeout, for
+	 * backwards compatibility).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #writeTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .writeTimeout(10000L)
+	 * .writeTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .writeTimeout(10000L)
+	 * .writeTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code writeTimeout(10000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the timeout in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder writeTimeout(Long timeout) {
+<span class="nc" id="L694">		writeValueBuilder.setValue(timeout);</span>
+<span class="nc" id="L695">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for bytes to be
+	 * written when creating a new SMPP session. Defaults to 0 (no timeout, for
+	 * backwards compatibility).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .writeTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #writeTimeout(Long)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .writeTimeout(10000L)
+	 * .writeTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; writeTimeout() {
+<span class="fc" id="L737">		return writeValueBuilder;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until a valid
+	 * response is received when a &quot;submit&quot; request is synchronously sends to
+	 * the remote endpoint. The timeout value includes both waiting for a
+	 * &quot;window&quot; slot, the time it takes to transmit the actual bytes on the
+	 * socket, and for the remote endpoint to send a response back. Defaults to
+	 * 5000.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #responseTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(1000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(1000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code responseTimeout(1000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the timeout in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder responseTimeout(Long timeout) {
+<span class="fc" id="L780">		responseValueBuilder.setValue(timeout);</span>
+<span class="fc" id="L781">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until a valid
+	 * response is received when a &quot;submit&quot; request is synchronously sends to
+	 * the remote endpoint. The timeout value includes both waiting for a
+	 * &quot;window&quot; slot, the time it takes to transmit the actual bytes on the
+	 * socket, and for the remote endpoint to send a response back. Defaults to
+	 * 5000.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #responseTimeout(Long)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(1000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 1000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; responseTimeout() {
+<span class="fc" id="L826">		return responseValueBuilder;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until the
+	 * session is unbounded, waiting up to a specified period of milliseconds
+	 * for an unbind response from the remote endpoint. Regardless of whether a
+	 * proper unbind response was received, the socket/channel is closed.
+	 * Defaults to 5000.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #unbindTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .unbindTimeout(10000L)
+	 * .unbindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .unbindTimeout(10000L)
+	 * .unbindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code unbindTimeout(10000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the timeout in milliseconds
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder unbindTimeout(Long timeout) {
+<span class="nc" id="L868">		unbindValueBuilder.setValue(timeout);</span>
+<span class="nc" id="L869">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until the
+	 * session is unbounded, waiting up to a specified period of milliseconds
+	 * for an unbind response from the remote endpoint. Regardless of whether a
+	 * proper unbind response was received, the socket/channel is closed.
+	 * Defaults to 5000.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .unbindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #unbindTimeout(Long)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .unbindTimeout(10000L)
+	 * .unbindTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SessionBuilder, Long&gt; unbindTimeout() {
+<span class="fc" id="L913">		return unbindValueBuilder;</span>
+	}
+
+	/**
+	 * Reuse the previous session instead of closing and reopening one if
+	 * possible. However, if the session has been closed by the remote server, a
+	 * new session will be created.
+	 * 
+	 * &lt;p&gt;
+	 * When sending the first message, a new session is created. Later, when
+	 * sending the next message, if the session is still alive, this session is
+	 * reused. As the connection is not actively maintained, the session may be
+	 * killed by the server. Therefore to check if the session is still alive,
+	 * an {@link EnquireLink} request is sent. If a response is received from
+	 * the server, then the session is still alive and the message can be sent
+	 * using the same session. If a failure response or no response is received
+	 * after some time from the server, then a new session must be created.
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * To check if the session is still alive, the {@link EnquireLink} request
+	 * is sent just before sending the real message. In order to prevent sending
+	 * an {@link EnquireLink} request before &lt;strong&gt;every&lt;/strong&gt; message, the
+	 * date of the last sent message or {@link EnquireLink} is kept. This date
+	 * is compared to a delay to ensure that no {@link EnquireLink} is sent
+	 * during this delay.
+	 * 
+	 * &lt;p&gt;
+	 * This builder let you configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable reuse session management&lt;/li&gt;
+	 * &lt;li&gt;The maximum time to wait for a response from the server for
+	 * {@link EnquireLink} request&lt;/li&gt;
+	 * &lt;li&gt;The time to wait before sending a new {@link EnquireLink} request
+	 * again&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #keepAlive()} strategy is enabled, this
+	 * option has no effect.
+	 * 
+	 * @return the builder to configure reuse session strategy
+	 */
+	public ReuseSessionBuilder reuseSession() {
+<span class="fc bfc" id="L957" title="All 2 branches covered.">		if (reuseSessionBuilder == null) {</span>
+<span class="fc" id="L958">			reuseSessionBuilder = new ReuseSessionBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L960">		return reuseSessionBuilder;</span>
+	}
+
+	/**
+	 * Configure keep alive management. Keep alive strategy actively maintains
+	 * the session opened by sending {@link EnquireLink} messages to the server.
+	 * 
+	 * &lt;p&gt;
+	 * Even if client sends messages to keep session alive, the connection may
+	 * be broken or closed by the server. Therefore, automatic reconnection is
+	 * done.
+	 * 
+	 * &lt;p&gt;
+	 * This builder let you configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable active keep alive management&lt;/li&gt;
+	 * &lt;li&gt;The time to wait between two {@link EnquireLink} messages&lt;/li&gt;
+	 * &lt;li&gt;The maximum time to wait for a response from the server for
+	 * {@link EnquireLink} request&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If this strategy is enabled,
+	 * {@link #reuseSession()} has no effect.
+	 * 
+	 * @return the builder to configure keep alive management
+	 */
+	public KeepAliveBuilder keepAlive() {
+<span class="fc bfc" id="L987" title="All 2 branches covered.">		if (keepAliveBuilder == null) {</span>
+<span class="fc" id="L988">			keepAliveBuilder = new KeepAliveBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L990">		return keepAliveBuilder;</span>
+	}
+
+	@Override
+	public CloudhopperSessionOptions build() {
+<span class="fc" id="L995">		CloudhopperSessionOptions sessionOpts = buildContext.register(new CloudhopperSessionOptions());</span>
+<span class="fc" id="L996">		sessionOpts.setBindTimeout(bindValueBuilder.getValue());</span>
+<span class="fc" id="L997">		sessionOpts.setConnectTimeout(connectValueBuilder.getValue());</span>
+<span class="fc" id="L998">		sessionOpts.setRequestExpiryTimeout(requestExpiryValueBuilder.getValue());</span>
+<span class="fc" id="L999">		sessionOpts.setWindowMonitorInterval(windowMonitorInvervalValueBuilder.getValue());</span>
+<span class="fc" id="L1000">		sessionOpts.setWindowSize(windowSizeValueBuilder.getValue());</span>
+<span class="fc" id="L1001">		sessionOpts.setWindowWaitTimeout(windowWaitValueBuilder.getValue());</span>
+<span class="fc" id="L1002">		sessionOpts.setWriteTimeout(writeValueBuilder.getValue());</span>
+<span class="fc" id="L1003">		sessionOpts.setResponseTimeout(responseValueBuilder.getValue());</span>
+<span class="fc" id="L1004">		sessionOpts.setUnbindTimeout(unbindValueBuilder.getValue());</span>
+<span class="pc bpc" id="L1005" title="1 of 2 branches missed.">		if (connectRetryBuilder != null) {</span>
+<span class="fc" id="L1006">			sessionOpts.setConnectRetry(connectRetryBuilder.build());</span>
+		}
+<span class="fc bfc" id="L1008" title="All 2 branches covered.">		sessionOpts.setKeepAlive(keepAliveBuilder != null ? keepAliveBuilder.build() : new KeepAliveOptions(false));</span>
+<span class="fc bfc" id="L1009" title="All 2 branches covered.">		sessionOpts.setReuseSession(reuseSessionBuilder != null ? reuseSessionBuilder.build() : new ReuseSessionOptions(false));</span>
+<span class="fc" id="L1010">		return sessionOpts;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

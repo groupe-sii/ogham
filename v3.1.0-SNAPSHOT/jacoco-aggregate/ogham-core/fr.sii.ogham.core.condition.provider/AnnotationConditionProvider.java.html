@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AnnotationConditionProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.provider</a> &gt; <span class="el_source">AnnotationConditionProvider.java</span></div><h1>AnnotationConditionProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.provider;
+
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.condition.AndCondition;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.env.PropertyResolver;
+
+/**
+ * Implementation that handle conditions defined through annotations.
+ * 
+ * See {@link RequiredProperties}, {@link RequiredProperty},
+ * {@link RequiredClasses} and {@link RequiredClass} for more information about
+ * the annotations.
+ * 
+ * &lt;p&gt;
+ * If no condition annotation is present on the source object, then a condition
+ * that always evaluates to true is returned.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;T&gt;
+ *            the object to analyze that may be annotated
+ */
+public class AnnotationConditionProvider&lt;T&gt; implements ConditionProvider&lt;Class&lt;?&gt;, T&gt; {
+	private final RequiredPropertyAnnotationProvider&lt;T&gt; propertyConditionProvider;
+	private final RequiredPropertiesAnnotationProvider&lt;T&gt; propertiesConditionProvider;
+	private final RequiredClassAnnotationProvider&lt;T&gt; classConditionProvider;
+	private final RequiredClassesAnnotationProvider&lt;T&gt; classesConditionProvider;
+
+	/**
+	 * Initializes with a {@link PropertyResolver} instance. The property
+	 * resolver is used by {@link RequiredPropertiesAnnotationProvider} and
+	 * {@link RequiredPropertyAnnotationProvider} in order to check if property
+	 * exists in the provided property resolver.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver
+	 */
+	public AnnotationConditionProvider(PropertyResolver propertyResolver) {
+<span class="fc" id="L44">		super();</span>
+<span class="fc" id="L45">		propertyConditionProvider = new RequiredPropertyAnnotationProvider&lt;&gt;(propertyResolver);</span>
+<span class="fc" id="L46">		propertiesConditionProvider = new RequiredPropertiesAnnotationProvider&lt;&gt;(propertyResolver);</span>
+<span class="fc" id="L47">		classConditionProvider = new RequiredClassAnnotationProvider&lt;&gt;();</span>
+<span class="fc" id="L48">		classesConditionProvider = new RequiredClassesAnnotationProvider&lt;&gt;();</span>
+<span class="fc" id="L49">	}</span>
+
+	@Override
+	public Condition&lt;T&gt; provide(Class&lt;?&gt; source) {
+<span class="fc" id="L53">		AndCondition&lt;T&gt; mainCondition = new AndCondition&lt;&gt;();</span>
+<span class="fc" id="L54">		mainCondition.and(propertyConditionProvider.provide(source.getAnnotation(RequiredProperty.class)));</span>
+<span class="fc" id="L55">		mainCondition.and(propertiesConditionProvider.provide(source.getAnnotation(RequiredProperties.class)));</span>
+<span class="fc" id="L56">		mainCondition.and(classConditionProvider.provide(source.getAnnotation(RequiredClass.class)));</span>
+<span class="fc" id="L57">		mainCondition.and(classesConditionProvider.provide(source.getAnnotation(RequiredClasses.class)));</span>
+<span class="fc" id="L58">		return mainCondition;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

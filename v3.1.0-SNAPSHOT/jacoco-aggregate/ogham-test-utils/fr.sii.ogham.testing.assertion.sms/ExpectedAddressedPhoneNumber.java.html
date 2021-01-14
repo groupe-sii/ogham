@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ExpectedAddressedPhoneNumber.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">ExpectedAddressedPhoneNumber.java</span></div><h1>ExpectedAddressedPhoneNumber.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+
+public class ExpectedAddressedPhoneNumber {
+	private final String number;
+	
+	/** The type of number (TON); */
+	private final byte ton;
+
+	/** &lt;li&gt;The numbering plan identification (NPI). */
+	private final byte npi;
+
+	/**
+	 * Initializes the phone number with the given number, TON and NPI.
+	 * 
+	 * @param number
+	 *            Phone number in text format
+	 * @param ton
+	 *            Type of number
+	 * @param npi
+	 *            Numbering plan identification
+	 */
+	public ExpectedAddressedPhoneNumber(String number, TypeOfNumber ton, NumberingPlanIndicator npi) {
+<span class="fc" id="L29">		this(number, ton.value(), npi.value());</span>
+<span class="fc" id="L30">	}</span>
+	
+	/**
+	 * Initializes the phone number with the given number, TON and NPI.
+	 * 
+	 * @param number
+	 *            Phone number in text format
+	 * @param ton
+	 *            Type of number
+	 * @param npi
+	 *            Numbering plan identification
+	 */
+	public ExpectedAddressedPhoneNumber(String number, byte ton, byte npi) {
+<span class="fc" id="L43">		super();</span>
+<span class="fc" id="L44">		this.number = number;</span>
+<span class="fc" id="L45">		this.ton = ton;</span>
+<span class="fc" id="L46">		this.npi = npi;</span>
+<span class="fc" id="L47">	}</span>
+
+	public String getNumber() {
+<span class="fc" id="L50">		return number;</span>
+	}
+
+	public byte getTon() {
+<span class="fc" id="L54">		return ton;</span>
+	}
+
+	public byte getNpi() {
+<span class="fc" id="L58">		return npi;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L63">		StringBuilder builder = new StringBuilder();</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">		if (getNumber() != null &amp;&amp; !getNumber().isEmpty()) {</span>
+<span class="nc" id="L65">			builder.append(getNumber()).append(&quot;|TON:&quot;).append(ton).append(&quot;|NPI:&quot;).append(npi);</span>
+		}
+<span class="nc" id="L67">		return builder.toString();</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L72">		return new HashCodeBuilder().append(getNumber()).append(ton).append(npi).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		if (obj == null) {</span>
+<span class="fc" id="L78">			return false;</span>
+		}
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		if (obj == this) {</span>
+<span class="fc" id="L81">			return true;</span>
+		}
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		if (obj.getClass() != getClass()) {</span>
+<span class="fc" id="L84">			return false;</span>
+		}
+<span class="fc" id="L86">		ExpectedAddressedPhoneNumber rhs = (ExpectedAddressedPhoneNumber) obj;</span>
+<span class="fc" id="L87">		return new EqualsBuilder().append(number, rhs.number).append(ton, rhs.ton).append(npi, rhs.npi).isEquals();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

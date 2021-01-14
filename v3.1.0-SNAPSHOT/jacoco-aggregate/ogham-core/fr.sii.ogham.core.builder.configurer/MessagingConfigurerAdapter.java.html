@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessagingConfigurerAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configurer</a> &gt; <span class="el_source">MessagingConfigurerAdapter.java</span></div><h1>MessagingConfigurerAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configurer;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+
+/**
+ * Adapter that configures a {@link MessagingBuilder} instance. It provides
+ * configuration methods for each main part of the builder configuration:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;Environment configuration (that may be inherited)&lt;/li&gt;
+ * &lt;li&gt;Resource resolution configuration (that may be inherited)&lt;/li&gt;
+ * &lt;li&gt;Mimetype detection configuration (that may be inherited)&lt;/li&gt;
+ * &lt;li&gt;Email configuration&lt;/li&gt;
+ * &lt;li&gt;Sms configuration&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * This class is intended to help developers configure {@link MessagingBuilder}
+ * differently than default configuration if needed without too much pain.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L32">public abstract class MessagingConfigurerAdapter implements MessagingConfigurer {</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="fc" id="L36">		configure(builder.environment());</span>
+<span class="fc" id="L37">		configure(builder.resource());</span>
+<span class="fc" id="L38">		configure(builder.mimetype());</span>
+<span class="fc" id="L39">		configure(builder.email());</span>
+<span class="fc" id="L40">		configure(builder.sms());</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Configures global environment management (configuration properties
+	 * resolution). The configured {@link EnvironmentBuilder} may be inherited
+	 * by sub-builders by using same instance or using a derived one (see
+	 * {@link EnvironmentBuilderDelegate}).
+	 * 
+	 * @param builder
+	 *            the builder to configure
+	 */
+	public void configure(EnvironmentBuilder&lt;?&gt; builder) {
+		// extension point
+<span class="fc" id="L54">	}</span>
+
+	/**
+	 * Configures global resource resolution. The configured
+	 * {@link ResourceResolutionBuilder} may be inherited by sub-builders by
+	 * using same instance or using a derived one.
+	 * 
+	 * @param builder
+	 *            the builder to configure
+	 */
+	public void configure(ResourceResolutionBuilder&lt;?&gt; builder) {
+		// extension point
+<span class="fc" id="L66">	}</span>
+
+	/**
+	 * Configures global mimetype detection. The configured
+	 * {@link MimetypeDetectionBuilder} may be inherited by sub-builders by
+	 * using same instance or using a derived one (see
+	 * {@link MimetypeDetectionBuilderDelegate}).
+	 * 
+	 * @param mimetype
+	 *            the builder to configure
+	 */
+	public void configure(MimetypeDetectionBuilder&lt;?&gt; mimetype) {
+		// extension point
+<span class="fc" id="L79">	}</span>
+
+	/**
+	 * Configures common email handling:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Attachment handling&lt;/li&gt;
+	 * &lt;li&gt;Image inlining&lt;/li&gt;
+	 * &lt;li&gt;CSS inlining&lt;/li&gt;
+	 * &lt;li&gt;Template handling&lt;/li&gt;
+	 * &lt;li&gt;Autofill handling&lt;/li&gt;
+	 * &lt;li&gt;Sender implementations handling&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param builder
+	 *            the builder to configure
+	 */
+	public void configure(EmailBuilder builder) {
+		// extension point
+<span class="fc" id="L97">	}</span>
+
+	/**
+	 * Configures common SMS handling:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Template handling&lt;/li&gt;
+	 * &lt;li&gt;Autofill handling&lt;/li&gt;
+	 * &lt;li&gt;Sender implementations handling&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param builder
+	 *            the builder to configure
+	 */
+	public void configure(SmsBuilder builder) {
+		// extension point
+<span class="fc" id="L112">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafV2EngineConfigBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v2.buider</a> &gt; <span class="el_source">ThymeleafV2EngineConfigBuilder.java</span></div><h1>ThymeleafV2EngineConfigBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v2.buider;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.messageresolver.IMessageResolver;
+import org.thymeleaf.templatemode.ITemplateModeHandler;
+import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafEngineConfigBuilder;
+
+/**
+ * Fluent builder to configure Thymeleaf engine.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class ThymeleafV2EngineConfigBuilder&lt;P&gt; extends AbstractThymeleafEngineConfigBuilder&lt;ThymeleafV2EngineConfigBuilder&lt;P&gt;, P&gt; {
+	private Set&lt;IMessageResolver&gt; defaultMessageResolvers;
+	private Set&lt;ITemplateModeHandler&gt; templateModeHandlers;
+	private Set&lt;ITemplateModeHandler&gt; defaultTemplateModeHandlers;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ThymeleafV2EngineConfigBuilder(P parent, BuildContext buildContext) {
+<span class="nc" id="L38">		super(ThymeleafV2EngineConfigBuilder.class, parent, buildContext);</span>
+<span class="nc" id="L39">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the Template Mode Handlers to be used by this template engine. Every
+	 * available template mode must have its corresponding handler.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * By default, template mode handlers set are
+	 * {@link StandardTemplateModeHandlers#ALL_TEMPLATE_MODE_HANDLERS}
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param templateModeHandlers
+	 *            the Set of Template Mode Handlers.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV2EngineConfigBuilder&lt;P&gt; setTemplateModeHandlers(final Set&lt;? extends ITemplateModeHandler&gt; templateModeHandlers) {
+<span class="nc" id="L62">		this.templateModeHandlers().clear();</span>
+<span class="nc" id="L63">		this.templateModeHandlers().addAll(templateModeHandlers);</span>
+<span class="nc" id="L64">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Adds a Template Mode Handler to the set of Template Mode Handlers to be
+	 * used by the template engine. Every available template mode must have its
+	 * corresponding handler.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * By default, template mode handlers set are
+	 * {@link StandardTemplateModeHandlers#ALL_TEMPLATE_MODE_HANDLERS}
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param templateModeHandler
+	 *            the new Template Mode Handler to be added.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV2EngineConfigBuilder&lt;P&gt; addTemplateModeHandler(final ITemplateModeHandler templateModeHandler) {
+<span class="nc" id="L89">		templateModeHandlers().add(templateModeHandler);</span>
+<span class="nc" id="L90">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the default Template Mode Handlers. These are used when no Template
+	 * Mode Handlers are set via the {@link #setTemplateModeHandlers(Set)} or
+	 * {@link #addTemplateModeHandler(ITemplateModeHandler)} methods.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This method is useful for creating subclasses of TemplateEngine that
+	 * establish default configurations for Template Mode Handlers.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * By default, template mode handlers set are
+	 * {@link StandardTemplateModeHandlers#ALL_TEMPLATE_MODE_HANDLERS}
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param defaultTemplateModeHandlers
+	 *            the default Template Mode Handlers.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV2EngineConfigBuilder&lt;P&gt; setDefaultTemplateModeHandlers(final Set&lt;? extends ITemplateModeHandler&gt; defaultTemplateModeHandlers) {
+<span class="nc" id="L119">		defaultTemplateModeHandlers().clear();</span>
+<span class="nc" id="L120">		defaultTemplateModeHandlers().addAll(defaultTemplateModeHandlers);</span>
+<span class="nc" id="L121">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the default message resolvers. These are used when no message
+	 * resolvers are set via the {@link #setMessageResolver(IMessageResolver)},
+	 * {@link #setMessageResolvers(Set)} or
+	 * {@link #addMessageResolver(IMessageResolver)} methods.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This method is useful for creating subclasses of {@link TemplateEngine}
+	 * that establish default configurations for message resolvers.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param defaultMessageResolvers
+	 *            the default message resolvers.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV2EngineConfigBuilder&lt;P&gt; setDefaultMessageResolvers(final Set&lt;? extends IMessageResolver&gt; defaultMessageResolvers) {
+<span class="nc" id="L147">		this.defaultMessageResolvers().clear();</span>
+<span class="nc" id="L148">		this.defaultMessageResolvers().addAll(defaultMessageResolvers);</span>
+<span class="nc" id="L149">		return this;</span>
+	}
+
+	@Override
+	public TemplateEngine build() {
+<span class="nc" id="L154">		TemplateEngine engine = super.build();</span>
+<span class="nc" id="L155">		configureTemplateModeHandlers(engine);</span>
+<span class="nc" id="L156">		return engine;</span>
+	}
+
+	private void configureTemplateModeHandlers(TemplateEngine engine) {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		if (defaultTemplateModeHandlers != null) {</span>
+<span class="nc" id="L161">			engine.setDefaultTemplateModeHandlers(defaultTemplateModeHandlers);</span>
+		}
+<span class="nc bnc" id="L163" title="All 2 branches missed.">		if (templateModeHandlers != null) {</span>
+<span class="nc" id="L164">			engine.setTemplateModeHandlers(templateModeHandlers);</span>
+		}
+<span class="nc" id="L166">	}</span>
+
+	@Override
+	protected void configureMessageResolvers(TemplateEngine engine) {
+<span class="nc" id="L170">		super.configureMessageResolvers(engine);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">		if (defaultMessageResolvers != null) {</span>
+<span class="nc" id="L172">			engine.setDefaultMessageResolvers(defaultMessageResolvers);</span>
+		}
+<span class="nc" id="L174">	}</span>
+
+	private Set&lt;IMessageResolver&gt; defaultMessageResolvers() {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">		if (defaultMessageResolvers == null) {</span>
+<span class="nc" id="L178">			defaultMessageResolvers = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L180">		return defaultMessageResolvers;</span>
+	}
+
+	private Set&lt;ITemplateModeHandler&gt; templateModeHandlers() {
+<span class="nc bnc" id="L184" title="All 2 branches missed.">		if (templateModeHandlers == null) {</span>
+<span class="nc" id="L185">			templateModeHandlers = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L187">		return templateModeHandlers;</span>
+	}
+
+	private Set&lt;ITemplateModeHandler&gt; defaultTemplateModeHandlers() {
+<span class="nc bnc" id="L191" title="All 2 branches missed.">		if (defaultTemplateModeHandlers == null) {</span>
+<span class="nc" id="L192">			defaultTemplateModeHandlers = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L194">		return defaultTemplateModeHandlers;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

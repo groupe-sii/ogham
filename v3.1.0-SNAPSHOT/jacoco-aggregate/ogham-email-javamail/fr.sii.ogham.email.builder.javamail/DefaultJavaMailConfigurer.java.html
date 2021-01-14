@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultJavaMailConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder.javamail</a> &gt; <span class="el_source">DefaultJavaMailConfigurer.java</span></div><h1>DefaultJavaMailConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder.javamail;
+
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
+
+/**
+ * Default JavaMail configurer that is automatically applied every time a
+ * {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 50000 in order to be applied after
+ * templating configurers.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if {@code javax.mail.Transport} and
+ * {@code javax.mail.internet.MimeMessage} are present in the classpath. If not
+ * present, JavaMail implementation is not registered at all.
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link BuildContext}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures host and port:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.email.javamail.host&quot;, &quot;mail.smtp.host&quot; or
+ * &quot;mail.hofromst&quot; property if defined for mail server host address (IP or
+ * hostname)&lt;/li&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.email.javamail.port&quot;, &quot;mail.smtp.port&quot; or
+ * &quot;mail.port&quot; property if defined for mail server port. Default port is 25&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures authentication:
+ * &lt;ul&gt;
+ * &lt;li&gt;If property &quot;ogham.email.javamail.authenticator.username&quot; and
+ * &quot;ogham.email.javamail.authenticator.password&quot; are defined, then an
+ * {@link UsernamePasswordAuthenticator} is used to handle username/password
+ * authentication&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures encoding:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses &quot;ogham.email.javamail.body.charset&quot; property value as charset for
+ * email body if defined. Default charset is UTF-8&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures mimetype detection:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses Apache Tika to detect mimetype&lt;/li&gt;
+ * &lt;li&gt;Explicitly use &quot;text/html&quot; mimetype instead of more specific ones like
+ * &quot;application/xhtml&quot; (XHTML)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class DefaultJavaMailConfigurer {
+<span class="fc" id="L75">	private static final Logger LOG = LoggerFactory.getLogger(DefaultJavaMailConfigurer.class);</span>
+	private static final int DEFAULT_SMTP_PORT = 25;
+
+	@ConfigurerFor(targetedBuilder = &quot;standard&quot;, priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
+<span class="fc" id="L79">	public static class JavaMailConfigurer implements MessagingConfigurer {</span>
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">			if (!canUseJavaMail()) {</span>
+<span class="fc" id="L83">				LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="fc" id="L84">				return;</span>
+			}
+<span class="fc" id="L86">			LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="fc" id="L87">			JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);</span>
+			// @formatter:off
+<span class="fc" id="L89">			builder</span>
+<span class="fc" id="L90">				.host().properties(&quot;${ogham.email.javamail.host}&quot;, &quot;${mail.smtp.host}&quot;, &quot;${mail.host}&quot;).and()</span>
+<span class="fc" id="L91">				.port().properties(&quot;${ogham.email.javamail.port}&quot;, &quot;${mail.smtp.port}&quot;, &quot;${mail.port}&quot;).defaultValue(overrideIfNotSet(DEFAULT_SMTP_PORT)).and()</span>
+<span class="fc" id="L92">				.authenticator()</span>
+<span class="fc" id="L93">					.username().properties(&quot;${ogham.email.javamail.authenticator.username}&quot;).and()</span>
+<span class="fc" id="L94">					.password().properties(&quot;${ogham.email.javamail.authenticator.password}&quot;).and()</span>
+<span class="fc" id="L95">					.and()</span>
+<span class="fc" id="L96">				.charset().properties(&quot;${ogham.email.javamail.body.charset}&quot;).defaultValue(overrideIfNotSet(UTF_8)).and()</span>
+<span class="fc" id="L97">				.mimetype()</span>
+<span class="fc" id="L98">					.tika()</span>
+<span class="fc" id="L99">						.failIfOctetStream().defaultValue(overrideIfNotSet(false)).and()</span>
+<span class="fc" id="L100">						.and()</span>
+<span class="fc" id="L101">					.replace()</span>
+						// the distinction between xhtml and html can be useful in some cases
+						// most email clients don't understand xhtml mimetype
+						// for emails, this distinction must not be done
+<span class="fc" id="L105">						.pattern(&quot;application/xhtml[^;]*(;.*)?&quot;, &quot;text/html$1&quot;);</span>
+			// @formatter:on
+<span class="fc" id="L107">		}</span>
+
+		private static boolean canUseJavaMail() {
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">			return ClasspathUtils.exists(&quot;javax.mail.Transport&quot;) &amp;&amp; ClasspathUtils.exists(&quot;javax.mail.internet.MimeMessage&quot;);</span>
+		}
+	}
+
+	private DefaultJavaMailConfigurer() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

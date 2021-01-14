@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This strategy opens a session when needed and try to reuse it if possible.</p>
+</div>
+<div class="paragraph">
+<p>When sending the first message, a new session is created. Later, when sending
+the next message, if the session is still alive, this session is reused. As
+the connection is not actively maintained, the session may be killed by the
+server. Therefore to check if the session is still alive, an
+<code>enquire_link</code> request is sent. If a response is received from the
+server, then the session is still alive and the message can be sent using the
+same session. If a failure response or no response is received after some
+time from the server, then a new session must be created.</p>
+</div>
+<div class="paragraph">
+<p>To check if the session is still alive, the <code>enquire_link</code> request is
+sent just before sending the real message. In order to prevent sending an
+<code>enquire_link</code> request before <strong>every</strong> message, the date
+of the last sent message or <code>enquire_link</code> is kept. This date is
+compared to a delay to ensure that no <code>enquire_link</code> is sent during this
+delay.</p>
+</div>
+<div class="paragraph">
+<p>To enable reuse session strategy, update the configuration like this:</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 1. Enable reuse session</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSampleExternalProperties</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    <span class="comment">// Load properties from file that is in classpath (src/main/resources/sms.properties)</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sms.properties</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the sms using fluent API</span>
+    service.send(<span class="keyword">new</span> Sms()
+            .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-5 highlight-lines:6">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">ogham.sms.smpp.host=&lt;your server host&gt;
+ogham.sms.smpp.port=&lt;your server port&gt;
+ogham.sms.smpp.system-id=&lt;your server system ID&gt;
+ogham.sms.smpp.password=&lt;your server password&gt;
+ogham.sms.from.default-value=&lt;phone number to display <span class="keyword">for</span> the sender&gt;
+ogham.sms.cloudhopper.session.reuse-session.enable=true           <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable reuse session (with default values)</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following diagram explains how it works:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-4644cd346f4e29f19da7b4c4a46244a6.png" alt="diag 4644cd346f4e29f19da7b4c4a46244a6" width="742" height="1067">
+</div>
+<div class="title">Figure 1. How reuse session works</div>
+</div>
+<div class="paragraph">
+<p>By default, Ogham considers that session should remain opened if last interaction (connection,
+<code>enquire_link</code> or <code>submit_sm</code>) with the server happened less than 30 seconds ago (recommended value).
+If the server doesn&#8217;t send a response after a delay (10 seconds by default), Ogham will consider
+the connection as down.</p>
+</div>
+<div class="paragraph">
+<p>Timings are configurable:</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 2. Custom reuse session configuration</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSampleExternalProperties</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    <span class="comment">// Load properties from file that is in classpath (src/main/resources/sms.properties)</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sms.properties</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+          .and()
+        .build();
+    <span class="comment">// send the sms using fluent API</span>
+    service.send(<span class="keyword">new</span> Sms()
+            .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</div>
+<div class="content">
+<div class="listingblock irrelevant-lines:1-5 highlight-lines:7-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">ogham.sms.smpp.host=&lt;your server host&gt;
+ogham.sms.smpp.port=&lt;your server port&gt;
+ogham.sms.smpp.system-id=&lt;your server system ID&gt;
+ogham.sms.smpp.password=&lt;your server password&gt;
+ogham.sms.from.default-value=&lt;phone number to display <span class="keyword">for</span> the sender&gt;
+ogham.sms.cloudhopper.session.reuse-session.enable=true
+ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay=<span class="integer">60000</span>       <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.sms.cloudhopper.session.reuse-session.enquire-link-timeout=<span class="integer">5000</span>                     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Change delay to consider last interaction <code>enquire_link</code> requests to 1 minute.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Change default response timeout to 5 seconds.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Connection lost</div>
+<div class="paragraph">
+<p>If the connection to the server is lost in the following cases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The server has explicitly closed the session</p>
+</li>
+<li>
+<p>The server has been shutdown</p>
+</li>
+<li>
+<p>The server has been restarted</p>
+</li>
+<li>
+<p>The network is not available</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Ogham will detect that the session is down and a new session will be used for next message.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Expiration delay</div>
+<div class="paragraph">
+<p>If <code>ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay</code> is too high, Ogham may
+consider that the session is still alive whereas the server may ignore the session (some servers
+may consider the client as outdated but without sending explicit close). In this case, no
+<code>enquire_link</code> request is sent. The message is sent using the same session. However, it will fail
+because Ogham reuses a session that is closed. In this case, the SMS can&#8217;t be sent and an error is
+raised.</p>
+</div>
+<div class="paragraph">
+<p>It is up to the developer to configure the right values according to the server when using this strategy.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

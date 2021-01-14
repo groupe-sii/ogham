@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ResourceResolutionBuilderHelper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.resolution</a> &gt; <span class="el_source">ResourceResolutionBuilderHelper.java</span></div><h1>ResourceResolutionBuilderHelper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.resolution;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+
+/**
+ * Resource resolution is used many times. This implementation helps configure
+ * resource resolution.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;FLUENT&gt;
+ *            The type of the helped instance. This is needed to have the right
+ *            return type for fluent chaining
+ */
+@SuppressWarnings(&quot;squid:S00119&quot;)
+public class ResourceResolutionBuilderHelper&lt;FLUENT extends ResourceResolutionBuilder&lt;FLUENT&gt;&gt; implements ResourceResolutionBuilder&lt;FLUENT&gt; {
+	private final BuildContext buildContext;
+	private ClassPathResolutionBuilder&lt;FLUENT&gt; classPath;
+	private FileResolutionBuilder&lt;FLUENT&gt; file;
+	private StringResolutionBuilder&lt;FLUENT&gt; string;
+	private List&lt;ResourceResolver&gt; customResolvers;
+	private FLUENT fluent;
+
+	/**
+	 * Initializes the helper with the fluent instance and the
+	 * {@link EnvironmentBuilder}. The fluent instance is used for chaining. It
+	 * indicates which type is returned. The {@link EnvironmentBuilder} is used
+	 * by sub-builders ( {@link ClassPathResolutionBuilder} and
+	 * {@link FileResolutionBuilder}) to evaluate properties when their build
+	 * methods are called.
+	 * 
+	 * @param fluent
+	 *            the instance used for chaining calls
+	 * @param buildContext
+	 *            for property resolution
+	 */
+	public ResourceResolutionBuilderHelper(FLUENT fluent, BuildContext buildContext) {
+<span class="fc" id="L48">		super();</span>
+<span class="fc" id="L49">		this.fluent = fluent;</span>
+<span class="fc" id="L50">		this.buildContext = buildContext;</span>
+<span class="fc" id="L51">		customResolvers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L52">	}</span>
+
+	@Override
+	public ClassPathResolutionBuilder&lt;FLUENT&gt; classpath() {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		if (classPath == null) {</span>
+<span class="fc" id="L57">			classPath = new ClassPathResolutionBuilder&lt;&gt;(fluent, buildContext);</span>
+		}
+<span class="fc" id="L59">		return classPath;</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;FLUENT&gt; file() {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		if (file == null) {</span>
+<span class="fc" id="L65">			file = new FileResolutionBuilder&lt;&gt;(fluent, buildContext);</span>
+		}
+<span class="fc" id="L67">		return file;</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;FLUENT&gt; string() {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		if (string == null) {</span>
+<span class="fc" id="L73">			string = new StringResolutionBuilder&lt;&gt;(fluent, buildContext);</span>
+		}
+<span class="fc" id="L75">		return string;</span>
+	}
+
+	@Override
+	public FLUENT resolver(ResourceResolver resolver) {
+<span class="nc" id="L80">		customResolvers.add(resolver);</span>
+<span class="nc" id="L81">		return fluent;</span>
+	}
+
+	/**
+	 * For each kind of lookup, stores the list of registered lookups.
+	 * 
+	 * @return map of lookups indexed by lookup type.
+	 */
+	public Map&lt;String, List&lt;String&gt;&gt; getAllLookups() {
+<span class="fc" id="L90">		Map&lt;String, List&lt;String&gt;&gt; all = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (string != null) {</span>
+<span class="fc" id="L92">			all.put(&quot;string&quot;, string.getLookups());</span>
+		}
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if (file != null) {</span>
+<span class="fc" id="L95">			all.put(&quot;file&quot;, file.getLookups());</span>
+		}
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		if (classPath != null) {</span>
+<span class="fc" id="L98">			all.put(&quot;classpath&quot;, classPath.getLookups());</span>
+		}
+<span class="fc" id="L100">		return all;</span>
+	}
+
+	/**
+	 * Build the list of resource resolvers.
+	 * 
+	 * &lt;p&gt;
+	 * The list is ordered to ensure that empty string lookup is always the last
+	 * registered.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If some custom resolvers are registered, they are used before default
+	 * ones in the order they were registered.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the list of resource resolvers
+	 */
+	public List&lt;ResourceResolver&gt; buildResolvers() {
+<span class="fc" id="L119">		List&lt;ResourceResolver&gt; resolvers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L120">		resolvers.addAll(customResolvers);</span>
+		// ensure that default lookup is always the last registered
+<span class="fc" id="L122">		List&lt;ResolverHelper&gt; helpers = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">		if (classPath != null) {</span>
+<span class="fc" id="L124">			helpers.add(new ResolverHelper(classPath.getLookups(), classPath));</span>
+		}
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		if (file != null) {</span>
+<span class="fc" id="L127">			helpers.add(new ResolverHelper(file.getLookups(), file));</span>
+		}
+<span class="fc bfc" id="L129" title="All 2 branches covered.">		if (string != null) {</span>
+<span class="fc" id="L130">			helpers.add(new ResolverHelper(string.getLookups(), string));</span>
+		}
+<span class="fc" id="L132">		Collections.sort(helpers, new PrefixComparator());</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">		for (ResolverHelper helper : helpers) {</span>
+<span class="fc" id="L134">			helper.register(resolvers);</span>
+<span class="fc" id="L135">		}</span>
+<span class="fc" id="L136">		return resolvers;</span>
+	}
+
+	/**
+	 * Order prefixes in order to ensure that empty string lookup is registered
+	 * at the end.
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	private static class PrefixComparator implements Comparator&lt;ResolverHelper&gt; {
+		@Override
+		public int compare(ResolverHelper o1, ResolverHelper o2) {
+<span class="fc" id="L149">			StringBuilder concat1 = new StringBuilder();</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">			for (String prefix : o1.getPrefixes()) {</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">				if (prefix.isEmpty()) {</span>
+<span class="nc" id="L152">					return 1;</span>
+				}
+<span class="fc" id="L154">				concat1.append(prefix);</span>
+<span class="fc" id="L155">			}</span>
+<span class="fc" id="L156">			StringBuilder concat2 = new StringBuilder();</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">			for (String prefix : o2.getPrefixes()) {</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">				if (prefix.isEmpty()) {</span>
+<span class="fc" id="L159">					return -1;</span>
+				}
+<span class="fc" id="L161">				concat2.append(prefix);</span>
+<span class="fc" id="L162">			}</span>
+<span class="fc" id="L163">			return concat1.toString().compareTo(concat2.toString());</span>
+		}
+
+	}
+
+	private static class ResolverHelper {
+		private final List&lt;String&gt; prefixes;
+		private final Builder&lt;ResourceResolver&gt; builder;
+
+		public ResolverHelper(List&lt;String&gt; prefixes, Builder&lt;ResourceResolver&gt; builder) {
+<span class="fc" id="L173">			super();</span>
+<span class="fc" id="L174">			this.prefixes = prefixes;</span>
+<span class="fc" id="L175">			this.builder = builder;</span>
+<span class="fc" id="L176">		}</span>
+
+		public void register(List&lt;ResourceResolver&gt; resolvers) {
+<span class="fc" id="L179">			resolvers.add(builder.build());</span>
+<span class="fc" id="L180">		}</span>
+
+		public List&lt;String&gt; getPrefixes() {
+<span class="fc" id="L183">			return prefixes;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

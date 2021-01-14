@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmppServerExtension.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.junit.sms</a> &gt; <span class="el_source">SmppServerExtension.java</span></div><h1>SmppServerExtension.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.junit.sms;
+
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.support.AnnotationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
+import fr.sii.ogham.testing.extension.junit.sms.config.SmppServerConfig;
+import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
+
+/**
+ * JUnit {@link Extension} for starting a local SMPP server for integration
+ * tests.
+ * 
+ * &lt;p&gt;
+ * The extension starts the server before every test, execute the test and stops
+ * the server.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The server stores the received messages (raw messages). These messages are
+ * available in testing through {@link #getReceivedMessages()}.
+ * &lt;/p&gt;
+ * 
+ * @param &lt;M&gt;
+ *            The type of the received messages
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public abstract class SmppServerExtension&lt;M&gt; extends AbstractJUnitSmppServerExt&lt;M&gt; implements BeforeEachCallback, AfterEachCallback {
+<span class="fc" id="L35">	private static final Logger LOG = LoggerFactory.getLogger(SmppServerExtension.class);</span>
+
+	/**
+	 * Initializes with the default configuration to use for the SMPP server:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Starts on random port&lt;/li&gt;
+	 * &lt;li&gt;No delay&lt;/li&gt;
+	 * &lt;li&gt;No credentials&lt;/li&gt;
+	 * &lt;li&gt;Do not keep messages between tests&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+	public SmppServerExtension() {
+<span class="nc" id="L47">		super();</span>
+<span class="nc" id="L48">	}</span>
+
+	/**
+	 * Initializes with the configuration to use for the SMPP server
+	 * 
+	 * @param builder
+	 *            the configuration for the server
+	 */
+	public SmppServerExtension(ServerConfig builder) {
+<span class="fc" id="L57">		super(builder);</span>
+<span class="fc" id="L58">	}</span>
+
+	@Override
+	public void beforeEach(ExtensionContext context) throws Exception {
+<span class="nc" id="L62">		SmppServerConfig config = AnnotationSupport.findAnnotation(context.getElement(), SmppServerConfig.class).orElse(null);</span>
+<span class="nc" id="L63">		SimulatorConfiguration serverConfig = builder.annotationConfig(config).build();</span>
+<span class="nc" id="L64">		server = initServer(serverConfig);</span>
+<span class="nc" id="L65">		LOG.info(&quot;starting SMPP server on port {}...&quot;, getPort());</span>
+<span class="nc" id="L66">		server.start();</span>
+<span class="nc" id="L67">		LOG.info(&quot;SMPP server started on port {}&quot;, getPort());</span>
+<span class="nc" id="L68">	}</span>
+
+	@Override
+	public void afterEach(ExtensionContext context) throws Exception {
+<span class="nc" id="L72">		LOG.info(&quot;stopping SMPP server...&quot;);</span>
+<span class="nc" id="L73">		server.stop();</span>
+<span class="nc" id="L74">		LOG.info(&quot;SMPP server stopped&quot;);</span>
+<span class="nc" id="L75">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

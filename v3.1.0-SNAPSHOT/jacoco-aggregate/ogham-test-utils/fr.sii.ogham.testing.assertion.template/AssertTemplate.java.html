@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertTemplate.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.template</a> &gt; <span class="el_source">AssertTemplate.java</span></div><h1>AssertTemplate.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.template;
+
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import org.junit.Assert;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.assertion.util.Executable;
+import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+
+/**
+ * Assertion class that simplifies checking template content.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class AssertTemplate {
+	/**
+	 * Assert that the received content is same as the expected content. The
+	 * check is strict (totally identical even new line characters). The expected content is loaded
+	 * from the classpath.
+	 * 
+	 * @param expectedContentPath
+	 *            the path to the expected content available in the classpath
+	 * @param content
+	 *            the received content to check
+	 * @throws IOException
+	 *             when the expected content couldn't be read
+	 */
+	public static void assertEquals(String expectedContentPath, Object content) throws IOException {
+<span class="fc" id="L34">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L35">		assertEquals(loadOrNull(expectedContentPath, registry), content, true, registry);</span>
+<span class="fc" id="L36">		registry.execute();</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Assert that the received content is same as the expected content. The
+	 * check is permissive (new line characters are ignored). The expected
+	 * content is loaded from the classpath.
+	 * 
+	 * @param expectedContentPath
+	 *            the path to the expected content available in the classpath
+	 * @param content
+	 *            the received content to check
+	 * @throws IOException
+	 *             when the expected content couldn't be read
+	 */
+	public static void assertSimilar(String expectedContentPath, Object content) throws IOException {
+<span class="fc" id="L52">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L53">		assertEquals(loadOrNull(expectedContentPath, registry), content, false, registry);</span>
+<span class="fc" id="L54">		registry.execute();</span>
+<span class="fc" id="L55">	}</span>
+
+	/**
+	 * Assert that the received content is same as the expected content. The
+	 * check is strict (totally identical even new line characters).
+	 * 
+	 * @param expectedContent
+	 *            the expected content
+	 * @param content
+	 *            the received content to check
+	 */
+	public static void assertEquals(String expectedContent, String content) {
+<span class="fc" id="L67">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L68">		assertEquals(expectedContent, content, true, registry);</span>
+<span class="fc" id="L69">		registry.execute();</span>
+<span class="fc" id="L70">	}</span>
+
+	/**
+	 * Assert that the received content is same as the expected content. The
+	 * check is permissive (new line characters are ignored).
+	 * 
+	 * @param expectedContent
+	 *            the expected content
+	 * @param content
+	 *            the received content to check
+	 */
+	public static void assertSimilar(String expectedContent, String content) {
+<span class="fc" id="L82">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L83">		assertEquals(expectedContent, content, false, registry);</span>
+<span class="fc" id="L84">		registry.execute();</span>
+<span class="fc" id="L85">	}</span>
+	
+	private static void assertEquals(String expectedContent, Object content, boolean strict, AssertionRegistry registry) {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">		String expected = strict ? expectedContent : sanitize(expectedContent);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		String contentAsString = content==null ? null : content.toString();</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		String actual = strict ? contentAsString : sanitize(contentAsString);</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">		registry.register(() -&gt; Assert.assertEquals(&quot;parsed template is different to expected content&quot;, expected == null ? null : expected.replace(&quot;\r&quot;, &quot;&quot;), actual == null ? null : actual.replace(&quot;\r&quot;, &quot;&quot;)));</span>
+<span class="fc" id="L92">	}</span>
+	
+	private static String loadOrNull(String path, AssertionRegistry registry) throws IOException {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if (path == null) {</span>
+<span class="fc" id="L96">			return null;</span>
+		}
+		try {
+<span class="fc" id="L99">			return resourceAsString(path, Charset.defaultCharset());</span>
+<span class="fc" id="L100">		} catch (IOException e) {</span>
+<span class="fc" id="L101">			registry.register(failure(e));</span>
+<span class="fc" id="L102">			return null;</span>
+		}
+	}
+	
+	private static &lt;E extends Exception&gt; Executable&lt;E&gt; failure(E exception) {
+<span class="fc" id="L107">		return new Executable&lt;E&gt;() {</span>
+			@Override
+			public void run() throws E {
+<span class="fc" id="L110">				throw exception;</span>
+			}
+		};
+	}
+
+	private static String sanitize(String str) {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">		if (str == null) {</span>
+<span class="fc" id="L117">			return null;</span>
+		}
+<span class="fc" id="L119">		return str.replaceAll(&quot;\r|\n&quot;, &quot;&quot;);</span>
+	}
+	
+	private AssertTemplate() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

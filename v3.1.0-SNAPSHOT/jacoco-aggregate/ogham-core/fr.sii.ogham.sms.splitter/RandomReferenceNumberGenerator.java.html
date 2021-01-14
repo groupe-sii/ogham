@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RandomReferenceNumberGenerator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.splitter</a> &gt; <span class="el_source">RandomReferenceNumberGenerator.java</span></div><h1>RandomReferenceNumberGenerator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.splitter;
+
+import java.util.Random;
+
+/**
+ * In the cellular phone industry, mobile phones and their networks sometimes
+ * support concatenated short message service (or concatenated SMS) to overcome
+ * the limitation on the number of characters that can be sent in a single SMS
+ * text message transmission (which is usually 160). Using this method, long
+ * messages are split into smaller messages by the sending device and recombined
+ * at the receiving end. Each message is then billed separately. When the
+ * feature works properly, it is nearly transparent to the user, appearing as a
+ * single long text message.
+ * 
+ * &lt;p&gt;
+ * One way of sending concatenated SMS (CSMS) is to split the message into 153
+ * 7-bit character parts (134 octets), and sending each part with a User Data
+ * Header (UDH) tacked onto the beginning. A UDH can be used for various
+ * purposes and its contents and size varies accordingly, but a UDH for
+ * concatenating SMSes look like this:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;Field 1 (1 octet): Length of User Data Header, in this case 05.&lt;/li&gt;
+ * &lt;li&gt;Field 2 (1 octet): Information Element Identifier, equal to 00
+ * (Concatenated short messages, 8-bit reference number)&lt;/li&gt;
+ * &lt;li&gt;Field 3 (1 octet): Length of the header, excluding the first two fields;
+ * equal to 03&lt;/li&gt;
+ * &lt;li&gt;Field 4 (1 octet): 00-FF, CSMS reference number, must be same for all the
+ * SMS parts in the CSMS&lt;/li&gt;
+ * &lt;li&gt;Field 5 (1 octet): 00-FF, total number of parts. The value shall remain
+ * constant for every short message which makes up the concatenated short
+ * message. If the value is zero then the receiving entity shall ignore the
+ * whole information element&lt;/li&gt;
+ * &lt;li&gt;Field 6 (1 octet): 00-FF, this part's number in the sequence. The value
+ * shall start at 1 and increment for every short message which makes up the
+ * concatenated short message. If the value is zero or greater than the value in
+ * Field 5 then the receiving entity shall ignore the whole information element.
+ * [ETSI Specification: GSM 03.40 Version 5.3.0: July 1996]&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * It is possible to use a 16 bit CSMS reference number in order to reduce the
+ * probability that two different concatenated messages are sent with identical
+ * reference numbers to a receiver. In this case, the User Data Header shall be:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;Field 1 (1 octet): Length of User Data Header (UDL), in this case
+ * 06.&lt;/li&gt;
+ * &lt;li&gt;Field 2 (1 octet): Information Element Identifier, equal to 08
+ * (Concatenated short messages, 16-bit reference number)&lt;/li&gt;
+ * &lt;li&gt;Field 3 (1 octet): Length of the header, excluding the first two fields;
+ * equal to 04&lt;/li&gt;
+ * &lt;li&gt;Field 4 (2 octets): 0000-FFFF, CSMS reference number, must be same for
+ * all the SMS parts in the CSMS&lt;/li&gt;
+ * &lt;li&gt;Field 5 (1 octet): 00-FF, total number of parts. The value shall remain
+ * constant for every short message which makes up the concatenated short
+ * message. If the value is zero then the receiving entity shall ignore the
+ * whole information element&lt;/li&gt;
+ * &lt;li&gt;Field 6 (1 octet): 00-FF, this part's number in the sequence. The value
+ * shall start at 1 and increment for every short message which makes up the
+ * concatenated short message. If the value is zero or greater than the value in
+ * Field 5 then the receiving entity shall ignore the whole information element.
+ * [ETSI Specification: GSM 03.40 Version 5.3.0: July 1996]&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * This implementation generates a value using {@link Random} utility.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RandomReferenceNumberGenerator implements ReferenceNumberGenerator {
+	private final Random random;
+	private final int length;
+
+	/**
+	 * Uses a default {@link Random} to generate random reference numbers. The
+	 * generated reference is only one octet length.
+	 * 
+	 * &lt;p&gt;
+	 * If you want a custom number generation, use
+	 * {@link #RandomReferenceNumberGenerator(Random)}.
+	 */
+	@SuppressWarnings(&quot;squid:S2245&quot;)
+	public RandomReferenceNumberGenerator() {
+<span class="fc" id="L86">		this(new Random());</span>
+<span class="fc" id="L87">	}</span>
+
+	/**
+	 * Use the provided {@link Random} to generate random reference numbers. The
+	 * generated reference is only one octet length.
+	 * 
+	 * &lt;p&gt;
+	 * If you want to generate a reference number of two octets, use
+	 * {@link #RandomReferenceNumberGenerator(Random, int)}.
+	 * 
+	 * @param random
+	 *            used to generate random numbers
+	 */
+	public RandomReferenceNumberGenerator(Random random) {
+<span class="fc" id="L101">		this(random, 1);</span>
+<span class="fc" id="L102">	}</span>
+
+	/**
+	 * Use the provided {@link Random} to generate random reference number byte
+	 * arrays. Each reference number byte array has a size of {@code length}
+	 * parameter.
+	 * 
+	 * @param random
+	 *            used to generate random numbers
+	 * @param length
+	 *            the number of octets for each reference number
+	 */
+	public RandomReferenceNumberGenerator(Random random, int length) {
+<span class="fc" id="L115">		super();</span>
+<span class="fc" id="L116">		this.random = random;</span>
+<span class="fc" id="L117">		this.length = length;</span>
+<span class="fc" id="L118">	}</span>
+
+	@Override
+	public byte[] generateReferenceNumber() {
+<span class="fc" id="L122">		byte[] referenceNumber = new byte[length];</span>
+<span class="fc" id="L123">		random.nextBytes(referenceNumber);</span>
+<span class="fc" id="L124">		return referenceNumber;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

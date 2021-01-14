@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageInliningBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">ImageInliningBuilder.java</span></div><h1>ImageInliningBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.List;
+
+import javax.activation.MimetypesFileTypeMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
+import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.html.inliner.EveryImageInliner;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.translator.InlineImageTranslator;
+
+/**
+ * Configures how images declared in the HTML content are automatically
+ * transformed to make it work with email.
+ * 
+ * Images can be either:
+ * &lt;ul&gt;
+ * &lt;li&gt;Attached to the email&lt;/li&gt;
+ * &lt;li&gt;Encoded to a base64 string&lt;/li&gt;
+ * &lt;li&gt;Not inlined at all&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * This builder is used to enable the inlining modes (and to configure them).
+ * Several modes can be enabled.
+ * 
+ * &lt;p&gt;
+ * If {@link #attach()} is called, it enables image attachment.
+ * 
+ * Image defined in a html must be referenced by a
+ * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID (or
+ * CID)&lt;/a&gt; if the image is attached to the email.
+ * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;attach&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and attached to the email.
+ * The src attribute will be replaced by the Content-ID.
+ * 
+ * 
+ * &lt;p&gt;
+ * If {@link #base64()} is called, it enables inlining by converting image
+ * content into base64 string and using the base64 string as image source.
+ * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;base64&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and encoded into a base64
+ * string. This base64 string is used in the src attribute of the image.
+ * 
+ * &lt;p&gt;
+ * If you don't want to inline a particular image, you can set the
+ * &quot;data-inline-image&quot; attribute to &quot;skip&quot;:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;skip&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image won't be inlined at all.
+ * 
+ * &lt;p&gt;
+ * If no inline mode is explicitly defined on the {@code &lt;img&gt;}:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * The behavior depends on what you have configured:
+ * &lt;ul&gt;
+ * &lt;li&gt;If {@link #attach()} is enabled (has been called), then image will be
+ * loaded from the classpath and attached to the email. The src attribute will
+ * be replaced by the Content-ID.&lt;/li&gt;
+ * &lt;li&gt;If {@link #attach()} is not enabled (never called) and {@link #base64()}
+ * is enabled (has been called), then the image will be loaded from the
+ * classpath and encoded into a base64 string. This base64 string is used in the
+ * src attribute of the image.&lt;/li&gt;
+ * &lt;li&gt;If neither {@link #attach()} nor {@link #base64()} are enabled (never
+ * called), then images won't be inlined at all&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder&gt; implements ResourceResolutionBuilder&lt;ImageInliningBuilder&gt;, Builder&lt;ContentTranslator&gt; {
+<span class="fc" id="L121">	private static final Logger LOG = LoggerFactory.getLogger(ImageInliningBuilder.class);</span>
+
+	private final BuildContext buildContext;
+	private final ResourceResolutionBuilderHelper&lt;ImageInliningBuilder&gt; resourceResolutionBuilderHelper;
+	private AttachImageBuilder attachBuilder;
+	private Base64InliningBuilder base64Builder;
+	private MimetypeDetectionBuilder&lt;ImageInliningBuilder&gt; mimetypeBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ImageInliningBuilder(ImageHandlingBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L140">		super(parent);</span>
+<span class="fc" id="L141">		this.buildContext = buildContext;</span>
+<span class="fc" id="L142">		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L143">	}</span>
+
+	/**
+	 * Configures how attachment of images is handled.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called, it enables image attachment.
+	 * 
+	 * Image defined in a html must be referenced by a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt; if the image is attached to the email.
+	 * 
+	 * For example, if your template contains the following HTML code:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;attach&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The src attribute will be replaced by the Content-ID.
+	 * 
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * In the same way, if your template contains the following code:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: attach;
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=
+	&quot;background: url('classpath:/foo.png'); --inline-image: attach;&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The url will be replaced by the Content-ID.
+	 * 
+	 * &lt;p&gt;
+	 * If no inline mode is defined, image attachment is used by default:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=&quot;background: url('classpath:/foo.png');&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * The examples above have the same result as the example that explicitly
+	 * defines the inline mode.
+	 * 
+	 * 
+	 * @return the builder to configure how images are automatically attached
+	 */
+	public AttachImageBuilder attach() {
+<span class="fc bfc" id="L230" title="All 2 branches covered.">		if (attachBuilder == null) {</span>
+<span class="fc" id="L231">			attachBuilder = new AttachImageBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L233">		return attachBuilder;</span>
+	}
+
+	/**
+	 * Configures how attachment of images is handled.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called, it enables inlining by converting image content
+	 * into base64 string and using the base64 string as image source.
+	 * 
+	 * For example, if your template contains the following HTML code:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;base64&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. This base64 string is used in the src attribute of the
+	 * {@code &lt;img&gt;}.
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * In the same way, if your template contains the following code:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: base64;
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=&quot;background: url('classpath:/foo.png'); --inline-image: base64;&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. The url is updated with the base64 string.
+	 * 
+	 * &lt;p&gt;
+	 * If no inline mode is defined &lt;strong&gt;and&lt;/strong&gt; image attachment is not
+	 * enable ({@link #attach()} is not called), this mode is used by default:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * In this case, the example above as the same result as the example that
+	 * explicitly defines the inline mode.
+	 * 
+	 * 
+	 * @return the builder to configure how images are automatically converted
+	 *         to base64
+	 */
+	public Base64InliningBuilder base64() {
+<span class="pc bpc" id="L299" title="1 of 2 branches missed.">		if (base64Builder == null) {</span>
+<span class="fc" id="L300">			base64Builder = new Base64InliningBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L302">		return base64Builder;</span>
+	}
+
+	/**
+	 * Builder that configures mimetype detection.
+	 * 
+	 * There exists several implementations to provide the mimetype:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Using Java {@link MimetypesFileTypeMap}&lt;/li&gt;
+	 * &lt;li&gt;Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}&lt;/li&gt;
+	 * &lt;li&gt;Using &lt;a href=&quot;http://tika.apache.org/&quot;&gt;Apache Tika&lt;/a&gt;&lt;/li&gt;
+	 * &lt;li&gt;Using
+	 * &lt;a href=&quot;https://github.com/arimus/jmimemagic&quot;&gt;JMimeMagic&lt;/a&gt;&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Both implementations provided by Java are based on file extensions. This
+	 * can't be used in most cases as we often handle {@link InputStream}s.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In previous version of Ogham, JMimeMagic was used and was working quite
+	 * well. Unfortunately, the library is no more maintained.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can configure how Tika will detect mimetype:
+	 * 
+	 * &lt;pre&gt;
+	 * .mimetype()
+	 *    .tika()
+	 *       ...
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to use several providers. It will chain them until
+	 * one can find a valid mimetype. If none is found, you can explicitly
+	 * provide the default one:
+	 * 
+	 * &lt;pre&gt;
+	 * .mimetype()
+	 *    .defaultMimetype(&quot;text/html&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If no mimetype detector was previously defined, it creates a new one.
+	 * Then each time you call {@link #mimetype()}, the same instance is used.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure mimetype detection
+	 */
+	public MimetypeDetectionBuilder&lt;ImageInliningBuilder&gt; mimetype() {
+<span class="fc bfc" id="L354" title="All 2 branches covered.">		if (mimetypeBuilder == null) {</span>
+<span class="fc" id="L355">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(this, buildContext);</span>
+		}
+<span class="fc" id="L357">		return mimetypeBuilder;</span>
+	}
+
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits mimetype configuration from another builder. This is useful for
+	 * configuring independently different parts of Ogham but keeping a whole
+	 * coherence.
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * &lt;p&gt;
+	 * If a previous builder was defined (by calling {@link #mimetype()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	public ImageInliningBuilder mimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
+<span class="nc" id="L379">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(this, builder);</span>
+<span class="nc" id="L380">		return this;</span>
+	}
+
+	@Override
+	public ClassPathResolutionBuilder&lt;ImageInliningBuilder&gt; classpath() {
+<span class="fc" id="L385">		return resourceResolutionBuilderHelper.classpath();</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;ImageInliningBuilder&gt; file() {
+<span class="fc" id="L390">		return resourceResolutionBuilderHelper.file();</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;ImageInliningBuilder&gt; string() {
+<span class="fc" id="L395">		return resourceResolutionBuilderHelper.string();</span>
+	}
+
+	@Override
+	public ImageInliningBuilder resolver(ResourceResolver resolver) {
+<span class="nc" id="L400">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
+	}
+
+	@Override
+	public ContentTranslator build() {
+<span class="fc" id="L405">		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();</span>
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">		if (mimetypeProvider == null) {</span>
+<span class="nc" id="L407">			LOG.info(&quot;Images won't be inlined because no mimetype detector is configured&quot;);</span>
+<span class="nc" id="L408">			return null;</span>
+		}
+<span class="fc" id="L410">		LOG.info(&quot;Images will be inlined&quot;);</span>
+<span class="fc" id="L411">		return buildContext.register(new InlineImageTranslator(buildInliner(), buildResolver(), mimetypeProvider, buildRelativePathProvider()));</span>
+	}
+
+	private MimeTypeProvider buildMimetypeProvider() {
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">		if (mimetypeBuilder == null) {</span>
+<span class="nc" id="L416">			return null;</span>
+		}
+<span class="fc" id="L418">		return mimetypeBuilder.build();</span>
+	}
+
+	private ImageInliner buildInliner() {
+<span class="fc" id="L422">		EveryImageInliner inliner = buildContext.register(new EveryImageInliner());</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">		if (attachBuilder != null) {</span>
+<span class="fc" id="L424">			inliner.addInliner(attachBuilder.build());</span>
+		}
+<span class="fc bfc" id="L426" title="All 2 branches covered.">		if (base64Builder != null) {</span>
+<span class="fc" id="L427">			inliner.addInliner(base64Builder.build());</span>
+		}
+<span class="fc" id="L429">		return inliner;</span>
+	}
+
+	private ResourceResolver buildResolver() {
+<span class="fc" id="L433">		List&lt;ResourceResolver&gt; resolvers = resourceResolutionBuilderHelper.buildResolvers();</span>
+<span class="fc" id="L434">		return buildContext.register(new FirstSupportingResourceResolver(resolvers));</span>
+	}
+
+	private RelativePathResolver buildRelativePathProvider() {
+<span class="fc" id="L438">		return buildContext.register(new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups()));</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

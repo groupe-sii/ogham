@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentAddressListAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">FluentAddressListAssert.java</span></div><h1>FluentAddressListAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.mail.internet.InternetAddress;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.util.HasParent;
+
+public class FluentAddressListAssert&lt;P&gt; extends HasParent&lt;P&gt; {
+	/**
+	 * The list of addresses that will be used for assertions
+	 */
+	private List&lt;AddressesWithContext&gt; actual;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
+
+	public FluentAddressListAssert(List&lt;AddressesWithContext&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L27">		super(parent);</span>
+<span class="fc" id="L28">		this.actual = actual;</span>
+<span class="fc" id="L29">		this.registry = registry;</span>
+<span class="fc" id="L30">	}</span>
+
+	/**
+	 * Make assertions on the email addresses (without personal).
+	 * 
+	 * &lt;p&gt;
+	 * Email address parts can be checked independently:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;address: &quot;recipient@sii.fr&quot;&lt;/li&gt;
+	 * &lt;li&gt;personal: &quot;Recipient Name&quot;&lt;/li&gt;
+	 * &lt;li&gt;textual: {@code &quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .address(hasItems(&quot;recipient@sii.fr&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email addresses of the first message
+	 * contains exactly &quot;recipient@sii.fr&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .address(hasItems(&quot;recipient@sii.fr&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email addresses of every message
+	 * contains exactly &quot;recipient@sii.fr&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the email addresses
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;P&gt; address(Matcher&lt;? super Iterable&lt;String&gt;&gt; matcher) {
+<span class="fc" id="L64">		String desc = &quot;email addresses of '${fieldName}' field of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		for (AddressesWithContext addresses : actual) {</span>
+<span class="fc" id="L66">			List&lt;String&gt; addressesStr = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">			for (InternetAddress address : addresses.getAddresses()) {</span>
+<span class="fc" id="L68">				addressesStr.add(address.getAddress());</span>
+<span class="fc" id="L69">			}</span>
+<span class="fc" id="L70">			registry.register(() -&gt; assertThat(addressesStr, usingContext(desc, addresses, matcher)));</span>
+<span class="fc" id="L71">		}</span>
+<span class="fc" id="L72">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the email addresses (textual form).
+	 * 
+	 * &lt;p&gt;
+	 * Email address parts can be checked independently:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;address: &quot;recipient@sii.fr&quot;&lt;/li&gt;
+	 * &lt;li&gt;personal: &quot;Recipient Name&quot;&lt;/li&gt;
+	 * &lt;li&gt;textual: {@code &quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .textual(hasItems(&quot;Recipient Name &amp;lt;recipient@sii.fr&amp;gt;&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email addresses (personal with
+	 * address) of the first message contains exactly {@code &quot;Recipient Name
+	 * &lt;recipient@sii.fr&gt;&quot;}.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .textual(hasItems(&quot;Recipient Name &amp;lt;recipient@sii.fr&amp;gt;&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email addresses (personal with
+	 * address) of every message contains exactly {@code &quot;Recipient Name
+	 * &lt;recipient@sii.fr&gt;&quot;}.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the email addresses
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;P&gt; textual(Matcher&lt;? super Iterable&lt;String&gt;&gt; matcher) {
+<span class="fc" id="L109">		String desc = &quot;textual addresses of '${fieldName}' field of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		for (AddressesWithContext addresses : actual) {</span>
+<span class="fc" id="L111">			List&lt;String&gt; addressesStr = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">			for (InternetAddress address : addresses.getAddresses()) {</span>
+<span class="fc" id="L113">				addressesStr.add(address.toString());</span>
+<span class="fc" id="L114">			}</span>
+<span class="fc" id="L115">			registry.register(() -&gt; assertThat(addressesStr, usingContext(desc, addresses, matcher)));</span>
+<span class="fc" id="L116">		}</span>
+<span class="fc" id="L117">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the email address types.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .type(hasItems(&quot;rfc822&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email address types of the first
+	 * message contains exactly &quot;rfc822&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .type(hasItems(&quot;rfc822&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email address types of every message
+	 * contains exactly &quot;rfc822&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the email addresses
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;P&gt; type(Matcher&lt;? super Iterable&lt;String&gt;&gt; matcher) {
+<span class="fc" id="L144">		String desc = &quot;address types of '${fieldName}' field of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">		for (AddressesWithContext addresses : actual) {</span>
+<span class="fc" id="L146">			List&lt;String&gt; addressesStr = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">			for (InternetAddress address : addresses.getAddresses()) {</span>
+<span class="fc" id="L148">				addressesStr.add(address.getType());</span>
+<span class="fc" id="L149">			}</span>
+<span class="fc" id="L150">			registry.register(() -&gt; assertThat(addressesStr, usingContext(desc, addresses, matcher)));</span>
+<span class="fc" id="L151">		}</span>
+<span class="fc" id="L152">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the email addresses (personal information only).
+	 * 
+	 * &lt;p&gt;
+	 * Email address parts can be checked independently:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;address: &quot;recipient@sii.fr&quot;&lt;/li&gt;
+	 * &lt;li&gt;personal: &quot;Recipient Name&quot;&lt;/li&gt;
+	 * &lt;li&gt;textual: {@code &quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .personal(hasItems(&quot;Recipient Name&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email addresses (personal
+	 * information) of the first message contains exactly &quot;Recipient Name&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .personal(hasItems(&quot;Recipient Name&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the list of recipient email addresses (personal
+	 * information) of every message contains exactly &quot;Recipient Name&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the email addresses
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentAddressListAssert&lt;P&gt; personal(Matcher&lt;? super Iterable&lt;String&gt;&gt; matcher) {
+<span class="fc" id="L187">		String desc = &quot;personal of '${fieldName}' field of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">		for (AddressesWithContext addresses : actual) {</span>
+<span class="fc" id="L189">			List&lt;String&gt; addressesStr = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">			for (InternetAddress address : addresses.getAddresses()) {</span>
+<span class="fc" id="L191">				addressesStr.add(address.getPersonal());</span>
+<span class="fc" id="L192">			}</span>
+<span class="fc" id="L193">			registry.register(() -&gt; assertThat(addressesStr, usingContext(desc, addresses, matcher)));</span>
+<span class="fc" id="L194">		}</span>
+<span class="fc" id="L195">		return this;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

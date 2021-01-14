@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractHtmlDiffMatcher.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.hamcrest</a> &gt; <span class="el_source">AbstractHtmlDiffMatcher.java</span></div><h1>AbstractHtmlDiffMatcher.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.hamcrest;
+
+import java.util.function.Consumer;
+
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Difference;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.junit.ComparisonFailure;
+import org.w3c.dom.Document;
+
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+
+/**
+ * Check if the HTML is identical or similar to the expected. The HTML strings are parsed
+ * into {@link Document}s. Two documents are considered to be &quot;identical&quot; if
+ * they contain the same elements and attributes in the same order.Two documents are considered to be &quot;similar&quot; if they
+ * contain the same elements and attributes regardless of order.
+ * 
+ * &lt;p&gt;
+ * This matcher is a {@link ExpectedValueProvider} for knowing the original expected
+ * value. Thanks to this information, {@link OghamAssertions} will generate a
+ * {@link ComparisonFailure} with the expected string and actual string in order
+ * to be able to visualize the differences on sources directly in the IDE.
+ * 
+ * &lt;p&gt;
+ * See {@link HtmlUtils} for more information about &quot;identical&quot;/&quot;similar&quot; HTML.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public abstract class AbstractHtmlDiffMatcher extends BaseMatcher&lt;String&gt; implements ExpectedValueProvider&lt;String&gt;, ComparisonAwareMatcher {
+	protected final String expected;
+	protected final Consumer&lt;String&gt; printer;
+	protected final String name;
+	protected DetailedDiff diff;
+
+	public AbstractHtmlDiffMatcher(String expected, Consumer&lt;String&gt; printer, String name) {
+<span class="fc" id="L40">		super();</span>
+<span class="fc" id="L41">		this.expected = expected;</span>
+<span class="fc" id="L42">		this.printer = printer;</span>
+<span class="fc" id="L43">		this.name = name;</span>
+<span class="fc" id="L44">	}</span>
+
+	@Override
+	public boolean matches(Object item) {
+<span class="fc" id="L48">		diff = HtmlUtils.compare(expected, (String) item);</span>
+<span class="fc" id="L49">		boolean matches = matches(diff);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">		if(!matches) {</span>
+<span class="fc" id="L51">			printer.accept(comparisonMessage());</span>
+		}
+<span class="fc" id="L53">		return matches;</span>
+	}
+
+	protected abstract boolean matches(DetailedDiff diff);
+
+	@Override
+	public void describeTo(Description description) {
+<span class="fc" id="L60">		description.appendValue(expected);</span>
+<span class="fc" id="L61">	}</span>
+
+	@Override
+	public String getExpectedValue() {
+<span class="fc" id="L65">		return expected;</span>
+	}
+
+	@Override
+	public String comparisonMessage() {
+<span class="fc" id="L70">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L71">		sb.append(&quot;The two HTML documents are not &quot;).append(name).append(&quot;.\n&quot;);</span>
+<span class="fc" id="L72">		sb.append(&quot;Here are the differences found:\n&quot;);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">		for(Difference d : diff.getAllDifferences()) {</span>
+<span class="fc" id="L74">			sb.append(&quot;  - &quot;).append(d.toString()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L75">		}</span>
+<span class="fc" id="L76">		sb.append(&quot;\n&quot;);</span>
+<span class="fc" id="L77">		return sb.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

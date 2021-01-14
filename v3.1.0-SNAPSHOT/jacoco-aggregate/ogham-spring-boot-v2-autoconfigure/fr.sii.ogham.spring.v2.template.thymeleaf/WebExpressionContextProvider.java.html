@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WebExpressionContextProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-v2-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.v2.template.thymeleaf</a> &gt; <span class="el_source">WebExpressionContextProvider.java</span></div><h1>WebExpressionContextProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.v2.template.thymeleaf;
+
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.context.ApplicationContext;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.IContext;
+import org.thymeleaf.context.WebExpressionContext;
+import org.thymeleaf.spring5.view.ThymeleafView;
+
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.spring.template.thymeleaf.ThymeleafWebContextProvider;
+
+/**
+ * Generate an instance of {@link WebExpressionContext} for Thymeleaf v3.
+ * 
+ * This is used to mimic the behavior of {@link ThymeleafView} in order to give
+ * access to {@link HttpServletRequest}, {@link HttpServletResponse} and
+ * {@link ServletContext} from templates.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class WebExpressionContextProvider implements ThymeleafWebContextProvider {
+	private final ITemplateEngine viewTemplateEngine;
+
+	public WebExpressionContextProvider(ITemplateEngine viewTemplateEngine) {
+<span class="fc" id="L33">		super();</span>
+<span class="fc" id="L34">		this.viewTemplateEngine = viewTemplateEngine;</span>
+<span class="fc" id="L35">	}</span>
+
+	@Override
+	public IContext getWebContext(Context context, IContext base, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext, ApplicationContext applicationContext,
+			Map&lt;String, Object&gt; springModel) {
+<span class="fc" id="L40">		final IEngineConfiguration configuration = viewTemplateEngine.getConfiguration();</span>
+<span class="fc" id="L41">		return new WebExpressionContext(configuration, request, response, servletContext, base.getLocale(), springModel);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

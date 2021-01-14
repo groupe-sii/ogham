@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you develop a Web application, you can use HTML for the content and CSS for
+layout and theming. HTML and CSS can use images to make a beautiful Web page.
+Each concern is separated in a different file. This is a good practice.</p>
+</div>
+<div class="paragraph">
+<p>However, writing an HTML email is totally different. Indeed, email clients are
+not as evolved as Web browsers. Even worse, some clients disable some features
+on purpose (like GMail that prevents using <code>style</code> tag). To make an email work
+on several clients, you should follow these rules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;img&gt;</code> tags that use local images must be embedded</p>
+</li>
+<li>
+<p>Use XHTML instead of HTML</p>
+</li>
+<li>
+<p>Remove HTML comments (except conditional comments used to target Outlook)</p>
+</li>
+<li>
+<p>Add border=0 on all images to avoid an ugly border</p>
+</li>
+<li>
+<p>Do not write shortcut CSS values (<code>padding: 4px 4px 4px 4px;</code> instead of
+<code>padding: 4px</code>)</p>
+</li>
+<li>
+<p>Padding is not supported on some clients so you must use margins instead
+(adding a parent just for the layout)</p>
+</li>
+<li>
+<p>Background images on body should be moved on another node</p>
+</li>
+<li>
+<p>CSS3 properties are not supported</p>
+</li>
+<li>
+<p>Images must have <code>alt</code> attribute</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>There are many other rules but the developer should not be constrained and
+should be able to write its HTML and CSS like as usual in Web browsers. Ogham
+simplifies image and CSS integration and is able to partially rewrite the HTML.</p>
+</div>
+<div class="exampleblock tab-container  no-max-height">
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-10,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HtmlWithImagesAndCssTemplateSample</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+    <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+    <span class="comment">// in System properties)</span>
+    <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+    properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from.default-value</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;email address to display for the sender user&gt;</span><span class="delimiter">&quot;</span></span>);
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(properties)
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    <span class="comment">// Note that the extension of the template is not given. This version</span>
+    <span class="comment">// automatically takes the provided path and adds the '.html' extension</span>
+    <span class="comment">// for the HTML template and '.txt.ftl' for text template</span>
+    service.send(<span class="keyword">new</span> Email()
+            .body().template(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/resources</span><span class="delimiter">&quot;</span></span>,    <i class="conum" data-value="1"></i><b>(1)</b>
+                              <span class="keyword">new</span> SimpleBean(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo</span><span class="delimiter">&quot;</span></span>, <span class="integer">42</span>))        <i class="conum" data-value="2"></i><b>(2)</b>
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">SimpleBean</span> {
+    <span class="directive">private</span> <span class="predefined-type">String</span> name;
+    <span class="directive">private</span> <span class="type">int</span> value;
+    <span class="directive">public</span> SimpleBean(<span class="predefined-type">String</span> name, <span class="type">int</span> value) {
+      <span class="local-variable">super</span>();
+      <span class="local-variable">this</span>.name = name;
+      <span class="local-variable">this</span>.value = value;
+    }
+    <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
+      <span class="keyword">return</span> name;
+    }
+    <span class="directive">public</span> <span class="type">int</span> getValue() {
+      <span class="keyword">return</span> value;
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The path to the templates (<code>/template/withImagesAndCss/resources.html</code> for the main body,
+<code>/template/withImagesAndCss/resources.txt.ftl</code> for the text alternative)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The template context</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=2">Source code of the sample</a></p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/thymeleaf-html.jpg" alt="thymeleaf html" width="30" height="30"></span> ThymeLeaf template</div>
+<div class="content">
+<div class="listingblock highlight-lines:7-8,12,18,27,39,42">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attribute-name">xmlns:th</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.thymeleaf.org</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attribute-name">http-equiv</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-Type</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">content</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text/html; charset=UTF-8</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;title&gt;</span>HtmlWithImagesAndCssTemplateSample<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">viewport</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">content</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">width=device-width, initial-scale=1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;link</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">css/layout.css</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">rel</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">stylesheet</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>                             <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tag">&lt;link</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">css/theme.css</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">rel</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">stylesheet</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>                              <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;header&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/h1.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Creating Email Magic</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>                      <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="tag">&lt;/header&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">content</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;span</span> <span class="attribute-name">th:text</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">${name}</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>name<span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attribute-name">th:text</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">${value}</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>value<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">left</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/left.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-inline-image</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">base64</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>                  <i class="conum" data-value="4"></i><b>(4)</b>
+      <span class="tag">&lt;p</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+        tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+        porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+        posuere mauris neque at erat.
+      <span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">right</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/right.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-inline-image</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">attach</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>                 <i class="conum" data-value="5"></i><b>(5)</b>
+      <span class="tag">&lt;p</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+        tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+        porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+        posuere mauris neque at erat.
+      <span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;footer&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">social</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.twitter.com/</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/tw.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Twitter</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>                       <i class="conum" data-value="6"></i><b>(6)</b>
+      <span class="tag">&lt;/a&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.facebook.com/</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/fb.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Facebook</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-inline-image</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">skip</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>           <i class="conum" data-value="7"></i><b>(7)</b>
+      <span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">sender-info</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="entity">&amp;reg;</span> Someone, somewhere 2013<span class="tag">&lt;br</span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-inline-styles</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">skip</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Unsubscribe<span class="tag">&lt;/a&gt;</span> to this newsletter instantly  <i class="conum" data-value="8"></i><b>(8)</b>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/footer&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The CSS is parsed by Ogham and applied directly on the HTML (using <code>style</code> attribute)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The CSS is parsed by Ogham and applied directly on the HTML (using <code>style</code> attribute). The CSS may
+contain rules that override some rules of other CSS files (like in a browser)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The image is automatically embedded (the path is replaced by a
+<a href="https://tools.ietf.org/html/rfc4021#section-2.2.2">Content-ID (or CID)</a> and the image is attached
+to the email using <code>ContentDisposition.INLINE</code> with the Content-ID header). The content type is
+automatically determined</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The image is converted to a base64 string. The <code>src</code> attribute of the image is updated using
+<a href="https://en.wikipedia.org/wiki/Data_URI_scheme">data URI scheme</a>. The content type is automatically
+determined</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Same as &lt;3&gt;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Same as &lt;3&gt;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>The image is not inlined by Ogham. This can be useful to embed it manually.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=2">Source code of the HTML template</a></p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/css.png" alt="css" width="37" height="30"></span> CSS</div>
+<div class="content">
+<div class="listingblock">
+<div class="title">layout.css</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="css"><span class="tag">body</span> {
+  <span class="key">margin</span>: <span class="float">10px</span> <span class="value">auto</span> <span class="float">30px</span> <span class="value">auto</span>;
+  <span class="key">width</span>: <span class="float">600px</span>;
+}
+
+<span class="tag">header</span> {
+  <span class="key">padding</span>: <span class="float">40px</span> <span class="float">30px</span>;
+}
+
+<span class="tag">header</span> <span class="tag">img</span> {
+  <span class="key">display</span>: <span class="value">block</span>;
+  <span class="key">margin</span>: <span class="value">auto</span>;
+}
+
+
+<span class="class">.content</span> {
+  <span class="key">padding</span>: <span class="float">40px</span> <span class="float">30px</span>;
+}
+
+<span class="class">.left</span>,
+<span class="class">.right</span> {
+  <span class="key">width</span>: <span class="float">250px</span>;
+  <span class="key">display</span>: <span class="value">inline-block</span>;
+}
+
+<span class="class">.left</span> {
+  <span class="key">margin-right</span>: <span class="float">36px</span>;
+}
+
+<span class="tag">footer</span> {
+  <span class="key">padding</span>: <span class="float">30px</span>;
+}
+
+<span class="tag">footer</span> <span class="class">.sender-info</span>,
+<span class="tag">footer</span> <span class="class">.social</span> {
+  <span class="key">text-align</span>: <span class="value">center</span>;
+}
+<span class="tag">footer</span> <span class="class">.social</span> <span class="tag">a</span> {
+  <span class="key">display</span>: <span class="value">inline-block</span>;
+}
+<span class="tag">footer</span> <span class="class">.sender-info</span> {
+  <span class="key">margin-top</span>: <span class="float">20px</span>;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">theme.css</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="css"><span class="tag">body</span> {
+  <span class="key">border</span>: <span class="float">1px</span> <span class="value">solid</span> <span class="color">#ccc</span>;
+}
+
+<span class="tag">header</span> {
+  <span class="key">background</span>: <span class="color">#70bbd9</span>;
+}
+
+<span class="class">.content</span> {
+  <span class="key">text-align</span>: <span class="value">justify</span>;
+}
+
+<span class="tag">footer</span> {
+  <span class="key">color</span>:<span class="color">#ffffff</span>;
+  <span class="key">font-family</span>:<span class="value">Arial</span>, <span class="value">sans-serif</span>;
+  <span class="key">font-size</span>:<span class="float">14px</span>;
+  <span class="key">background</span>: <span class="color">#ee4c50</span>;
+}
+
+<span class="tag">footer</span> <span class="class">.social</span> <span class="tag">a</span> {
+  <span class="key">color</span>:<span class="color">#ffffff</span>;
+}
+
+<span class="class">.white</span> {
+  <span class="key">color</span>: <span class="color">#fff</span>;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/html.png" alt="html" width="37" height="30"></span> Sent HTML</div>
+<div class="content">
+<div class="exampleblock TODO">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Add code of the generated HTML with all transformations</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Here is the list of supported transformations:</p>
+</div>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><i class="fa fa-check-square-o"></i> <code>&lt;img&gt;</code> tags that use local images are embedded (using <code>cid</code> reference)</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> <code>&lt;img&gt;</code> tags that use local images are embedded (using base64 data URI)</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> Inline CSS rules using <code>style</code> attribute</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> <code>background</code> images that use local images are embedded (using <code>cid</code> reference)</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> <code>background</code> images that use local images are embedded (using base64 data URI)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Use XHTML instead of HTML</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Tables used for layout explicitly set default values</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Remove HTML comments (except conditional comments used to target Outlook)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Add border=0 on all images to avoid an ugly border</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Do not write shortcut CSS values (<code>padding: 4px 4px 4px 4px;</code> instead of <code>padding: 4px</code>)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Background images on body should be moved on another node</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Images must have <code>alt</code> attribute</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock TODO">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>List all other rules</p>
+</li>
+<li>
+<p>Indicate what will be supported and what won&#8217;t and why</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

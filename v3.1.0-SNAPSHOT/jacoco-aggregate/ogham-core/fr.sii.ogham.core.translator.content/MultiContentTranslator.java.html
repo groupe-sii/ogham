@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MultiContentTranslator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.translator.content</a> &gt; <span class="el_source">MultiContentTranslator.java</span></div><h1>MultiContentTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.translator.content;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.handler.NoContentException;
+import fr.sii.ogham.core.exception.handler.Recoverable;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MultiContent;
+
+/**
+ * &lt;p&gt;
+ * Decorator that is able to handle {@link MultiContent}. A {@link MultiContent}
+ * can provide several contents to put into the final message. For example,
+ * emails can send both HTML and text content.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * This implementation calls the delegate content translator to apply
+ * translation on each sub content of the {@link MultiContent}. It can be useful
+ * to apply content translations on every sub content like it should be applied
+ * for normal content.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The same translator is applied for all sub contents.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the content is not a {@link MultiContent}, then the content is returned
+ * as-is.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MultiContentTranslator implements ContentTranslator {
+<span class="fc" id="L40">	private static final Logger LOG = LoggerFactory.getLogger(MultiContentTranslator.class);</span>
+
+	/**
+	 * The content translator to apply on each sub content
+	 */
+	private ContentTranslator delegate;
+
+	public MultiContentTranslator(ContentTranslator delegate) {
+<span class="fc" id="L48">		super();</span>
+<span class="fc" id="L49">		this.delegate = delegate;</span>
+<span class="fc" id="L50">	}</span>
+
+	@Override
+	public Content translate(Content content) throws ContentTranslatorException {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		if (!(content instanceof MultiContent)) {</span>
+<span class="fc" id="L55">			LOG.trace(&quot;Not a MultiContent =&gt; skip it&quot;);</span>
+<span class="fc" id="L56">			return content;</span>
+		}
+<span class="fc" id="L58">		MultiContent result = new MultiContent();</span>
+<span class="fc" id="L59">		List&lt;ContentTranslatorException&gt; missing = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">		for (Content c : ((MultiContent) content).getContents()) {</span>
+<span class="fc" id="L61">			translate(c, result, missing);</span>
+<span class="fc" id="L62">		}</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		if (result.getContents().isEmpty()) {</span>
+<span class="nc" id="L64">			handleEmptyContent(content, missing);</span>
+		}
+<span class="fc" id="L66">		return result;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L71">		return &quot;MultiContentTranslator&quot;;</span>
+	}
+
+
+	private void translate(Content c, MultiContent result, List&lt;ContentTranslatorException&gt; missing) throws ContentTranslatorException {
+<span class="fc" id="L76">		LOG.debug(&quot;Translate the sub content using {}&quot;, delegate);</span>
+<span class="fc" id="L77">		LOG.trace(&quot;sub content: {}&quot;, c);</span>
+		try {
+<span class="fc" id="L79">			Content translated = delegate.translate(c);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">			if (translated == null) {</span>
+<span class="fc" id="L81">				LOG.debug(&quot;Sub content skipped&quot;);</span>
+<span class="fc" id="L82">				LOG.trace(&quot;sub-content: {}&quot;, c);</span>
+			} else {
+<span class="fc" id="L84">				LOG.debug(&quot;Sub content added&quot;);</span>
+<span class="fc" id="L85">				LOG.trace(&quot;sub-content: {}&quot;, c);</span>
+<span class="fc" id="L86">				result.addContent(translated);</span>
+			}
+<span class="fc" id="L88">		} catch (ContentTranslatorException e) {</span>
+<span class="fc" id="L89">			handleException(e, missing);</span>
+<span class="fc" id="L90">		}</span>
+<span class="fc" id="L91">	}</span>
+
+	private static void handleException(ContentTranslatorException e, List&lt;ContentTranslatorException&gt; missing) throws ContentTranslatorException {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if (!isRecoverable(e)) {</span>
+<span class="fc" id="L95">			throw e;</span>
+		}
+<span class="fc" id="L97">		LOG.info(&quot;{} =&gt; ignoring&quot;, e.getMessage(), e);</span>
+<span class="fc" id="L98">		missing.add(e);</span>
+<span class="fc" id="L99">	}</span>
+
+	private static void handleEmptyContent(Content content, List&lt;ContentTranslatorException&gt; missing) throws NoContentException {
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		if (!missing.isEmpty()) {</span>
+<span class="fc" id="L103">			String notFoundTemplates = missing.stream().map(Exception::getMessage).collect(Collectors.joining(&quot;\n&quot;));</span>
+<span class="fc" id="L104">			throw new NoContentException(&quot;The message is empty maybe due to some errors:\n&quot; + notFoundTemplates, (MultiContent) content, missing);</span>
+		}
+<span class="fc" id="L106">		throw new NoContentException(&quot;The message is empty&quot;, (MultiContent) content, missing);</span>
+	}
+
+	private static boolean isRecoverable(ContentTranslatorException e) {
+<span class="fc" id="L110">		return e.getClass().isAnnotationPresent(Recoverable.class);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

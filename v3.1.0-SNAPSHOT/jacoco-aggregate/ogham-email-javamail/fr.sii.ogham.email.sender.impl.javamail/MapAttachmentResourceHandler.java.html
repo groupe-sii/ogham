@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MapAttachmentResourceHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl.javamail</a> &gt; <span class="el_source">MapAttachmentResourceHandler.java</span></div><h1>MapAttachmentResourceHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl.javamail;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.mail.BodyPart;
+
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.NoAttachmentResourceHandlerException;
+
+/**
+ * Provides a handler for the attachment resource based on the class of the
+ * attachment resource. The registration order is important.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MapAttachmentResourceHandler implements JavaMailAttachmentResourceHandler {
+	/**
+	 * The mapping of attachment resource handlers indexed by the attachment
+	 * resource class
+	 */
+	private final List&lt;Mapping&gt; mappings;
+
+	/**
+	 * Initialize an empty mapping
+	 */
+	public MapAttachmentResourceHandler() {
+<span class="fc" id="L31">		super();</span>
+<span class="fc" id="L32">		this.mappings = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L33">	}</span>
+
+	@Override
+	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
+<span class="fc" id="L37">		JavaMailAttachmentResourceHandler attachmentHandler = find(resource.getClass());</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">		if (attachmentHandler == null) {</span>
+<span class="nc" id="L39">			throw new NoAttachmentResourceHandlerException(&quot;there is no attachment resource handler defined for managing &quot; + resource.getClass().getSimpleName() + &quot; attachment resource class&quot;,</span>
+					attachment);
+		}
+<span class="fc" id="L42">		attachmentHandler.setData(part, resource, attachment);</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * Register a new attachment resource handler. The registration order is
+	 * important.
+	 * 
+	 * @param clazz
+	 *            the class of the attachment resource
+	 * @param handler
+	 *            the attachment resource handler
+	 */
+	public void registerResourceHandler(Class&lt;? extends NamedResource&gt; clazz, JavaMailAttachmentResourceHandler handler) {
+<span class="fc" id="L55">		mappings.add(new Mapping(clazz, handler));</span>
+<span class="fc" id="L56">	}</span>
+
+	private JavaMailAttachmentResourceHandler find(Class&lt;? extends NamedResource&gt; clazz) {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">		for (Mapping mapping : mappings) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">			if (mapping.getClazz().isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L61">				return mapping.getHandler();</span>
+			}
+<span class="fc" id="L63">		}</span>
+<span class="nc" id="L64">		return null;</span>
+	}
+
+	private static class Mapping {
+		private final Class&lt;? extends NamedResource&gt; clazz;
+		private final JavaMailAttachmentResourceHandler handler;
+
+		public Mapping(Class&lt;? extends NamedResource&gt; clazz, JavaMailAttachmentResourceHandler handler) {
+<span class="fc" id="L72">			super();</span>
+<span class="fc" id="L73">			this.clazz = clazz;</span>
+<span class="fc" id="L74">			this.handler = handler;</span>
+<span class="fc" id="L75">		}</span>
+
+		public Class&lt;? extends NamedResource&gt; getClazz() {
+<span class="fc" id="L78">			return clazz;</span>
+		}
+
+		public JavaMailAttachmentResourceHandler getHandler() {
+<span class="fc" id="L82">			return handler;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

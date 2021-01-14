@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentShortMessageMessageAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentShortMessageMessageAssert.java</span></div><h1>FluentShortMessageMessageAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static java.util.Collections.unmodifiableList;
+import static org.apache.commons.lang3.ArrayUtils.toObject;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on {@code short_message} field.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            Parent type
+ * @param &lt;S&gt;
+ *            Sent SubmitSm type
+ */
+public class FluentShortMessageMessageAssert&lt;P, S extends SubmitSm&gt; extends HasParent&lt;P&gt; {
+	private final List&lt;ShortMessageWithContext&lt;S&gt;&gt; actual;
+	private final AssertionRegistry registry;
+
+	/**
+	 * Initializes with the list of short messages and the parent.
+	 * 
+	 * @param actual
+	 *            the list of short messages (whit extra context for error
+	 *            reporting)
+	 * @param parent
+	 *            the parent (used by {@link #and()})
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentShortMessageMessageAssert(List&lt;ShortMessageWithContext&lt;S&gt;&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L43">		super(parent);</span>
+<span class="fc" id="L44">		this.actual = unmodifiableList(actual);</span>
+<span class="fc" id="L45">		this.registry = registry;</span>
+<span class="fc" id="L46">	}</span>
+
+	/**
+	 * Make assertions on the header byte array of short message field of the
+	 * message(s) using fluent API. The header byte array may be null. This is
+	 * the default behavior. However, if the original message is split into
+	 * several segments, each segment has a header that contains information to
+	 * indicate how the message was split (number of segments, reference number,
+	 * current segment number, ...).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages()
+	 *   .message(0)
+	 *     .rawRequest()
+	 *       .shortMessage()
+	 *         .header(array(equalTo(0x01), equalTo(0x02)))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the header byte array of the first message is exactly
+	 * [0x01, 0x02].
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages()
+	 *   .every()
+	 *     .rawRequest()
+	 *       .shortMessage()
+	 *         .header(array(equalTo(0x01), equalTo(0x02)))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the header byte array of every message is exactly [0x01,
+	 * 0x02].
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the header
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentShortMessageMessageAssert&lt;P, S&gt; header(Matcher&lt;? super Byte[]&gt; matcher) {
+<span class="fc" id="L83">		String message = &quot;header of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">		for (ShortMessageWithContext&lt;S&gt; shortMessageWithContext : actual) {</span>
+<span class="fc" id="L85">			S msg = shortMessageWithContext.getRequest();</span>
+<span class="fc" id="L86">			registry.register(() -&gt; assertThat(toObject(getHeader(msg)), usingContext(message, shortMessageWithContext, matcher)));</span>
+<span class="fc" id="L87">		}</span>
+<span class="fc" id="L88">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the payload byte array of short message field of the
+	 * message(s) using fluent API. The payload is the part without the header
+	 * (see {@link #header(Matcher)}). It contains the message (as byte array)
+	 * displayed to the end-user.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages()
+	 *   .message(0)
+	 *     .rawRequest()
+	 *       .shortMessage()
+	 *         .payload(arrayWithSize(160))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the payload byte array of the first message has exactly 160
+	 * bytes.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages()
+	 *   .every()
+	 *     .rawRequest()
+	 *       .shortMessage()
+	 *         .payload(arrayWithSize(160))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the payload byte array of the first message has exactly 160
+	 * bytes.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the payload
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentShortMessageMessageAssert&lt;P, S&gt; payload(Matcher&lt;? super Byte[]&gt; matcher) {
+<span class="fc" id="L124">		String message = &quot;payload of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">		for (ShortMessageWithContext&lt;S&gt; shortMessageWithContext : actual) {</span>
+<span class="fc" id="L126">			S msg = shortMessageWithContext.getRequest();</span>
+<span class="fc" id="L127">			registry.register(() -&gt; assertThat(toObject(getPayload(msg)), usingContext(message, shortMessageWithContext, matcher)));</span>
+<span class="fc" id="L128">		}</span>
+<span class="fc" id="L129">		return this;</span>
+	}
+
+	@SuppressWarnings(&quot;squid:S1168&quot;)
+	private byte[] getHeader(S msg) {
+<span class="fc" id="L134">		byte[] shortMessage = msg.getShortMessage();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">		if (msg.isUdhi()) {</span>
+<span class="fc" id="L136">			return Arrays.copyOfRange(shortMessage, 0, headerLength(shortMessage));</span>
+		}
+<span class="fc" id="L138">		return null;</span>
+	}
+
+	private static int headerLength(byte[] shortMessage) {
+<span class="fc" id="L142">		return shortMessage[0] + 1;</span>
+	}
+
+	private byte[] getPayload(S msg) {
+<span class="fc" id="L146">		byte[] shortMessage = msg.getShortMessage();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		if (msg.isUdhi()) {</span>
+<span class="fc" id="L148">			return Arrays.copyOfRange(shortMessage, headerLength(shortMessage), shortMessage.length);</span>
+		}
+<span class="fc" id="L150">		return shortMessage;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

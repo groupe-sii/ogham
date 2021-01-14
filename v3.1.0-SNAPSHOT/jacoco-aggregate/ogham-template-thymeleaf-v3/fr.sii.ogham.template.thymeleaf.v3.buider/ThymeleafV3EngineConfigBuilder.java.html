@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafV3EngineConfigBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v3</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3.buider</a> &gt; <span class="el_source">ThymeleafV3EngineConfigBuilder.java</span></div><h1>ThymeleafV3EngineConfigBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3.buider;
+
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafEngineConfigBuilder;
+
+/**
+ * Fluent builder to configure Thymeleaf engine.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class ThymeleafV3EngineConfigBuilder&lt;P&gt; extends AbstractThymeleafEngineConfigBuilder&lt;ThymeleafV3EngineConfigBuilder&lt;P&gt;, P&gt; {
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ThymeleafV3EngineConfigBuilder(P parent, BuildContext buildContext) {
+<span class="nc" id="L26">		super(ThymeleafV3EngineConfigBuilder.class, parent, buildContext);</span>
+<span class="nc" id="L27">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

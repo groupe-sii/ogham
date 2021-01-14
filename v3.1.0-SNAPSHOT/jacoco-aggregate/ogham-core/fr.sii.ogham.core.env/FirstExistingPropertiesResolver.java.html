@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstExistingPropertiesResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.env</a> &gt; <span class="el_source">FirstExistingPropertiesResolver.java</span></div><h1>FirstExistingPropertiesResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.env;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Resolve properties by requesting delegates.
+ * 
+ * The first registered delegate is requested for a property value or existence.
+ * If the first resolver can provide the property (property exists), then the
+ * property value is returned. If the first can't provide the property, then the
+ * second is requested and so on until one resolver can provide the value.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FirstExistingPropertiesResolver implements PropertyResolver {
+	private final List&lt;PropertyResolver&gt; delegates;
+
+	/**
+	 * Initialize the resolver with a list of sub-resolvers that will be
+	 * executed in order to search for a property value.
+	 * 
+	 * @param delegates
+	 *            the ordered list of resolvers
+	 */
+	public FirstExistingPropertiesResolver(PropertyResolver... delegates) {
+<span class="fc" id="L28">		this(Arrays.asList(delegates));</span>
+<span class="fc" id="L29">	}</span>
+
+	/**
+	 * Initialize the resolver with a list of sub-resolvers that will be
+	 * executed in order to search for a property value.
+	 * 
+	 * @param delegates
+	 *            the ordered list of resolvers
+	 */
+	public FirstExistingPropertiesResolver(List&lt;PropertyResolver&gt; delegates) {
+<span class="fc" id="L39">		super();</span>
+<span class="fc" id="L40">		this.delegates = delegates;</span>
+<span class="fc" id="L41">	}</span>
+
+	@Override
+	public boolean containsProperty(String key) {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">			if (resolver.containsProperty(key)) {</span>
+<span class="fc" id="L47">				return true;</span>
+			}
+<span class="fc" id="L49">		}</span>
+<span class="fc" id="L50">		return false;</span>
+	}
+
+	@Override
+	public String getProperty(String key) {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">			if (resolver.containsProperty(key)) {</span>
+<span class="fc" id="L57">				return resolver.getProperty(key);</span>
+			}
+<span class="fc" id="L59">		}</span>
+<span class="fc" id="L60">		return null;</span>
+	}
+
+	@Override
+	public String getProperty(String key, String defaultValue) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">			if (resolver.containsProperty(key)) {</span>
+<span class="fc" id="L67">				return resolver.getProperty(key, defaultValue);</span>
+			}
+<span class="fc" id="L69">		}</span>
+<span class="fc" id="L70">		return defaultValue;</span>
+	}
+
+	@Override
+	public &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetType) {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">			if (resolver.containsProperty(key)) {</span>
+<span class="fc" id="L77">				return resolver.getProperty(key, targetType);</span>
+			}
+<span class="fc" id="L79">		}</span>
+<span class="fc" id="L80">		return null;</span>
+	}
+
+	@Override
+	public &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetType, T defaultValue) {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">			if (resolver.containsProperty(key)) {</span>
+<span class="nc" id="L87">				return resolver.getProperty(key, targetType, defaultValue);</span>
+			}
+<span class="nc" id="L89">		}</span>
+<span class="nc" id="L90">		return defaultValue;</span>
+	}
+
+	@Override
+	public String getRequiredProperty(String key) {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">			if (resolver.containsProperty(key)) {</span>
+<span class="nc" id="L97">				return resolver.getRequiredProperty(key);</span>
+			}
+<span class="nc" id="L99">		}</span>
+<span class="nc" id="L100">		throw new IllegalStateException(&quot;no value for required property &quot; + key);</span>
+	}
+
+	@Override
+	public &lt;T&gt; T getRequiredProperty(String key, Class&lt;T&gt; targetType) {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		for (PropertyResolver resolver : delegates) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">			if (resolver.containsProperty(key)) {</span>
+<span class="nc" id="L107">				return resolver.getRequiredProperty(key, targetType);</span>
+			}
+<span class="nc" id="L109">		}</span>
+<span class="nc" id="L110">		throw new IllegalStateException(&quot;no value for required property &quot; + key);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

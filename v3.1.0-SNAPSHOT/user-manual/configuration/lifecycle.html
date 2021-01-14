@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>@ConfigurerFor</code> has a field named <code>phase()</code> to indicate when the <code>MessagingConfigurer</code>
+must be executed. There are two phases: <code>ConfigurationPhase.AFTER_INIT</code> and
+<code>ConfigurationPhase.BEFORE_BUILD</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here is the auto-configuration lifecycle:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>MessagingBuilder</code> instantiation (using <code>MessagingBuilder.standard()</code> or
+<code>MessagingBuilder.minimal()</code>).</p>
+</li>
+<li>
+<p>Search <code>MessagingConfigurer</code> classes in the classpath and register found classes
+ordered by higher priority.</p>
+</li>
+<li>
+<p>Trigger <code>ConfigurationPhase.AFTER_INIT</code> phase: Instantiate and configure previously
+registered <code>MessagingConfigurer</code> classes (only configurers registered for
+<code>AFTER_INIT</code> phase).</p>
+</li>
+<li>
+<p>Developer can configure Ogham using <code>MessagingBuilder</code> instance (created at step 1).</p>
+</li>
+<li>
+<p>Developer has finished configuring Ogham so he calls <code>MessagingBuilder.build()</code>.</p>
+</li>
+<li>
+<p>Trigger <code>ConfigurationPhase.BEFORE_BUILD</code> phase: Instantiate and configure
+previously registered <code>MessagingConfigurer</code> classes (only configurers registered for
+<code>BEFORE_BUILD</code> phase).</p>
+</li>
+<li>
+<p>Instantiate <code>MessagingService</code> according to <code>MessagingBuilder</code> configuration.</p>
+</li>
+<li>
+<p>Developer gets an instance of <code>MessagingService</code> completely configured for his
+needs.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Early initialization phase and property evaluation</div>
+<div class="paragraph">
+<p>If an Ogham extension provides a <code>MessagingConfigurer</code> that is initialized during
+<code>AFTER_INIT</code> phase and this configurer needs to evaluate a property value
+to adapt the behavior, it may not work as expected.</p>
+</div>
+<div class="paragraph">
+<p>Actually, the developer can configure value for properties at the step 4 while
+<code>AFTER_INIT</code> phase is triggered at step 3.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+</body>
+</html>

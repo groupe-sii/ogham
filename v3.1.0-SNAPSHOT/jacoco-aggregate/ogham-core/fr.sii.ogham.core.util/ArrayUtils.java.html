@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ArrayUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">ArrayUtils.java</span></div><h1>ArrayUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+/**
+ * Utility class for manipulating arrays.
+ */
+public final class ArrayUtils {
+	/**
+	 * Create an array starting with first element and followed by others.
+	 * &lt;p&gt;
+	 * This can be useful when handling vararg parameters and when you want to
+	 * force to have at least one value.
+	 * &lt;p&gt;
+	 * 
+	 * @param first
+	 *            the first element
+	 * @param others
+	 *            the other elements
+	 * @param &lt;T&gt;
+	 *            the type of each element in the array
+	 * @return the combined array
+	 * @throws IllegalArgumentException
+	 *             if first or others is null
+	 */
+	public static &lt;T&gt; T[] concat(T first, T[] others) {
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">		if (first == null) {</span>
+<span class="nc" id="L29">			throw new IllegalArgumentException(&quot;first cannot be null&quot;);</span>
+		}
+		@SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L32">		T[] arr = (T[]) Array.newInstance(first.getClass(), 1);</span>
+<span class="fc" id="L33">		arr[0] = first;</span>
+<span class="fc" id="L34">		return concat(arr, others);</span>
+	}
+
+	/**
+	 * Combine two arrays. It creates a new array that contains all the elements
+	 * of first followed by all elements of second.
+	 * 
+	 * @param first
+	 *            the first array
+	 * @param second
+	 *            the second array
+	 * @param &lt;T&gt;
+	 *            the type of each element in the array
+	 * @return the combined array
+	 * @throws IllegalArgumentException
+	 *             if first or second is null
+	 */
+	public static &lt;T&gt; T[] concat(T[] first, T[] second) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">		if (first == null) {</span>
+<span class="fc" id="L53">			throw new IllegalArgumentException(&quot;first cannot be null&quot;);</span>
+		}
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if (second == null) {</span>
+<span class="fc" id="L56">			throw new IllegalArgumentException(&quot;second cannot be null&quot;);</span>
+		}
+<span class="fc" id="L58">		T[] result = Arrays.copyOf(first, first.length + second.length);</span>
+<span class="fc" id="L59">		System.arraycopy(second, 0, result, first.length, second.length);</span>
+<span class="fc" id="L60">		return result;</span>
+	}
+
+	private ArrayUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

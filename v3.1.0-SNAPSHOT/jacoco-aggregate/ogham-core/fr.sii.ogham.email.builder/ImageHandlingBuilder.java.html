@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageHandlingBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">ImageHandlingBuilder.java</span></div><h1>ImageHandlingBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+
+/**
+ * Image handling consists of defining how images are inlined in the email:
+ * &lt;ul&gt;
+ * &lt;li&gt;Either inlining directly in the HTML content by encoding image into
+ * base64 string&lt;/li&gt;
+ * &lt;li&gt;Or attaching the image to the email and referencing it using a
+ * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+ * (CID)&lt;/a&gt;&lt;/li&gt;
+ * &lt;li&gt;Or no inlining&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ImageHandlingBuilder extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;ContentTranslator&gt; {
+	private final BuildContext buildContext;
+	private ImageInliningBuilder imageInliningBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ImageHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L38">		super(parent);</span>
+<span class="fc" id="L39">		this.buildContext = buildContext;</span>
+<span class="fc" id="L40">	}</span>
+
+	/**
+	 * Configures how images are handled. Image handling consists of defining
+	 * how images are inlined in the email:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Either inlining directly in the HTML content by encoding image into
+	 * base64 string&lt;/li&gt;
+	 * &lt;li&gt;Or attaching the image to the email and referencing it using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (CID)&lt;/a&gt;&lt;/li&gt;
+	 * &lt;li&gt;Or no inlining&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * This builder is used to enable the inlining modes (and to configure
+	 * them). Several modes can be enabled.
+	 * 
+	 * &lt;p&gt;
+	 * If {@link ImageInliningBuilder#attach()} is called, it enables image
+	 * attachment.
+	 * 
+	 * Image defined in a html must be referenced by a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt; if the image is attached to the email.
+	 * 
+	 * For example, if your template contains the following HTML code:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;attach&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The src attribute will be replaced by the Content-ID.
+	 * 
+	 * It also works for images included from CSS:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: attach;
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=&quot;background: url('classpath:/foo.png'); --inline-image: attach;&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The url will be replaced by the Content-ID.
+	 * 
+	 * &lt;p&gt;
+	 * If {@link ImageInliningBuilder#base64()} is called, it enables inlining
+	 * by converting image content into base64 string and using the base64
+	 * string as image source.
+	 * 
+	 * For example, if your template contains the following HTML code:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;base64&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. This base64 string is used in the src attribute of the
+	 * {@code &lt;img&gt;}.
+	 * 
+	 * It also works for images included from CSS:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: base64;
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=&quot;background: url('classpath:/foo.png'); --inline-image: base64;&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. The url is updated with the base64 string.
+	 * 
+	 * &lt;p&gt;
+	 * If you don't want to inline a particular image, you can set the
+	 * &quot;data-inline-image&quot; attribute to &quot;skip&quot;:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;skip&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image won't be inlined at all.
+	 * 
+	 * &lt;p&gt;
+	 * If no inline mode is explicitly defined on the {@code &lt;img&gt;}:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * The behavior depends on what you have configured:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If {@link ImageInliningBuilder#attach()} is enabled (has been
+	 * called), then image will be loaded from the classpath and attached to the
+	 * email. The src attribute will be replaced by the Content-ID.&lt;/li&gt;
+	 * &lt;li&gt;If {@link ImageInliningBuilder#attach()} is not enabled (never
+	 * called) and {@link ImageInliningBuilder#base64()} is enabled (has been
+	 * called), then the image will be loaded from the classpath and encoded
+	 * into a base64 string. This base64 string is used in the src attribute of
+	 * the image.&lt;/li&gt;
+	 * &lt;li&gt;If neither {@link ImageInliningBuilder#attach()} nor
+	 * {@link ImageInliningBuilder#base64()} are enabled (never called), then
+	 * images won't be inlined at all&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to configure image inlining
+	 */
+	public ImageInliningBuilder inline() {
+<span class="fc bfc" id="L181" title="All 2 branches covered.">		if (imageInliningBuilder == null) {</span>
+<span class="fc" id="L182">			imageInliningBuilder = new ImageInliningBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L184">		return imageInliningBuilder;</span>
+	}
+
+	@Override
+	public ContentTranslator build() {
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">		if (imageInliningBuilder == null) {</span>
+<span class="nc" id="L190">			return null;</span>
+		}
+<span class="fc" id="L192">		return imageInliningBuilder.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstExistingResourceVariantResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.common.adapter</a> &gt; <span class="el_source">FirstExistingResourceVariantResolver.java</span></div><h1>FirstExistingResourceVariantResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.common.adapter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.message.capability.HasVariant;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.template.exception.VariantResolutionException;
+
+/**
+ * Try every possible path for the variant until one path points to an existing
+ * resource.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FirstExistingResourceVariantResolver implements VariantResolver {
+	private List&lt;VariantResolver&gt; delegates;
+	private VariantResolver defaultResolver;
+
+	public FirstExistingResourceVariantResolver(VariantResolver defaultResolver, VariantResolver... delegates) {
+<span class="fc" id="L24">		this(defaultResolver, new ArrayList&lt;&gt;(Arrays.asList(delegates)));</span>
+<span class="fc" id="L25">	}</span>
+
+	public FirstExistingResourceVariantResolver(VariantResolver defaultResolver, List&lt;VariantResolver&gt; delegates) {
+<span class="fc" id="L28">		super();</span>
+<span class="fc" id="L29">		this.defaultResolver = defaultResolver;</span>
+<span class="fc" id="L30">		this.delegates = delegates;</span>
+<span class="fc" id="L31">	}</span>
+
+	@Override
+	public ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		if (!(template instanceof HasVariant)) {</span>
+<span class="fc" id="L36">			return template.getPath();</span>
+		}
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		for (VariantResolver delegate : delegates) {</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">			if(delegate.variantExists(template)) {</span>
+<span class="fc" id="L40">				return delegate.getRealPath(template);</span>
+			}
+<span class="fc" id="L42">		}</span>
+<span class="fc" id="L43">		return defaultResolver.getRealPath(template);</span>
+	}
+
+	@Override
+	public boolean variantExists(TemplateContent template) {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">		if (!(template instanceof HasVariant)) {</span>
+<span class="nc" id="L49">			return false;</span>
+		}
+<span class="nc bnc" id="L51" title="All 2 branches missed.">		for (VariantResolver delegate : delegates) {</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">			if(delegate.variantExists(template)) {</span>
+<span class="nc" id="L53">				return true;</span>
+			}
+<span class="nc" id="L55">		}</span>
+<span class="nc" id="L56">		return defaultResolver.variantExists(template);</span>
+	}
+
+	public FirstExistingResourceVariantResolver addVariantResolver(VariantResolver variantResolver) {
+<span class="fc" id="L60">		delegates.add(variantResolver);</span>
+<span class="fc" id="L61">		return this;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

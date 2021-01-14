@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>HttpStatus.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-ovh</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.util.http</a> &gt; <span class="el_source">HttpStatus.java</span></div><h1>HttpStatus.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.util.http;
+
+/**
+ * Enum that contains all HTTP status.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L9">public enum HttpStatus {</span>
+	// --- 1xx Informational ---
+
+	/** &lt;strong&gt;100 Continue&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L13">	CONTINUE(100, &quot;Continue&quot;),</span>
+	/** &lt;strong&gt;101 Switching Protocols&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L15">	SWITCHING_PROTOCOLS(101, &quot;Switching Protocols&quot;),</span>
+	/** &lt;strong&gt;102 Processing&lt;/strong&gt; (WebDAV - RFC 2518) */
+<span class="fc" id="L17">	PROCESSING(102, &quot;Processing&quot;),</span>
+
+	// --- 2xx Success ---
+
+	/** &lt;strong&gt;200 OK&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L22">	OK(200, &quot;OK&quot;),</span>
+	/** &lt;strong&gt;201 Created&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L24">	CREATED(201, &quot;Created&quot;),</span>
+	/** &lt;strong&gt;202 Accepted&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L26">	ACCEPTED(202, &quot;Accepted&quot;),</span>
+	/** &lt;strong&gt;203 Non Authoritative Information&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L28">	NON_AUTHORITATIVE_INFORMATION(203, &quot;Non Authoritative Information&quot;),</span>
+	/** &lt;strong&gt;204 No Content&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L30">	NO_CONTENT(204, &quot;No Content&quot;),</span>
+	/** &lt;strong&gt;205 Reset Content&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L32">	RESET_CONTENT(205, &quot;Reset Content&quot;),</span>
+	/** &lt;strong&gt;206 Partial Content&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L34">	PARTIAL_CONTENT(206, &quot;Partial Content&quot;),</span>
+	/**
+	 * &lt;strong&gt;207 Multi-Status&lt;/strong&gt; (WebDAV - RFC 2518) or &lt;strong&gt;207 Partial Update
+	 * OK&lt;/strong&gt; (HTTP/1.1 - draft-ietf-http-v11-spec-rev-01?)
+	 */
+<span class="fc" id="L39">	MULTI_STATUS(207, &quot;Multi-Status&quot;),</span>
+	/**
+	 * &lt;strong&gt;207 Multi-Status&lt;/strong&gt; (WebDAV - RFC 2518) or &lt;strong&gt;207 Partial Update
+	 * OK&lt;/strong&gt; (HTTP/1.1 - draft-ietf-http-v11-spec-rev-01?)
+	 */
+<span class="fc" id="L44">	PARTIAL_UPDATE_OK(207, &quot;Partial Update OK&quot;),</span>
+
+	// --- 3xx Redirection ---
+
+	/** &lt;strong&gt;300 Mutliple Choices&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L49">	MULTIPLE_CHOICES(300, &quot;Mutliple Choices&quot;),</span>
+	/** &lt;strong&gt;301 Moved Permanently&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L51">	MOVED_PERMANENTLY(301, &quot;Moved Permanently&quot;),</span>
+	/**
+	 * &lt;strong&gt;302 Moved Temporarily&lt;/strong&gt; (Sometimes &lt;strong&gt;Found&lt;/strong&gt;) (HTTP/1.0 - RFC
+	 * 1945)
+	 */
+<span class="fc" id="L56">	MOVED_TEMPORARILY(302, &quot;Moved Temporarily&quot;),</span>
+	/** &lt;strong&gt;303 See Other&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L58">	SEE_OTHER(303, &quot;See Other&quot;),</span>
+	/** &lt;strong&gt;304 Not Modified&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L60">	NOT_MODIFIED(304, &quot;Not Modified&quot;),</span>
+	/** &lt;strong&gt;305 Use Proxy&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L62">	USE_PROXY(305, &quot;Use Proxy&quot;),</span>
+	/** &lt;strong&gt;307 Temporary Redirect&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L64">	TEMPORARY_REDIRECT(307, &quot;Temporary Redirect&quot;),</span>
+
+	// --- 4xx Client Error ---
+
+	/** &lt;strong&gt;400 Bad Request&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L69">	BAD_REQUEST(400, &quot;Bad Request&quot;),</span>
+	/** &lt;strong&gt;401 Unauthorized&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L71">	UNAUTHORIZED(401, &quot;Unauthorized&quot;),</span>
+	/** &lt;strong&gt;402 Payment Required&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L73">	PAYMENT_REQUIRED(402, &quot;Payment Required&quot;),</span>
+	/** &lt;strong&gt;403 Forbidden&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L75">	FORBIDDEN(403, &quot;Forbidden&quot;),</span>
+	/** &lt;strong&gt;404 Not Found&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L77">	NOT_FOUND(404, &quot;Not Found&quot;),</span>
+	/** &lt;strong&gt;405 Method Not Allowed&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L79">	METHOD_NOT_ALLOWED(405, &quot;Method Not Allowed&quot;),</span>
+	/** &lt;strong&gt;406 Not Acceptable&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L81">	NOT_ACCEPTABLE(406, &quot;Not Acceptable&quot;),</span>
+	/** &lt;strong&gt;407 Proxy Authentication Required&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L83">	PROXY_AUTHENTICATION_REQUIRED(407, &quot;Proxy Authentication Required&quot;),</span>
+	/** &lt;strong&gt;408 Request Timeout&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L85">	REQUEST_TIMEOUT(408, &quot;Request Timeout&quot;),</span>
+	/** &lt;strong&gt;409 Conflict&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L87">	CONFLICT(409, &quot;Conflict&quot;),</span>
+	/** &lt;strong&gt;410 Gone&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L89">	GONE(410, &quot;Gone&quot;),</span>
+	/** &lt;strong&gt;411 Length Required&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L91">	LENGTH_REQUIRED(411, &quot;Length Required&quot;),</span>
+	/** &lt;strong&gt;412 Precondition Failed&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L93">	PRECONDITION_FAILED(412, &quot;Precondition Failed&quot;),</span>
+	/** &lt;strong&gt;413 Request Entity Too Large&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L95">	REQUEST_TOO_LONG(413, &quot;Request Entity Too Large&quot;),</span>
+	/** &lt;strong&gt;414 Request-URI Too Long&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L97">	REQUEST_URI_TOO_LONG(414, &quot;Request-URI Too Long&quot;),</span>
+	/** &lt;strong&gt;415 Unsupported Media Type&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L99">	UNSUPPORTED_MEDIA_TYPE(415, &quot;Unsupported Media Type&quot;),</span>
+	/** &lt;strong&gt;416 Requested Range Not Satisfiable&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L101">	REQUESTED_RANGE_NOT_SATISFIABLE(416, &quot;Requested Range Not Satisfiable&quot;),</span>
+	/** &lt;strong&gt;417 Expectation Failed&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L103">	EXPECTATION_FAILED(417, &quot;Expectation Failed&quot;),</span>
+
+	/**
+	 * Static constant for a 418 error. &lt;strong&gt;418 Unprocessable Entity&lt;/strong&gt;
+	 * (WebDAV drafts?) or &lt;strong&gt;418 Reauthentication Required&lt;/strong&gt; (HTTP/1.1
+	 * drafts?)
+	 */
+	// not used
+	// UNPROCESSABLE_ENTITY(418, &quot;Unprocessable Entity&quot;);
+
+	/**
+	 * Static constant for a 419 error.
+	 * &lt;strong&gt;419 Insufficient Space on Resource&lt;/strong&gt; (WebDAV -
+	 * draft-ietf-webdav-protocol-05?) or
+	 * &lt;strong&gt;419 Proxy Reauthentication Required&lt;/strong&gt; (HTTP/1.1 drafts?)
+	 */
+<span class="fc" id="L119">	INSUFFICIENT_SPACE_ON_RESOURCE(419, &quot;Insufficient Space on Resource&quot;),</span>
+	/**
+	 * Static constant for a 419 error.
+	 * &lt;strong&gt;419 Insufficient Space on Resource&lt;/strong&gt; (WebDAV -
+	 * draft-ietf-webdav-protocol-05?) or
+	 * &lt;strong&gt;419 Proxy Reauthentication Required&lt;/strong&gt; (HTTP/1.1 drafts?)
+	 */
+<span class="fc" id="L126">	PROXY_REAUTHENTICATION_REQUIRED(419, &quot;Proxy Reauthentication Required&quot;),</span>
+	/**
+	 * Static constant for a 420 error. &lt;strong&gt;420 Method Failure&lt;/strong&gt; (WebDAV -
+	 * draft-ietf-webdav-protocol-05?)
+	 */
+<span class="fc" id="L131">	METHOD_FAILURE(420, &quot;Method Failure&quot;),</span>
+	/** &lt;strong&gt;422 Unprocessable Entity&lt;/strong&gt; (WebDAV - RFC 2518) */
+<span class="fc" id="L133">	UNPROCESSABLE_ENTITY(422, &quot;Unprocessable Entity&quot;),</span>
+	/** &lt;strong&gt;423 Locked&lt;/strong&gt; (WebDAV - RFC 2518) */
+<span class="fc" id="L135">	LOCKED(423, &quot;Locked&quot;),</span>
+	/** &lt;strong&gt;424 Failed Dependency&lt;/strong&gt; (WebDAV - RFC 2518) */
+<span class="fc" id="L137">	FAILED_DEPENDENCY(424, &quot;Failed Dependency&quot;),</span>
+
+	// --- 5xx Server Error ---
+
+	/** &lt;strong&gt;500 Server Error&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L142">	INTERNAL_SERVER_ERROR(500, &quot;Server Error&quot;),</span>
+	/** &lt;strong&gt;501 Not Implemented&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L144">	NOT_IMPLEMENTED(501, &quot;Not Implemented&quot;),</span>
+	/** &lt;strong&gt;502 Bad Gateway&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L146">	BAD_GATEWAY(502, &quot;Bad Gateway&quot;),</span>
+	/** &lt;strong&gt;503 Service Unavailable&lt;/strong&gt; (HTTP/1.0 - RFC 1945) */
+<span class="fc" id="L148">	SERVICE_UNAVAILABLE(503, &quot;Service Unavailable&quot;),</span>
+	/** &lt;strong&gt;504 Gateway Timeout&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L150">	GATEWAY_TIMEOUT(504, &quot;Gateway Timeout&quot;),</span>
+	/** &lt;strong&gt;505 HTTP Version Not Supported&lt;/strong&gt; (HTTP/1.1 - RFC 2616) */
+<span class="fc" id="L152">	HTTP_VERSION_NOT_SUPPORTED(505, &quot;HTTP Version Not Supported&quot;),</span>
+
+	/** &lt;strong&gt;507 Insufficient Storage&lt;/strong&gt; (WebDAV - RFC 2518) */
+<span class="fc" id="L155">	INSUFFICIENT_STORAGE(507, &quot;Insufficient Storage&quot;);</span>
+
+	private static final int SERVER_ERROR_STATUS_START = 500;
+	private static final int CLIENT_ERROR_STATUS_START = 400;
+	private static final int REDIRECT_STATUS_START = 300;
+	private static final int SUCCESS_STATUS_START = 200;
+	private static final int INFORMAL_STATUS_START = 100;
+
+	private int code;
+
+	private String reason;
+
+<span class="fc" id="L167">	HttpStatus(int code, String reason) {</span>
+<span class="fc" id="L168">		this.code = code;</span>
+<span class="fc" id="L169">		this.reason = reason;</span>
+<span class="fc" id="L170">	}</span>
+
+	public int getCode() {
+<span class="fc" id="L173">		return code;</span>
+	}
+
+	public String getReason() {
+<span class="nc" id="L177">		return reason;</span>
+	}
+
+	/**
+	 * Is the HTTP status stand for informal (between 100 inclusive and 200
+	 * exclusive)
+	 * 
+	 * @return true if informal
+	 */
+	public boolean isInformal() {
+<span class="nc bnc" id="L187" title="All 4 branches missed.">		return code &gt;= INFORMAL_STATUS_START &amp;&amp; code &lt; SUCCESS_STATUS_START;</span>
+	}
+
+	/**
+	 * Is the HTTP status stand for success (between 200 inclusive and 300
+	 * exclusive)
+	 * 
+	 * @return true if success
+	 */
+	public boolean isSuccess() {
+<span class="pc bpc" id="L197" title="1 of 4 branches missed.">		return code &gt;= SUCCESS_STATUS_START &amp;&amp; code &lt; REDIRECT_STATUS_START;</span>
+	}
+
+	/**
+	 * Is the HTTP status stand for redirect (between 300 inclusive and 400
+	 * exclusive)
+	 * 
+	 * @return true if redirect
+	 */
+	public boolean isRedirect() {
+<span class="nc bnc" id="L207" title="All 4 branches missed.">		return code &gt;= REDIRECT_STATUS_START &amp;&amp; code &lt; CLIENT_ERROR_STATUS_START;</span>
+	}
+
+	/**
+	 * Is the HTTP status stand for client error (between 400 inclusive and 500
+	 * exclusive)
+	 * 
+	 * @return true if client error
+	 */
+	public boolean isClientError() {
+<span class="nc bnc" id="L217" title="All 4 branches missed.">		return code &gt;= CLIENT_ERROR_STATUS_START &amp;&amp; code &lt; SERVER_ERROR_STATUS_START;</span>
+	}
+
+	/**
+	 * Is the HTTP status stand for server error (between 500 inclusive and 600
+	 * exclusive)
+	 * 
+	 * @return true if server error
+	 */
+	public boolean isServerError() {
+<span class="nc bnc" id="L227" title="All 2 branches missed.">		return code &gt;= SERVER_ERROR_STATUS_START;</span>
+	}
+
+	public static HttpStatus valueOf(int code) {
+<span class="fc" id="L231">		HttpStatus[] values = HttpStatus.values();</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">		for (HttpStatus value : values) {</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">			if (value.getCode() == code) {</span>
+<span class="fc" id="L234">				return value;</span>
+			}
+		}
+<span class="nc" id="L237">		throw new IllegalArgumentException(&quot;Unknown HTTP status code (&quot; + code + &quot;)&quot;);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

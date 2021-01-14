@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DelegateConverter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.convert</a> &gt; <span class="el_source">DelegateConverter.java</span></div><h1>DelegateConverter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.convert;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.exception.convert.ConversionException;
+
+/**
+ * Calls registered {@link SupportingConverter}s to make the real conversion. It
+ * asks each {@link SupportingConverter} if it can make the conversion. If the
+ * {@link SupportingConverter} can do the conversion, the conversion is applied
+ * using that {@link SupportingConverter} and the result is immediately
+ * returned.
+ * 
+ * If none of the registered {@link SupportingConverter}s can make the
+ * conversion, then a {@link ConversionException} is thrown.
+ * 
+ * If the source is null, then the result is null too.
+ * 
+ * &lt;strong&gt;Registration order is important.&lt;/strong&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class DelegateConverter implements Converter, ConverterRegistry {
+	private final List&lt;SupportingConverter&gt; delegates;
+
+	/**
+	 * Registers none, one or several converters
+	 * 
+	 * @param delegates
+	 *            the converters to register
+	 */
+	public DelegateConverter(SupportingConverter... delegates) {
+<span class="fc" id="L36">		this(new ArrayList&lt;&gt;(Arrays.asList(delegates)));</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Registers a list of converters. The list must not be null
+	 * 
+	 * @param delegates
+	 *            the converters to register
+	 */
+	public DelegateConverter(List&lt;SupportingConverter&gt; delegates) {
+<span class="fc" id="L46">		super();</span>
+<span class="fc" id="L47">		this.delegates = delegates;</span>
+<span class="fc" id="L48">	}</span>
+
+	@Override
+	public ConverterRegistry register(SupportingConverter converter) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">		if (!delegates.contains(converter)) {</span>
+<span class="fc" id="L53">			delegates.add(converter);</span>
+		}
+<span class="fc" id="L55">		return this;</span>
+	}
+
+	@Override
+	public &lt;T&gt; T convert(Object source, Class&lt;T&gt; targetType) {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">		if (source == null) {</span>
+<span class="fc" id="L61">			return null;</span>
+		}
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		for (SupportingConverter converter : delegates) {</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">			if (converter.supports(source.getClass(), targetType)) {</span>
+<span class="fc" id="L65">				return converter.convert(source, targetType);</span>
+			}
+<span class="fc" id="L67">		}</span>
+<span class="fc" id="L68">		throw new ConversionException(&quot;No converter available to convert &quot; + source + &quot; into &quot; + targetType.getSimpleName());</span>
+	}
+
+	@Override
+	public List&lt;SupportingConverter&gt; getRegisteredConverters() {
+<span class="nc" id="L73">		return delegates;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

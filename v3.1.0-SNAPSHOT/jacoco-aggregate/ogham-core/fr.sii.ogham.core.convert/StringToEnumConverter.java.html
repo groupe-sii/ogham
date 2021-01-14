@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringToEnumConverter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.convert</a> &gt; <span class="el_source">StringToEnumConverter.java</span></div><h1>StringToEnumConverter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.convert;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import fr.sii.ogham.core.exception.convert.ConversionException;
+
+/**
+ * Converts a string to a {@link Enum} value. It uses
+ * {@link Enum#valueOf(Class, String)} to get the enum value by default.
+ * 
+ * &lt;p&gt;
+ * If the enum is annotated with {@link FactoryMethod}, the name of the static
+ * method is used to create the enum instance:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * {@literal @}FactoryMethod(name=&quot;fromNameOrValue&quot;)
+ * enum MyEnum {
+ *   A(&quot;1&quot;),
+ *   B(&quot;2&quot;);
+ *   
+ *   private final String value;
+ *   MyEnum(String value) {
+ *     this.value = value;
+ *   }
+ *   
+ *   public String value() {
+ *     return value;
+ *   }
+ *   
+ *   public static MyEnum fromNameOrValue(String nameOrValue) {
+ *      for (MyEnum e : values()) {
+ *        if (e.value().equals(nameOrValue))
+ *          return e;
+ *        if (e.name().equals(nameOrValue))
+ *          return e;
+ *        throw new IllegalArgumentException(&quot;Unknown name or value: &quot;+nameOrValue);
+ *      }
+ *   }
+ * }
+ * }
+ * &lt;/pre&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@SuppressWarnings(&quot;squid:S1192&quot;)
+<span class="fc" id="L57">public class StringToEnumConverter implements SupportingConverter {</span>
+
+	/**
+	 * Idicates which method to use to instantiate the {@link Enum} instead of
+	 * using {@link Enum#valueOf(Class, String)}.
+	 * 
+	 * @author Aurélien Baudet
+	 */
+	@Target(TYPE)
+	@Retention(RUNTIME)
+	@Documented
+	@Inherited
+	public static @interface FactoryMethod {
+		/**
+		 * The name of the factory method to use for instantiating the
+		 * {@link Enum} instead of {@link Enum#valueOf(Class, String)}.
+		 * 
+		 * @return the name of the factory method
+		 */
+		String name();
+	}
+
+	@Override
+	public &lt;T&gt; T convert(Object source, Class&lt;T&gt; targetType) {
+<span class="fc" id="L81">		String name = (String) source;</span>
+<span class="fc bfc" id="L82" title="All 4 branches covered.">		if (name == null || name.isEmpty()) {</span>
+<span class="fc" id="L83">			return null;</span>
+		}
+<span class="fc" id="L85">		FactoryMethod annotation = targetType.getAnnotation(FactoryMethod.class);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		if (annotation != null) {</span>
+<span class="fc" id="L87">			return create(targetType, annotation.name(), name);</span>
+		}
+<span class="fc" id="L89">		return valueOf(targetType, name);</span>
+	}
+
+	@Override
+	public boolean supports(Class&lt;?&gt; sourceType, Class&lt;?&gt; targetType) {
+<span class="fc bfc" id="L94" title="All 4 branches covered.">		return String.class.isAssignableFrom(sourceType) &amp;&amp; Enum.class.isAssignableFrom(targetType);</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T&gt; T create(Class&lt;T&gt; targetType, String methodName, String value) {
+		try {
+<span class="fc" id="L100">			Method method = targetType.getMethod(methodName, String.class);</span>
+<span class="fc" id="L101">			return (T) method.invoke(null, value);</span>
+<span class="fc" id="L102">		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {</span>
+<span class="fc" id="L103">			throw new ConversionException(&quot;Failed to convert &quot; + value + &quot; into Enum using custom factory method&quot;, e);</span>
+		}
+	}
+
+	@SuppressWarnings({ &quot;unchecked&quot;, &quot;rawtypes&quot; })
+	private static &lt;T&gt; T valueOf(Class&lt;T&gt; targetType, String name) {
+		try {
+<span class="fc" id="L110">			return (T) Enum.valueOf((Class&lt;Enum&gt;) targetType, name.trim());</span>
+<span class="fc" id="L111">		} catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L112">			throw new ConversionException(&quot;Failed to convert &quot; + name + &quot; into Enum&quot;, e);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

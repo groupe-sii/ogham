@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OvhOptions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-ovh</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.ovh</a> &gt; <span class="el_source">OvhOptions.java</span></div><h1>OvhOptions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.ovh;
+
+/**
+ * The optional parameters used to customize OVH SMS:
+ * &lt;ul&gt;
+ * &lt;li&gt;noStop: do not display STOP footer. Disabled by default&lt;/li&gt;
+ * &lt;li&gt;tag: mark the sent SMS with a tag (20 characters max)&lt;/li&gt;
+ * &lt;li&gt;smsCoding: the SMS encoding. 7bits by default. If you change to Unicode,
+ * the message limit will be 70 instead of 160.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class OvhOptions {
+	/**
+	 * Option to skip displaying STOP message
+	 */
+	private int noStop;
+
+	/**
+	 * Option to tag the sent SMS (20 characters max)
+	 */
+	private String tag;
+
+	/**
+	 * Option to select encoding
+	 */
+	private SmsCoding smsCoding;
+
+	public OvhOptions() {
+<span class="nc" id="L32">		this(true, null, null);</span>
+<span class="nc" id="L33">	}</span>
+
+	public OvhOptions(boolean noStop, String tag, SmsCoding smsCoding) {
+<span class="fc" id="L36">		super();</span>
+<span class="fc" id="L37">		this.noStop = toInt(noStop);</span>
+<span class="fc" id="L38">		this.tag = tag;</span>
+<span class="fc" id="L39">		this.smsCoding = smsCoding;</span>
+<span class="fc" id="L40">	}</span>
+
+	public int getNoStop() {
+<span class="fc" id="L43">		return noStop;</span>
+	}
+
+	public String getTag() {
+<span class="fc" id="L47">		return tag;</span>
+	}
+
+	public SmsCoding getSmsCoding() {
+<span class="fc" id="L51">		return smsCoding;</span>
+	}
+
+	public void setNoStop(boolean noStop) {
+<span class="nc" id="L55">		this.noStop = toInt(noStop);</span>
+<span class="nc" id="L56">	}</span>
+
+	public void setTag(String tag) {
+<span class="nc" id="L59">		this.tag = tag;</span>
+<span class="nc" id="L60">	}</span>
+
+	public void setSmsCoding(SmsCoding smsCoding) {
+<span class="nc" id="L63">		this.smsCoding = smsCoding;</span>
+<span class="nc" id="L64">	}</span>
+
+	private static int toInt(boolean noStop) {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		return noStop ? 1 : 0;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

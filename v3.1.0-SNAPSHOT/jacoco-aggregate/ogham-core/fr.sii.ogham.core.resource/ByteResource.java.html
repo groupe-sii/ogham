@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ByteResource.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource</a> &gt; <span class="el_source">ByteResource.java</span></div><h1>ByteResource.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+import fr.sii.ogham.core.util.IOUtils;
+
+/**
+ * Basic implementation of a {@link NamedResource} that simply stores a
+ * reference to the provided bytes.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ByteResource implements NamedResource {
+	/**
+	 * The content of the resource as array of bytes
+	 */
+	private byte[] bytes;
+
+	/**
+	 * The name of the resource
+	 */
+	private String name;
+
+	/**
+	 * Initialize the resource with the provided name and bytes that are
+	 * immediately read from the stream. The bytes are copied into a new array
+	 * to prevent security leaks.
+	 * 
+	 * @param name
+	 *            the name of the resource
+	 * @param stream
+	 *            the stream that is read
+	 * @throws IOException
+	 *             when the input stream can't be read
+	 */
+	public ByteResource(String name, InputStream stream) throws IOException {
+<span class="fc" id="L43">		this(name, IOUtils.toByteArray(stream));</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Initialize the resource with the provided name and bytes. The bytes are
+	 * copied into a new array to prevent security leaks.
+	 * 
+	 * @param name
+	 *            the name of the resource
+	 * @param bytes
+	 *            the bytes of the resource
+	 */
+	public ByteResource(String name, byte[] bytes) {
+<span class="fc" id="L56">		super();</span>
+<span class="fc" id="L57">		this.name = name;</span>
+<span class="fc" id="L58">		this.bytes = Arrays.copyOf(bytes, bytes.length);</span>
+<span class="fc" id="L59">	}</span>
+
+	@Override
+	public InputStream getInputStream() {
+<span class="fc" id="L63">		return new ByteArrayInputStream(bytes);</span>
+	}
+
+	@Override
+	public String getName() {
+<span class="fc" id="L68">		return name;</span>
+	}
+
+	public byte[] getBytes() {
+<span class="fc" id="L72">		return bytes;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L77">		return new HashCodeBuilder().append(name, bytes).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L82">		return new EqualsBuilder(this, obj).appendFields(&quot;name&quot;, &quot;bytes&quot;).isEqual();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

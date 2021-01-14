@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CssImageInlineUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner.impl.regexp</a> &gt; <span class="el_source">CssImageInlineUtils.java</span></div><h1>CssImageInlineUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner.impl.regexp;
+
+import static fr.sii.ogham.core.util.HtmlUtils.CSS_IMAGE_PROPERTIES_PATTERN;
+import static fr.sii.ogham.core.util.HtmlUtils.CSS_URL_FUNC_PATTERN;
+import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.INLINED_URL_FUNC;
+import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.INLINE_MODE_PROPERTY;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.html.inliner.ImageResource;
+import fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.InlineMode;
+
+/**
+ * Helper class that factorizes code for classes that are using inliners.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class CssImageInlineUtils {
+<span class="fc" id="L26">	private static final Logger LOG = LoggerFactory.getLogger(CssImageInlineUtils.class);</span>
+
+	private static final String QUOTE_ENTITY = &quot;&amp;quot;&quot;;
+	private static final String QUOTE_TEMP_ESCAPE = &quot;&amp;quot__semicolon__&quot;;
+<span class="fc" id="L30">	private static final Pattern ESCAPE_QUOTE_ENTITIES = Pattern.compile(Pattern.quote(QUOTE_ENTITY), Pattern.CASE_INSENSITIVE);</span>
+<span class="fc" id="L31">	private static final Pattern UNESCAPE_QUOTE_ENTITIES = Pattern.compile(Pattern.quote(QUOTE_TEMP_ESCAPE), Pattern.CASE_INSENSITIVE);</span>
+<span class="fc" id="L32">	private static final Pattern RULE_START = Pattern.compile(&quot;(?&lt;rulestart&gt;[{])|(?&lt;style&gt;(?&lt;quote&gt;['\&quot;])\\s*=\\s*elyts)&quot;, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);</span>
+<span class="fc" id="L33">	private static final Pattern INLINE_PROPERTY_PATTERN = Pattern.compile(&quot;(?&lt;property&gt;(?&lt;propertyname&gt;&quot; + Pattern.quote(INLINE_MODE_PROPERTY) + &quot;)\\s*:)(?&lt;value&gt;[^;}&gt;]+)\\s*;?&quot;,</span>
+			Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+<span class="fc" id="L35">	private static final Pattern INLINE_PROPERTY_MODE_PATTERN = Pattern.compile(&quot;\\s*((?&lt;imageurl&gt;[^=]+)=(?&lt;specificmode&gt;[^=\&quot;';\\s]+))|(?&lt;globalmode&gt;[^=;\&quot;'\\s]+)&quot;);</span>
+<span class="fc" id="L36">	private static final Pattern INLINED_URL_PATTERN = Pattern.compile(Pattern.quote(INLINED_URL_FUNC));</span>
+
+	/**
+	 * Search for all images included by CSS properties using {@code url()}
+	 * (either defined in CSS rules or style attributes).
+	 * 
+	 * &lt;p&gt;
+	 * For each matched URL, it delegates the replacement value to
+	 * {@code inlineHandler} parameter. The HTML content is updated with the new
+	 * URL if the image points to a local image and the handler corresponds to
+	 * the inline mode.
+	 * 
+	 * &lt;p&gt;
+	 * The inline mode can be specified globally (default mode if none is
+	 * specified), per CSS rule or per image using
+	 * {@link CssImageInlinerConstants#INLINE_MODE_PROPERTY}.
+	 * 
+	 * 
+	 * @param htmlContent
+	 *            the HTML content that may include CSS properties that points
+	 *            to images that need to be inlined
+	 * @param images
+	 *            the images to inline
+	 * @param mode
+	 *            the inline mode
+	 * @param inlineHandler
+	 *            the handler that provides the URL replacement
+	 * @return the updated HTML
+	 */
+	public static String inline(String htmlContent, List&lt;ImageResource&gt; images, InlineMode mode, Function&lt;CssImageDeclaration, String&gt; inlineHandler) {
+<span class="fc" id="L66">		StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L67">		String escapedHtml = escapeQuoteEntities(htmlContent);</span>
+<span class="fc" id="L68">		Matcher propertyDeclarationMatcher = CSS_IMAGE_PROPERTIES_PATTERN.matcher(escapedHtml);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">		while (propertyDeclarationMatcher.find()) {</span>
+<span class="fc" id="L70">			String value = propertyDeclarationMatcher.group(&quot;value&quot;);</span>
+<span class="fc" id="L71">			Matcher urlMatcher = CSS_URL_FUNC_PATTERN.matcher(value);</span>
+<span class="fc" id="L72">			StringBuffer newValue = new StringBuffer();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">			while (urlMatcher.find()) {</span>
+<span class="fc" id="L74">				boolean inlined = true;</span>
+<span class="fc" id="L75">				MatchedUrl matchedUrl = getUrl(urlMatcher);</span>
+<span class="fc" id="L76">				String newUrl = getInlinedUrl(escapedHtml, propertyDeclarationMatcher, matchedUrl, images, mode, inlineHandler);</span>
+				// if no new url =&gt; use old one
+<span class="fc bfc" id="L78" title="All 2 branches covered.">				if (newUrl == null) {</span>
+<span class="fc" id="L79">					newUrl = matchedUrl.getUrl();</span>
+<span class="fc" id="L80">					inlined = false;</span>
+				}
+<span class="fc" id="L82">				urlMatcher.appendReplacement(newValue,</span>
+<span class="fc" id="L83">						Matcher.quoteReplacement(markAsInlned(inlined, urlMatcher.group(&quot;start&quot;)) + matchedUrl.getDelim() + newUrl + matchedUrl.getDelim() + urlMatcher.group(&quot;end&quot;)));</span>
+<span class="fc" id="L84">			}</span>
+<span class="fc" id="L85">			urlMatcher.appendTail(newValue);</span>
+<span class="fc" id="L86">			propertyDeclarationMatcher.appendReplacement(sb, Matcher.quoteReplacement(propertyDeclarationMatcher.group(&quot;property&quot;) + newValue.toString()));</span>
+<span class="fc" id="L87">		}</span>
+<span class="fc" id="L88">		propertyDeclarationMatcher.appendTail(sb);</span>
+<span class="fc" id="L89">		return unescapeQuoteEntities(sb.toString());</span>
+	}
+
+	/**
+	 * Checks if inlining mode is allowed on the provided element.
+	 * 
+	 * @param img
+	 *            the image element to check if the actual inlining mode is
+	 *            allowed
+	 * @param mode
+	 *            the actual mode
+	 * @return true if this mode is allowed, false otherwise
+	 */
+	@SuppressWarnings(&quot;squid:S1126&quot;)
+	private static boolean isInlineModeAllowed(CssImageDeclaration img, InlineMode mode) {
+		// if already inlined, the regexp won't match so don't need to
+		// check if skipped here
+
+		// if inline mode defined but not the wanted mode =&gt; reject
+<span class="fc bfc" id="L108" title="All 4 branches covered.">		if (img.getMode() != null &amp;&amp; !mode.is(img.getMode())) {</span>
+<span class="fc" id="L109">			return false;</span>
+		}
+		// if inline mode defined and matches the wanted mode =&gt; allow
+		// if no inline mode defined =&gt; allow (any mode allowed)
+<span class="fc" id="L113">		return true;</span>
+	}
+
+	/**
+	 * Remove properties that are used only by Ogham:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CssImageInlinerConstants#INLINE_MODE_PROPERTY}&lt;/li&gt;
+	 * &lt;li&gt;{@link CssImageInlinerConstants#INLINED_URL_FUNC}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param html
+	 *            the html to clean
+	 * @return the cleaned html
+	 */
+	public static String removeOghamProperties(String html) {
+<span class="fc" id="L128">		String cleaned = html;</span>
+<span class="fc" id="L129">		cleaned = INLINED_URL_PATTERN.matcher(cleaned).replaceAll(&quot;url&quot;);</span>
+<span class="fc" id="L130">		cleaned = INLINE_PROPERTY_PATTERN.matcher(cleaned).replaceAll(&quot;&quot;);</span>
+<span class="fc" id="L131">		return cleaned;</span>
+	}
+
+	private static String getInlinedUrl(String htmlContent, Matcher propertyDeclarationMatcher, MatchedUrl matchedUrl, List&lt;ImageResource&gt; images, InlineMode mode,
+			Function&lt;CssImageDeclaration, String&gt; inlineHandler) {
+<span class="fc" id="L136">		String url = matchedUrl.getUrl();</span>
+<span class="fc" id="L137">		ImageResource image = getImage(url, images);</span>
+		// url may match external url =&gt; simply skip it
+<span class="fc bfc" id="L139" title="All 2 branches covered.">		if (image == null) {</span>
+<span class="fc" id="L140">			LOG.debug(&quot;Skipping {}&quot;, url);</span>
+<span class="fc" id="L141">			return null;</span>
+		}
+<span class="fc" id="L143">		String enclosingCssRule = getEnclosingCssRule(htmlContent, propertyDeclarationMatcher);</span>
+<span class="fc" id="L144">		CssImageDeclaration imageDeclaration = new CssImageDeclaration(matchedUrl, getInlineProperty(enclosingCssRule, matchedUrl), image);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">		if (!isInlineModeAllowed(imageDeclaration, mode)) {</span>
+<span class="fc" id="L146">			return null;</span>
+		}
+<span class="fc" id="L148">		return inlineHandler.apply(imageDeclaration);</span>
+	}
+
+	private static MatchedUrl getUrl(Matcher urlMatcher) {
+<span class="fc" id="L152">		String url = urlMatcher.group(&quot;unquotedurl&quot;);</span>
+<span class="fc" id="L153">		String delim = &quot;&quot;;</span>
+<span class="pc bpc" id="L154" title="1 of 4 branches missed.">		if (url != null &amp;&amp; url.contains(QUOTE_TEMP_ESCAPE)) {</span>
+<span class="fc" id="L155">			url = removeQuoteEntities(url);</span>
+<span class="fc" id="L156">			delim = QUOTE_TEMP_ESCAPE;</span>
+		}
+<span class="fc bfc" id="L158" title="All 2 branches covered.">		if (url == null) {</span>
+<span class="fc" id="L159">			url = urlMatcher.group(&quot;singlequotedurl&quot;);</span>
+<span class="fc" id="L160">			delim = &quot;'&quot;;</span>
+		}
+<span class="fc bfc" id="L162" title="All 2 branches covered.">		if (url == null) {</span>
+<span class="fc" id="L163">			url = urlMatcher.group(&quot;doublequotedurl&quot;);</span>
+<span class="fc" id="L164">			delim = &quot;\&quot;&quot;;</span>
+		}
+<span class="fc" id="L166">		return new MatchedUrl(url, delim);</span>
+	}
+
+	private static ImageResource getImage(String url, List&lt;ImageResource&gt; images) {
+		// @formatter:off
+<span class="fc" id="L171">		return images.stream()</span>
+<span class="fc" id="L172">				.filter(i -&gt; url.equals(i.getSrcUrl()))</span>
+<span class="fc" id="L173">				.findFirst()</span>
+<span class="fc" id="L174">				.orElse(null);</span>
+		// @formatter:on
+	}
+
+	private static String unescapeQuoteEntities(String str) {
+<span class="fc" id="L179">		return UNESCAPE_QUOTE_ENTITIES.matcher(str).replaceAll(QUOTE_ENTITY);</span>
+	}
+
+	private static String removeQuoteEntities(String url) {
+<span class="fc" id="L183">		return UNESCAPE_QUOTE_ENTITIES.matcher(url).replaceAll(&quot;&quot;);</span>
+	}
+
+	private static String escapeQuoteEntities(String htmlContent) {
+<span class="fc" id="L187">		return ESCAPE_QUOTE_ENTITIES.matcher(htmlContent).replaceAll(QUOTE_TEMP_ESCAPE);</span>
+	}
+
+	private static String getEnclosingCssRule(String htmlContent, Matcher propertyDeclarationMatcher) {
+<span class="fc" id="L191">		String untilPropertyDeclaration = htmlContent.substring(0, propertyDeclarationMatcher.start());</span>
+<span class="fc" id="L192">		Matcher m = RULE_START.matcher(new StringBuilder(untilPropertyDeclaration).reverse());</span>
+<span class="fc" id="L193">		int ruleStart = -1;</span>
+<span class="fc" id="L194">		char endChar = '}';</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">		if (m.find()) {</span>
+<span class="fc" id="L196">			ruleStart = untilPropertyDeclaration.length() - m.start();</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">			if (m.group(&quot;style&quot;) != null) {</span>
+<span class="fc" id="L198">				endChar = m.group(&quot;quote&quot;).charAt(0);</span>
+			}
+		}
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">		if (ruleStart == -1) {</span>
+			// @formatter:off
+<span class="nc" id="L203">			throw new IllegalStateException(&quot;Inlining of CSS images (through either background, list-style, cursor, ...) &quot;</span>
+			 		+ &quot;can't be performed safely because we can't determine the beginning of the enclosing CSS rule declaration.\n&quot;
+			 		+ &quot;\n&quot;
+<span class="nc" id="L206">			 		+ &quot;[            CSS property]=&quot;+propertyDeclarationMatcher.group()+&quot;\n&quot;</span>
+			 		+ &quot;[text before CSS property]=&quot;+untilPropertyDeclaration+&quot;\n\n&quot;
+			 		+ &quot;can't find either { character that declares the beginning of a CSS rule &quot;
+			 		+ &quot;or style= that declares the beginning of CSS styles on an HTML tag&quot;);
+			// @formatter:on
+		}
+<span class="fc" id="L212">		int ruleEnd = htmlContent.indexOf(endChar, propertyDeclarationMatcher.start());</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">		if (ruleEnd == -1) {</span>
+			// @formatter:off
+<span class="nc" id="L215">			throw new IllegalStateException(&quot;Inlining of CSS images (through either background, list-style, cursor, ...) &quot;</span>
+			 		+ &quot;can't be performed safely because we can't determine the end of the enclosing CSS rule declaration.\n&quot;
+			 		+ &quot;\n&quot;
+<span class="nc" id="L218">			 		+ &quot;[           CSS property]=&quot;+propertyDeclarationMatcher.group()+&quot;\n&quot;</span>
+<span class="nc" id="L219">			 		+ &quot;[text after CSS property]=&quot;+htmlContent.substring(propertyDeclarationMatcher.end())+&quot;\n\n&quot;</span>
+			 		+ &quot;can't find either } character that declares the end of a CSS rule &quot;
+			 		+ &quot;or &quot;+endChar+&quot; that declares the end of CSS styles on an HTML tag&quot;);
+			// @formatter:on
+		}
+<span class="fc" id="L224">		return htmlContent.substring(ruleStart, ruleEnd);</span>
+	}
+
+	private static String getInlineProperty(String enclosingCssRule, MatchedUrl matchedUrl) {
+<span class="fc" id="L228">		Matcher m = INLINE_PROPERTY_PATTERN.matcher(enclosingCssRule);</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">		if (m.find()) {</span>
+<span class="fc" id="L230">			String modes = m.group(&quot;value&quot;);</span>
+<span class="fc" id="L231">			Matcher imageModeMatcher = INLINE_PROPERTY_MODE_PATTERN.matcher(modes);</span>
+<span class="fc" id="L232">			String globalMode = null;</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">			while (imageModeMatcher.find()) {</span>
+<span class="fc" id="L234">				String specificInlineModeUrl = imageModeMatcher.group(&quot;imageurl&quot;);</span>
+				// specific inline mode
+<span class="fc bfc" id="L236" title="All 2 branches covered.">				if (isInlineModeForImage(specificInlineModeUrl, matchedUrl)) {</span>
+<span class="fc" id="L237">					return imageModeMatcher.group(&quot;specificmode&quot;);</span>
+				}
+				// if global mode defined
+<span class="fc" id="L240">				String global = imageModeMatcher.group(&quot;globalmode&quot;);</span>
+<span class="pc bpc" id="L241" title="1 of 4 branches missed.">				if (global != null &amp;&amp; globalMode == null) {</span>
+<span class="fc" id="L242">					globalMode = global;</span>
+				}
+<span class="fc" id="L244">			}</span>
+			// @formatter:off
+			// return either:
+			//  - globalMode =&gt; global mode for all images included in the CSS rule
+			//  - null =&gt; use default mode
+			// @formatter:on
+<span class="fc" id="L250">			return globalMode;</span>
+		}
+<span class="fc" id="L252">		return null;</span>
+	}
+
+	private static boolean isInlineModeForImage(String inlineUrl, MatchedUrl matchedUrl) {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">		if (inlineUrl == null) {</span>
+<span class="fc" id="L257">			return false;</span>
+		}
+<span class="fc" id="L259">		return matchedUrl.getUrl().contains(inlineUrl);</span>
+	}
+
+	private static String markAsInlned(boolean inlined, String value) {
+<span class="fc bfc" id="L263" title="All 2 branches covered.">		if (inlined) {</span>
+<span class="fc" id="L264">			return value.replace(&quot;url&quot;, INLINED_URL_FUNC);</span>
+		}
+<span class="fc" id="L266">		return value;</span>
+	}
+
+	private CssImageInlineUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

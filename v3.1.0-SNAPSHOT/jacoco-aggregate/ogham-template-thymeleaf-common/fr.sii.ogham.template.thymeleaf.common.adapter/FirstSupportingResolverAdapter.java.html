@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstSupportingResolverAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.adapter</a> &gt; <span class="el_source">FirstSupportingResolverAdapter.java</span></div><h1>FirstSupportingResolverAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.adapter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.template.exception.NoResolverAdapterException;
+import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
+
+/**
+ * Decorator that will ask each resolver adapter if it is able to handle the
+ * template resolver. If the resolver adapter supports it, then this
+ * implementation asks the resolver adapter to provide the Thymeleaf template
+ * resolver.
+ * 
+ * Only the first resolver adapter that can handle the template resolver is
+ * used.
+ * 
+ * @author Aurélien Baudet
+ */
+public class FirstSupportingResolverAdapter implements TemplateResolverAdapter {
+
+	/**
+	 * The list of adapters used to convert the general resolvers into Thymeleaf
+	 * specific resolvers
+	 */
+	private List&lt;TemplateResolverAdapter&gt; adapters;
+
+	/**
+	 * Initialize the decorator with none, one or several resolver adapter
+	 * implementations. The registration order may be important.
+	 * 
+	 * @param adapters
+	 *            the adapters to register
+	 */
+	public FirstSupportingResolverAdapter(TemplateResolverAdapter... adapters) {
+<span class="fc" id="L40">		this(new ArrayList&lt;&gt;(Arrays.asList(adapters)));</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Initialize the decorator with the provided resolver adapter
+	 * implementations. The registration order may be important.
+	 * 
+	 * @param adapters
+	 *            the adapters to register
+	 */
+	public FirstSupportingResolverAdapter(List&lt;TemplateResolverAdapter&gt; adapters) {
+<span class="fc" id="L51">		super();</span>
+<span class="fc" id="L52">		this.adapters = adapters;</span>
+<span class="fc" id="L53">	}</span>
+
+	public FirstSupportingResolverAdapter() {
+<span class="fc" id="L56">		this(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L57">	}</span>
+
+	@Override
+	public boolean supports(ResourceResolver resolver) {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (TemplateResolverAdapter adapter : adapters) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">			if (adapter.supports(resolver)) {</span>
+<span class="fc" id="L63">				return true;</span>
+			}
+<span class="fc" id="L65">		}</span>
+<span class="fc" id="L66">		return false;</span>
+	}
+
+	@Override
+	public ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		for (TemplateResolverAdapter adapter : adapters) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">			if (adapter.supports(resolver)) {</span>
+<span class="fc" id="L73">				return adapter.adapt(resolver);</span>
+			}
+<span class="fc" id="L75">		}</span>
+<span class="fc" id="L76">		throw new NoResolverAdapterException(&quot;No resolver adapter found for the provided resolver: &quot; + resolver.getClass().getSimpleName(), resolver);</span>
+	}
+
+	/**
+	 * Register a new adapter. The adapter is added at the end.
+	 * 
+	 * @param adapter
+	 *            the adapter to register
+	 */
+	public void addAdapter(TemplateResolverAdapter adapter) {
+<span class="fc" id="L86">		adapters.add(adapter);</span>
+<span class="fc" id="L87">	}</span>
+
+	public List&lt;TemplateResolverAdapter&gt; getAdapters() {
+<span class="nc" id="L90">		return adapters;</span>
+	}
+
+	@Override
+	public void setOptions(TemplateResolverOptions options) {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for (TemplateResolverAdapter adapter : adapters) {</span>
+<span class="fc" id="L96">			adapter.setOptions(options);</span>
+<span class="fc" id="L97">		}</span>
+<span class="fc" id="L98">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperSMPPSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl</a> &gt; <span class="el_source">CloudhopperSMPPSender.java</span></div><h1>CloudhopperSMPPSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl;
+
+import static fr.sii.ogham.core.util.LogUtils.logString;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_IMPLEMENTATION_PRIORITY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudhopper.smpp.SmppSession;
+import com.cloudhopper.smpp.pdu.SubmitSm;
+import com.cloudhopper.smpp.type.RecoverablePduException;
+import com.cloudhopper.smpp.type.SmppChannelException;
+import com.cloudhopper.smpp.type.SmppTimeoutException;
+import com.cloudhopper.smpp.type.UnrecoverablePduException;
+
+import fr.sii.ogham.core.builder.priority.Priority;
+import fr.sii.ogham.core.clean.Cleanable;
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.exception.clean.CleanException;
+import fr.sii.ogham.core.sender.AbstractSpecializedSender;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.SmppException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.SessionHandlingStrategy;
+
+/**
+ * Implementation based on
+ * &lt;a href=&quot;https://github.com/twitter/cloudhopper-smpp&quot;&gt;cloudhopper-smpp&lt;/a&gt;
+ * library.
+ * 
+ * @author Aurélien Baudet
+ */
+@Priority(properties=&quot;${ogham.sms.implementation-priority.cloudhopper}&quot;, defaultValue = DEFAULT_CLOUDHOPPER_IMPLEMENTATION_PRIORITY)
+public class CloudhopperSMPPSender extends AbstractSpecializedSender&lt;Sms&gt; implements Cleanable {
+<span class="fc" id="L36">	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperSMPPSender.class);</span>
+	
+	private final ExtendedSmppSessionConfiguration configuration;
+	private final SessionHandlingStrategy sessionHandler;
+	private final MessagePreparator messagePreparator;
+	
+
+	public CloudhopperSMPPSender(ExtendedSmppSessionConfiguration configuration, SessionHandlingStrategy sessionHandler, MessagePreparator messagePreparator) {
+<span class="fc" id="L44">		super();</span>
+<span class="fc" id="L45">		this.configuration = configuration;</span>
+<span class="fc" id="L46">		this.sessionHandler = sessionHandler;</span>
+<span class="fc" id="L47">		this.messagePreparator = messagePreparator;</span>
+<span class="fc" id="L48">	}</span>
+
+	@Override
+	public void send(Sms sms) throws MessageException {
+		try {
+<span class="fc" id="L53">			LOG.debug(&quot;Sending SMS...\n{}&quot;, logString(sms));</span>
+<span class="fc" id="L54">			SmppSession session = sessionHandler.getSession();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			for (SubmitSm msg : messagePreparator.prepareMessages(sms)) {</span>
+<span class="fc" id="L56">				session.submit(msg, configuration.getResponseTimeout());</span>
+<span class="fc" id="L57">			}</span>
+<span class="fc" id="L58">			LOG.debug(&quot;SMS sent\n{}&quot;, logString(sms));</span>
+<span class="fc" id="L59">			sessionHandler.messageSent(sms);</span>
+<span class="fc" id="L60">		} catch (SmppException e) {</span>
+<span class="nc" id="L61">			sessionHandler.messageNotSent(sms, e);</span>
+<span class="fc" id="L62">		} catch (UnrecoverablePduException | RecoverablePduException | SmppTimeoutException | SmppChannelException e) {</span>
+<span class="nc" id="L63">			sessionHandler.messageNotSent(sms, new SmppException(&quot;Failed to send SMS&quot;, e));</span>
+<span class="nc" id="L64">		} catch (InterruptedException e) {</span>
+<span class="nc" id="L65">			Thread.currentThread().interrupt();</span>
+<span class="nc" id="L66">			sessionHandler.messageNotSent(sms, new SmppException(&quot;Failed to send SMS (interrupted)&quot;, e));</span>
+		} finally {
+<span class="fc" id="L68">			sessionHandler.messageProcessed(sms);</span>
+		}
+<span class="fc" id="L70">	}</span>
+
+	@Override
+	public void clean() throws CleanException {
+<span class="fc" id="L74">		sessionHandler.clean();</span>
+<span class="fc" id="L75">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L79">		return &quot;CloudhopperSMPPSender&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

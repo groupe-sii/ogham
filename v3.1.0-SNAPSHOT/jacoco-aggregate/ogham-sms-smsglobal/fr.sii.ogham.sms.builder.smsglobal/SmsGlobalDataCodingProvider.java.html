@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsGlobalDataCodingProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-smsglobal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.smsglobal</a> &gt; <span class="el_source">SmsGlobalDataCodingProvider.java</span></div><h1>SmsGlobalDataCodingProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.smsglobal;
+
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
+import static com.cloudhopper.commons.gsm.DataCoding.CHAR_ENC_DEFAULT;
+import static com.cloudhopper.commons.gsm.DataCoding.CHAR_ENC_UCS2;
+import static com.cloudhopper.commons.gsm.DataCoding.createCharacterEncodingGroup;
+
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.gsm.DataCoding;
+
+import fr.sii.ogham.sms.encoder.Encoded;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.DataCodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.UnsupportedCharsetException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
+
+/**
+ * SMSGlobal only supports either GSM 8-bit or UCS-2 encodings.
+ * 
+ * &lt;p&gt;
+ * If GSM 8-bit encoding is used, DCS value is set to 0
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * If UCS-2 encoding is used, DCS value is set to 8
+ * &lt;/p&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L32">public class SmsGlobalDataCodingProvider implements DataCodingProvider {</span>
+
+	@Override
+	public DataCoding provide(Encoded encoded) throws DataCodingException {
+<span class="fc" id="L36">		String charsetName = encoded.getCharsetName();</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (NAME_UCS_2.equals(charsetName)) {</span>
+<span class="fc" id="L38">			return createCharacterEncodingGroup(CHAR_ENC_UCS2);</span>
+		}
+<span class="fc bfc" id="L40" title="All 4 branches covered.">		if (NAME_GSM.equals(charsetName) || CharsetUtil.NAME_GSM8.equals(charsetName)) {</span>
+<span class="fc" id="L41">			return createCharacterEncodingGroup(CHAR_ENC_DEFAULT);</span>
+		}
+<span class="fc" id="L43">		throw new UnsupportedCharsetException(charsetName + &quot; not supported by SmsGlobal (it will result in invalid characters). &quot; + </span>
+											&quot;Please use one of CharsetUtil.NAME_GSM, CharsetUtil.NAME_GSM_8 or CharsetUtil.NAME_UCS_2&quot;,
+											encoded);
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

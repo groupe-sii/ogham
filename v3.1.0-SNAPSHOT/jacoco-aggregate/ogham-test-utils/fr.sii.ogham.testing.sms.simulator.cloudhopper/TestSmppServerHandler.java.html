@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TestSmppServerHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.cloudhopper</a> &gt; <span class="el_source">TestSmppServerHandler.java</span></div><h1>TestSmppServerHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.cloudhopper;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.cloudhopper.smpp.SmppConstants;
+import com.cloudhopper.smpp.SmppServerHandler;
+import com.cloudhopper.smpp.SmppServerSession;
+import com.cloudhopper.smpp.SmppSessionConfiguration;
+import com.cloudhopper.smpp.impl.PollableSmppSessionHandler;
+import com.cloudhopper.smpp.pdu.BaseBind;
+import com.cloudhopper.smpp.pdu.BaseBindResp;
+import com.cloudhopper.smpp.type.SmppProcessingException;
+
+public class TestSmppServerHandler implements SmppServerHandler {
+<span class="nc" id="L16">	private Set&lt;SmppServerSession&gt; sessions = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L17">	private PollableSmppSessionHandler sessionHandler = new PollableSmppSessionHandler();</span>
+
+	private String systemId;
+	private String password;
+
+	public TestSmppServerHandler(String systemId, String password) {
+<span class="nc" id="L23">		super();</span>
+<span class="nc" id="L24">		this.systemId = systemId;</span>
+<span class="nc" id="L25">		this.password = password;</span>
+<span class="nc" id="L26">	}</span>
+
+	@Override
+	@SuppressWarnings(&quot;rawtypes&quot;)
+	public void sessionBindRequested(Long sessionId, SmppSessionConfiguration sessionConfiguration, final BaseBind bindRequest) throws SmppProcessingException {
+		// test name change of sessions
+<span class="nc" id="L32">		sessionConfiguration.setName(&quot;Test1&quot;);</span>
+
+<span class="nc bnc" id="L34" title="All 2 branches missed.">		if (!systemId.equals(bindRequest.getSystemId())) {</span>
+<span class="nc" id="L35">			throw new SmppProcessingException(SmppConstants.STATUS_INVSYSID);</span>
+		}
+
+<span class="nc bnc" id="L38" title="All 2 branches missed.">		if (!password.equals(bindRequest.getPassword())) {</span>
+<span class="nc" id="L39">			throw new SmppProcessingException(SmppConstants.STATUS_INVPASWD);</span>
+		}
+<span class="nc" id="L41">	}</span>
+
+	@Override
+	public void sessionCreated(Long sessionId, SmppServerSession session, BaseBindResp preparedBindResponse) {
+<span class="nc" id="L45">		sessions.add(session);</span>
+		// need to do something it now (flag we're ready)
+<span class="nc" id="L47">		session.serverReady(sessionHandler);</span>
+<span class="nc" id="L48">	}</span>
+
+	@Override
+	public void sessionDestroyed(Long sessionId, SmppServerSession session) {
+<span class="nc" id="L52">		sessions.remove(session);</span>
+<span class="nc" id="L53">	}</span>
+
+	public Set&lt;SmppServerSession&gt; getSessions() {
+<span class="nc" id="L56">		return sessions;</span>
+	}
+
+	public PollableSmppSessionHandler getSessionHandler() {
+<span class="nc" id="L60">		return sessionHandler;</span>
+	}
+
+	public String getSystemId() {
+<span class="nc" id="L64">		return systemId;</span>
+	}
+
+	public String getPassword() {
+<span class="nc" id="L68">		return password;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

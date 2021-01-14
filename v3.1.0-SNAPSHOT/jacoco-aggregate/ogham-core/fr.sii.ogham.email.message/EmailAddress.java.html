@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EmailAddress.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.message</a> &gt; <span class="el_source">EmailAddress.java</span></div><h1>EmailAddress.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.message;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
+/**
+ * Represents an email address. javax.mail.internet.InternetAddress also
+ * provides the same feature but we don't want to be sticked to a particular
+ * implementation.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class EmailAddress {
+	private static final String QUOTED = &quot;([\&quot;](?&lt;personal1&gt;[^\&quot;]+)[\&quot;])&quot;;
+	private static final String UNQUOTED = &quot;(?&lt;personal2&gt;.+)&quot;;
+	private static final String ADDRESS_WITH_TAG = &quot;&lt;(?&lt;address&gt;[^&gt;]+)&gt;&quot;;
+<span class="fc" id="L21">	private static final Pattern SIMPLE_ADDRESS_WITH_PERSONAL = Pattern.compile(&quot;\\s*(&quot;+QUOTED+&quot;|&quot;+UNQUOTED+&quot;)\\s* &quot;+ADDRESS_WITH_TAG);</span>
+
+	/**
+	 * The email address part (is of the form &quot;user@domain.host&quot;)
+	 */
+	private String address;
+
+	/**
+	 * The user name part (can be anything)
+	 */
+	private String personal;
+
+	/**
+	 * Initialize the address with only the email address part (no personal). It
+	 * is of the form &quot;user@domain.host&quot; or and &quot;Personal Name
+	 * &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * When using an address of the form &quot;Personal Name
+	 * &amp;lt;user@host.domain&amp;gt;&quot;, the address is parsed to split into two
+	 * fields:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;email address (&quot;user@domain.host&quot;), accessible through
+	 * {@link #getAddress()}&lt;/li&gt;
+	 * &lt;li&gt;personal name if any (&quot;Personal Name&quot;), accessible through
+	 * {@link #getPersonal()}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;strong&gt;IMPORTANT: The parsing of address and personal only supports
+	 * simple cases. The cases defined in RFC822 and RFC2822 with comments,
+	 * mailbox and group are not supported.&lt;/strong&gt; If you need this feature,
+	 * you need to use an external parser in order to extract information. If
+	 * an address containing mailbox or group is provided, then no personal name
+	 * is extracted but address is the full string.
+	 * 
+	 * @param rawAddress
+	 *            the email address part
+	 */
+	public EmailAddress(String rawAddress) {
+<span class="fc" id="L59">		super();</span>
+<span class="fc" id="L60">		EmailAddress parsed = parse(rawAddress);</span>
+<span class="fc" id="L61">		address = parsed.getAddress();</span>
+<span class="fc" id="L62">		personal = parsed.getPersonal();</span>
+<span class="fc" id="L63">	}</span>
+
+	/**
+	 * Initialize the address with the email address and the personal parts.
+	 * No parsing is applied.
+	 * 
+	 * @param address
+	 *            the email address part, it is of the form &quot;user@domain.host&quot;
+	 * @param personal
+	 *            the personal part
+	 */
+	public EmailAddress(String address, String personal) {
+<span class="fc" id="L75">		super();</span>
+<span class="fc" id="L76">		this.address = address;</span>
+<span class="fc" id="L77">		this.personal = personal;</span>
+<span class="fc" id="L78">	}</span>
+
+	public String getAddress() {
+<span class="fc" id="L81">		return address;</span>
+	}
+
+	public String getPersonal() {
+<span class="fc" id="L85">		return personal;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L90">		StringBuilder builder = new StringBuilder();</span>
+<span class="pc bpc" id="L91" title="1 of 4 branches missed.">		if (personal != null &amp;&amp; !personal.isEmpty()) {</span>
+<span class="fc" id="L92">			builder.append(personal).append(&quot; &quot;);</span>
+		}
+<span class="fc" id="L94">		builder.append(&quot;&lt;&quot;).append(address).append(&quot;&gt;&quot;);</span>
+<span class="fc" id="L95">		return builder.toString();</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L100">		return new HashCodeBuilder().append(address, personal).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L105">		return new EqualsBuilder(this, obj).appendFields(&quot;address&quot;, &quot;personal&quot;).isEqual();</span>
+	}
+
+	public static EmailAddress parse(String rawAddress) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		if(rawAddress == null) {</span>
+<span class="fc" id="L110">			throw new IllegalArgumentException(&quot;Address can't be null&quot;);</span>
+		}
+<span class="fc" id="L112">		Matcher matcher = SIMPLE_ADDRESS_WITH_PERSONAL.matcher(rawAddress);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		if(matcher.matches()) {</span>
+<span class="fc" id="L114">			String address = matcher.group(&quot;address&quot;);</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">			String personal = matcher.group(&quot;personal1&quot;) != null ? matcher.group(&quot;personal1&quot;) : matcher.group(&quot;personal2&quot;);</span>
+<span class="fc" id="L116">			return new EmailAddress(address, personal);</span>
+		}
+<span class="fc" id="L118">		return new EmailAddress(rawAddress, null);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ExpectedEmailHeader.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">ExpectedEmailHeader.java</span></div><h1>ExpectedEmailHeader.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Class used in tests for ensuring that the email is respected. It provides the
+ * following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;The expected subject&lt;/li&gt;
+ * &lt;li&gt;The expected sender address&lt;/li&gt;
+ * &lt;li&gt;The expected recipients (to, cc, bcc)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ExpectedEmailHeader {
+	/**
+	 * The expected subject
+	 */
+	protected String subject;
+	
+	/**
+	 * The expected sender address
+	 */
+	protected String from;
+	
+	/**
+	 * The expected list of recipients for the &quot;to&quot; field
+	 */
+<span class="fc" id="L33">	protected List&lt;String&gt; to = new ArrayList&lt;&gt;();</span>
+
+	/**
+	 * The expected list of recipients for the &quot;cc&quot; field
+	 */
+<span class="fc" id="L38">	protected List&lt;String&gt; cc = new ArrayList&lt;&gt;();</span>
+
+	/**
+	 * The expected list of recipients for the &quot;bcc&quot; field
+	 */
+<span class="fc" id="L43">	protected List&lt;String&gt; bcc = new ArrayList&lt;&gt;();</span>
+
+	public ExpectedEmailHeader(String subject, String from, String... to) {
+<span class="fc" id="L46">		this(subject, from, new ArrayList&lt;&gt;(Arrays.asList(to)));</span>
+<span class="fc" id="L47">	}</span>
+
+	public ExpectedEmailHeader(String subject, String from, List&lt;String&gt; to) {
+<span class="fc" id="L50">		super();</span>
+<span class="fc" id="L51">		this.subject = subject;</span>
+<span class="fc" id="L52">		this.from = from;</span>
+<span class="fc" id="L53">		this.to = to;</span>
+<span class="fc" id="L54">	}</span>
+
+	public String getSubject() {
+<span class="fc" id="L57">		return subject;</span>
+	}
+
+	public String getFrom() {
+<span class="fc" id="L61">		return from;</span>
+	}
+
+	public List&lt;String&gt; getTo() {
+<span class="fc" id="L65">		return to;</span>
+	}
+
+	public List&lt;String&gt; getCc() {
+<span class="fc" id="L69">		return cc;</span>
+	}
+
+	public List&lt;String&gt; getBcc() {
+<span class="fc" id="L73">		return bcc;</span>
+	}
+
+	public void setCc(String... cc) {
+<span class="fc" id="L77">		this.cc = new ArrayList&lt;&gt;(Arrays.asList(cc));</span>
+<span class="fc" id="L78">	}</span>
+
+	public void setBcc(String... bcc) {
+<span class="fc" id="L81">		this.bcc = new ArrayList&lt;&gt;(Arrays.asList(bcc));</span>
+<span class="fc" id="L82">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

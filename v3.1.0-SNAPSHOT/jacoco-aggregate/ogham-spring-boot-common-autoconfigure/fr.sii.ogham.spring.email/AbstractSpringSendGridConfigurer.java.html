@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSpringSendGridConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.email</a> &gt; <span class="el_source">AbstractSpringSendGridConfigurer.java</span></div><h1>AbstractSpringSendGridConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.email;
+
+import static java.util.Optional.ofNullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.sendgrid.SendGridProperties;
+
+import com.sendgrid.SendGrid;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.email.sendgrid.SendGridConstants;
+import fr.sii.ogham.email.sendgrid.builder.AbstractSendGridBuilder;
+import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
+
+/**
+ * Integrates with Spring SendGrid by using Spring properties defined with
+ * prefix {@code spring.sendgrid} (see {@link SendGridProperties}).
+ * 
+ * If both Spring property and Ogham property is defined, Ogham property is
+ * used.
+ * 
+ * For example, if the file application.properties contains the following
+ * configuration:
+ * 
+ * &lt;pre&gt;
+ * spring.sendgrid.api-key=foo
+ * ogham.email.sendgrid.api-key=bar
+ * &lt;/pre&gt;
+ * 
+ * The {@link SendGridSender} implementation will use foo to connect to the
+ * SendGrid service.
+ * 
+ * &lt;p&gt;
+ * This configurer is also useful to support property naming variants (see
+ * &lt;a href=
+ * &quot;https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0&quot;&gt;Relaxed
+ * Binding&lt;/a&gt;).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public abstract class AbstractSpringSendGridConfigurer implements SpringMessagingConfigurer {
+	private static final int SPRING_CONFIGURER_PRIORITY_OFFSET = 1000;
+
+<span class="fc" id="L47">	private static final Logger LOG = LoggerFactory.getLogger(AbstractSpringSendGridConfigurer.class);</span>
+	
+	protected final OghamSendGridProperties properties;
+	protected final SendGridProperties springProperties;
+	protected final SendGrid sendGrid;
+
+	public AbstractSpringSendGridConfigurer(OghamSendGridProperties properties, SendGridProperties springProperties, SendGrid sendGrid) {
+<span class="fc" id="L54">		super();</span>
+<span class="fc" id="L55">		this.properties = properties;</span>
+<span class="fc" id="L56">		this.springProperties = springProperties;</span>
+<span class="fc" id="L57">		this.sendGrid = sendGrid;</span>
+<span class="fc" id="L58">	}</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="fc" id="L62">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+		// Ogham specific properties take precedence over Spring properties if specified
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		if (springProperties != null) {</span>
+<span class="fc" id="L65">			applySpringConfiguration(builder);</span>
+		}
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">		if (properties != null) {</span>
+<span class="fc" id="L68">			applyOghamConfiguration(builder);</span>
+		}
+<span class="fc" id="L70">	}</span>
+
+	@SuppressWarnings(&quot;java:S1452&quot;)
+	protected abstract Class&lt;? extends AbstractSendGridBuilder&lt;?, ?&gt;&gt; getSendGridBuilderClass();
+
+	@SuppressWarnings(&quot;deprecation&quot;)
+	protected void applyOghamConfiguration(MessagingBuilder builder) {
+<span class="fc" id="L77">		LOG.debug(&quot;[{}] apply ogham configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L79">		builder.email()</span>
+<span class="fc" id="L80">			.sender(getSendGridBuilderClass())</span>
+<span class="fc" id="L81">				.apiKey().value(ofNullable(properties.getApiKey())).and()</span>
+<span class="fc" id="L82">				.url().value(ofNullable(properties.getUrl())).and()</span>
+<span class="fc" id="L83">				.username().value(ofNullable(properties.getUsername())).and()</span>
+<span class="fc" id="L84">				.password().value(ofNullable(properties.getPassword()));</span>
+		// @formatter:on
+<span class="fc" id="L86">	}</span>
+
+	protected void applySpringConfiguration(MessagingBuilder builder) {
+<span class="fc" id="L89">		LOG.debug(&quot;[{}] apply spring configuration properties to {}&quot;, this, builder);</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		if (sendGrid != null) {</span>
+<span class="fc" id="L91">			useSpringSendGridClient(builder);</span>
+		} else {
+			// This is a special case that is not really reachable with Spring Boot:
+			// - it means that SendGridProperties bean is available
+			// - but SendGrid bean is not
+			// As both beans are created by SendGridAutoConfiguration, either none is available or both are available.
+			// We keep it in the case where a developer would use a @Configuration class with only @EnableConfigurationProperties(SendGridProperties.class)
+<span class="fc" id="L98">			useOghamSendGridClientWithSpringProperties(builder);</span>
+		}
+<span class="fc" id="L100">	}</span>
+
+	protected abstract void useSpringSendGridClient(MessagingBuilder builder);
+
+	protected void useOghamSendGridClientWithSpringProperties(MessagingBuilder builder) {
+		// @formatter:off
+<span class="fc" id="L106">		builder.email()</span>
+<span class="fc" id="L107">			.sender(getSendGridBuilderClass())</span>
+<span class="fc" id="L108">				.apiKey().value(ofNullable(springProperties.getApiKey()));</span>
+		// @formatter:on
+<span class="fc" id="L110">	}</span>
+
+	@Override
+	public int getOrder() {
+<span class="fc" id="L114">		return SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY + SPRING_CONFIGURER_PRIORITY_OFFSET;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

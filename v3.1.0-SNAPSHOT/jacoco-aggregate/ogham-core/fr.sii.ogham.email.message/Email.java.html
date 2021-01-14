@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Email.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.message</a> &gt; <span class="el_source">Email.java</span></div><h1>Email.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.message;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.capability.HasContentFluent;
+import fr.sii.ogham.core.message.capability.HasRecipients;
+import fr.sii.ogham.core.message.capability.HasRecipientsFluent;
+import fr.sii.ogham.core.message.capability.HasSubject;
+import fr.sii.ogham.core.message.capability.HasSubjectFluent;
+import fr.sii.ogham.core.message.capability.HasToFluent;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MultiContent;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
+import fr.sii.ogham.core.util.Loggable;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+import fr.sii.ogham.core.util.StringUtils;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.attachment.ContentDisposition;
+import fr.sii.ogham.email.message.fluent.AttachBuilder;
+import fr.sii.ogham.email.message.fluent.BodyBuilder;
+import fr.sii.ogham.email.message.fluent.EmbedBuilder;
+
+/**
+ * Email message that contains the following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;The subject of the mail&lt;/li&gt;
+ * &lt;li&gt;The body of the mail (see {@link Content} and sub classes for more
+ * information)&lt;/li&gt;
+ * &lt;li&gt;The sender address&lt;/li&gt;
+ * &lt;li&gt;The list of recipient addresses with the type (to, cc, bcc)&lt;/li&gt;
+ * &lt;li&gt;The list of attachments to join to the mail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class Email implements Message, HasContentFluent&lt;Email&gt;, HasSubject, HasSubjectFluent&lt;Email&gt;, HasRecipients&lt;Recipient&gt;, HasRecipientsFluent&lt;Email, Recipient&gt;, HasToFluent&lt;Email&gt;, Loggable {
+	/**
+	 * The subject
+	 */
+	private String subject;
+
+	/**
+	 * The email body content
+	 */
+	private Content content;
+
+	/**
+	 * The sender address
+	 */
+	private EmailAddress from;
+
+	/**
+	 * The list of recipient addresses with the associated type (to, cc, bcc)
+	 */
+	private List&lt;Recipient&gt; recipients;
+
+	/**
+	 * The list of attachments to send with the email
+	 */
+	private List&lt;Attachment&gt; attachments;
+
+	private final SingleContentBuilder&lt;Email&gt; htmlBuilder;
+	private final SingleContentBuilder&lt;Email&gt; textBuilder;
+	private final BodyBuilder bodyBuilder;
+	private final AttachBuilder attachBuilder;
+	private final EmbedBuilder embedBuilder;
+
+	/**
+	 * Instantiates an empty email
+	 */
+	public Email() {
+<span class="fc" id="L78">		super();</span>
+<span class="fc" id="L79">		recipients = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L80">		attachments = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L81">		htmlBuilder = new SingleContentBuilder&lt;&gt;(this);</span>
+<span class="fc" id="L82">		textBuilder = new SingleContentBuilder&lt;&gt;(this);</span>
+<span class="fc" id="L83">		bodyBuilder = new BodyBuilder(this);</span>
+<span class="fc" id="L84">		attachBuilder = new AttachBuilder(this);</span>
+<span class="fc" id="L85">		embedBuilder = new EmbedBuilder(this);</span>
+<span class="fc" id="L86">	}</span>
+
+	// ----------------------- Getter/Setters -----------------------//
+
+	@Override
+	public Content getContent() {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">		if (content != null) {</span>
+<span class="fc" id="L93">			return content;</span>
+		}
+<span class="fc" id="L95">		return buildContent();</span>
+	}
+
+	@Override
+	public void setContent(Content content) {
+<span class="fc" id="L100">		this.content = content;</span>
+<span class="fc" id="L101">	}</span>
+
+	/**
+	 * Get the sender address
+	 * 
+	 * @return the sender address
+	 */
+	public EmailAddress getFrom() {
+<span class="fc" id="L109">		return from;</span>
+	}
+
+	/**
+	 * Set the sender address.
+	 * 
+	 * @param from
+	 *            the sender address
+	 */
+	public void setFrom(EmailAddress from) {
+<span class="fc" id="L119">		this.from = from;</span>
+<span class="fc" id="L120">	}</span>
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * &quot;user@host.domain&quot; or &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot;).
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;).
+	 */
+	public void setFrom(String from) {
+<span class="fc" id="L132">		setFrom(new EmailAddress(from));</span>
+<span class="fc" id="L133">	}</span>
+
+	/**
+	 * Get the list of recipients of the mail.
+	 * 
+	 * @return the list of recipients
+	 */
+	@Override
+	public List&lt;Recipient&gt; getRecipients() {
+<span class="fc" id="L142">		return recipients;</span>
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
+	 */
+	@Override
+	public void setRecipients(List&lt;Recipient&gt; recipients) {
+<span class="nc" id="L153">		this.recipients = recipients;</span>
+<span class="nc" id="L154">	}</span>
+
+	/**
+	 * Get the subject of the mail.
+	 * 
+	 * @return the subject of the mail
+	 */
+	public String getSubject() {
+<span class="fc" id="L162">		return subject;</span>
+	}
+
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 */
+	public void setSubject(String subject) {
+<span class="fc" id="L172">		this.subject = subject;</span>
+<span class="fc" id="L173">	}</span>
+
+	/**
+	 * Get the list of attachments.
+	 * 
+	 * @return the list of attachments
+	 */
+	public List&lt;Attachment&gt; getAttachments() {
+<span class="fc" id="L181">		List&lt;Attachment&gt; merged = new ArrayList&lt;&gt;();</span>
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L184" title="All 2 branches covered.">		if (attachments != null) {</span>
+<span class="fc" id="L185">			merged.addAll(attachments);</span>
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L189" title="All 2 branches covered.">		if (attachBuilder != null) {</span>
+<span class="fc" id="L190">			merged.addAll(attachBuilder.build());</span>
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		if (embedBuilder != null) {</span>
+<span class="fc" id="L195">			merged.addAll(embedBuilder.build());</span>
+		}
+<span class="fc" id="L197">		return merged;</span>
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 */
+	public void setAttachments(List&lt;Attachment&gt; attachments) {
+<span class="nc" id="L207">		this.attachments = attachments;</span>
+<span class="nc" id="L208">	}</span>
+
+	// ----------------------- Fluent API -----------------------//
+
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @return this instance for fluent chaining
+	 */
+	public Email subject(String subject) {
+<span class="fc" id="L220">		setSubject(subject);</span>
+<span class="fc" id="L221">		return this;</span>
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * &lt;p&gt;
+	 * You can use this method to explicitly set a particular {@link Content}
+	 * instance. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .content(new TemplateContent(&quot;path/to/template&quot;, obj));
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If you prefer, you can instead use the fluent API to set the email
+	 * content (body):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .body().template(&quot;path/to/template&quot;, obj)
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent chaining
+	 * @see #body()
+	 * @see #html()
+	 * @see #text()
+	 */
+	public Email content(Content content) {
+<span class="fc" id="L255">		setContent(content);</span>
+<span class="fc" id="L256">		return this;</span>
+	}
+
+	/**
+	 * Set the content (body) of the message. This is a shortcut to
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .content(new StringContent(content))}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If you prefer, you can instead use the fluent API to set the email
+	 * content (body):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .body().string(content)
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent chaining
+	 * @see #body()
+	 * @see #html()
+	 * @see #text()
+	 */
+	public Email content(String content) {
+<span class="fc" id="L285">		return content(new StringContent(content));</span>
+	}
+
+	/**
+	 * Set the content (body) of the message (HTML part).
+	 * 
+	 * &lt;p&gt;
+	 * You can use this method in addition to {@link #text()} to provide both a
+	 * main body and an alternative textual body (that is used when HTML format
+	 * is not supported by the email client).
+	 * 
+	 * &lt;p&gt;
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * &lt;p&gt;
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)} or {@link #setContent(Content)} then this method
+	 * has no effect.
+	 * 
+	 * @return the builder for building HTML part
+	 * @since 3.0.0
+	 */
+	public SingleContentBuilder&lt;Email&gt; html() {
+<span class="fc" id="L309">		return htmlBuilder;</span>
+	}
+
+	/**
+	 * Set the content (body) of the message (text part).
+	 * 
+	 * &lt;p&gt;
+	 * You can use this method in addition to {@link #html()} to provide both a
+	 * main body and an alternative textual body (that is used when HTML format
+	 * is not supported by the email client). If you only call {@link #text()},
+	 * then the textual content is used as the main body.
+	 * 
+	 * &lt;p&gt;
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * &lt;p&gt;
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)} or {@link #setContent(Content)} then this method
+	 * has no effect.
+	 * 
+	 * @return the builder for building text part
+	 * @since 3.0.0
+	 */
+	public SingleContentBuilder&lt;Email&gt; text() {
+<span class="fc" id="L334">		return textBuilder;</span>
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * &lt;p&gt;
+	 * This is the method that you can use in main circumstances to set the
+	 * body:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;When you want to set a single textual body (no alternative):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .body().string(&quot;text&quot;)}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;When you want to set a single HTML body (no alternative):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .body().string(&quot;&lt;html&gt;&lt;body&gt;Hello world&lt;/body&gt;&lt;/html&gt;&quot;)}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;When you want to set a single text body (no alternative) based on a
+	 * template (extension depends on template parser):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .body().template(&quot;path/to/text/template.txt&quot;, obj)}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;When you want to set a single HTML body (no alternative) based on a
+	 * template (extension depends on template parser):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .body().template(&quot;path/to/text/template.html&quot;, obj)}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;When you want to set both HTML and textual alternative based on two
+	 * different templates (same path but without extension):
+	 * 
+	 * &lt;pre&gt;
+	 * {@code .body().template(&quot;path/to/text/template&quot;, obj)}
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * &lt;p&gt;
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)}, {@link #setContent(Content)}, {@link #html()}
+	 * or {@link #text()} then this method has no effect because they are more
+	 * specific.
+	 * 
+	 * @return the builder for building the body
+	 * @since 3.0.0
+	 */
+	public BodyBuilder body() {
+<span class="fc" id="L398">		return bodyBuilder;</span>
+	}
+
+	/**
+	 * Attach a file to the email. The attachment must have a name.
+	 * 
+	 * &lt;p&gt;
+	 * The file is attached with the {@link ContentDisposition#ATTACHMENT}
+	 * disposition.
+	 * 
+	 * &lt;p&gt;
+	 * This method provides fluent chaining to guide the developer. This method
+	 * has the same effect has using {@link #attach(Attachment)},
+	 * {@link #attach(Attachment...)} or {@link #attach(List)}.
+	 * 
+	 * @return the builder for building the attachments
+	 * @since 3.0.0
+	 */
+	public AttachBuilder attach() {
+<span class="fc" id="L417">		return attachBuilder;</span>
+	}
+
+	/**
+	 * Embed a file in the email. This is mainly used for images. The embedded
+	 * file must be referenced in the body of the email using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The file is attached {@link ContentDisposition#INLINE} disposition.
+	 * 
+	 * &lt;p&gt;
+	 * This method provides fluent chaining to guide the developer. This method
+	 * has the same effect has using {@link #attach(Attachment)},
+	 * {@link #attach(Attachment...)} or {@link #attach(List)}.
+	 * 
+	 * @return the builder for building the attachments
+	 * @since 3.0.0
+	 */
+	public EmbedBuilder embed() {
+<span class="fc" id="L438">		return embedBuilder;</span>
+	}
+
+	/**
+	 * Set the sender address. It supports both &quot;user@domain.host&quot; and &quot;Personal
+	 * Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param from
+	 *            the sender address
+	 * @return this instance for fluent chaining
+	 */
+	public Email from(EmailAddress from) {
+<span class="fc" id="L450">		setFrom(from);</span>
+<span class="fc" id="L451">		return this;</span>
+	}
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * &quot;user@host.domain&quot; or &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot;).
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;).
+	 * @return this instance for fluent chaining
+	 */
+	public Email from(String from) {
+<span class="fc" id="L465">		setFrom(from);</span>
+<span class="fc" id="L466">		return this;</span>
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	public Email recipients(List&lt;Recipient&gt; recipients) {
+<span class="nc" id="L478">		setRecipients(recipients);</span>
+<span class="nc" id="L479">		return this;</span>
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 * @return this instance for fluent chaining
+	 */
+	public Email attach(List&lt;Attachment&gt; attachments) {
+<span class="nc" id="L490">		setAttachments(attachments);</span>
+<span class="nc" id="L491">		return this;</span>
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 * @return this instance for fluent chaining
+	 */
+	public Email attach(Attachment... attachments) {
+<span class="fc bfc" id="L502" title="All 2 branches covered.">		for (Attachment attachment : attachments) {</span>
+<span class="fc" id="L503">			attach(attachment);</span>
+		}
+<span class="fc" id="L505">		return this;</span>
+	}
+
+	/**
+	 * Add an attachment to join to the mail.
+	 * 
+	 * @param attachment
+	 *            the attachment to add
+	 * @return this instance for fluent chaining
+	 */
+	public Email attach(Attachment attachment) {
+<span class="fc" id="L516">		attachments.add(attachment);</span>
+<span class="fc" id="L517">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient of the mail.
+	 * 
+	 * @param recipients
+	 *            one or several recipient to add
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	public Email recipient(Recipient... recipients) {
+<span class="fc" id="L529">		this.recipients.addAll(Arrays.asList(recipients));</span>
+<span class="fc" id="L530">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;to&quot; recipient address. It supports both &quot;user@domain.host&quot; and
+	 * &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param to
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email to(String... to) {
+<span class="fc bfc" id="L542" title="All 2 branches covered.">		for (String t : to) {</span>
+<span class="fc" id="L543">			to(new EmailAddress(t));</span>
+		}
+<span class="fc" id="L545">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;to&quot; recipient address.
+	 * 
+	 * @param to
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email to(EmailAddress... to) {
+<span class="fc bfc" id="L556" title="All 2 branches covered.">		for (EmailAddress t : to) {</span>
+<span class="fc" id="L557">			recipient(t, RecipientType.TO);</span>
+		}
+<span class="fc" id="L559">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;cc&quot; recipient address. It supports both &quot;user@domain.host&quot; and
+	 * &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param cc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email cc(String... cc) {
+<span class="fc bfc" id="L571" title="All 2 branches covered.">		for (String c : cc) {</span>
+<span class="fc" id="L572">			cc(new EmailAddress(c));</span>
+		}
+<span class="fc" id="L574">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;cc&quot; recipient address.
+	 * 
+	 * @param cc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email cc(EmailAddress... cc) {
+<span class="fc bfc" id="L585" title="All 2 branches covered.">		for (EmailAddress c : cc) {</span>
+<span class="fc" id="L586">			recipient(c, RecipientType.CC);</span>
+		}
+<span class="fc" id="L588">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;bcc&quot; recipient address. It supports both &quot;user@domain.host&quot; and
+	 * &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param bcc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email bcc(String... bcc) {
+<span class="fc bfc" id="L600" title="All 2 branches covered.">		for (String b : bcc) {</span>
+<span class="fc" id="L601">			bcc(new EmailAddress(b));</span>
+		}
+<span class="fc" id="L603">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;bcc&quot; recipient address.
+	 * 
+	 * @param bcc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email bcc(EmailAddress... bcc) {
+<span class="fc bfc" id="L614" title="All 2 branches covered.">		for (EmailAddress b : bcc) {</span>
+<span class="fc" id="L615">			recipient(b, RecipientType.BCC);</span>
+		}
+<span class="fc" id="L617">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient specifying its address and the type (to, cc, bcc).
+	 * 
+	 * @param recipient
+	 *            the recipient address
+	 * @param type
+	 *            the type (to, cc, bcc)
+	 * @return this instance for fluent chaining
+	 */
+	public Email recipient(EmailAddress recipient, RecipientType type) {
+<span class="fc" id="L630">		recipient(new Recipient(recipient, type));</span>
+<span class="fc" id="L631">		return this;</span>
+	}
+
+	// ----------------------- Utilities -----------------------//
+
+	/**
+	 * Converts a list of string to a list of recipients. Each recipient will
+	 * have the type {@link RecipientType#TO}.
+	 * 
+	 * @param to
+	 *            the list of addresses to convert (typical address syntax is of
+	 *            the form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;)
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(List&lt;String&gt; to) {
+<span class="nc" id="L647">		Recipient[] addresses = new Recipient[to.size()];</span>
+<span class="nc" id="L648">		int i = 0;</span>
+<span class="nc bnc" id="L649" title="All 2 branches missed.">		for (String t : to) {</span>
+<span class="nc" id="L650">			addresses[i] = new Recipient(t);</span>
+<span class="nc" id="L651">			i++;</span>
+<span class="nc" id="L652">		}</span>
+<span class="nc" id="L653">		return addresses;</span>
+	}
+
+	/**
+	 * Converts a list of {@link EmailAddress} to a list of recipients. Each
+	 * recipient will have the type {@link RecipientType#TO}.
+	 * 
+	 * @param to
+	 *            the list of addresses to convert
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(EmailAddress[] to) {
+<span class="nc" id="L665">		Recipient[] addresses = new Recipient[to.length];</span>
+<span class="nc" id="L666">		int i = 0;</span>
+<span class="nc bnc" id="L667" title="All 2 branches missed.">		for (EmailAddress t : to) {</span>
+<span class="nc" id="L668">			addresses[i] = new Recipient(t);</span>
+<span class="nc" id="L669">			i++;</span>
+		}
+<span class="nc" id="L671">		return addresses;</span>
+	}
+
+	/**
+	 * Converts a list of string to a list of recipients. Each recipient will
+	 * have the type {@link RecipientType#TO}.
+	 * 
+	 * @param to
+	 *            the list of addresses to convert (typical address syntax is of
+	 *            the form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;)
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(String[] to) {
+<span class="nc" id="L685">		Recipient[] addresses = new Recipient[to.length];</span>
+<span class="nc" id="L686">		int i = 0;</span>
+<span class="nc bnc" id="L687" title="All 2 branches missed.">		for (String t : to) {</span>
+<span class="nc" id="L688">			addresses[i] = new Recipient(t);</span>
+<span class="nc" id="L689">			i++;</span>
+		}
+<span class="nc" id="L691">		return addresses;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L696">		return toString(false);</span>
+	}
+
+	@Override
+	public String toLogString() {
+<span class="nc" id="L701">		return toString(true);</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L706">		return new HashCodeBuilder().append(subject, getContent(), from, recipients, getAttachments()).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L711">		return new EqualsBuilder(this, obj).appendFields(&quot;subject&quot;, &quot;content&quot;, &quot;from&quot;, &quot;recipients&quot;, &quot;attachments&quot;).isEqual();</span>
+	}
+
+	private String toString(boolean includeContent) {
+<span class="fc" id="L715">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L716">		builder.append(&quot;Email message\r\nFrom: &quot;).append(from);</span>
+<span class="fc bfc" id="L717" title="All 2 branches covered.">		for (RecipientType type : RecipientType.values()) {</span>
+<span class="fc" id="L718">			List&lt;EmailAddress&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L719" title="All 2 branches covered.">			for (Recipient recipient : recipients) {</span>
+<span class="fc bfc" id="L720" title="All 2 branches covered.">				if (type == recipient.getType()) {</span>
+<span class="fc" id="L721">					addresses.add(recipient.getAddress());</span>
+				}
+<span class="fc" id="L723">			}</span>
+<span class="fc bfc" id="L724" title="All 2 branches covered.">			if (!addresses.isEmpty()) {</span>
+<span class="fc" id="L725">				builder.append(&quot;\r\n&quot;);</span>
+<span class="fc" id="L726">				builder.append(type).append(&quot;: &quot;);</span>
+<span class="fc" id="L727">				builder.append(StringUtils.join(addresses, &quot;, &quot;));</span>
+			}
+		}
+<span class="fc" id="L730">		builder.append(&quot;\r\nSubject: &quot;).append(subject);</span>
+<span class="pc bpc" id="L731" title="1 of 2 branches missed.">		builder.append(&quot;\r\n----------------------------------\r\n&quot;).append(includeContent ? getContent() : &quot;&lt;Content skipped&gt;&quot;);</span>
+<span class="pc bpc" id="L732" title="1 of 4 branches missed.">		if (attachments != null &amp;&amp; !attachments.isEmpty()) {</span>
+<span class="fc" id="L733">			builder.append(&quot;\r\n----------------------------------&quot;).append(&quot;\r\nAttachments: &quot;).append(getAttachments());</span>
+		}
+<span class="fc" id="L735">		builder.append(&quot;\r\n==================================\r\n&quot;);</span>
+<span class="fc" id="L736">		return builder.toString();</span>
+	}
+
+	private Content buildContent() {
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L742" title="All 2 branches covered.">		Content html = htmlBuilder == null ? null : htmlBuilder.build();</span>
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L745" title="All 2 branches covered.">		Content text = textBuilder == null ? null : textBuilder.build();</span>
+<span class="fc bfc" id="L746" title="All 4 branches covered.">		if (html != null &amp;&amp; text != null) {</span>
+<span class="fc" id="L747">			return new MultiContent(text, html);</span>
+		}
+<span class="fc bfc" id="L749" title="All 2 branches covered.">		if (html != null) {</span>
+<span class="fc" id="L750">			return html;</span>
+		}
+<span class="fc bfc" id="L752" title="All 2 branches covered.">		if (text != null) {</span>
+<span class="fc" id="L753">			return text;</span>
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+<span class="fc bfc" id="L757" title="All 2 branches covered.">		Content body = bodyBuilder == null ? null : bodyBuilder.build();</span>
+<span class="fc bfc" id="L758" title="All 2 branches covered.">		if (body != null) {</span>
+<span class="fc" id="L759">			return body;</span>
+		}
+<span class="fc" id="L761">		return null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

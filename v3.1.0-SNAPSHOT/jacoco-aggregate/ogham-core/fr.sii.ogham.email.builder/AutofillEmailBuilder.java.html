@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AutofillEmailBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">AutofillEmailBuilder.java</span></div><h1>AutofillEmailBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.filler.EveryFillerDecorator;
+import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.email.filler.EmailFiller;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Configures how Ogham will add default values to the {@link Email} if some
+ * information is missing.
+ * 
+ * If sender address is missing, a default one can be defined in configuration
+ * properties.
+ * 
+ * If recipient address is missing, a default one can be defined in
+ * configuration properties.
+ * 
+ * If subject is missing, a default one can be defined either:
+ * &lt;ul&gt;
+ * &lt;li&gt;In HTML title&lt;/li&gt;
+ * &lt;li&gt;In first line of text template&lt;/li&gt;
+ * &lt;li&gt;Using a default value defined in configuration properties&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ * @see EmailFiller
+ *
+ */
+public class AutofillEmailBuilder extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;MessageFiller&gt; {
+	private final BuildContext buildContext;
+	private AutofillSubjectBuilder subjectBuilder;
+	private AutofillDefaultEmailAddressBuilder&lt;String&gt; fromBuilder;
+	private AutofillDefaultEmailAddressBuilder&lt;String[]&gt; toBuilder;
+	private AutofillDefaultEmailAddressBuilder&lt;String[]&gt; ccBuilder;
+	private AutofillDefaultEmailAddressBuilder&lt;String[]&gt; bccBuilder;
+
+	/**
+	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
+	 * The parent builder is used when calling the {@link #and()} method. The
+	 * {@link EnvironmentBuilder} is used by {@link #build()} method to evaluate
+	 * property values.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for property resolution
+	 */
+	public AutofillEmailBuilder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L57">		super(parent);</span>
+<span class="fc" id="L58">		this.buildContext = buildContext;</span>
+<span class="fc" id="L59">	}</span>
+
+	/**
+	 * Configures how to handle missing {@link Email} subject: if no subject is
+	 * explicitly defined on the {@link Email}, Ogham will use the result of
+	 * this builder configuration to provide a default subject.
+	 * 
+	 * Default subject can be provided by:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Using HTML {@code &lt;title&gt;} header tag as subject&lt;/li&gt;
+	 * &lt;li&gt;Using first line text if prefixed&lt;/li&gt;
+	 * &lt;li&gt;Using a property value&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * @return the builder to configure default subject handling
+	 */
+	public AutofillSubjectBuilder subject() {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		if (subjectBuilder == null) {</span>
+<span class="fc" id="L78">			subjectBuilder = new AutofillSubjectBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L80">		return subjectBuilder;</span>
+	}
+
+	/**
+	 * Configures how to handle missing {@link Email} sender address: if no
+	 * sender address is explicitly defined on the {@link Email}, Ogham will use
+	 * the result of this builder configuration to provide a default sender
+	 * address.
+	 * 
+	 * @return the builder to configure default sender address handling
+	 */
+	public AutofillDefaultEmailAddressBuilder&lt;String&gt; from() {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">		if (fromBuilder == null) {</span>
+<span class="fc" id="L93">			fromBuilder = new AutofillDefaultEmailAddressBuilder&lt;&gt;(this, String.class, buildContext);</span>
+		}
+<span class="fc" id="L95">		return fromBuilder;</span>
+	}
+
+	/**
+	 * Configures how to handle missing {@link Email} recipient address: if no
+	 * &quot;to&quot; address is explicitly defined on the {@link Email}, Ogham will use
+	 * the result of this builder configuration to provide a default &quot;to&quot;
+	 * address.
+	 * 
+	 * @return the builder to configure default address handling
+	 */
+	public AutofillDefaultEmailAddressBuilder&lt;String[]&gt; to() {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		if (toBuilder == null) {</span>
+<span class="fc" id="L108">			toBuilder = new AutofillDefaultEmailAddressBuilder&lt;&gt;(this, String[].class, buildContext);</span>
+		}
+<span class="fc" id="L110">		return toBuilder;</span>
+	}
+
+	/**
+	 * Configures how to handle missing {@link Email} recipient address: if no
+	 * &quot;cc&quot; address is explicitly defined on the {@link Email}, Ogham will use
+	 * the result of this builder configuration to provide a default &quot;cc&quot;
+	 * address.
+	 * 
+	 * @return the builder to configure default address handling
+	 */
+	public AutofillDefaultEmailAddressBuilder&lt;String[]&gt; cc() {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		if (ccBuilder == null) {</span>
+<span class="fc" id="L123">			ccBuilder = new AutofillDefaultEmailAddressBuilder&lt;&gt;(this, String[].class, buildContext);</span>
+		}
+<span class="fc" id="L125">		return ccBuilder;</span>
+	}
+
+	/**
+	 * Configures how to handle missing {@link Email} recipient address: if no
+	 * &quot;bcc&quot; address is explicitly defined on the {@link Email}, Ogham will use
+	 * the result of this builder configuration to provide a default &quot;bcc&quot;
+	 * address.
+	 * 
+	 * @return the builder to configure default address handling
+	 */
+	public AutofillDefaultEmailAddressBuilder&lt;String[]&gt; bcc() {
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		if (bccBuilder == null) {</span>
+<span class="fc" id="L138">			bccBuilder = new AutofillDefaultEmailAddressBuilder&lt;&gt;(this, String[].class, buildContext);</span>
+		}
+<span class="fc" id="L140">		return bccBuilder;</span>
+	}
+
+	@Override
+	public MessageFiller build() {
+<span class="fc" id="L145">		EveryFillerDecorator filler = buildContext.register(new EveryFillerDecorator());</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">		if (subjectBuilder != null) {</span>
+<span class="fc" id="L147">			filler.addFiller(subjectBuilder.build());</span>
+		}
+<span class="fc" id="L149">		filler.addFiller(buildContext.register(new EmailFiller(buildDefaultValueProps())));</span>
+<span class="fc" id="L150">		return filler;</span>
+	}
+
+	private Map&lt;String, ConfigurationValueBuilderHelper&lt;?, ?&gt;&gt; buildDefaultValueProps() {
+<span class="fc" id="L154">		Map&lt;String, ConfigurationValueBuilderHelper&lt;?, ?&gt;&gt; props = new HashMap&lt;&gt;();</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">		if (subjectBuilder != null) {</span>
+<span class="fc" id="L156">			props.put(&quot;subject&quot;, (ConfigurationValueBuilderHelper&lt;?, String&gt;) subjectBuilder.defaultValue());</span>
+		}
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if (fromBuilder != null) {</span>
+<span class="fc" id="L159">			props.put(&quot;from&quot;, (ConfigurationValueBuilderHelper&lt;?, String&gt;) fromBuilder.defaultValue());</span>
+		}
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">		if (toBuilder != null) {</span>
+<span class="fc" id="L162">			props.put(&quot;to&quot;, (ConfigurationValueBuilderHelper&lt;?, String[]&gt;) toBuilder.defaultValue());</span>
+		}
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">		if (ccBuilder != null) {</span>
+<span class="fc" id="L165">			props.put(&quot;cc&quot;, (ConfigurationValueBuilderHelper&lt;?, String[]&gt;) ccBuilder.defaultValue());</span>
+		}
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">		if (bccBuilder != null) {</span>
+<span class="fc" id="L168">			props.put(&quot;bcc&quot;, (ConfigurationValueBuilderHelper&lt;?, String[]&gt;) bccBuilder.defaultValue());</span>
+		}
+<span class="fc" id="L170">		return props;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

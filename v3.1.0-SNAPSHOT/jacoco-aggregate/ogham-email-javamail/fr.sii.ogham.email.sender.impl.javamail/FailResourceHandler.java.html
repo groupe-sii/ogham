@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FailResourceHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl.javamail</a> &gt; <span class="el_source">FailResourceHandler.java</span></div><h1>FailResourceHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl.javamail;
+
+import java.util.function.BiFunction;
+
+import javax.mail.BodyPart;
+
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+
+/**
+ * Handler that fails with a particular exception. This implementation is useful
+ * to provide a specific exception/message to help the developer to understand
+ * why the attachment can't be handled.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FailResourceHandler implements JavaMailAttachmentResourceHandler {
+	private final BiFunction&lt;NamedResource, Attachment, AttachmentResourceHandlerException&gt; exceptionProvider;
+
+	public FailResourceHandler(BiFunction&lt;NamedResource, Attachment, AttachmentResourceHandlerException&gt; exceptionProvider) {
+<span class="fc" id="L23">		super();</span>
+<span class="fc" id="L24">		this.exceptionProvider = exceptionProvider;</span>
+<span class="fc" id="L25">	}</span>
+
+	@Override
+	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
+<span class="fc" id="L29">		throw exceptionProvider.apply(resource, attachment);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

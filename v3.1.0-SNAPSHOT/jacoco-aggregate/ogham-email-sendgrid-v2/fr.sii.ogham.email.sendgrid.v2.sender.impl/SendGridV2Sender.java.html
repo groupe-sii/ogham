@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendGridV2Sender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v2.sender.impl</a> &gt; <span class="el_source">SendGridV2Sender.java</span></div><h1>SendGridV2Sender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v2.sender.impl;
+
+import static fr.sii.ogham.core.util.LogUtils.logString;
+import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_IMPLEMENTATION_PRIORITY;
+import static fr.sii.ogham.email.sendgrid.sender.EmailValidator.validate;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sendgrid.SendGrid;
+import com.sendgrid.SendGridException;
+
+import fr.sii.ogham.core.builder.priority.Priority;
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.sender.AbstractSpecializedSender;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.message.EmailAddress;
+import fr.sii.ogham.email.message.Recipient;
+import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
+import fr.sii.ogham.email.sendgrid.sender.exception.AttachmentReadException;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridInterceptor;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.SendGridContentHandler;
+
+/**
+ * SendGrid-backed implementation of the email sender.
+ */
+@Priority(properties = &quot;${ogham.email.implementation-priority.sendgrid}&quot;, defaultValue = DEFAULT_SENDGRID_IMPLEMENTATION_PRIORITY)
+public final class SendGridV2Sender extends AbstractSpecializedSender&lt;Email&gt; implements SendGridSender {
+<span class="fc" id="L35">	private static final Logger LOG = LoggerFactory.getLogger(SendGridV2Sender.class);</span>
+<span class="fc" id="L36">	private static final Pattern CID = Pattern.compile(&quot;^&lt;(.+)&gt;$&quot;);</span>
+
+	private final SendGridClient delegate;
+	private final SendGridContentHandler handler;
+	private final SendGridInterceptor interceptor;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param service
+	 *            the underlying SendGrid service
+	 * @param handler
+	 *            the content handler, in change of converting the email content
+	 *            into something the {@link SendGridClient} can work with
+	 */
+	public SendGridV2Sender(final SendGridClient service, final SendGridContentHandler handler) {
+<span class="fc" id="L52">		this(service, handler, null);</span>
+<span class="fc" id="L53">	}</span>
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param service
+	 *            the underlying SendGrid service
+	 * @param handler
+	 *            the content handler, in change of converting the email content
+	 *            into something the {@link SendGridClient} can work with
+	 * @param interceptor
+	 *            an extension point for customizing the email to send
+	 */
+<span class="fc" id="L66">	public SendGridV2Sender(final SendGridClient service, final SendGridContentHandler handler, SendGridInterceptor interceptor) {</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		if (service == null) {</span>
+<span class="fc" id="L68">			throw new IllegalArgumentException(&quot;[service] cannot be null&quot;);</span>
+		}
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		if (handler == null) {</span>
+<span class="fc" id="L71">			throw new IllegalArgumentException(&quot;[handler] cannot be null&quot;);</span>
+		}
+
+<span class="fc" id="L74">		this.delegate = service;</span>
+<span class="fc" id="L75">		this.handler = handler;</span>
+<span class="fc" id="L76">		this.interceptor = interceptor;</span>
+<span class="fc" id="L77">	}</span>
+
+	@Override
+	public void send(final Email message) throws MessageException {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">		if (message == null) {</span>
+<span class="fc" id="L82">			throw new IllegalArgumentException(&quot;[message] cannot be null&quot;);</span>
+		}
+<span class="fc" id="L84">		validate(message);</span>
+
+		try {
+<span class="fc" id="L87">			LOG.debug(&quot;Preparing to send email using SendGrid: {}&quot;, logString(message));</span>
+<span class="fc" id="L88">			final SendGrid.Email sgEmail = intercept(toSendGridEmail(message), message);</span>
+
+<span class="fc" id="L90">			LOG.debug(&quot;Sending email...\n{}&quot;, logString(message));</span>
+<span class="fc" id="L91">			LOG.trace(&quot;SendGrid email: {}&quot;, sgEmail);</span>
+<span class="fc" id="L92">			delegate.send(sgEmail);</span>
+<span class="fc" id="L93">			LOG.debug(&quot;Email has been successfully sent&quot;);</span>
+<span class="nc" id="L94">		} catch (ContentHandlerException e) {</span>
+<span class="nc" id="L95">			throw new MessageException(&quot;A content-related error occurred when trying to build an email&quot;, message, e);</span>
+<span class="fc" id="L96">		} catch (AttachmentReadException e) {</span>
+<span class="fc" id="L97">			throw new MessageException(&quot;Attaching file to email failed when trying to send an email&quot;, message, e);</span>
+<span class="fc" id="L98">		} catch (SendGridException e) {</span>
+<span class="fc" id="L99">			throw new MessageException(&quot;A SendGrid-related error occurred when trying to send an email&quot;, message, e);</span>
+<span class="fc" id="L100">		}</span>
+<span class="fc" id="L101">	}</span>
+
+	private SendGrid.Email intercept(SendGrid.Email sendGridEmail, Email source) {
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">		if (interceptor == null) {</span>
+<span class="fc" id="L105">			return sendGridEmail;</span>
+		}
+<span class="nc" id="L107">		return interceptor.intercept(sendGridEmail, source);</span>
+	}
+
+	private SendGrid.Email toSendGridEmail(final Email message) throws ContentHandlerException, AttachmentReadException {
+<span class="fc" id="L111">		final SendGrid.Email ret = new SendGrid.Email();</span>
+<span class="fc" id="L112">		ret.setSubject(message.getSubject());</span>
+
+<span class="fc" id="L114">		ret.setFrom(message.getFrom().getAddress());</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		ret.setFromName(message.getFrom().getPersonal() == null ? &quot;&quot; : message.getFrom().getPersonal());</span>
+
+<span class="fc" id="L117">		final String[] tos = new String[message.getRecipients().size()];</span>
+<span class="fc" id="L118">		final String[] toNames = new String[message.getRecipients().size()];</span>
+<span class="fc" id="L119">		int i = 0;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		for (Recipient recipient : message.getRecipients()) {</span>
+<span class="fc" id="L121">			final EmailAddress address = recipient.getAddress();</span>
+<span class="fc" id="L122">			tos[i] = address.getAddress();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">			toNames[i] = address.getPersonal() == null ? &quot;&quot; : address.getPersonal();</span>
+<span class="fc" id="L124">			i++;</span>
+<span class="fc" id="L125">		}</span>
+<span class="fc" id="L126">		ret.setTo(tos);</span>
+<span class="fc" id="L127">		ret.setToName(toNames);</span>
+
+<span class="fc" id="L129">		handler.setContent(message, ret, message.getContent());</span>
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		for (Attachment attachment : message.getAttachments()) {</span>
+<span class="fc" id="L132">			addAttachment(ret, attachment);</span>
+<span class="fc" id="L133">		}</span>
+
+<span class="fc" id="L135">		return ret;</span>
+	}
+
+	private static void addAttachment(final SendGrid.Email ret, final Attachment attachment) throws AttachmentReadException {
+		try {
+<span class="fc" id="L140">			ret.addAttachment(attachment.getResource().getName(), attachment.getResource().getInputStream());</span>
+			// TODO: how to set Content-Type per attachment with SendGrid v2 API ?
+<span class="fc bfc" id="L142" title="All 2 branches covered.">			if (attachment.getContentId() != null) {</span>
+<span class="fc" id="L143">				String id = CID.matcher(attachment.getContentId()).replaceAll(&quot;$1&quot;);</span>
+<span class="fc" id="L144">				ret.addContentId(attachment.getResource().getName(), id);</span>
+			}
+<span class="fc" id="L146">		} catch (IOException e) {</span>
+<span class="fc" id="L147">			throw new AttachmentReadException(&quot;Failed to attach email attachment named &quot; + attachment.getResource().getName(), attachment, e);</span>
+<span class="fc" id="L148">		}</span>
+<span class="fc" id="L149">	}</span>
+
+	public SendGridClient getDelegate() {
+<span class="nc" id="L152">		return delegate;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

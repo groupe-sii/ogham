@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DataCodingSchemeBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">DataCodingSchemeBuilder.java</span></div><h1>DataCodingSchemeBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import java.util.function.Supplier;
+
+import com.cloudhopper.commons.charset.Charset;
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.gsm.DataCoding;
+import com.cloudhopper.smpp.SmppConstants;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToGeneralGroupDataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.FirstSupportingDataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.FixedByteValueDataCodingProvider;
+
+/**
+ * Data Coding Scheme is a one-octet field in Short Messages (SM) and Cell
+ * Broadcast Messages (CB) which carries a basic information how the recipient
+ * handset should process the received message. The information includes:
+ * &lt;ul&gt;
+ * &lt;li&gt;the character set or message coding which determines the encoding of the
+ * message user data&lt;/li&gt;
+ * &lt;li&gt;the message class which determines to which component of the Mobile
+ * Station (MS) or User Equipment (UE) should be the message delivered&lt;/li&gt;
+ * &lt;li&gt;the request to automatically delete the message after reading&lt;/li&gt;
+ * &lt;li&gt;the state of flags indicating presence of unread voicemail, fax, e-mail
+ * or other messages&lt;/li&gt;
+ * &lt;li&gt;the indication that the message content is compressed&lt;/li&gt;
+ * &lt;li&gt;the language of the cell broadcast message&lt;/li&gt;
+ * &lt;/ul&gt;
+ * The field is described in 3GPP 23.040 and 3GPP 23.038 under the name TP-DCS
+ * (see &lt;a href=
+ * &quot;https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme&quot;&gt;SMS
+ * Data Coding Scheme&lt;/a&gt;).
+ * 
+ * &lt;p&gt;
+ * Configures how Cloudhopper determines the Data Coding Scheme to use:
+ * &lt;ul&gt;
+ * &lt;li&gt;Automatic mode:
+ * &lt;ul&gt;
+ * &lt;li&gt;If SMPP v3.3 is used then
+ * {@link CharsetMapToGeneralGroupDataCodingProvider} generates a
+ * {@link DataCoding} with
+ * {@link DataCoding#createGeneralGroup(byte, Byte, boolean)}&lt;/li&gt;
+ * &lt;li&gt;If SMPP v3.4+ is used then
+ * {@link CharsetMapToCharacterEncodingGroupDataCodingProvider} generates a
+ * {@link DataCoding} with
+ * {@link DataCoding#createCharacterEncodingGroup(byte)}&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Allow registration of custom {@link DataCodingProvider}&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ */
+public class DataCodingSchemeBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;DataCodingProvider&gt; {
+	private final BuildContext buildContext;
+	private final Supplier&lt;Byte&gt; interfaceVersionProvider;
+	private final ConfigurationValueBuilderHelper&lt;DataCodingSchemeBuilder, Boolean&gt; autoValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;DataCodingSchemeBuilder, Byte&gt; dcsValueBuilder;
+	private DataCodingProvider custom;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 * @param interfaceVersionProvider
+	 *            A function used to retrieve the value of the interface
+	 *            version. This is needed when {@link #auto(Boolean)} mode is
+	 *            enabled.
+	 */
+	public DataCodingSchemeBuilder(CloudhopperBuilder parent, BuildContext buildContext, Supplier&lt;Byte&gt; interfaceVersionProvider) {
+<span class="fc" id="L85">		super(parent);</span>
+<span class="fc" id="L86">		this.buildContext = buildContext;</span>
+<span class="fc" id="L87">		this.interfaceVersionProvider = interfaceVersionProvider;</span>
+<span class="fc" id="L88">		this.autoValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L89">		this.dcsValueBuilder = buildContext.newConfigurationValueBuilder(this, Byte.class);</span>
+<span class="fc" id="L90">	}</span>
+
+	/**
+	 * * Enable/disable automatic mode based on SMPP interface version.
+	 * 
+	 * &lt;p&gt;
+	 * {@link DataCodingProvider} implementation is selected based on SMPP
+	 * interface version. SMPP v3.3 Data Coding Scheme values are defined in
+	 * &lt;a href=
+	 * &quot;https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme&quot;&gt;SMS
+	 * Data Coding Scheme&lt;/a&gt;. SMPP 3.4 introduced a new list of data_coding
+	 * values (&lt;a href=
+	 * &quot;https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer#PDU_body&quot;&gt;PDU
+	 * body&lt;/a&gt;).
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;strong&gt;SMPP v3.3&lt;/strong&gt;
+	 * &lt;p&gt;
+	 * The text message is encoded using {@link Charset}. According to that
+	 * charset, the Data Coding Scheme is determined using the &lt;strong&gt;General
+	 * Data Coding group&lt;/strong&gt; table. Therefore, a simple mapping is applied:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * &lt;strong&gt;SMPP v3.4+&lt;/strong&gt;
+	 * &lt;p&gt;
+	 * The text message is encoded using {@link Charset}. According to that
+	 * charset, the Data Coding Scheme is determined using only the
+	 * &lt;strong&gt;Alphabet&lt;/strong&gt; table. Therefore, a simple mapping is applied:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_ISO_8859_1} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_LATIN1}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #auto()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .auto(false)
+	 * .auto()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .auto(false)
+	 * .auto()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code auto(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable automatic Data Coding Scheme detection
+	 * @return this instance for fluent chaining
+	 */
+	public DataCodingSchemeBuilder auto(Boolean enable) {
+<span class="nc" id="L178">		autoValueBuilder.setValue(enable);</span>
+<span class="nc" id="L179">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable automatic mode based on SMPP interface version.
+	 * 
+	 * &lt;p&gt;
+	 * {@link DataCodingProvider} implementation is selected based on SMPP
+	 * interface version. SMPP v3.3 Data Coding Scheme values are defined in
+	 * &lt;a href=
+	 * &quot;https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme&quot;&gt;SMS
+	 * Data Coding Scheme&lt;/a&gt;. SMPP 3.4 introduced a new list of data_coding
+	 * values (&lt;a href=
+	 * &quot;https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer#PDU_body&quot;&gt;PDU
+	 * body&lt;/a&gt;).
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;strong&gt;SMPP v3.3&lt;/strong&gt;
+	 * &lt;p&gt;
+	 * The text message is encoded using {@link Charset}. According to that
+	 * charset, the Data Coding Scheme is determined using the &lt;strong&gt;General
+	 * Data Coding group&lt;/strong&gt; table. Therefore, a simple mapping is applied:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * &lt;strong&gt;SMPP v3.4+&lt;/strong&gt;
+	 * &lt;p&gt;
+	 * The text message is encoded using {@link Charset}. According to that
+	 * charset, the Data Coding Scheme is determined using only the
+	 * &lt;strong&gt;Alphabet&lt;/strong&gt; table. Therefore, a simple mapping is applied:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_ISO_8859_1} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_LATIN1}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * &lt;strong&gt;Custom {@link DataCodingProvider} also configured&lt;/strong&gt;
+	 * &lt;p&gt;
+	 * If a custom {@link DataCodingProvider} instance is registered, this
+	 * instance is tried first (see {@link #custom(DataCodingProvider)} for more
+	 * information). The automatic behavior is applied after if returned value
+	 * of custom {@link DataCodingProvider} is {@code null}.
+	 * 
+	 * &lt;strong&gt;Fixed value also configured&lt;/strong&gt;
+	 * &lt;p&gt;
+	 * If a fixed value is configured then it preempts any other configuration (
+	 * {@link #auto(Boolean)} and {@link #custom(DataCodingProvider)} are not
+	 * used at all).
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .auto()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #auto(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .auto(false)
+	 * .auto()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;DataCodingSchemeBuilder, Boolean&gt; auto() {
+<span class="fc" id="L284">		return autoValueBuilder;</span>
+	}
+
+	/**
+	 * Use the same Data Coding Scheme value for all messages.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #value()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .value((byte) 0x10)
+	 * .value()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue((byte) 0)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .value((byte) 0x10)
+	 * .value()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue((byte) 0)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code value((byte) 0x10)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param value
+	 *            the Data Coding Scheme value for all messages
+	 * @return this instance for fluent chaining
+	 */
+	public DataCodingSchemeBuilder value(Byte value) {
+<span class="nc" id="L322">		this.dcsValueBuilder.setValue(value);</span>
+<span class="nc" id="L323">		return this;</span>
+	}
+
+	/**
+	 * Use the same Data Coding Scheme value for all messages.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .value()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue((byte) 0)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #value(Byte)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .value((byte) 0x10)
+	 * .value()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue((byte) 0)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code (byte) 0x10} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;DataCodingSchemeBuilder, Byte&gt; value() {
+<span class="fc" id="L363">		return dcsValueBuilder;</span>
+	}
+
+	/**
+	 * Register a custom strategy to determine Data Coding Scheme value.
+	 * 
+	 * &lt;p&gt;
+	 * Automatic behavior (see {@link #auto(Boolean)} is still active but custom
+	 * strategy is executed first. As the custom {@link DataCodingProvider} can
+	 * return {@code null}, the automatic behavior is executed in that case.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is provided, custom strategy is disabled.
+	 * 
+	 * @param custom
+	 *            the Strategy to determine Data Coding Scheme value.
+	 * @return this instance for fluent chaining
+	 */
+	public DataCodingSchemeBuilder custom(DataCodingProvider custom) {
+<span class="fc" id="L382">		this.custom = custom;</span>
+<span class="fc" id="L383">		return this;</span>
+	}
+
+	@Override
+	@SuppressWarnings(&quot;squid:S5411&quot;)
+	public DataCodingProvider build() {
+<span class="fc" id="L389">		Byte dataCodingValue = dcsValueBuilder.getValue();</span>
+<span class="pc bpc" id="L390" title="1 of 2 branches missed.">		if (dataCodingValue != null) {</span>
+<span class="nc" id="L391">			return buildContext.register(new FixedByteValueDataCodingProvider(dataCodingValue));</span>
+		}
+<span class="fc" id="L393">		FirstSupportingDataCodingProvider firstSupporting = buildContext.register(new FirstSupportingDataCodingProvider());</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">		if (custom != null) {</span>
+<span class="fc" id="L395">			firstSupporting.register(custom);</span>
+		}
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">		if (autoValueBuilder.getValue(false)) {</span>
+<span class="fc" id="L398">			registerAuto(firstSupporting);</span>
+		}
+<span class="fc" id="L400">		return firstSupporting;</span>
+	}
+
+	private void registerAuto(FirstSupportingDataCodingProvider firstSupporting) {
+<span class="fc" id="L404">		Byte interfaceVersion = interfaceVersionProvider.get();</span>
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">		if (interfaceVersion == SmppConstants.VERSION_3_3) {</span>
+<span class="nc" id="L406">			firstSupporting.register(buildContext.register(new CharsetMapToGeneralGroupDataCodingProvider(false)));</span>
+<span class="nc" id="L407">			return;</span>
+		}
+		// 3.4+
+<span class="fc" id="L410">		firstSupporting.register(buildContext.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider(false)));</span>
+<span class="fc" id="L411">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

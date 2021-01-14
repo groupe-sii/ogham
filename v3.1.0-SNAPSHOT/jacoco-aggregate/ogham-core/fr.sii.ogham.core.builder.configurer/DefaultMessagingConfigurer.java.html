@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultMessagingConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configurer</a> &gt; <span class="el_source">DefaultMessagingConfigurer.java</span></div><h1>DefaultMessagingConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configurer;
+
+import static fr.sii.ogham.core.CoreConstants.CLASSPATH_LOOKUPS;
+import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
+import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.core.builder.configurer.SendMessageRetryablePredicates.canResendMessage;
+import static java.util.Arrays.asList;
+
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+
+import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.mimetype.TikaBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.convert.DefaultConverter;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.builder.AutofillDefaultEmailAddressBuilder;
+import fr.sii.ogham.email.builder.AutofillSubjectBuilder;
+import fr.sii.ogham.email.builder.CssInliningBuilder;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.builder.ImageInliningBuilder;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.sms.builder.AutofillSmsBuilder;
+import fr.sii.ogham.sms.builder.RecipientNumberFormatBuilder;
+import fr.sii.ogham.sms.builder.SenderNumberFormatBuilder;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.message.Sms;
+
+/**
+ * Default configurer that is automatically applied every time a
+ * {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()} or {@link MessagingBuilder#minimal()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 100000 in order to be applied before all
+ * other configurers.
+ * &lt;/p&gt;
+ * 
+ * This configurer applies general configuration (see
+ * {@link EnvironmentBuilder}):
+ * &lt;ul&gt;
+ * &lt;li&gt;The {@link MessagingService} will catch all uncaught exception (even
+ * runtime) in order to wrap them in a {@link MessagingException}.&lt;/li&gt;
+ * &lt;li&gt;General environment configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;System properties with&lt;/li&gt;
+ * &lt;li&gt;Uses the {@link DefaultConverter}&lt;/li&gt;
+ * &lt;li&gt;&lt;strong&gt;Environment will be inherited by sub-builders by
+ * default.&lt;/strong&gt;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Resource resolution configuration (see
+ * {@link ResourceResolutionBuilder}):
+ * &lt;ul&gt;
+ * &lt;li&gt;Lookup prefixes for classpath: &quot;classpath:&quot; and no lookup prefix (if no
+ * prefix is defined, then classpath is used).
+ * &lt;li&gt;Lookup prefix for file: &quot;file:&quot;.
+ * &lt;li&gt;Lookup prefixes for string: &quot;string:&quot;, &quot;s:.
+ * &lt;li&gt;&lt;strong&gt;Resource resolution will be by default inherited by
+ * sub-builders&lt;/strong&gt;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configure common email behaviors:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configure resource resolution for attachments, css inlining and image
+ * inlining using same resource resolution configuration as the general one (see
+ * {@link ResourceResolutionBuilder})&lt;/li&gt;
+ * &lt;li&gt;Configure mimetype detection for attachments and image inlining (see
+ * {@link MimetypeDetectionBuilder})&lt;/li&gt;
+ * &lt;li&gt;Automatically fill {@link Email} messages with subject either from title
+ * tag of html template, from first line starting with &quot;Subject:&quot; of text
+ * template or using {@code ogham.email.subject} property if defined (see
+ * {@link AutofillSubjectBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with sender address if one of the
+ * property {@code ogham.email.from.default-value} or {@code mail.smtp.from} is
+ * defined (see {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with recipient address (to) if the
+ * property {@code ogham.email.to.default-value} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with recipient address (cc) if the
+ * property {@code ogham.email.cc.default-value} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with recipient address (bcc) if the
+ * property {@code ogham.email.bcc.default-value} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Automatically inline CSS styles in the HTML templates (see
+ * {@link CssInliningBuilder})&lt;/li&gt;
+ * &lt;li&gt;Automatically inline images in the email either by attaching them or by
+ * converting them into base64 (see {@link ImageInliningBuilder})&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configure common SMS behaviors:
+ * &lt;ul&gt;
+ * &lt;li&gt;Autofill {@link Sms} messages with sender phone number if the property
+ * {@code ogham.sms.from.default-value} is defined (see
+ * {@link AutofillSmsBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Sms} messages with recipient phone number if the property
+ * {@code ogham.sms.to.default-value} is defined (see
+ * {@link AutofillSmsBuilder})&lt;/li&gt;
+ * &lt;li&gt;Configure phone number formats (see {@link SenderNumberFormatBuilder} and
+ * {@link RecipientNumberFormatBuilder})&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Mimetype detection configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses {@link Tika} to detect mimetype (see {@link TikaBuilder})&lt;/li&gt;
+ * &lt;li&gt;Uses property {@code ogham.mimetype.default-mimetype} if Tika has not
+ * detected the mimetype (see {@link MimetypeDetectionBuilder})&lt;/li&gt;
+ * &lt;li&gt;Uses {@code application/octet-stream} if neither Tika has detected
+ * mimetype nor default property value has been set&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@ConfigurerFor(targetedBuilder = { &quot;minimal&quot;, &quot;standard&quot; }, priority = DEFAULT_MESSAGING_CONFIGURER_PRIORITY)
+public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
+<span class="fc" id="L129">	private static final Logger LOG = LoggerFactory.getLogger(DefaultMessagingConfigurer.class);</span>
+<span class="fc" id="L130">	private static final Pattern LOCATIONS_SEPARATOR = Pattern.compile(&quot;,\\s*&quot;);</span>
+<span class="fc" id="L131">	private static final Pattern PROFILES_SEPARATOR = Pattern.compile(&quot;,\\s*&quot;);</span>
+	
+	private final Supplier&lt;List&lt;String&gt;&gt; profilesSupplier;
+	private final Supplier&lt;List&lt;String&gt;&gt; locationsSupplier;
+	
+	public DefaultMessagingConfigurer() {
+<span class="fc" id="L137">		this(() -&gt; asList(PROFILES_SEPARATOR.split(System.getProperty(&quot;ogham.profiles.active&quot;, &quot;default&quot;))),</span>
+<span class="fc" id="L138">			() -&gt; asList(LOCATIONS_SEPARATOR.split(System.getProperty(&quot;ogham.config.location&quot;, &quot;&quot;))));</span>
+<span class="fc" id="L139">	}</span>
+	
+	public DefaultMessagingConfigurer(Supplier&lt;List&lt;String&gt;&gt; profilesSupplier, Supplier&lt;List&lt;String&gt;&gt; locationsSupplier) {
+<span class="fc" id="L142">		super();</span>
+<span class="fc" id="L143">		this.profilesSupplier = profilesSupplier;</span>
+<span class="fc" id="L144">		this.locationsSupplier = locationsSupplier;</span>
+<span class="fc" id="L145">	}</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="fc" id="L149">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="fc" id="L150">		super.configure(builder);</span>
+<span class="fc" id="L151">		builder.wrapUncaught().properties(&quot;${ogham.wrap-uncaught-exceptions.enable}&quot;).defaultValue(overrideIfNotSet(true));</span>
+<span class="fc" id="L152">	}</span>
+
+	@Override
+	public void configure(EnvironmentBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="fc" id="L157">		builder</span>
+<span class="fc" id="L158">			.systemProperties()</span>
+<span class="fc" id="L159">			.converter()</span>
+<span class="fc" id="L160">				.defaultConverter(overrideIfNotSet(new DefaultConverter()));</span>
+		// @formatter:on
+<span class="fc" id="L162">		List&lt;String&gt; profiles = profilesSupplier.get();</span>
+<span class="fc" id="L163">		List&lt;String&gt; locations = locationsSupplier.get();</span>
+<span class="fc" id="L164">		addUserDefinedConfigLocationsForProfiles(builder, locations, profiles);</span>
+<span class="fc" id="L165">		addUserDefinedConfigLocations(builder, locations);</span>
+<span class="fc" id="L166">		addDefaultConfigLocationsForProfiles(builder, profiles);</span>
+<span class="fc" id="L167">		addDefaultConfigLocations(builder);</span>
+<span class="fc" id="L168">	}</span>
+
+	@Override
+	public void configure(ResourceResolutionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="fc" id="L173">		builder</span>
+<span class="fc" id="L174">			.string()</span>
+<span class="fc" id="L175">				.lookup(STRING_LOOKUPS)</span>
+<span class="fc" id="L176">				.and()</span>
+<span class="fc" id="L177">			.file()</span>
+<span class="fc" id="L178">				.lookup(FILE_LOOKUPS)</span>
+<span class="fc" id="L179">				.and()</span>
+<span class="fc" id="L180">			.classpath()</span>
+<span class="fc" id="L181">				.lookup(CLASSPATH_LOOKUPS);</span>
+		// @formatter:on
+<span class="fc" id="L183">	}</span>
+
+	@Override
+	public void configure(EmailBuilder builder) {
+		// configure resource resolution for attachments, css and images
+<span class="fc" id="L188">		configure(builder.attachments());</span>
+<span class="fc" id="L189">		configure(builder.css().inline());</span>
+<span class="fc" id="L190">		configure(builder.images().inline());</span>
+		// configure mimetype detection for images
+<span class="fc" id="L192">		configureImageInliningMimetype(builder.images().inline().mimetype());</span>
+
+		// @formatter:off
+<span class="fc" id="L195">		builder</span>
+<span class="fc" id="L196">			.autofill()</span>
+<span class="fc" id="L197">				.subject()</span>
+<span class="fc" id="L198">					.defaultValue().properties(&quot;${ogham.email.subject.default-value}&quot;).and()</span>
+<span class="fc" id="L199">					.htmlTitle().properties(&quot;${ogham.email.subject.extract-html-title.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L200">					.text().properties(&quot;${ogham.email.subject.extract-from-text.first-line-prefix}&quot;).defaultValue(overrideIfNotSet(&quot;Subject:&quot;)).and()</span>
+<span class="fc" id="L201">					.and()</span>
+<span class="fc" id="L202">				.from()</span>
+<span class="fc" id="L203">					.defaultValue().properties(&quot;${ogham.email.from.default-value}&quot;, &quot;${mail.smtp.from}&quot;, &quot;${mail.from}&quot;).and()</span>
+<span class="fc" id="L204">					.and()</span>
+<span class="fc" id="L205">				.to()</span>
+<span class="fc" id="L206">					.defaultValue().properties(&quot;${ogham.email.to.default-value}&quot;).and()</span>
+<span class="fc" id="L207">					.and()</span>
+<span class="fc" id="L208">				.cc()</span>
+<span class="fc" id="L209">					.defaultValue().properties(&quot;${ogham.email.cc.default-value}&quot;).and()</span>
+<span class="fc" id="L210">					.and()</span>
+<span class="fc" id="L211">				.bcc()</span>
+<span class="fc" id="L212">					.defaultValue().properties(&quot;${ogham.email.bcc.default-value}&quot;).and()</span>
+<span class="fc" id="L213">					.and()</span>
+<span class="fc" id="L214">				.and()</span>
+<span class="fc" id="L215">			.css()</span>
+<span class="fc" id="L216">				.inline()</span>
+<span class="fc" id="L217">					.jsoup()</span>
+<span class="fc" id="L218">					.and()</span>
+<span class="fc" id="L219">				.and()</span>
+<span class="fc" id="L220">			.images()</span>
+<span class="fc" id="L221">				.inline()</span>
+<span class="fc" id="L222">					.attach()</span>
+<span class="fc" id="L223">						.cid()</span>
+<span class="fc" id="L224">							.sequential()</span>
+<span class="fc" id="L225">							.and()</span>
+<span class="fc" id="L226">						.and()</span>
+<span class="fc" id="L227">					.base64().and()</span>
+<span class="fc" id="L228">					.and()</span>
+<span class="fc" id="L229">				.and()</span>
+<span class="fc" id="L230">			.failIfMissingVariant().defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L231">			.listPossiblePaths().defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L232">			.autoRetry()</span>
+<span class="fc" id="L233">				.fixedDelay()</span>
+<span class="fc" id="L234">					.maxRetries().properties(&quot;${ogham.email.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L235">					.delay().properties(&quot;${ogham.email.send-retry.delay-between-attempts}&quot;).and()</span>
+<span class="fc" id="L236">					.and()</span>
+<span class="fc" id="L237">				.exponentialDelay()</span>
+<span class="fc" id="L238">					.maxRetries().properties(&quot;${ogham.email.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L239">					.initialDelay().properties(&quot;${ogham.email.send-retry.exponential-initial-delay}&quot;).and()</span>
+<span class="fc" id="L240">					.and()</span>
+<span class="fc" id="L241">				.perExecutionDelay()</span>
+<span class="fc" id="L242">					.maxRetries().properties(&quot;${ogham.email.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L243">					.delays().properties(&quot;${ogham.email.send-retry.per-execution-delays}&quot;).and()</span>
+<span class="fc" id="L244">					.and()</span>
+<span class="fc" id="L245">				.fixedInterval()</span>
+<span class="fc" id="L246">					.maxRetries().properties(&quot;${ogham.email.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L247">					.interval().properties(&quot;${ogham.email.send-retry.execution-interval}&quot;).and()</span>
+<span class="fc" id="L248">					.and()</span>
+<span class="fc" id="L249">				.retryable(canResendMessage());</span>
+		// @formatter:on
+<span class="fc" id="L251">	}</span>
+
+	@Override
+	public void configure(SmsBuilder builder) {
+		// @formatter:off
+<span class="fc" id="L256">		builder</span>
+<span class="fc" id="L257">			.autofill()</span>
+<span class="fc" id="L258">				.from()</span>
+<span class="fc" id="L259">					.defaultValue().properties(&quot;${ogham.sms.from.default-value}&quot;).and()</span>
+<span class="fc" id="L260">					.and()</span>
+<span class="fc" id="L261">				.to()</span>
+<span class="fc" id="L262">					.defaultValue().properties(&quot;${ogham.sms.to.default-value}&quot;).and()</span>
+<span class="fc" id="L263">					.and()</span>
+<span class="fc" id="L264">				.and()</span>
+<span class="fc" id="L265">			.numbers()</span>
+<span class="fc" id="L266">				.from()</span>
+<span class="fc" id="L267">					.format()</span>
+<span class="fc" id="L268">						.alphanumericCode().properties(&quot;${ogham.sms.from.alphanumeric-code-format.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L269">						.shortCode().properties(&quot;${ogham.sms.from.short-code-format.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L270">						.internationalNumber().properties(&quot;${ogham.sms.from.international-format.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L271">						.and()</span>
+<span class="fc" id="L272">					.and()</span>
+<span class="fc" id="L273">				.to()</span>
+<span class="fc" id="L274">					.format()</span>
+<span class="fc" id="L275">						.internationalNumber().properties(&quot;${ogham.sms.to.international-format.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L276">						.and()</span>
+<span class="fc" id="L277">					.and()</span>
+<span class="fc" id="L278">				.and()</span>
+<span class="fc" id="L279">			.autoRetry()</span>
+<span class="fc" id="L280">				.fixedDelay()</span>
+<span class="fc" id="L281">					.maxRetries().properties(&quot;${ogham.sms.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L282">					.delay().properties(&quot;${ogham.sms.send-retry.delay-between-attempts}&quot;).and()</span>
+<span class="fc" id="L283">					.and()</span>
+<span class="fc" id="L284">				.exponentialDelay()</span>
+<span class="fc" id="L285">					.maxRetries().properties(&quot;${ogham.sms.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L286">					.initialDelay().properties(&quot;${ogham.sms.send-retry.exponential-initial-delay}&quot;).and()</span>
+<span class="fc" id="L287">					.and()</span>
+<span class="fc" id="L288">				.perExecutionDelay()</span>
+<span class="fc" id="L289">					.maxRetries().properties(&quot;${ogham.sms.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L290">					.delays().properties(&quot;${ogham.sms.send-retry.per-execution-delays}&quot;).and()</span>
+<span class="fc" id="L291">					.and()</span>
+<span class="fc" id="L292">				.fixedInterval()</span>
+<span class="fc" id="L293">					.maxRetries().properties(&quot;${ogham.sms.send-retry.max-attempts}&quot;).and()</span>
+<span class="fc" id="L294">					.interval().properties(&quot;${ogham.sms.send-retry.execution-interval}&quot;).and()</span>
+<span class="fc" id="L295">					.and()</span>
+<span class="fc" id="L296">				.retryable(canResendMessage());</span>
+		// @formatter:on
+<span class="fc" id="L298">	}</span>
+
+	@Override
+	public void configure(MimetypeDetectionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="fc" id="L303">		builder</span>
+<span class="fc" id="L304">			.tika()</span>
+<span class="fc" id="L305">				.instance(new Tika())</span>
+<span class="fc" id="L306">				.failIfOctetStream().properties(&quot;${ogham.mimetype.tika.fail-if-octet-stream}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L307">				.and()</span>
+<span class="fc" id="L308">			.defaultMimetype().properties(&quot;${ogham.mimetype.default-mimetype}&quot;).defaultValue(overrideIfNotSet(&quot;application/octet-stream&quot;));</span>
+		// @formatter:on
+<span class="fc" id="L310">	}</span>
+
+	protected void configureImageInliningMimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="fc" id="L314">		builder</span>
+<span class="fc" id="L315">			.tika()</span>
+<span class="fc" id="L316">				.instance(new Tika())</span>
+<span class="fc" id="L317">				.failIfOctetStream().defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L318">				.and()</span>
+<span class="fc" id="L319">			.allowed().properties(&quot;${ogham.email.image-inlining.mimetype.allowed-mimetypes}&quot;).defaultValue(overrideIfNotSet(new String[] { &quot;image/*&quot; }));</span>
+		// @formatter:on
+<span class="fc" id="L321">	}</span>
+	
+
+	protected void addDefaultConfigLocationsForProfiles(EnvironmentBuilder&lt;?&gt; builder, List&lt;String&gt; profiles) {
+<span class="fc bfc" id="L325" title="All 2 branches covered.">		for (String profile : profiles) {</span>
+<span class="fc" id="L326">			addConfigLocations(builder, &quot;file:config&quot;, profile);</span>
+<span class="fc" id="L327">			addConfigLocations(builder, &quot;classpath:config&quot;, profile);</span>
+<span class="fc" id="L328">		}</span>
+<span class="fc" id="L329">	}</span>
+
+	protected void addDefaultConfigLocations(EnvironmentBuilder&lt;?&gt; builder) {
+<span class="fc" id="L332">		addConfigLocations(builder, &quot;file:config&quot;);</span>
+<span class="fc" id="L333">		addConfigLocations(builder, &quot;classpath:config&quot;);</span>
+<span class="fc" id="L334">	}</span>
+
+	protected void addUserDefinedConfigLocations(EnvironmentBuilder&lt;?&gt; builder, List&lt;String&gt; locations) {
+<span class="fc bfc" id="L337" title="All 2 branches covered.">		for (String location : locations) {</span>
+<span class="fc" id="L338">			addConfigLocations(builder, location);</span>
+<span class="fc" id="L339">		}</span>
+<span class="fc" id="L340">	}</span>
+	
+	protected void addUserDefinedConfigLocationsForProfiles(EnvironmentBuilder&lt;?&gt; builder, List&lt;String&gt; locations, List&lt;String&gt; profiles) {
+<span class="fc bfc" id="L343" title="All 2 branches covered.">		for (String location : locations) {</span>
+<span class="fc bfc" id="L344" title="All 2 branches covered.">			for (String profile : profiles) {</span>
+<span class="fc" id="L345">				addConfigLocations(builder, location, profile);</span>
+<span class="fc" id="L346">			}</span>
+<span class="fc" id="L347">		}</span>
+<span class="fc" id="L348">	}</span>
+	
+	protected void addConfigLocations(EnvironmentBuilder&lt;?&gt; builder, String location) {
+<span class="fc" id="L351">		addConfigLocations(builder, location, null);</span>
+<span class="fc" id="L352">	}</span>
+	
+	protected void addConfigLocations(EnvironmentBuilder&lt;?&gt; builder, String location, String profile) {
+<span class="fc bfc" id="L355" title="All 2 branches covered.">		if (location.isEmpty()) {</span>
+<span class="fc" id="L356">			return;</span>
+		}
+<span class="fc bfc" id="L358" title="All 2 branches covered.">		String suffix = profile == null ? &quot;&quot; : (&quot;-&quot; + profile);</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">		if (suffix.isEmpty()) {</span>
+<span class="fc" id="L360">			builder.properties(&quot;?&quot;+location);</span>
+		}
+<span class="fc" id="L362">		builder.properties(&quot;?&quot;+location+&quot;/ogham&quot;+suffix+&quot;.properties&quot;);</span>
+<span class="fc" id="L363">		builder.properties(&quot;?&quot;+location+&quot;/application&quot;+suffix+&quot;.properties&quot;);</span>
+<span class="fc" id="L364">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

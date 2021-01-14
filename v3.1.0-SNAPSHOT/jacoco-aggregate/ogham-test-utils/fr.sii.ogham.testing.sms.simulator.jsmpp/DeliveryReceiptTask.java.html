@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DeliveryReceiptTask.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">DeliveryReceiptTask.java</span></div><h1>DeliveryReceiptTask.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import java.util.Date;
+
+import org.jsmpp.bean.DataCodings;
+import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.GSMSpecificFeature;
+import org.jsmpp.bean.MessageMode;
+import org.jsmpp.bean.MessageType;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.SMPPServerSession;
+import org.jsmpp.util.DeliveryReceiptState;
+import org.jsmpp.util.MessageId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+class DeliveryReceiptTask implements Runnable {
+	private static final int TWO_BYTES = 16;
+
+<span class="fc" id="L26">	private static final Logger LOG = LoggerFactory.getLogger(DeliveryReceiptTask.class);</span>
+
+	private final SMPPServerSession session;
+	private final MessageId messageId;
+
+	private final TypeOfNumber sourceAddrTon;
+	private final NumberingPlanIndicator sourceAddrNpi;
+	private final String sourceAddress;
+
+	private final TypeOfNumber destAddrTon;
+	private final NumberingPlanIndicator destAddrNpi;
+	private final String destAddress;
+
+	private final int totalSubmitted;
+	private final int totalDelivered;
+
+	private final byte[] shortMessage;
+
+<span class="fc" id="L44">	public DeliveryReceiptTask(SMPPServerSession session, SubmitSm submitSm, MessageId messageId) {</span>
+<span class="fc" id="L45">		this.session = session;</span>
+<span class="fc" id="L46">		this.messageId = messageId;</span>
+
+		// reversing destination to source
+<span class="fc" id="L49">		sourceAddrTon = TypeOfNumber.valueOf(submitSm.getDestAddrTon());</span>
+<span class="fc" id="L50">		sourceAddrNpi = NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi());</span>
+<span class="fc" id="L51">		sourceAddress = submitSm.getDestAddress();</span>
+
+		// reversing source to destination
+<span class="fc" id="L54">		destAddrTon = TypeOfNumber.valueOf(submitSm.getSourceAddrTon());</span>
+<span class="fc" id="L55">		destAddrNpi = NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi());</span>
+<span class="fc" id="L56">		destAddress = submitSm.getSourceAddr();</span>
+
+<span class="fc" id="L58">		totalSubmitted = totalDelivered = 1;</span>
+
+<span class="fc" id="L60">		shortMessage = submitSm.getShortMessage();</span>
+<span class="fc" id="L61">	}</span>
+
+<span class="nc" id="L63">	public DeliveryReceiptTask(SMPPServerSession session, SubmitMulti submitMulti, MessageId messageId) {</span>
+<span class="nc" id="L64">		this.session = session;</span>
+<span class="nc" id="L65">		this.messageId = messageId;</span>
+
+		// set to unknown and null, since it was submit_multi
+<span class="nc" id="L68">		sourceAddrTon = TypeOfNumber.UNKNOWN;</span>
+<span class="nc" id="L69">		sourceAddrNpi = NumberingPlanIndicator.UNKNOWN;</span>
+<span class="nc" id="L70">		sourceAddress = null;</span>
+
+		// reversing source to destination
+<span class="nc" id="L73">		destAddrTon = TypeOfNumber.valueOf(submitMulti.getSourceAddrTon());</span>
+<span class="nc" id="L74">		destAddrNpi = NumberingPlanIndicator.valueOf(submitMulti.getSourceAddrNpi());</span>
+<span class="nc" id="L75">		destAddress = submitMulti.getSourceAddr();</span>
+
+		// distribution list assumed only contains single address
+<span class="nc" id="L78">		totalSubmitted = totalDelivered = submitMulti.getDestAddresses().length;</span>
+
+<span class="nc" id="L80">		shortMessage = submitMulti.getShortMessage();</span>
+<span class="nc" id="L81">	}</span>
+
+	public void run() {
+<span class="fc" id="L84">		SessionState state = session.getSessionState();</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">		if (!state.isReceivable()) {</span>
+<span class="nc" id="L86">			LOG.debug(&quot;Not sending delivery receipt for message id {} since session state is {}&quot;, messageId, state);</span>
+<span class="nc" id="L87">			return;</span>
+		}
+<span class="fc" id="L89">		String stringValue = Integer.valueOf(messageId.getValue(), TWO_BYTES).toString();</span>
+		try {
+
+<span class="fc" id="L92">			DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD, null, new String(shortMessage));</span>
+<span class="fc" id="L93">			session.deliverShortMessage(&quot;mc&quot;, sourceAddrTon, sourceAddrNpi, sourceAddress, destAddrTon, destAddrNpi, destAddress, new ESMClass(MessageMode.DEFAULT,</span>
+<span class="fc" id="L94">					MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), (byte) 0, (byte) 0, new RegisteredDelivery(0), DataCodings.ZERO, delRec.toString().getBytes());</span>
+<span class="fc" id="L95">			LOG.debug(&quot;Sending delivery receipt for message id {}: {}&quot;, messageId, stringValue);</span>
+<span class="nc" id="L96">		} catch (Exception e) {</span>
+<span class="nc" id="L97">			LOG.error(&quot;Failed sending delivery_receipt for message id {}: {}&quot;, messageId, stringValue, e);</span>
+<span class="fc" id="L98">		}</span>
+<span class="fc" id="L99">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

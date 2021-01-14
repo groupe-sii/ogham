@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>from v2.0.0 to v3.0.0</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="..//javascripts/steps.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="..//javascripts/toc.js"></script>
+<script type="text/javascript" src="..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="..//styles/doc-styles.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#v2.0.0-v3.0.0">from v2.0.0 to v3.0.0</a>
+<ul class="sectlevel2">
+<li><a href="#_fluent_builder_consistency_for_property_configuration">Fluent builder consistency for property configuration</a></li>
+<li><a href="#fluent-content-api">Fluent API for message construction</a></li>
+<li><a href="#_images_and_css_inlining_html_attributes_consistency">Images and CSS inlining HTML attributes consistency</a></li>
+<li><a href="#_properties_consistency">Properties consistency</a></li>
+<li><a href="#_sms">SMS</a></li>
+<li><a href="#_test_utilities">Test utilities</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="v2.0.0-v3.0.0"><a class="anchor" href="#v2.0.0-v3.0.0"></a>from v2.0.0 to v3.0.0</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_fluent_builder_consistency_for_property_configuration"><a class="anchor" href="#_fluent_builder_consistency_for_property_configuration"></a>Fluent builder consistency for property configuration</h3>
+<div class="paragraph">
+<p>As Ogham is fully extensible, there could be an issue of priority due to registration
+order. Therefore a developer could set a configuration value in its code but it
+could be overridden by an external property. This could be particularly annoying in
+tests.</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 1. Example of the issue</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Automatic configuration</div>
+<div class="content">
+<div class="paragraph">
+<p>For example, Ogham could automatically provide a configuration for email SMTP port:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">.sender(JavaMailBuilder.class)
+  .port(<span class="string"><span class="delimiter">&quot;</span><span class="content">${mail.smtp.port}</span><span class="delimiter">&quot;</span></span>,     <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">25</span><span class="delimiter">&quot;</span></span>)                    <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Register the property <code>mail.smtp.port</code> for the SMTP port. If the property
+is set with a value, this value is used. A property is recognize because it
+is surrounded by <code>${}</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The default value to use if no value is set for the <code>mail.smtp.port</code> property.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Developer code</div>
+<div class="content">
+<div class="paragraph">
+<p>Now developer wants to set the port in its code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">.sender(JavaMailBuilder.class)
+  .port(<span class="string"><span class="delimiter">&quot;</span><span class="content">465</span><span class="delimiter">&quot;</span></span>)                    <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Explicitly set the port to <code>465</code> using the string method.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The result is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the property is set anywhere then it is used so the value set by the developer
+is not used.</p>
+</li>
+<li>
+<p>If the property is not set then the default value (<code>25</code>) is used.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The developer could still use the method <code>port(int)</code> instead that has higher priority
+but this was not the case for a string value.</p>
+</div>
+<div class="paragraph">
+<p>Ogham now provides different methods for configuring properties, default values and
+values provided by the developer. There is now a clear priority order:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>value explicitly set by the developer</p>
+</li>
+<li>
+<p>property that has a value set</p>
+</li>
+<li>
+<p>default value</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 2. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:2 diff-add-lines:3">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">.sender(JavaMailBuilder.class)
+  .port(<span class="string"><span class="delimiter">&quot;</span><span class="content">465</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="1"></i><b>(1)</b>
+  .port(<span class="integer">465</span>)                   <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old way to set the value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new way to set the value</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In addition to a clearer and consistent API, the new API uses the right type instead
+of using strings.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fluent-content-api"><a class="anchor" href="#fluent-content-api"></a>Fluent API for message construction</h3>
+<div class="paragraph">
+<p>Ogham now provides a fuent API for message content building in order to guide
+developer.</p>
+</div>
+<div class="paragraph">
+<p>Here are examples with the new API:</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 3. Fluent API for email body</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> String body</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:3 diff-add-lines:4">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>)                     <i class="conum" data-value="1"></i><b>(1)</b>
+  .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>)               <i class="conum" data-value="2"></i><b>(2)</b>
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>content()</code> method can take a string to set the body of the email.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new API provides a <code>body()</code> method to construct the email&#8230;&#8203; body !
+The <code>body()</code> method provides access to several methods to set the email body.
+The sample shows how to set a simple string as the body of the email (<code>.string()</code>
+method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Templated body</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:3 diff-add-lines:4">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .content(<span class="keyword">new</span> TemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">template.html</span><span class="delimiter">&quot;</span></span>, templateContext))    <i class="conum" data-value="1"></i><b>(1)</b>
+  .body().template(<span class="string"><span class="delimiter">&quot;</span><span class="content">template.html</span><span class="delimiter">&quot;</span></span>, templateContext)                 <i class="conum" data-value="2"></i><b>(2)</b>
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>content()</code> method can take a <code>TemplateContent</code> to set the body of the email
+using a template.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>body()</code> method provides access to several methods to set the email body.
+The sample shows how to use a template for the body of the email (<code>.template()</code>
+method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> body + alternative</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:3-5 diff-add-lines:6-7">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .content(<span class="keyword">new</span> MultiContent(                                    <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="keyword">new</span> TemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">altarnative.txt</span><span class="delimiter">&quot;</span></span>, templateContext),    <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="keyword">new</span> TemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">body.html</span><span class="delimiter">&quot;</span></span>, templateContext)))         <i class="conum" data-value="3"></i><b>(3)</b>
+  .html().template(<span class="string"><span class="delimiter">&quot;</span><span class="content">body.html</span><span class="delimiter">&quot;</span></span>, templateContext)                <i class="conum" data-value="4"></i><b>(4)</b>
+  .text().template(<span class="string"><span class="delimiter">&quot;</span><span class="content">alternative.txt</span><span class="delimiter">&quot;</span></span>, templateContext)          <i class="conum" data-value="5"></i><b>(5)</b>
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>content()</code> method can take a <code>MultiContent</code> to set the body and alternative
+of the email.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use a text template for the alternative (<code>new TemplateContent</code>). The order
+is important: alternative <strong>MUST</strong> be first sub-content.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use an html template for the body (<code>new TemplateContent</code>). The order
+is important: body <strong>MUST</strong> be second sub-content.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The new API provides a <code>html()</code> method to set the html body of the email. Call
+order doesn&#8217;t matter.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The new API provides a <code>text()</code> method to set the text alternative of the email.
+Call order doesn&#8217;t matter.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Shortcut</div>
+<div class="paragraph">
+<p>The new API also provides a shortcut to set both alternative and body based
+on templates:</p>
+</div>
+<div class="listingblock highlight-lines:3">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .body().template(<span class="string"><span class="delimiter">&quot;</span><span class="content">template</span><span class="delimiter">&quot;</span></span>, templateContext)        <i class="conum" data-value="1"></i><b>(1)</b>
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>No extension is provided so Ogham can automatically use <code>template.html</code> as
+body of the email if the template exists and use <code>template.txt</code> as the textual
+alternative of the email if the template exists.</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 4. Fluent API for SMS message</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> String message</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:2 diff-add-lines:3">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Sms()
+  .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms message</span><span class="delimiter">&quot;</span></span>)                     <i class="conum" data-value="1"></i><b>(1)</b>
+  .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms message</span><span class="delimiter">&quot;</span></span>)            <i class="conum" data-value="2"></i><b>(2)</b>
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">0600000000</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>content()</code> method can take a string to set the message of the SMS.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new API provides a <code>message()</code> method to construct the SMS&#8230;&#8203; message !
+The <code>message()</code> method provides access to several methods to set the SMS message.
+The sample shows how to set a simple string as the message of the SMS (<code>.string()</code>
+method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Templated message</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:2 diff-add-lines:3">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Sms()
+  .content(<span class="keyword">new</span> TemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">template.txt</span><span class="delimiter">&quot;</span></span>, templateContext))    <i class="conum" data-value="1"></i><b>(1)</b>
+  .message().template(<span class="string"><span class="delimiter">&quot;</span><span class="content">template.txt</span><span class="delimiter">&quot;</span></span>, templateContext)              <i class="conum" data-value="2"></i><b>(2)</b>
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>content()</code> method can take a <code>TemplateContent</code> to set the message of the SMS
+using a template.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>message()</code> method provides access to several methods to set the SMS message.
+The sample shows how to use a template for the message of the SMS (<code>.template()</code>
+method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The old API is generic and for instance, a developer could misunderstand which class
+to use as <code>content()</code> method parameter. He could use a <code>MultiContent</code> for
+SMS. However, a <code>MultiContent</code> for a SMS has no meaning.</p>
+</div>
+<div class="paragraph">
+<p>The new API provides adapted methods to avoid this kind of misunderstanding.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The old API is still available and useful for advanced behavior.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Ogham also provides a fuent API to join attachments to the email.
+Attachments are either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>attached (a file that is outside the body and is downloadable)</p>
+</li>
+<li>
+<p>embedded (a resource that is used by the body of the email like an image for example).
+An embedded attachment <strong>MUST</strong> provide a <code>Content-ID</code> in order to be referenced in the
+email body.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Developers that use old API had to know which value to use for <code>disposition</code> parameter
+of <code>Attachment</code> constructors. If no disposition is specified, the default disposition
+is <code>ContentDisposition.ATTACHMENT</code>. If a developer wanted to embed an attachment, he
+had to know that the <code>Content-ID</code> must be specified in order to work.
+Moreover, <code>Attachment</code> constructors could take a <code>name</code> parameter that is either
+optional or mandatory depending on the type of the attached resource (optional
+for file, mandatory for stream, mandatory for byte array).</p>
+</div>
+<div class="paragraph">
+<p>This behavior is still available but the new API is clearer:</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 5. Fluent API for email attachments</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> External file</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:1-5,11,13 diff-add-lines:12,14">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Attachment embedded = <span class="keyword">new</span> Attachment(                          <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">path-to-file.pdf</span><span class="delimiter">&quot;</span></span>),                                <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">description</span><span class="delimiter">&quot;</span></span>,                                               <i class="conum" data-value="3"></i><b>(3)</b>
+  ContentDisposition.INLINE));                                 <i class="conum" data-value="4"></i><b>(4)</b>
+embedded.setContentId(<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-ID</span><span class="delimiter">&quot;</span></span>);                           <i class="conum" data-value="5"></i><b>(5)</b>
+
+oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>)
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>)
+  .attach(<span class="keyword">new</span> Attachment(<span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">path-to-file.pdf</span><span class="delimiter">&quot;</span></span>)))         <i class="conum" data-value="6"></i><b>(6)</b>
+  .attach().file(<span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">path-to-file.pdf</span><span class="delimiter">&quot;</span></span>))                  <i class="conum" data-value="7"></i><b>(7)</b>
+  .attach(embedded);                                            <i class="conum" data-value="8"></i><b>(8)</b>
+  .embed().file(<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-ID</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">path-to-file.pdf</span><span class="delimiter">&quot;</span></span>)));   <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>As <code>Attachment</code> constructors doesn&#8217;t provide a way to set <code>Content-ID</code> for
+embedded attachments, developer has to extract to a variable to call <code>setContentId()</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Indicate the file to embed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>To indicate that the <code>Attachment</code> is embedded, developer had to
+use the constructor that takes 3 parameters. So he had to set a value for description
+of the embedded resource even if it is optional.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Indicate that the <code>Attachment</code> is embedded.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Set the <code>Content-ID</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Add an attachment to the email (uses <code>ContentDisposition.ATTACHMENT</code> disposition).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>New API to attach a file (disposition is set to <code>ContentDisposition.ATTACHMENT</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Add the embedded attachment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>New API to embed a file (disposition is set to <code>ContentDisposition.INLINE</code>).
+As <code>Content-ID</code> is mandatory for embedded attachments, this method takes the
+<code>Content-ID</code> as first parameter.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Resource</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:1-5,11,13 diff-add-lines:12,14">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Attachment embedded = <span class="keyword">new</span> Attachment(                              <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">path-to-file.pdf</span><span class="delimiter">&quot;</span></span>),                                    <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">description</span><span class="delimiter">&quot;</span></span>,                                                   <i class="conum" data-value="3"></i><b>(3)</b>
+  ContentDisposition.INLINE));                                     <i class="conum" data-value="4"></i><b>(4)</b>
+embedded.setContentId(<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-ID</span><span class="delimiter">&quot;</span></span>);                               <i class="conum" data-value="5"></i><b>(5)</b>
+
+oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>)
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>)
+  .attach(<span class="keyword">new</span> Attachment(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:path-to-file.pdf</span><span class="delimiter">&quot;</span></span>))            <i class="conum" data-value="6"></i><b>(6)</b>
+  .attach().resource(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:path-to-file.pdf</span><span class="delimiter">&quot;</span></span>)                 <i class="conum" data-value="7"></i><b>(7)</b>
+  .attach(embedded);                                               <i class="conum" data-value="8"></i><b>(8)</b>
+  .embed().resource(<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-ID</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:path-to-file.pdf</span><span class="delimiter">&quot;</span></span>)    <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>As <code>Attachment</code> constructors doesn&#8217;t provide a way to set <code>Content-ID</code> for
+embedded attachments, developer has to extract to a variable to call <code>setContentId()</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Indicate the file to embed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>To indicate that the <code>Attachment</code> is embedded, developer had to
+use the constructor that takes 3 parameters. So he had to set a value for description
+of the embedded resource even if it is optional.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Indicate that the <code>Attachment</code> is embedded.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Set the <code>Content-ID</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Add an attachment to the email (uses <code>ContentDisposition.ATTACHMENT</code> disposition).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>New API to attach a file (disposition is set to <code>ContentDisposition.ATTACHMENT</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Add the embedded attachment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>New API to embed a file (disposition is set to <code>ContentDisposition.INLINE</code>).
+As <code>Content-ID</code> is mandatory for embedded attachments, this method takes the
+<code>Content-ID</code> as first parameter.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Custom name</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:5-6 diff-add-lines:7-8">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">oghamService.send(<span class="keyword">new</span> Email()
+  .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+  .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>)
+  .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">Recipient Name &lt;recipient@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>)
+  .attach(<span class="keyword">new</span> Attachment(<span class="string"><span class="delimiter">&quot;</span><span class="content">custom-name.pdf</span><span class="delimiter">&quot;</span></span>,                        <i class="conum" data-value="1"></i><b>(1)</b>
+    getClass().getResourceAsStream(<span class="string"><span class="delimiter">&quot;</span><span class="content">path-to-file.pdf</span><span class="delimiter">&quot;</span></span>)))           <i class="conum" data-value="2"></i><b>(2)</b>
+  .attach().resource(<span class="string"><span class="delimiter">&quot;</span><span class="content">custom-name.pdf</span><span class="delimiter">&quot;</span></span>,                            <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/attachment/path-to-file.pdf</span><span class="delimiter">&quot;</span></span>)                      <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Developer must use the constructor that takes the name as first argument
+and a <code>byte[]</code> or <code>InputStream</code> as second argument. See note below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A simple path can&#8217;t be provided, developer must write Java code. See note below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The new API provides a method that allow to provide a custom name&#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>and point to a resource using a simple path.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Why new API is better</div>
+<div class="paragraph">
+<p>As <code>Attachment</code> doesn&#8217;t have a constructor that takes both path to a file or
+resource with custom name, developer has to update its code to not use a path
+anymore but use directly Java code to get the an <code>InputStream</code> or a <code>byte[]</code>.
+This means that developer can&#8217;t benefit from Ogham resource resolution.
+He can&#8217;t make the path configurable to point either to a file in the classpath
+or to an external file according to running environment (file present in classpath
+in tests but external file in production for instance), he has to either handle it
+manually or change its code.</p>
+</div>
+<div class="paragraph">
+<p>On the contrary, with the new API, the developer just has to add the name parameter
+and that&#8217;s it.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Custom Content-Type</div>
+<div class="paragraph">
+<p>The new API also provides a simplest way to set a custom <code>Content-Type</code> for
+an attachment instead of automatic detection.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_images_and_css_inlining_html_attributes_consistency"><a class="anchor" href="#_images_and_css_inlining_html_attributes_consistency"></a>Images and CSS inlining HTML attributes consistency</h3>
+<div class="paragraph">
+<p>As described in <a href="../user-manual.html#css-images-inlining">HTML body with CSS and images</a> section,
+images and CSS rules can be inlined into the email. Ogham uses HTML attributes to indicate how
+inlining should behave. Those attributes have been renamed to be more consistent:</p>
+</div>
+<div class="paragraph">
+<p>The attribute <code>ogham-inline-mode</code> was used for image inlining. It has been renamed to <code>data-inline-image</code>.
+The <code>data-</code> prefix is used to comply with HTML standards. The new attribute name also indicates
+which kind of inlining is targeted. The <code>data-inline-image</code> still uses the same values:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>attach</code> (default) to attach the images with the email (with <code>Content-Disposition</code> header set to <code>inline</code>)</p>
+</li>
+<li>
+<p><code>base64</code> to convert to a <a href="https://tools.ietf.org/html/rfc2397">data URL scheme</a> and inlined directly in
+the HTML using <code>src</code> attribute</p>
+</li>
+<li>
+<p><code>skip</code> to prevent inlining of the image</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 6. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/thymeleaf-html.jpg" alt="thymeleaf html" width="30" height="30"></span> ThymeLeaf template</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:2 diff-add-lines:3">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="html"><span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">left</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/left.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">ogham-inline-mode</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">base64</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>      <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">images/left.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-inline-image</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">base64</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>      <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="tag">&lt;p</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  <span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/div&gt;</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old attribute name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new attribute name</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>CSS inlining was using the attribute <code>data-skip-inline</code> attribute. The name of this attribute was not
+clear on its purpose (was it for CSS or for images ?). This attribute has been removed and
+the new attribute <code>data-inine-styles</code> is used instead. The value is the name of the strategy to
+use for handling inline (as for images). Currently, only one inlining strategy is
+available but in future versions, other may come. For now the only possible value is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>skip</code> to prevent inlining of CSS rules on the node</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 7. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/thymeleaf-html.jpg" alt="thymeleaf html" width="30" height="30"></span> ThymeLeaf template</div>
+<div class="content">
+<div class="listingblock diff-remove-lines:3 diff-add-lines:4">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="html"><span class="tag">&lt;div</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">sender-info</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="entity">&amp;reg;</span> Someone, somewhere 2013<span class="tag">&lt;br</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-skip-inline</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Unsubscribe<span class="tag">&lt;/a&gt;</span> to this newsletter instantly      <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-inline-styles</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">skip</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Unsubscribe<span class="tag">&lt;/a&gt;</span> to this newsletter instantly    <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tag">&lt;/div&gt;</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old attribute name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new attribute name</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_properties_consistency"><a class="anchor" href="#_properties_consistency"></a>Properties consistency</h3>
+<div class="paragraph">
+<p>Ogham heavily uses configuration properties to make it fully and easily customizable.</p>
+</div>
+<div class="paragraph">
+<p>Some properties were using different keys between standalone usage (without framework) and Spring usage.
+Now the keys are aligned to be consistent.</p>
+</div>
+<div class="paragraph">
+<p>Other properties were using a key that may be misinterpreted (on what they do and the scope of the
+property). Their name didn&#8217;t follow same convention (for example some were missing the protocol to indicate
+that the property is only handled by that protocol and not common to all protocols).
+These properties are renamed.</p>
+</div>
+<div class="sect3">
+<h4 id="_properties_for_default_values"><a class="anchor" href="#_properties_for_default_values"></a>Properties for default values</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.bcc</code> renamed to <code>ogham.email.bcc.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.cc</code> renamed to <code>ogham.email.cc.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.from</code> renamed to <code>ogham.email.from.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.to</code> renamed to <code>ogham.email.to.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.email.subject</code> renamed to <code>ogham.email.subject.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from</code> renamed to <code>ogham.sms.from.default-value</code></p>
+</li>
+<li>
+<p><code>ogham.sms.to</code> renamed to <code>ogham.sms.to.default-value</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The new property names clearly indicate now that the value is used only if nothing else is defined.
+There is another benefit: we can use other property names for configuring other parts (such as
+<code>ogham.email.subject.extract-from-text.first-line-prefix</code>). This is consistent with Spring behavior.</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 8. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSample</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+    <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+    <span class="comment">// in System properties)</span>
+    <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;email address to display for the sender user&gt;</span><span class="delimiter">&quot;</span></span>);                 <i class="conum" data-value="1"></i><b>(1)</b>
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from.default-value</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;email address to display for the sender user&gt;</span><span class="delimiter">&quot;</span></span>);   <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(properties)
+          .properties()
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.subject</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Default subject</span><span class="delimiter">&quot;</span></span>)                                        <i class="conum" data-value="3"></i><b>(3)</b>
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.subject.default-value</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Default subject</span><span class="delimiter">&quot;</span></span>)                          <i class="conum" data-value="4"></i><b>(4)</b>
+            .and()
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old property for default sender address</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new property for default sender address</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The old property for default subject (defined using fluent API)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The new property for default subject (defined using fluent API)</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_properties_for_subject_extraction"><a class="anchor" href="#_properties_for_subject_extraction"></a>Properties for subject extraction</h4>
+<div class="paragraph">
+<p><code>ogham.email.subject.text.first-line-prefix</code> renamed to <code>ogham.email.subject.extract-from-text.first-line-prefix</code>:</p>
+</div>
+<div class="paragraph">
+<p>This property is used to extract the first line of the text part (if first line starts with with the
+value of this property) of an email and use it as the subject of the email. The new name of the
+property is consistent with <code>ogham.email.subject.extract-html-title.enable</code>. Moreover, in future
+versions we could add more properties to control the subject extraction from text part using additional
+properties (<code>ogham.email.subject.extract-from-text.something-else</code> for example).
+The new name also complies with Spring property handling.</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 9. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSample</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+    <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+    <span class="comment">// in System properties)</span>
+    <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.subject.text.first-line-prefix</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Subject:</span><span class="delimiter">&quot;</span></span>);                     <i class="conum" data-value="1"></i><b>(1)</b>
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.subject.extract-from-text.first-line-prefix</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Subject:</span><span class="delimiter">&quot;</span></span>);        <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(properties)
+          .properties()
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.subject.text.first-line-prefix</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Subject:</span><span class="delimiter">&quot;</span></span>)                <i class="conum" data-value="3"></i><b>(3)</b>
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.subject.extract-from-text.first-line-prefix</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Subject:</span><span class="delimiter">&quot;</span></span>)   <i class="conum" data-value="4"></i><b>(4)</b>
+            .and()
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+                    .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">sender@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old property to enable extraction of subject from text alternative if
+is starts with the provided prefix.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new property to enable extraction of subject from text alternative if
+is starts with the provided prefix.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The old property to enable extraction of subject from text alternative if
+is starts with the provided prefix (defined using fluent API).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The new property to enable extraction of subject from text alternative if
+is starts with the provided prefix (defined using fluent API).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sendgrid_properties"><a class="anchor" href="#_sendgrid_properties"></a>SendGrid properties</h4>
+<div class="paragraph">
+<p><code>ogham.email.sengrid.api-key</code> renamed to <code>ogham.email.sendgrid.api-key</code></p>
+</div>
+<div class="paragraph">
+<p>Fix misspelling (missing <code>d</code> character).</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 10. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSample</span> {
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+    <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+    <span class="comment">// in System properties)</span>
+    <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.sengrid.api-key</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;SendGrid API key&gt;</span><span class="delimiter">&quot;</span></span>);           <i class="conum" data-value="1"></i><b>(1)</b>
+    properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.sendgrid.api-key</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;SendGrid API key&gt;</span><span class="delimiter">&quot;</span></span>);          <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="comment">// Instantiate the messaging service using default behavior and</span>
+    <span class="comment">// provided properties</span>
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties(properties)
+          .properties()
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.sengrid.api-key</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;SendGrid API key&gt;</span><span class="delimiter">&quot;</span></span>)      <i class="conum" data-value="3"></i><b>(3)</b>
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.sendgrid.api-key</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;SendGrid API key&gt;</span><span class="delimiter">&quot;</span></span>)     <i class="conum" data-value="4"></i><b>(4)</b>
+            .and()
+          .and()
+        .build();
+    <span class="comment">// send the email using fluent API</span>
+    service.send(<span class="keyword">new</span> Email()
+                    .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">sender@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+            .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+            .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old property for SendGrid API key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new property for SendGrid API key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The old property for SendGrid API key (defined using fluent API).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The new property for SendGrid API key (defined using fluent API).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_freemarker_properties"><a class="anchor" href="#_freemarker_properties"></a>FreeMarker properties</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.freemarker.prefix</code> renamed to <code>ogham.sms.freemarker.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.freemarker.suffix</code> renamed to <code>ogham.sms.freemarker.path-suffix</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Fix missing <code>path-</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cloudhopper_session_properties"><a class="anchor" href="#_cloudhopper_session_properties"></a>Cloudhopper session properties</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.cloudhopper.bind-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.bind-timeout</code>,</p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.connect-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.connect-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.response-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.response-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.request-expiry-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.request-expiry-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.session-name</code> renamed to <code>ogham.sms.cloudhopper.session.name</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.unbind-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.unbind-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.window-monitor-interval</code> renamed to <code>ogham.sms.cloudhopper.session.window-monitor-interval</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.window-size</code> renamed to <code>ogham.sms.cloudhopper.session.window-size</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.window-wait-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.window-wait-timeout</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.write-timeout</code> renamed to <code>ogham.sms.cloudhopper.session.write-timeout</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Rename all the properties that configures Cloudhopper session for clarity.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.cloudhopper.connect-max-retry</code> renamed to <code>ogham.sms.cloudhopper.session.connect-retry.max-attempts</code></p>
+</li>
+<li>
+<p><code>ogham.sms.cloudhopper.connect-retry-delay</code> renamed to <code>ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Rename properties used for reconnection of session for clarity.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_general_sms_properties"><a class="anchor" href="#_general_sms_properties"></a>General SMS properties</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.from-format-enable-alphanumeric</code> renamed to <code>ogham.sms.from.alphanumeric-code-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from-format-enable-international</code> renamed to <code>ogham.sms.from.international-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.from-format-enable-shortcode</code> renamed to <code>ogham.sms.from.short-code-format.enable</code></p>
+</li>
+<li>
+<p><code>ogham.sms.to-format-enable-international</code> renamed to <code>ogham.sms.to.international-format.enable</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Follows same convention as all other "enable" properties.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ovh_sms_properties"><a class="anchor" href="#_ovh_sms_properties"></a>OVH SMS properties</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.ovh.no-stop</code> renamed to <code>ogham.sms.ovh.options.no-stop</code></p>
+</li>
+<li>
+<p><code>ogham.sms.ovh.sms-coding</code> renamed to <code>ogham.sms.ovh.options.sms-coding</code></p>
+</li>
+<li>
+<p><code>ogham.sms.ovh.tag</code> renamed to <code>ogham.sms.ovh.options.tag</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Distinguish mandatory/important properties from options.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sms"><a class="anchor" href="#_sms"></a>SMS</h3>
+<div class="paragraph">
+<p>Instead of static mapping that doesn&#8217;t fit SMPP behavior, Ogham now provides
+an automatic encoding guessing that is based on the characters used in the message
+to use the right character table and protocol parameters (like Data Coding Scheme).</p>
+</div>
+<div class="paragraph">
+<p>If you were using <code>ogham.sms.cloudhopper.smpp-charset=&lt;charset name&gt;</code> to use a fixed
+SMPP charset, you should update your configuration like this:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You should use <code>ogham.sms.smpp.encoder.default-charset=&lt;charset name&gt;</code> (or its alias
+<code>ogham.sms.cloudhopper.encoder.default-charset</code>) instead of
+<code>ogham.sms.cloudhopper.smpp-charset=&lt;charset name&gt;</code>.</p>
+</li>
+<li>
+<p>You may need to disable automatic guessing <code>ogham.sms.smpp.encoder.auto-guess.enable=false</code> (or its alias
+<code>ogham.sms.cloudhopper.encoder.auto-guess.enable</code>) to always use the default
+encoding configured above.</p>
+</li>
+<li>
+<p>You may also need to force <code>0</code> value for Data Coding Scheme using
+the configuration property <code>ogham.sms.smpp.data-coding-scheme.value=0</code> (or its alias
+<code>ogham.sms.cloudhopper.data-coding-scheme.value</code>).</p>
+</li>
+<li>
+<p>You may also need to disable automatic Data Coding Scheme guessing using
+<code>ogham.sms.smpp.data-coding-scheme.auto.enable=false</code> (or its alias
+<code>ogham.sms.cloudhopper.data-coding-scheme.auto.enable</code>).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You should also read the section that explains
+<a href="../user-manual.html#message-encoding">automatic encoding guessing</a> to fully
+understand the purpose of each property.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test_utilities"><a class="anchor" href="#_test_utilities"></a>Test utilities</h3>
+<div class="paragraph">
+<p>Ogham provides utilities for testing reception of email or SMS. In order to be concise, Ogham
+provides a method for applying the same assertions on all received messages. This method has been renamed
+from <code>forEach()</code> to <code>every()</code>.</p>
+</div>
+<div class="exampleblock tab-container">
+<div class="title">Example 11. Update your code</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-24,26-43 irrelevant-lines:46-52 diff-remove-lines:55 diff-add-lines:56">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.test</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.icegreen.greenmail.util.ServerSetupTest.SMTP</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.containsInAnyOrder</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.emptyIterable</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.hasItems</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.nullValue</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.startsWith</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">org.junit.Before</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.junit4.GreenMailRule</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">SeveralRecipientsTestSample</span> {
+  <span class="directive">private</span> MessagingService oghamService;
+
+  <span class="annotation">@Rule</span>
+  <span class="directive">public</span> <span class="directive">final</span> GreenMailRule greenMail = <span class="keyword">new</span> GreenMailRule(SMTP);
+
+  <span class="annotation">@Before</span>
+  <span class="directive">public</span> <span class="type">void</span> setUp() <span class="directive">throws</span> <span class="exception">IOException</span> {
+    oghamService = MessagingBuilder.standard()
+        .environment()
+          .properties()
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from.default-value</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Sender Name &lt;test.sender@sii.fr&gt;</span><span class="delimiter">&quot;</span></span>)
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, SMTP.getBindAddress())
+            .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.valueOf(SMTP.getPort()))
+            .and()
+          .and()
+        .build();
+  }
+
+  <span class="annotation">@Test</span>
+  <span class="directive">public</span> <span class="type">void</span> severalRecipients() <span class="directive">throws</span> MessagingException, javax.mail.MessagingException {
+    <span class="comment">// @formatter:off</span>
+    oghamService.send(<span class="keyword">new</span> Email()
+                .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+                .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>)
+                .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient1@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient2@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient3@sii.fr</span><span class="delimiter">&quot;</span></span>)
+                .cc(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient4@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient5@sii.fr</span><span class="delimiter">&quot;</span></span>)
+                .bcc(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient6@sii.fr</span><span class="delimiter">&quot;</span></span>));
+    assertThat(greenMail).receivedMessages()
+      .count(is(<span class="integer">6</span>))
+      .forEach()                                                                  <i class="conum" data-value="1"></i><b>(1)</b>
+      .every()                                                                    <i class="conum" data-value="2"></i><b>(2)</b>
+        .subject(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>))
+        .from()
+          .address(hasItems(<span class="string"><span class="delimiter">&quot;</span><span class="content">test.sender@sii.fr</span><span class="delimiter">&quot;</span></span>))
+          .personal(hasItems(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sender Name</span><span class="delimiter">&quot;</span></span>)).and()
+        .to()
+          .address(containsInAnyOrder(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient1@sii.fr</span><span class="delimiter">&quot;</span></span>,
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient2@sii.fr</span><span class="delimiter">&quot;</span></span>,
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient3@sii.fr</span><span class="delimiter">&quot;</span></span>)).and()
+        .cc()
+          .address(containsInAnyOrder(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient4@sii.fr</span><span class="delimiter">&quot;</span></span>,
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient5@sii.fr</span><span class="delimiter">&quot;</span></span>)).and()
+        .body()
+          .contentAsString(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>))
+          .contentType(startsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>)).and()
+        .alternative(nullValue())
+        .attachments(emptyIterable());
+    <span class="comment">// @formatter:on</span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The old method</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The new method</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-14 16:48:02 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

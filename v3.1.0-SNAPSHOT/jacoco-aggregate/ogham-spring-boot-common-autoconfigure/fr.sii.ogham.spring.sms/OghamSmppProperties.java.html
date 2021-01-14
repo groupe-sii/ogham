@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamSmppProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">OghamSmppProperties.java</span></div><h1>OghamSmppProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import com.cloudhopper.smpp.SmppBindType;
+
+@ConfigurationProperties(&quot;ogham.sms.smpp&quot;)
+<span class="fc" id="L9">public class OghamSmppProperties {</span>
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME. This is an
+	 * alias of ogham.sms.cloudhopper.system-id. If both properties are defined,
+	 * the value of the property ogham.sms.cloudhopper.system-id is used.
+	 */
+	private String systemId;
+	/**
+	 * The password parameter is used by the SMSC (Short Message Service Centre)
+	 * to authenticate the identity of the binding ESME (External Short Message
+	 * Entity). The Service Provider may require ESME’s to provide a password
+	 * when binding to the SMSC. This password is normally issued by the SMSC
+	 * system administrator. The password parameter may also be used by the ESME
+	 * to authenticate the identity of the binding SMSC (e.g. in the case of the
+	 * outbind operation). This is an alias of ogham.sms.cloudhopper.password.
+	 * If both properties are defined, the value of the property
+	 * ogham.sms.cloudhopper.password is used.
+	 */
+	private String password;
+	/**
+	 * The SMPP server host (IP or address).&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.host. If both properties are
+	 * defined, the value of the property ogham.sms.cloudhopper.host is used.
+	 */
+	private String host;
+	/**
+	 * The SMPP server port.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.port. If both properties are
+	 * defined, the value of the property ogham.sms.cloudhopper.port is
+	 * used.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * Default: &lt;i&gt;2775&lt;/i&gt;
+	 */
+	private Integer port;
+	/**
+	 * The bind command type.&lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.bind-type. If both properties
+	 * are defined, the value of the property ogham.sms.cloudhopper.bind-type is
+	 * used.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * Default: &lt;i&gt;&quot;TRANSMITTER&quot;.&lt;/i&gt;
+	 */
+	private SmppBindType bindType;
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.&lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.system-type. If both properties
+	 * are defined, the value of the property ogham.sms.cloudhopper.system-type
+	 * is used.&lt;br /&gt;
+	 */
+	private String systemType;
+<span class="fc" id="L74">	@NestedConfigurationProperty</span>
+	private EncoderProperties encoder = new EncoderProperties();
+<span class="fc" id="L76">	@NestedConfigurationProperty</span>
+	private UserDataProperties userData = new UserDataProperties();
+<span class="fc" id="L78">	@NestedConfigurationProperty</span>
+	private SplitProperties split = new SplitProperties();
+<span class="fc" id="L80">	@NestedConfigurationProperty</span>
+	private DataCodingSchemeProperties dataCodingScheme = new DataCodingSchemeProperties();
+
+	public String getSystemType() {
+<span class="fc" id="L84">		return systemType;</span>
+	}
+
+	public void setSystemType(String systemType) {
+<span class="fc" id="L88">		this.systemType = systemType;</span>
+<span class="fc" id="L89">	}</span>
+
+	public String getSystemId() {
+<span class="fc" id="L92">		return systemId;</span>
+	}
+
+	public void setSystemId(String systemId) {
+<span class="fc" id="L96">		this.systemId = systemId;</span>
+<span class="fc" id="L97">	}</span>
+
+	public String getPassword() {
+<span class="fc" id="L100">		return password;</span>
+	}
+
+	public void setPassword(String password) {
+<span class="fc" id="L104">		this.password = password;</span>
+<span class="fc" id="L105">	}</span>
+
+	public String getHost() {
+<span class="fc" id="L108">		return host;</span>
+	}
+
+	public void setHost(String host) {
+<span class="fc" id="L112">		this.host = host;</span>
+<span class="fc" id="L113">	}</span>
+
+	public Integer getPort() {
+<span class="fc" id="L116">		return port;</span>
+	}
+
+	public void setPort(Integer port) {
+<span class="fc" id="L120">		this.port = port;</span>
+<span class="fc" id="L121">	}</span>
+
+	public SmppBindType getBindType() {
+<span class="fc" id="L124">		return bindType;</span>
+	}
+
+	public void setBindType(SmppBindType bindType) {
+<span class="fc" id="L128">		this.bindType = bindType;</span>
+<span class="fc" id="L129">	}</span>
+
+	public EncoderProperties getEncoder() {
+<span class="fc" id="L132">		return encoder;</span>
+	}
+
+	public void setEncoder(EncoderProperties encoder) {
+<span class="fc" id="L136">		this.encoder = encoder;</span>
+<span class="fc" id="L137">	}</span>
+
+	public UserDataProperties getUserData() {
+<span class="fc" id="L140">		return userData;</span>
+	}
+
+	public void setUserData(UserDataProperties userData) {
+<span class="fc" id="L144">		this.userData = userData;</span>
+<span class="fc" id="L145">	}</span>
+
+	public SplitProperties getSplit() {
+<span class="fc" id="L148">		return split;</span>
+	}
+
+	public void setSplit(SplitProperties split) {
+<span class="fc" id="L152">		this.split = split;</span>
+<span class="fc" id="L153">	}</span>
+
+	public DataCodingSchemeProperties getDataCodingScheme() {
+<span class="fc" id="L156">		return dataCodingScheme;</span>
+	}
+
+	public void setDataCodingScheme(DataCodingSchemeProperties dataCodingScheme) {
+<span class="fc" id="L160">		this.dataCodingScheme = dataCodingScheme;</span>
+<span class="fc" id="L161">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

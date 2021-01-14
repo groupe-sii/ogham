@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractMessageAwareFiller.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.filler</a> &gt; <span class="el_source">AbstractMessageAwareFiller.java</span></div><h1>AbstractMessageAwareFiller.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.filler;
+
+import java.util.Map;
+
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.exception.filler.FillMessageException;
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * Base class to help to fill a particular {@link Message} type.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;M&gt;
+ *            the type of the message that the filler is able to handle
+ */
+public abstract class AbstractMessageAwareFiller&lt;M&gt; implements MessageFiller {
+	protected final Map&lt;String, ConfigurationValueBuilderHelper&lt;?, ?&gt;&gt; defaultValues;
+	private final Class&lt;M&gt; messageType;
+
+	/**
+	 * The list of properties is indexed by an alias that is known by the
+	 * implementation. For example, if the keys is defined like this:
+	 * 
+	 * &lt;pre&gt;
+	 * Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; keys = new HashMap&amp;lt;&amp;gt;();
+	 * keys.put(&quot;to&quot;, valueBuilder.properties(&quot;ogham.email.to.default-value&quot;));
+	 * keys.put(&quot;from&quot;, valueBuilder.properties(&quot;ogham.email.from.default-value&quot;, &quot;mail.smtp.from&quot;));
+	 * &lt;/pre&gt;
+	 * 
+	 * The implementation can then retrieve real property value using map key
+	 * (alias):
+	 * 
+	 * &lt;pre&gt;
+	 * getProperty(&quot;from&quot;);
+	 * // will return either the value of &quot;ogham.email.from.default-value&quot; or
+	 * // &quot;mail.smtp.from&quot;
+	 * &lt;/pre&gt;
+	 * 
+	 * @param defaultValues
+	 *            a list of property keys indexed by an alias
+	 * @param messageType
+	 *            the class of the message that this implementation can handle
+	 */
+	protected AbstractMessageAwareFiller(Map&lt;String, ConfigurationValueBuilderHelper&lt;?, ?&gt;&gt; defaultValues, Class&lt;M&gt; messageType) {
+<span class="fc" id="L46">		super();</span>
+<span class="fc" id="L47">		this.defaultValues = defaultValues;</span>
+<span class="fc" id="L48">		this.messageType = messageType;</span>
+<span class="fc" id="L49">	}</span>
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@Override
+	public void fill(Message message) throws FillMessageException {
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">		if (messageType.isAssignableFrom(message.getClass())) {</span>
+<span class="fc" id="L55">			fill((M) message);</span>
+		}
+<span class="fc" id="L57">	}</span>
+
+	protected abstract void fill(M message);
+
+	/**
+	 * Return whether the given property alias has at least one property key
+	 * that is available for resolution, i.e., the value for the given key is
+	 * not {@code null}.
+	 * 
+	 * @param alias
+	 *            the property alias to resolve
+	 * @return true if property exists, false otherwise
+	 */
+	protected boolean containsProperty(String alias) {
+<span class="fc" id="L71">		ConfigurationValueBuilderHelper&lt;?, ?&gt; valueBuilder = defaultValues.get(alias);</span>
+<span class="fc bfc" id="L72" title="All 4 branches covered.">		return valueBuilder != null &amp;&amp; valueBuilder.getValue() != null;</span>
+	}
+
+	/**
+	 * Returns the value of first property represented by the provided alias
+	 * that has a value (not {@code null}).
+	 * 
+	 * @param alias
+	 *            the property alias to resolve
+	 * @param valueClass
+	 *            the class of the resulting value
+	 * @param &lt;T&gt;
+	 *            the type of the resulting value
+	 * @return the property value or null
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected &lt;T&gt; T getProperty(String alias, Class&lt;T&gt; valueClass) {
+<span class="fc" id="L89">		ConfigurationValueBuilderHelper&lt;?, T&gt; valueBuilder = (ConfigurationValueBuilderHelper&lt;?, T&gt;) defaultValues.get(alias);</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">		return valueBuilder == null ? null : valueBuilder.getValue();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

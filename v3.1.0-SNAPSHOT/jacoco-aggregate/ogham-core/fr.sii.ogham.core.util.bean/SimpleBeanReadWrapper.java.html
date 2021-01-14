@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleBeanReadWrapper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">SimpleBeanReadWrapper.java</span></div><h1>SimpleBeanReadWrapper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
+
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.getClassName;
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.getReadMethods;
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.isInvalid;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import fr.sii.ogham.core.exception.util.InvalidPropertyException;
+
+/**
+ * Simple implementation that wraps a bean in order to access the properties of
+ * the bean.
+ * 
+ * This implementation delegates the access to the properties to
+ * {@link Accessor}s.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SimpleBeanReadWrapper implements BeanReadWrapper {
+	private final Object bean;
+	private final Map&lt;String, Accessor&lt;Object&gt;&gt; accessors;
+	private final boolean failOnMissingProperty;
+
+	/**
+	 * Builds the map of accessors for each bean property.
+	 * 
+	 * If a property doesn't exist, an {@link InvalidPropertyException} is
+	 * thrown.
+	 * 
+	 * @param bean
+	 *            the bean that may have properties to access later
+	 */
+	public SimpleBeanReadWrapper(Object bean) {
+<span class="fc" id="L43">		this(bean, true);</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Builds the map of accessors for each bean property.
+	 * 
+	 * @param bean
+	 *            the bean that may have properties to access later
+	 * @param failOnMissingProperty
+	 *            if false null is returned if the property doesn't exist, if
+	 *            true an {@link InvalidPropertyException} is thrown if the
+	 *            property doesn't exist
+	 */
+	public SimpleBeanReadWrapper(Object bean, boolean failOnMissingProperty) {
+<span class="fc" id="L57">		super();</span>
+<span class="fc" id="L58">		this.bean = bean;</span>
+<span class="fc" id="L59">		this.accessors = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L60">		this.failOnMissingProperty = failOnMissingProperty;</span>
+<span class="fc" id="L61">		initialize(bean);</span>
+<span class="fc" id="L62">	}</span>
+
+	@Override
+	public Object getPropertyValue(String name) {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if (getWrappedBean() == null) {</span>
+<span class="fc" id="L67">			return null;</span>
+		}
+
+<span class="fc" id="L70">		Accessor&lt;Object&gt; accessor = accessors.get(name);</span>
+<span class="fc bfc" id="L71" title="All 4 branches covered.">		if (failOnMissingProperty &amp;&amp; accessor == null) {</span>
+<span class="fc" id="L72">			throw new InvalidPropertyException(&quot;No accessor for property '&quot; + name + &quot;' on bean '&quot; + getClassName(bean) + &quot;'&quot;, bean, name);</span>
+		}
+
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		return accessor == null ? null : accessor.getValue();</span>
+	}
+
+	@Override
+	public List&lt;String&gt; getProperties() {
+<span class="fc" id="L80">		return new ArrayList&lt;&gt;(accessors.keySet());</span>
+	}
+
+	@Override
+	public Object getWrappedBean() {
+<span class="fc" id="L85">		return bean;</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private void initialize(Object bean) {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		if (bean == null) {</span>
+<span class="fc" id="L91">			return;</span>
+		}
+
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if (isInvalid(bean)) {</span>
+<span class="fc" id="L95">			throw new IllegalArgumentException(getClassName(bean) + &quot; values can't be used as bean&quot;);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">		} else if (bean instanceof Collection) {</span>
+<span class="fc" id="L97">			initializeCollection((Collection&lt;Object&gt;) bean, accessors);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		} else if (bean instanceof Map) {</span>
+<span class="fc" id="L99">			initializeMap((Map&lt;Object, Object&gt;) bean, accessors);</span>
+		} else {
+<span class="fc" id="L101">			initializeBean(bean, accessors);</span>
+		}
+<span class="fc" id="L103">	}</span>
+
+	private static void initializeCollection(Collection&lt;Object&gt; collection, Map&lt;String, Accessor&lt;Object&gt;&gt; accessors) {
+<span class="fc" id="L106">		int i = 0;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		for (Iterator&lt;Object&gt; it = collection.iterator(); it.hasNext(); i++) {</span>
+<span class="fc" id="L108">			accessors.put(Integer.toString(i), new DirectAccessor&lt;&gt;(it.next()));</span>
+		}
+<span class="fc" id="L110">	}</span>
+
+	private static void initializeMap(Map&lt;Object, Object&gt; map, Map&lt;String, Accessor&lt;Object&gt;&gt; accessors) {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		for (Entry&lt;Object, Object&gt; entry : map.entrySet()) {</span>
+<span class="fc" id="L114">			accessors.put(entry.getKey().toString(), new DirectAccessor&lt;&gt;(entry.getValue()));</span>
+<span class="fc" id="L115">		}</span>
+<span class="fc" id="L116">	}</span>
+
+	private static void initializeBean(Object bean, Map&lt;String, Accessor&lt;Object&gt;&gt; accessors) {
+<span class="fc" id="L119">		Map&lt;String, Method&gt; readMethods = getReadMethods(bean);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		for(Entry&lt;String, Method&gt; entry : readMethods.entrySet()) {</span>
+<span class="fc" id="L121">			String name = entry.getKey();</span>
+<span class="fc" id="L122">			Method readMethod = entry.getValue();</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">			if (readMethod != null) {</span>
+<span class="fc" id="L124">				accessors.put(name, new ReadMethodAccessor&lt;&gt;(bean, name, readMethod));</span>
+			}
+<span class="fc" id="L126">		}</span>
+<span class="fc" id="L127">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

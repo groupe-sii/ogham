@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendGridV2Builder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v2.builder.sendgrid</a> &gt; <span class="el_source">SendGridV2Builder.java</span></div><h1>SendGridV2Builder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v2.builder.sendgrid;
+
+import java.net.URL;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sendgrid.SendGrid;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
+import fr.sii.ogham.core.message.content.MultiContent;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.message.content.ContentWithAttachments;
+import fr.sii.ogham.email.sendgrid.builder.AbstractSendGridBuilder;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.DelegateSendGridClient;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridInterceptor;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.ContentWithAttachmentsHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.MultiContentHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.PriorizedContentHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContentHandler;
+
+/**
+ * Configures how SendGrid implementation will send {@link Email}s.
+ * 
+ * This implementation uses SendGrid HTTP API.
+ * 
+ * &lt;p&gt;
+ * To send {@link Email} using SendGrid, you need to register this builder into
+ * a {@link MessagingBuilder} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * MessagingBuilder msgBuilder = ...
+ * msgBuilder.email()
+ *    .sender(SendGridV2Builder.class)    // registers the builder and accesses to that builder for configuring it
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Once the builder is registered, sending email through SendGrid requires
+ * either an API key or a username/password pair. You can define it using:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder.email()
+ *    .sender(SendGridV2Builder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .apiKey(&quot;foo&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can also use property keys (using interpolation):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder
+ * .environment()
+ *    .properties()
+ *       .set(&quot;custom.property.for.api-key&quot;, &quot;foo&quot;)
+ *       .and()
+ *    .and()
+ * .email()
+ *    .sender(SendGridV2Builder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .apiKey(&quot;${custom.property.for.api-key}&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * Finally, Ogham will transform general {@link Email} object into
+ * {@link SendGrid}.Email object. This transformation will fit almost all use
+ * cases but you may need to customize a part of the SendGrid message. Instead
+ * of doing again the same work Ogham does, this builder allows you to intercept
+ * the message to modify it just before sending it:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .sender(SendGridV2Builder.class)
+ *    .intercept(new MyCustomInterceptor())
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * See {@link SendGridInterceptor} for more information.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SendGridV2Builder extends AbstractSendGridBuilder&lt;SendGridV2Builder, EmailBuilder&gt; {
+<span class="fc" id="L95">	private static final Logger LOG = LoggerFactory.getLogger(SendGridV2Builder.class);</span>
+
+	private final ConfigurationValueBuilderHelper&lt;SendGridV2Builder, String&gt; usernameValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SendGridV2Builder, String&gt; passwordValueBuilder;
+	private SendGridClient client;
+	private SendGridInterceptor interceptor;
+
+	/**
+	 * Default constructor when using SendGrid sender without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public SendGridV2Builder() {
+<span class="fc" id="L108">		this(null, new DefaultBuildContext());</span>
+<span class="fc" id="L109">	}</span>
+
+	/**
+	 * Constructor that is called when using Ogham builder:
+	 * 
+	 * &lt;pre&gt;
+	 * MessagingBuilder msgBuilder = ...
+	 * msgBuilder
+	 * .email()
+	 *    .sender(SendGridV2Builder.class)
+	 * &lt;/pre&gt;
+	 * 
+	 * @param parent
+	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public SendGridV2Builder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L127">		super(SendGridV2Builder.class, parent, buildContext);</span>
+<span class="fc" id="L128">		usernameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L129">		passwordValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L130">	}</span>
+
+	@Override
+	public SendGridV2Builder username(String username) {
+<span class="fc" id="L134">		usernameValueBuilder.setValue(username);</span>
+<span class="fc" id="L135">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilder&lt;SendGridV2Builder, String&gt; username() {
+<span class="fc" id="L140">		return usernameValueBuilder;</span>
+	}
+
+	@Override
+	public SendGridV2Builder password(String password) {
+<span class="fc" id="L145">		passwordValueBuilder.setValue(password);</span>
+<span class="fc" id="L146">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilder&lt;SendGridV2Builder, String&gt; password() {
+<span class="fc" id="L151">		return passwordValueBuilder;</span>
+	}
+
+	/**
+	 * By default, calling SendGrid HTTP API is done through the default
+	 * {@link SendGrid} implementation. If you want to use another client
+	 * implementation (creating your custom HTTP API caller for example), you
+	 * can implement the {@link SendGridClient} interface and provide it:
+	 * 
+	 * &lt;pre&gt;
+	 * .client(new MyCustomHttpApiCaller())
+	 * &lt;/pre&gt;
+	 * 
+	 * NOTE: if you provide your custom implementation, any defined properties
+	 * and values using {@link #apiKey(String)}, {@link #username(String)} or
+	 * {@link #password(String)} won't be used at all. You then have to handle
+	 * it by yourself.
+	 * 
+	 * @param client
+	 *            the custom client used to call SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV2Builder client(SendGridClient client) {
+<span class="fc" id="L174">		this.client = client;</span>
+<span class="fc" id="L175">		return this;</span>
+	}
+
+	/**
+	 * Ogham will transform general {@link Email} object into
+	 * {@link SendGrid}.Email objects. This transformation will fit almost all
+	 * use cases but you may need to customize a part of the SendGrid message.
+	 * Instead of doing again the same work Ogham does, this builder allows you
+	 * to intercept the message to modify it just before sending it:
+	 * 
+	 * &lt;pre&gt;
+	 * .sender(SendGridV2Builder.class)
+	 *    .intercept(new MyCustomInterceptor())
+	 * &lt;/pre&gt;
+	 * 
+	 * See {@link SendGridInterceptor} for more information.
+	 * 
+	 * @param interceptor
+	 *            the custom interceptor used to modify {@link SendGrid}.Email
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV2Builder intercept(SendGridInterceptor interceptor) {
+<span class="nc" id="L197">		this.interceptor = interceptor;</span>
+<span class="nc" id="L198">		return this;</span>
+	}
+
+	@Override
+	public SendGridV2Sender build() {
+<span class="fc" id="L203">		String apiKey = apiKeyValueBuilder.getValue();</span>
+<span class="fc" id="L204">		String username = usernameValueBuilder.getValue();</span>
+<span class="fc" id="L205">		String password = passwordValueBuilder.getValue();</span>
+<span class="fc" id="L206">		URL url = urlValueBuilder.getValue();</span>
+<span class="fc" id="L207">		SendGridClient builtClient = buildClient(apiKey, username, password, url);</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">		if (builtClient == null) {</span>
+<span class="fc" id="L209">			return null;</span>
+		}
+<span class="fc" id="L211">		LOG.info(&quot;Sending email using SendGrid API is registered&quot;);</span>
+<span class="fc" id="L212">		LOG.debug(&quot;SendGrid account: apiKey={}, username={}&quot;, apiKey, username);</span>
+<span class="fc" id="L213">		return buildContext.register(new SendGridV2Sender(builtClient, buildContentHandler(), interceptor));</span>
+	}
+
+	private SendGridClient buildClient(String apiKey, String username, String password, URL url) {
+<span class="fc bfc" id="L217" title="All 2 branches covered.">		if (client != null) {</span>
+<span class="fc" id="L218">			return client;</span>
+		}
+<span class="pc bpc" id="L220" title="1 of 6 branches missed.">		if (apiKey != null || (username != null &amp;&amp; password != null)) {</span>
+<span class="fc" id="L221">			return buildContext.register(new DelegateSendGridClient(buildSendGrid(apiKey, username, password, url)));</span>
+		}
+<span class="fc" id="L223">		return null;</span>
+	}
+
+	private SendGrid buildSendGrid(String apiKey, String username, String password, URL url) {
+<span class="fc" id="L227">		SendGrid sendGrid = newSendGrid(apiKey, username, password);</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		if (url != null) {</span>
+<span class="fc" id="L229">			sendGrid.setUrl(url.toString());</span>
+		}
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">		if (httpClient != null) {</span>
+<span class="nc" id="L232">			sendGrid.setClient(httpClient);</span>
+		}
+<span class="fc" id="L234">		return sendGrid;</span>
+	}
+
+	private SendGrid newSendGrid(String apiKey, String username, String password) {
+<span class="fc bfc" id="L238" title="All 2 branches covered.">		if (apiKey != null) {</span>
+<span class="fc" id="L239">			return buildContext.register(new SendGrid(apiKey));</span>
+		}
+<span class="fc" id="L241">		return buildContext.register(new SendGrid(username, password));</span>
+	}
+
+	private PriorizedContentHandler buildContentHandler() {
+<span class="fc" id="L245">		MimeTypeProvider mimetypeProvider = mimetypeBuilder.build();</span>
+<span class="fc" id="L246">		PriorizedContentHandler contentHandler = buildContext.register(new PriorizedContentHandler());</span>
+<span class="fc" id="L247">		contentHandler.register(MultiContent.class, buildContext.register(new MultiContentHandler(contentHandler)));</span>
+<span class="fc" id="L248">		contentHandler.register(ContentWithAttachments.class, buildContext.register(new ContentWithAttachmentsHandler(contentHandler)));</span>
+<span class="fc" id="L249">		contentHandler.register(MayHaveStringContent.class, buildContext.register(new StringContentHandler(mimetypeProvider)));</span>
+<span class="fc" id="L250">		return contentHandler;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SubmitSmAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">SubmitSmAdapter.java</span></div><h1>SubmitSmAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import fr.sii.ogham.testing.sms.simulator.bean.Address;
+import fr.sii.ogham.testing.sms.simulator.bean.Command;
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+import fr.sii.ogham.testing.sms.simulator.bean.SimpleAddress;
+import fr.sii.ogham.testing.sms.simulator.bean.SimpleCommand;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.Tag;
+
+/**
+ * Adapts JSMPP {@link org.jsmpp.bean.SubmitSm} into {@link SubmitSm}
+ * abstraction.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SubmitSmAdapter implements SubmitSm {
+	protected final org.jsmpp.bean.SubmitSm original;
+
+	/**
+	 * @param original
+	 *            the JSMPP {@link org.jsmpp.bean.SubmitSm} to adapt
+	 */
+	public SubmitSmAdapter(org.jsmpp.bean.SubmitSm original) {
+<span class="fc" id="L31">		super();</span>
+<span class="fc" id="L32">		this.original = original;</span>
+<span class="fc" id="L33">	}</span>
+
+	@Override
+	public Command getCommand() {
+<span class="nc" id="L37">		return new SimpleCommand(original.getCommandLength(), original.getCommandId(), original.getCommandStatus(), original.getSequenceNumber());</span>
+	}
+
+	@Override
+	public String getServiceType() {
+<span class="nc" id="L42">		return original.getServiceType();</span>
+	}
+
+	@Override
+	public Address getSourceAddress() {
+<span class="fc" id="L47">		return new SimpleAddress(original.getSourceAddr(), original.getSourceAddrTon(), original.getSourceAddrNpi());</span>
+	}
+
+	@Override
+	public Address getDestAddress() {
+<span class="fc" id="L52">		return new SimpleAddress(original.getDestAddress(), original.getDestAddrTon(), original.getDestAddrNpi());</span>
+	}
+
+	@Override
+	public byte getEsmClass() {
+<span class="nc" id="L57">		return original.getEsmClass();</span>
+	}
+
+	@Override
+	public byte getRegisteredDelivery() {
+<span class="nc" id="L62">		return original.getRegisteredDelivery();</span>
+	}
+
+	@Override
+	public byte getDataCoding() {
+<span class="fc" id="L67">		return original.getDataCoding();</span>
+	}
+
+	@Override
+	public byte[] getShortMessage() {
+<span class="fc" id="L72">		return original.getShortMessage();</span>
+	}
+
+	@Override
+	public int getShortMessageLength() {
+<span class="nc" id="L77">		return original.getShortMessage().length;</span>
+	}
+
+	@Override
+	public OptionalParameter getOptionalParameter(Tag tag) {
+<span class="fc" id="L82">		return new OptionalParameterAdapter(original, tag.getCode());</span>
+	}
+
+	@Override
+	public List&lt;OptionalParameter&gt; getOptionalParameters() {
+<span class="nc" id="L87">		return Stream.of(original.getOptionalParameters()).map(p -&gt; new OptionalParameterAdapter(original, p.tag)).collect(toList());</span>
+	}
+
+	@Override
+	public byte getPriorityFlag() {
+<span class="nc" id="L92">		return original.getPriorityFlag();</span>
+	}
+
+	@Override
+	public byte getProtocolId() {
+<span class="nc" id="L97">		return original.getProtocolId();</span>
+	}
+
+	@Override
+	public byte getReplaceIfPresentFlag() {
+<span class="nc" id="L102">		return original.getReplaceIfPresent();</span>
+	}
+
+	@Override
+	public String getScheduleDeliveryTime() {
+<span class="nc" id="L107">		return original.getScheduleDeliveryTime();</span>
+	}
+
+	@Override
+	public byte getSmDefaultMsgId() {
+<span class="nc" id="L112">		return original.getSmDefaultMsgId();</span>
+	}
+
+	@Override
+	public String getValidityPeriod() {
+<span class="nc" id="L117">		return original.getValidityPeriod();</span>
+	}
+
+	@Override
+	public boolean isUdhi() {
+<span class="fc" id="L122">		return original.isUdhi();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

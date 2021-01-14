@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultPortFinder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.util.port</a> &gt; <span class="el_source">DefaultPortFinder.java</span></div><h1>DefaultPortFinder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.util.port;
+
+import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.IntPredicate;
+
+import fr.sii.ogham.testing.util.RandomPortUtils;
+
+/**
+ * Default implementation that search for ports by delegating port availability
+ * check to a function.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class DefaultPortFinder implements PortFinder {
+	protected final Random random;
+	protected final String protocol;
+	protected final IntPredicate isPortAvailable;
+
+	/**
+	 * Initialize with a function to check if a port is available or not.
+	 * 
+	 * @param protocol
+	 *            the protocol
+	 * @param isPortAvailable
+	 *            Determine if the specified port for this {@code SocketType} is
+	 *            currently available on {@code localhost}.
+	 */
+	@SuppressWarnings(&quot;java:S2245&quot;)
+	public DefaultPortFinder(String protocol, IntPredicate isPortAvailable) {
+<span class="fc" id="L33">		this(protocol, isPortAvailable, new Random(System.nanoTime()));</span>
+<span class="fc" id="L34">	}</span>
+
+	/**
+	 * Initialize with a function to check if a port is available or not.
+	 * 
+	 * @param protocol
+	 *            the protocol
+	 * @param isPortAvailable
+	 *            Determine if the specified port for this {@code SocketType} is
+	 *            currently available on {@code localhost}.
+	 * @param random
+	 *            the random implementation to use
+	 */
+	public DefaultPortFinder(String protocol, IntPredicate isPortAvailable, Random random) {
+<span class="fc" id="L48">		super();</span>
+<span class="fc" id="L49">		this.protocol = protocol;</span>
+<span class="fc" id="L50">		this.isPortAvailable = isPortAvailable;</span>
+<span class="fc" id="L51">		this.random = random;</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 * Find an available port for this {@code SocketType}, randomly selected
+	 * from the range [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return an available port number for this socket type
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public int findAvailablePort(int minPort, int maxPort) {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		assertIsTrue(minPort &gt; 0, &quot;'minPort' must be greater than 0&quot;);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		assertIsTrue(maxPort &gt;= minPort, &quot;'maxPort' must be greater than or equal to 'minPort'&quot;);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">		assertIsTrue(maxPort &lt;= RandomPortUtils.PORT_RANGE_MAX, &quot;'maxPort' must be less than or equal to &quot; + RandomPortUtils.PORT_RANGE_MAX);</span>
+
+<span class="fc" id="L71">		int portRange = maxPort - minPort;</span>
+		int candidatePort;
+<span class="fc" id="L73">		int searchCounter = 0;</span>
+		do {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">			if (searchCounter &gt; portRange) {</span>
+<span class="fc" id="L76">				throw new IllegalStateException(String.format(&quot;Could not find an available %s port in the range [%d, %d] after %d attempts&quot;, protocol, minPort, maxPort, searchCounter));</span>
+			}
+<span class="fc" id="L78">			candidatePort = findRandomPort(minPort, maxPort);</span>
+<span class="fc" id="L79">			searchCounter++;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		} while (!isPortAvailable.test(candidatePort));</span>
+
+<span class="fc" id="L82">		return candidatePort;</span>
+	}
+
+	/**
+	 * Find the requested number of available ports for this {@code SocketType},
+	 * each randomly selected from the range [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param numRequested
+	 *            the number of available ports to find
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return a sorted set of available port numbers for this socket type
+	 * @throws IllegalStateException
+	 *             if the requested number of available ports could not be found
+	 */
+	public SortedSet&lt;Integer&gt; findAvailablePorts(int numRequested, int minPort, int maxPort) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">		assertIsTrue(minPort &gt; 0, &quot;'minPort' must be greater than 0&quot;);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		assertIsTrue(maxPort &gt; minPort, &quot;'maxPort' must be greater than 'minPort'&quot;);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		assertIsTrue(maxPort &lt;= RandomPortUtils.PORT_RANGE_MAX, &quot;'maxPort' must be less than or equal to &quot; + RandomPortUtils.PORT_RANGE_MAX);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		assertIsTrue(numRequested &gt; 0, &quot;'numRequested' must be greater than 0&quot;);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		assertIsTrue((maxPort - minPort) &gt;= numRequested, &quot;'numRequested' must not be greater than 'maxPort' - 'minPort'&quot;);</span>
+
+<span class="fc" id="L106">		SortedSet&lt;Integer&gt; availablePorts = new TreeSet&lt;&gt;();</span>
+<span class="fc" id="L107">		int attemptCount = 0;</span>
+<span class="pc bpc" id="L108" title="1 of 4 branches missed.">		while ((++attemptCount &lt;= numRequested + 100) &amp;&amp; availablePorts.size() &lt; numRequested) {</span>
+<span class="fc" id="L109">			availablePorts.add(findAvailablePort(minPort, maxPort));</span>
+		}
+
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">		if (availablePorts.size() != numRequested) {</span>
+<span class="nc" id="L113">			throw new IllegalStateException(String.format(&quot;Could not find %d available %s ports in the range [%d, %d]&quot;, numRequested, protocol, minPort, maxPort));</span>
+		}
+
+<span class="fc" id="L116">		return availablePorts;</span>
+	}
+	
+	/**
+	 * Find a pseudo-random port number within the range [{@code minPort},
+	 * {@code maxPort}].
+	 * 
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return a random port number within the specified range
+	 */
+	private int findRandomPort(int minPort, int maxPort) {
+<span class="fc" id="L130">		int portRange = maxPort - minPort;</span>
+<span class="fc" id="L131">		return minPort + random.nextInt(portRange + 1);</span>
+	}
+
+	private static void assertIsTrue(boolean condition, String message) {
+<span class="fc bfc" id="L135" title="All 2 branches covered.">		if (!condition) {</span>
+<span class="fc" id="L136">			throw new IllegalArgumentException(message);</span>
+		}
+<span class="fc" id="L138">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

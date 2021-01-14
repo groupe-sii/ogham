@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RandomPortUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.util</a> &gt; <span class="el_source">RandomPortUtils.java</span></div><h1>RandomPortUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.util;
+
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.util.SortedSet;
+
+import javax.net.ServerSocketFactory;
+
+import fr.sii.ogham.testing.util.port.DefaultPortFinder;
+import fr.sii.ogham.testing.util.port.PortFinder;
+
+/**
+ * Simple utility methods for finding available ports on {@code localhost}.
+ *
+ * &lt;p&gt;
+ * Within this class, a TCP port refers to a port for a {@link ServerSocket};
+ * whereas, a UDP port refers to a port for a {@link DatagramSocket}.
+ * 
+ * &lt;strong&gt;NOTE:&lt;/strong&gt; This code has been borrowed from Spring Framework.
+ * 
+ * @see &quot;https://github.com/spring-projects/spring-framework/blob/master/spring-core/src/main/java/org/springframework/util/SocketUtils.java&quot;
+ */
+public final class RandomPortUtils {
+
+	/**
+	 * The default minimum value for port ranges used when finding an available
+	 * socket port.
+	 */
+	public static final int PORT_RANGE_MIN = 1024;
+
+	/**
+	 * The default maximum value for port ranges used when finding an available
+	 * socket port.
+	 */
+	public static final int PORT_RANGE_MAX = 65535;
+
+	/**
+	 * Find an available TCP port randomly selected from the range
+	 * [{@value #PORT_RANGE_MIN}, {@value #PORT_RANGE_MAX}].
+	 * 
+	 * @return an available TCP port number
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public static int findAvailableTcpPort() {
+<span class="fc" id="L47">		return findAvailableTcpPort(PORT_RANGE_MIN);</span>
+	}
+
+	/**
+	 * Find an available TCP port randomly selected from the range
+	 * [{@code minPort}, {@value #PORT_RANGE_MAX}].
+	 * 
+	 * @param minPort
+	 *            the minimum port number
+	 * @return an available TCP port number
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public static int findAvailableTcpPort(int minPort) {
+<span class="fc" id="L61">		return findAvailableTcpPort(minPort, PORT_RANGE_MAX);</span>
+	}
+
+	/**
+	 * Find an available TCP port randomly selected from the range
+	 * [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return an available TCP port number
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public static int findAvailableTcpPort(int minPort, int maxPort) {
+<span class="fc" id="L77">		return SocketType.TCP.findAvailablePort(minPort, maxPort);</span>
+	}
+
+	/**
+	 * Find the requested number of available TCP ports, each randomly selected
+	 * from the range [{@value #PORT_RANGE_MIN}, {@value #PORT_RANGE_MAX}].
+	 * 
+	 * @param numRequested
+	 *            the number of available ports to find
+	 * @return a sorted set of available TCP port numbers
+	 * @throws IllegalStateException
+	 *             if the requested number of available ports could not be found
+	 */
+	public static SortedSet&lt;Integer&gt; findAvailableTcpPorts(int numRequested) {
+<span class="nc" id="L91">		return findAvailableTcpPorts(numRequested, PORT_RANGE_MIN, PORT_RANGE_MAX);</span>
+	}
+
+	/**
+	 * Find the requested number of available TCP ports, each randomly selected
+	 * from the range [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param numRequested
+	 *            the number of available ports to find
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return a sorted set of available TCP port numbers
+	 * @throws IllegalStateException
+	 *             if the requested number of available ports could not be found
+	 */
+	public static SortedSet&lt;Integer&gt; findAvailableTcpPorts(int numRequested, int minPort, int maxPort) {
+<span class="nc" id="L109">		return SocketType.TCP.findAvailablePorts(numRequested, minPort, maxPort);</span>
+	}
+
+	/**
+	 * Find an available UDP port randomly selected from the range
+	 * [{@value #PORT_RANGE_MIN}, {@value #PORT_RANGE_MAX}].
+	 * 
+	 * @return an available UDP port number
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public static int findAvailableUdpPort() {
+<span class="nc" id="L121">		return findAvailableUdpPort(PORT_RANGE_MIN);</span>
+	}
+
+	/**
+	 * Find an available UDP port randomly selected from the range
+	 * [{@code minPort}, {@value #PORT_RANGE_MAX}].
+	 * 
+	 * @param minPort
+	 *            the minimum port number
+	 * @return an available UDP port number
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public static int findAvailableUdpPort(int minPort) {
+<span class="nc" id="L135">		return findAvailableUdpPort(minPort, PORT_RANGE_MAX);</span>
+	}
+
+	/**
+	 * Find an available UDP port randomly selected from the range
+	 * [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return an available UDP port number
+	 * @throws IllegalStateException
+	 *             if no available port could be found
+	 */
+	public static int findAvailableUdpPort(int minPort, int maxPort) {
+<span class="nc" id="L151">		return SocketType.UDP.findAvailablePort(minPort, maxPort);</span>
+	}
+
+	/**
+	 * Find the requested number of available UDP ports, each randomly selected
+	 * from the range [{@value #PORT_RANGE_MIN}, {@value #PORT_RANGE_MAX}].
+	 * 
+	 * @param numRequested
+	 *            the number of available ports to find
+	 * @return a sorted set of available UDP port numbers
+	 * @throws IllegalStateException
+	 *             if the requested number of available ports could not be found
+	 */
+	public static SortedSet&lt;Integer&gt; findAvailableUdpPorts(int numRequested) {
+<span class="nc" id="L165">		return findAvailableUdpPorts(numRequested, PORT_RANGE_MIN, PORT_RANGE_MAX);</span>
+	}
+
+	/**
+	 * Find the requested number of available UDP ports, each randomly selected
+	 * from the range [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param numRequested
+	 *            the number of available ports to find
+	 * @param minPort
+	 *            the minimum port number
+	 * @param maxPort
+	 *            the maximum port number
+	 * @return a sorted set of available UDP port numbers
+	 * @throws IllegalStateException
+	 *             if the requested number of available ports could not be found
+	 */
+	public static SortedSet&lt;Integer&gt; findAvailableUdpPorts(int numRequested, int minPort, int maxPort) {
+<span class="nc" id="L183">		return SocketType.UDP.findAvailablePorts(numRequested, minPort, maxPort);</span>
+	}
+
+<span class="fc" id="L186">	@SuppressWarnings(&quot;squid:IndentationCheck&quot;)</span>
+	private enum SocketType implements PortFinder {
+
+<span class="fc" id="L189">		TCP {</span>
+			@Override
+			protected boolean isPortAvailable(int port) {
+				try {
+<span class="fc" id="L193">					ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(port, 1, InetAddress.getByName(&quot;localhost&quot;));</span>
+<span class="fc" id="L194">					serverSocket.close();</span>
+<span class="fc" id="L195">					return true;</span>
+<span class="nc" id="L196">				} catch (Exception ex) {</span>
+<span class="nc" id="L197">					return false;</span>
+				}
+			}
+		},
+
+<span class="fc" id="L202">		UDP {</span>
+			@Override
+			protected boolean isPortAvailable(int port) {
+				try {
+<span class="nc" id="L206">					DatagramSocket socket = new DatagramSocket(port, InetAddress.getByName(&quot;localhost&quot;));</span>
+<span class="nc" id="L207">					socket.close();</span>
+<span class="nc" id="L208">					return true;</span>
+<span class="nc" id="L209">				} catch (Exception ex) {</span>
+<span class="nc" id="L210">					return false;</span>
+				}
+			}
+		};
+		
+		private PortFinder delegate;
+		
+<span class="fc" id="L217">		SocketType() {</span>
+<span class="fc" id="L218">			this.delegate = new DefaultPortFinder(name(), this::isPortAvailable);</span>
+<span class="fc" id="L219">		}</span>
+
+		protected abstract boolean isPortAvailable(int port);
+		
+		/**
+		 * Find an available port for this {@code SocketType}, randomly selected
+		 * from the range [{@code minPort}, {@code maxPort}].
+		 * 
+		 * @param minPort
+		 *            the minimum port number
+		 * @param maxPort
+		 *            the maximum port number
+		 * @return an available port number for this socket type
+		 * @throws IllegalStateException
+		 *             if no available port could be found
+		 */
+		@Override
+		public int findAvailablePort(int minPort, int maxPort) {
+<span class="fc" id="L237">			return delegate.findAvailablePort(minPort, maxPort);</span>
+		}
+		
+		/**
+		 * Find the requested number of available ports for this
+		 * {@code SocketType}, each randomly selected from the range
+		 * [{@code minPort}, {@code maxPort}].
+		 * 
+		 * @param numRequested
+		 *            the number of available ports to find
+		 * @param minPort
+		 *            the minimum port number
+		 * @param maxPort
+		 *            the maximum port number
+		 * @return a sorted set of available port numbers for this socket type
+		 * @throws IllegalStateException
+		 *             if the requested number of available ports could not be
+		 *             found
+		 */
+		@Override
+		public SortedSet&lt;Integer&gt; findAvailablePorts(int numRequested, int minPort, int maxPort) {
+<span class="nc" id="L258">			return delegate.findAvailablePorts(numRequested, minPort, maxPort);</span>
+		}
+	}
+
+	private RandomPortUtils() {
+		super();
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

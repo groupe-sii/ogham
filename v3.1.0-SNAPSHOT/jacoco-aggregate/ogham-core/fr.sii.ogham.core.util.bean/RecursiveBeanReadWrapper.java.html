@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RecursiveBeanReadWrapper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">RecursiveBeanReadWrapper.java</span></div><h1>RecursiveBeanReadWrapper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
+
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.isInvalid;
+
+import java.util.List;
+
+/**
+ * A wrapper that wraps original bean and all nested property values (only
+ * objects, not primitives).
+ * 
+ * The aim is to abstract access to the bean and also to nested properties that
+ * are beans.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RecursiveBeanReadWrapper implements BeanReadWrapper {
+	private final BeanReadWrapper delegate;
+	private final BeanReadWrapperFactory recursiveFactory;
+
+	public RecursiveBeanReadWrapper(Object bean) {
+<span class="fc" id="L22">		this(new SimpleBeanReadWrapper(bean));</span>
+<span class="fc" id="L23">	}</span>
+
+	public RecursiveBeanReadWrapper(BeanReadWrapper delegate) {
+<span class="fc" id="L26">		this(delegate, new DefaultRecursiveBeanReadWrapperFactory());</span>
+<span class="fc" id="L27">	}</span>
+
+	public RecursiveBeanReadWrapper(Object bean, BeanReadWrapperFactory recursiveFactory) {
+<span class="fc" id="L30">		this(new SimpleBeanReadWrapper(bean), recursiveFactory);</span>
+<span class="fc" id="L31">	}</span>
+	
+	public RecursiveBeanReadWrapper(BeanReadWrapper delegate, BeanReadWrapperFactory recursiveFactory) {
+<span class="fc" id="L34">		super();</span>
+<span class="fc" id="L35">		this.delegate = delegate;</span>
+<span class="fc" id="L36">		this.recursiveFactory = recursiveFactory;</span>
+<span class="fc" id="L37">	}</span>
+
+	@Override
+	public Object getPropertyValue(String name) {
+<span class="fc" id="L41">		Object value = delegate.getPropertyValue(name);</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		if (value == null) {</span>
+<span class="nc" id="L43">			return null;</span>
+		}
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if (isInvalid(value)) {</span>
+<span class="fc" id="L46">			return value;</span>
+		}
+<span class="fc" id="L48">		return recursiveFactory.create(value);</span>
+	}
+
+	@Override
+	public List&lt;String&gt; getProperties() {
+<span class="nc" id="L53">		return delegate.getProperties();</span>
+	}
+
+	@Override
+	public Object getWrappedBean() {
+<span class="nc" id="L58">		return delegate.getWrappedBean();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

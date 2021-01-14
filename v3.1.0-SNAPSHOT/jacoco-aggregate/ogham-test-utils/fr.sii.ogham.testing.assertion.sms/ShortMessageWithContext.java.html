@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ShortMessageWithContext.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">ShortMessageWithContext.java</span></div><h1>ShortMessageWithContext.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import fr.sii.ogham.testing.assertion.context.Context;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+
+/**
+ * Context dedicated to the {@code short_message} field of a {@link SubmitSm}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;S&gt;
+ *            the type of the {@link SubmitSm}
+ */
+public class ShortMessageWithContext&lt;S extends SubmitSm&gt; implements Context {
+	private final S request;
+	private final Context parent;
+
+	/**
+	 * @param request
+	 *            the sent request
+	 * @param parent
+	 *            the parent context
+	 */
+	public ShortMessageWithContext(S request, Context parent) {
+<span class="fc" id="L25">		super();</span>
+<span class="fc" id="L26">		this.request = request;</span>
+<span class="fc" id="L27">		this.parent = parent;</span>
+<span class="fc" id="L28">	}</span>
+
+	@Override
+	public String evaluate(String template) {
+<span class="fc" id="L32">		return parent.evaluate(template);</span>
+	}
+
+	/**
+	 * @return the received request
+	 */
+	public S getRequest() {
+<span class="fc" id="L39">		return request;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

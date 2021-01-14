@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RequiredPropertyAnnotationProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.provider</a> &gt; <span class="el_source">RequiredPropertyAnnotationProvider.java</span></div><h1>RequiredPropertyAnnotationProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.provider;
+
+import static fr.sii.ogham.core.condition.fluent.Conditions.alwaysTrue;
+import static fr.sii.ogham.core.condition.fluent.Conditions.not;
+import static fr.sii.ogham.core.condition.fluent.Conditions.requiredProperty;
+import static fr.sii.ogham.core.condition.fluent.Conditions.requiredPropertyValue;
+
+import java.util.regex.Pattern;
+
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.fluent.Conditions;
+import fr.sii.ogham.core.condition.fluent.FluentCondition;
+import fr.sii.ogham.core.env.PropertyResolver;
+
+/**
+ * Provider that handle {@link RequiredProperty} annotation to provide a
+ * condition.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;T&gt;
+ *            the kind of the object under conditions
+ */
+public class RequiredPropertyAnnotationProvider&lt;T&gt; implements ConditionProvider&lt;RequiredProperty, T&gt; {
+	private final PropertyResolver propertyResolver;
+
+	public RequiredPropertyAnnotationProvider(PropertyResolver propertyResolver) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.propertyResolver = propertyResolver;</span>
+<span class="fc" id="L31">	}</span>
+
+	@Override
+	public Condition&lt;T&gt; provide(RequiredProperty annotation) {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		if (annotation == null) {</span>
+<span class="fc" id="L36">			return alwaysTrue();</span>
+		} else {
+<span class="fc" id="L38">			FluentCondition&lt;T&gt; mainCondition = exists(annotation);</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">			if (!annotation.is().isEmpty()) {</span>
+<span class="fc" id="L40">				mainCondition = mainCondition.and(matchesValue(annotation));</span>
+			}
+<span class="fc bfc" id="L42" title="All 2 branches covered.">			if (!annotation.pattern().isEmpty()) {</span>
+<span class="fc" id="L43">				mainCondition = mainCondition.and(matchesPattern(annotation));</span>
+			}
+<span class="fc bfc" id="L45" title="All 2 branches covered.">			for (String excludeValue : annotation.excludes()) {</span>
+<span class="fc" id="L46">				mainCondition = mainCondition.and(not(matchesExcludes(annotation, excludeValue)));</span>
+			}
+<span class="fc" id="L48">			return mainCondition;</span>
+		}
+	}
+
+	private FluentCondition&lt;T&gt; exists(RequiredProperty annotation) {
+<span class="fc" id="L53">		FluentCondition&lt;T&gt; condition = requiredProperty(propertyResolver, annotation.value());</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		for (String alternative : annotation.alternatives()) {</span>
+<span class="fc" id="L55">			condition = condition.or(Conditions.&lt;T&gt; requiredProperty(propertyResolver, alternative));</span>
+		}
+<span class="fc" id="L57">		return condition;</span>
+	}
+
+	private FluentCondition&lt;T&gt; matchesValue(RequiredProperty annotation) {
+<span class="fc" id="L61">		FluentCondition&lt;T&gt; condition = requiredPropertyValue(propertyResolver, annotation.value(), annotation.is());</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">		for (String alternative : annotation.alternatives()) {</span>
+<span class="fc" id="L63">			condition = condition.or(Conditions.&lt;T&gt; requiredPropertyValue(propertyResolver, alternative, annotation.is()));</span>
+		}
+<span class="fc" id="L65">		return condition;</span>
+	}
+
+	private FluentCondition&lt;T&gt; matchesPattern(RequiredProperty annotation) {
+<span class="fc" id="L69">		Pattern pattern = Pattern.compile(annotation.pattern(), annotation.flags());</span>
+<span class="fc" id="L70">		FluentCondition&lt;T&gt; condition = requiredPropertyValue(propertyResolver, annotation.value(), pattern);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		for (String alternative : annotation.alternatives()) {</span>
+<span class="fc" id="L72">			condition = condition.or(Conditions.&lt;T&gt; requiredPropertyValue(propertyResolver, alternative, pattern));</span>
+		}
+<span class="fc" id="L74">		return condition;</span>
+	}
+
+	private FluentCondition&lt;T&gt; matchesExcludes(RequiredProperty annotation, String excludeValue) {
+<span class="fc" id="L78">		FluentCondition&lt;T&gt; condition = requiredPropertyValue(propertyResolver, annotation.value(), excludeValue);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		for (String alternative : annotation.alternatives()) {</span>
+<span class="fc" id="L80">			condition = condition.or(Conditions.&lt;T&gt; requiredPropertyValue(propertyResolver, alternative, excludeValue));</span>
+		}
+<span class="fc" id="L82">		return condition;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

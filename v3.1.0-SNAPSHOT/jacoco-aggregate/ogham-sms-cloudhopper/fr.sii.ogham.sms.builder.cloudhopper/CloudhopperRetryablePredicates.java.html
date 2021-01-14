@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperRetryablePredicates.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">CloudhopperRetryablePredicates.java</span></div><h1>CloudhopperRetryablePredicates.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import static com.cloudhopper.smpp.SmppConstants.STATUS_ALYBND;
+import static com.cloudhopper.smpp.SmppConstants.STATUS_INVPASWD;
+import static com.cloudhopper.smpp.SmppConstants.STATUS_INVSERTYP;
+import static com.cloudhopper.smpp.SmppConstants.STATUS_INVSYSID;
+import static fr.sii.ogham.core.util.ExceptionUtils.fatalJvmError;
+import static fr.sii.ogham.core.util.ExceptionUtils.hasAnyCause;
+import static java.util.Arrays.asList;
+
+import java.util.function.Predicate;
+
+import com.cloudhopper.commons.gsm.DataCoding;
+import com.cloudhopper.smpp.type.SmppBindException;
+
+import fr.sii.ogham.sms.exception.message.EncodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.DataCodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.MessagePreparationException;
+
+/**
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class CloudhopperRetryablePredicates {
+
+	private CloudhopperRetryablePredicates() {
+		super();
+	}
+
+	/**
+	 * Default predicate used to indicate if the error raised by Cloudhopper is
+	 * fatal or not. It returns {@code true} if the error is not fatal (means
+	 * that a new retry can be attempted). It returns {@code false} if the error
+	 * is fatal and no retry must be attempted.
+	 * 
+	 * &lt;p&gt;
+	 * Here is the list of cases where there should have no retries:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;There is a fatal JVM {@link Error} (like {@link OutOfMemoryError} for
+	 * example).&lt;/li&gt;
+	 * &lt;li&gt;A bind request has been sent to the SMSC and it has responded with an
+	 * error indicating that the credentials are invalid&lt;/li&gt;
+	 * &lt;li&gt;A bind request has been sent to the SMSC and it has responded with an
+	 * error indicating that the {@code system_type} is invalid&lt;/li&gt;
+	 * &lt;li&gt;A bind request has been sent to the SMSC and it has responded with an
+	 * error indicating that client is already bound&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if a connect may be retried
+	 */
+	@SuppressWarnings(&quot;squid:S1126&quot;)
+	public static boolean canRetryConnecting(Throwable error) {
+<span class="pc bpc" id="L57" title="3 of 8 branches missed.">		if (fatalJvmError(error) || invalidCredentials(error) || invalidSystemType(error) || alreadyBound(error)) {</span>
+<span class="fc" id="L58">			return false;</span>
+		}
+<span class="fc" id="L60">		return true;</span>
+	}
+
+	/**
+	 * Checks whether the error has been raised because the SMSC has sent a
+	 * response to a bind request indicating that the credentials are invalid
+	 * (wrong {@code system_id} or {@code password}).
+	 * 
+	 * &lt;p&gt;
+	 * If the credentials are invalid, there is no point in retrying to connect.
+	 * 
+	 * @param error
+	 *            the raised error
+	 * @return true if the error is issued due to a bind failure (wrong
+	 *         credentials)
+	 */
+	public static boolean invalidCredentials(Throwable error) {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		if (error instanceof SmppBindException) {</span>
+<span class="fc" id="L78">			return isCommandStatus((SmppBindException) error, STATUS_INVPASWD, STATUS_INVSYSID);</span>
+		}
+<span class="fc" id="L80">		return false;</span>
+	}
+
+	/**
+	 * Checks whether the error has been raised because the SMSC has sent a
+	 * response to a bind request indicating that the {@code system_type} field
+	 * is invalid.
+	 * 
+	 * &lt;p&gt;
+	 * If the {@code system_type} field is invalid, there is no point in
+	 * retrying to connect.
+	 * 
+	 * @param error
+	 *            the raised error
+	 * @return true if the error is issued due to a bind failure (wrong
+	 *         {@code system_type})
+	 */
+	public static boolean invalidSystemType(Throwable error) {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">		if (error instanceof SmppBindException) {</span>
+<span class="nc" id="L99">			return isCommandStatus((SmppBindException) error, STATUS_INVSERTYP);</span>
+		}
+<span class="fc" id="L101">		return false;</span>
+	}
+
+	/**
+	 * Checks whether the error has been raised because the SMSC has sent a
+	 * response to a bind request indicating that the client is already bound.
+	 * 
+	 * &lt;p&gt;
+	 * If the client is already bound, there is no point in retrying to connect.
+	 * 
+	 * @param error
+	 *            the raised error
+	 * @return true if the error is issued due to a bind failure (already bound)
+	 */
+	public static boolean alreadyBound(Throwable error) {
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">		if (error instanceof SmppBindException) {</span>
+<span class="nc" id="L117">			return isCommandStatus((SmppBindException) error, STATUS_ALYBND);</span>
+		}
+<span class="fc" id="L119">		return false;</span>
+	}
+
+	/**
+	 * Default predicate used to indicate if the error raised by Cloudhopper is
+	 * fatal or not. It returns {@code true} if the error is not fatal (means
+	 * that a new retry can be attempted). It returns {@code false} if the error
+	 * is fatal and no retry must be attempted.
+	 * 
+	 * &lt;p&gt;
+	 * Here is the list of cases where there should have no retries:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;There is a fatal JVM {@link Error} (like {@link OutOfMemoryError} for
+	 * example).&lt;/li&gt;
+	 * &lt;li&gt;A bind request has been sent to the SMSC and it has responded with an
+	 * error indicating that the credentials are invalid&lt;/li&gt;
+	 * &lt;li&gt;A bind request has been sent to the SMSC and it has responded with an
+	 * error indicating that the {@code system_type} is invalid&lt;/li&gt;
+	 * &lt;li&gt;A bind request has been sent to the SMSC and it has responded with an
+	 * error indicating that client is already bound&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the predicate
+	 */
+	public static Predicate&lt;Throwable&gt; canRetryConnecting() {
+<span class="fc" id="L144">		return CloudhopperRetryablePredicates::canRetryConnecting;</span>
+	}
+
+	/**
+	 * Predicate that skip retry if one of theses condition is met:
+	 * 
+	 * If the error is due to a preparation error (not sending). In this case,
+	 * retrying will result in the same behavior so it will fail again:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Data coding couldn't be determined&lt;/li&gt;
+	 * &lt;li&gt;Encoding couldn't be determined&lt;/li&gt;
+	 * &lt;li&gt;Message preparation has failed&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In other situations, the message may be sent again.
+	 * 
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if a connect may be retried
+	 */
+	@SuppressWarnings(&quot;squid:S1126&quot;)
+	public static boolean canResendMessage(Throwable error) {
+<span class="pc bpc" id="L168" title="2 of 6 branches missed.">		if (isDataCodingError(error) || isEncodingError(error) || messagePreparationFailed(error)) {</span>
+<span class="fc" id="L169">			return false;</span>
+		}
+		// @formatter:off
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">		if (hasAnyCause(error, CloudhopperRetryablePredicates::isDataCodingError)</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">				|| hasAnyCause(error, CloudhopperRetryablePredicates::isEncodingError)</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">				|| hasAnyCause(error, CloudhopperRetryablePredicates::messagePreparationFailed)) {</span>
+<span class="fc" id="L175">			return false;</span>
+		}
+		// @formatter:on
+<span class="fc" id="L178">		return true;</span>
+	}
+
+	/**
+	 * Indicates if the error is due to a {@link DataCoding} detection error.
+	 * 
+	 * &lt;p&gt;
+	 * In this case, retrying will lead to the same error.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if it is a data coding error
+	 */
+	public static boolean isDataCodingError(Throwable error) {
+<span class="fc" id="L192">		return error instanceof DataCodingException;</span>
+	}
+
+	/**
+	 * Indicates if the error is due to an encoding detection error.
+	 * 
+	 * &lt;p&gt;
+	 * In this case, retrying will lead to the same error.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if it is an encoding error
+	 */
+	public static boolean isEncodingError(Throwable error) {
+<span class="fc" id="L206">		return error instanceof EncodingException;</span>
+	}
+
+	/**
+	 * Indicates if the error is due to an error during preparation of the
+	 * message.
+	 * 
+	 * &lt;p&gt;
+	 * In this case, retrying will lead to the same error.
+	 * 
+	 * @param error
+	 *            the error to analyze
+	 * @return true if it is a preparation error
+	 */
+	public static boolean messagePreparationFailed(Throwable error) {
+<span class="fc" id="L221">		return error instanceof MessagePreparationException;</span>
+	}
+
+	/**
+	 * Predicate that skip retry if one of theses condition is met:
+	 * 
+	 * If the error is due to a preparation error (not sending). In this case,
+	 * retrying will result in the same behavior so it will fail again:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Data coding couldn't be determined&lt;/li&gt;
+	 * &lt;li&gt;Encoding couldn't be determined&lt;/li&gt;
+	 * &lt;li&gt;Message preparation has failed&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In other situations, the message may be sent again.
+	 * 
+	 * 
+	 * @return the predicate that indicates if the message can be sent again
+	 */
+	public static Predicate&lt;Throwable&gt; canResendMessage() {
+<span class="fc" id="L242">		return CloudhopperRetryablePredicates::canResendMessage;</span>
+	}
+
+	private static boolean isCommandStatus(SmppBindException e, Integer... statuses) {
+<span class="fc" id="L246">		return asList(statuses).contains(e.getBindResponse().getCommandStatus());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

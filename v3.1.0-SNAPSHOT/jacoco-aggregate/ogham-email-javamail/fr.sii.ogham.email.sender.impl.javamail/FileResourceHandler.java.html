@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FileResourceHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl.javamail</a> &gt; <span class="el_source">FileResourceHandler.java</span></div><h1>FileResourceHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl.javamail;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.activation.DataHandler;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.util.ByteArrayDataSource;
+
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.FileResource;
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+
+/**
+ * Specific implementation for files so that mimetype detection may also use the
+ * file name to guess the mimetype.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
+	private static final String ERROR_MESSAGE_PREFIX = &quot;Failed to attach '&quot;;
+
+	/**
+	 * The Mime Type detector
+	 */
+	private MimeTypeProvider mimetypeProvider;
+
+	public FileResourceHandler(MimeTypeProvider mimetypeProvider) {
+<span class="fc" id="L35">		super();</span>
+<span class="fc" id="L36">		this.mimetypeProvider = mimetypeProvider;</span>
+<span class="fc" id="L37">	}</span>
+
+	@Override
+	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
+<span class="fc" id="L41">		FileResource fileResource = (FileResource) resource;</span>
+<span class="fc" id="L42">		try (FileInputStream fis = new FileInputStream(fileResource.getFile())) {</span>
+<span class="fc" id="L43">			part.setDataHandler(new DataHandler(new ByteArrayDataSource(fis, getMimetype(attachment, fileResource))));</span>
+<span class="nc" id="L44">		} catch (MimeTypeDetectionException e) {</span>
+<span class="nc" id="L45">			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + &quot;'. Mime type can't be detected&quot;, attachment, e);</span>
+<span class="fc" id="L46">		} catch (FileNotFoundException e) {</span>
+<span class="fc" id="L47">			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + &quot;'. File doesn't exists&quot;, attachment, e);</span>
+<span class="nc" id="L48">		} catch (MessagingException e) {</span>
+<span class="nc" id="L49">			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + &quot;'&quot;, attachment, e);</span>
+<span class="nc" id="L50">		} catch (IOException e) {</span>
+<span class="nc" id="L51">			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + &quot;'. File can't be read&quot;, attachment, e);</span>
+<span class="fc" id="L52">		}</span>
+<span class="fc" id="L53">	}</span>
+
+	private String getMimetype(Attachment attachment, FileResource fileResource) throws MimeTypeDetectionException {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		if (attachment.getContentType() != null) {</span>
+<span class="fc" id="L57">			return attachment.getContentType();</span>
+		}
+<span class="fc" id="L59">		return mimetypeProvider.getMimeType(fileResource.getFile()).toString();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

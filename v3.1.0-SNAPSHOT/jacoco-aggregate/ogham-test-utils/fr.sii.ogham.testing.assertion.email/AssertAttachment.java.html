@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertAttachment.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">AssertAttachment.java</span></div><h1>AssertAttachment.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAttachment;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getContent;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+
+import org.junit.Assert;
+import org.junit.internal.ArrayComparisonFailure;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.assertion.util.Executable;
+import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+
+/**
+ * Utility class for checking the attachment of the received email is as
+ * expected.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class AssertAttachment {
+	/**
+	 * Shortcut for use with GreenMail. See
+	 * {@link #assertEquals(ExpectedAttachment, Message)}.
+	 * 
+	 * @param expected
+	 *            the expected attachment values
+	 * @param actual
+	 *            the received email that must contain the attachment (the array
+	 *            must have only one email)
+	 * @throws Exception
+	 *             when access to message has failed
+	 */
+	public static void assertEquals(ExpectedAttachment expected, Message[] actual) throws Exception {
+<span class="fc" id="L39">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L40">		registry.register(() -&gt; Assert.assertEquals(&quot;should have only one message&quot;, 1, actual.length));</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		assertEquals(expected, actual.length == 1 ? actual[0] : null, registry);</span>
+<span class="nc" id="L42">		registry.execute();</span>
+<span class="nc" id="L43">	}</span>
+
+	/**
+	 * Checks if the received email contains the expected attachment. It also
+	 * ensures that the values of the attachment are respected by checking:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The mimetype of the attachment&lt;/li&gt;
+	 * &lt;li&gt;The description of the attachment&lt;/li&gt;
+	 * &lt;li&gt;The disposition of the attachment&lt;/li&gt;
+	 * &lt;li&gt;The content of the attachment&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param expected
+	 *            the expected attachment values
+	 * @param actual
+	 *            the received email that must contain the attachment
+	 * @throws Exception
+	 *             when access to message has failed
+	 */
+	public static void assertEquals(ExpectedAttachment expected, Message actual) throws Exception {
+<span class="fc" id="L63">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L64">		assertEquals(expected, actual, registry);</span>
+<span class="fc" id="L65">		registry.execute();</span>
+<span class="fc" id="L66">	}</span>
+
+	/**
+	 * It ensures that the values of the received attachment are respected by
+	 * checking:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The mimetype of the attachment&lt;/li&gt;
+	 * &lt;li&gt;The description of the attachment&lt;/li&gt;
+	 * &lt;li&gt;The disposition of the attachment&lt;/li&gt;
+	 * &lt;li&gt;The content of the attachment&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param expected
+	 *            the expected attachment values
+	 * @param attachment
+	 *            the received attachment
+	 * @throws ArrayComparisonFailure
+	 *             when there are unexpected differences
+	 * @throws Exception
+	 *             when access to part has failed
+	 */
+	public static void assertEquals(ExpectedAttachment expected, BodyPart attachment) throws Exception {
+<span class="fc" id="L88">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L89">		assertEquals(expected, attachment, registry);</span>
+<span class="fc" id="L90">		registry.execute();</span>
+<span class="fc" id="L91">	}</span>
+
+	private static void assertEquals(ExpectedAttachment expected, Message actual, AssertionRegistry registry) throws Exception {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		Object content = actual == null ? null : actual.getContent();</span>
+<span class="fc" id="L95">		registry.register(() -&gt; Assert.assertTrue(&quot;should be multipart message&quot;, content instanceof Multipart));</span>
+<span class="fc" id="L96">		BodyPart part = getAttachmentOrNull((Multipart) content, expected.getName(), registry);</span>
+<span class="fc" id="L97">		assertEquals(expected, part, registry);</span>
+<span class="fc" id="L98">	}</span>
+
+	private static void assertEquals(ExpectedAttachment expected, BodyPart attachment, AssertionRegistry registry) throws Exception {
+		// @formatter:off
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		String prefix = &quot;attachment named '&quot; + expected.getName() + &quot;'&quot; + (attachment==null ? &quot; (/!\\ not found)&quot; : &quot;&quot;);</span>
+<span class="pc bpc" id="L103" title="1 of 4 branches missed.">		String contentType = attachment == null || attachment.getContentType()==null ? null : attachment.getContentType();</span>
+<span class="fc bfc" id="L104" title="All 4 branches covered.">		registry.register(() -&gt; Assert.assertTrue(prefix + &quot; mimetype should match '&quot; + expected.getMimetype() + &quot;' but was &quot; + (contentType==null ? &quot;null&quot; : &quot;'&quot; + contentType + &quot;'&quot;),</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">				contentType!=null &amp;&amp; expected.getMimetype().matcher(contentType).matches()));</span>
+<span class="fc" id="L106">		registry.register(() -&gt; Assert.assertEquals(prefix + &quot; description should be '&quot; + expected.getDescription() + &quot;'&quot;, </span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">				expected.getDescription(),</span>
+<span class="fc" id="L108">				attachment == null ? null : attachment.getDescription()));</span>
+<span class="fc" id="L109">		registry.register(() -&gt; Assert.assertEquals(prefix + &quot; disposition should be '&quot; + expected.getDisposition() + &quot;'&quot;, </span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">				expected.getDisposition(),</span>
+<span class="fc" id="L111">				attachment == null ? null : attachment.getDisposition()));</span>
+<span class="fc" id="L112">		registry.register(() -&gt; Assert.assertArrayEquals(prefix + &quot; has invalid content&quot;, </span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">				expected.getContent(), </span>
+<span class="fc" id="L114">				attachment == null ? null : getContent(attachment)));</span>
+		// @formatter:on
+<span class="fc" id="L116">	}</span>
+
+	@SuppressWarnings(&quot;squid:S2147&quot;) // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
+	private static BodyPart getAttachmentOrNull(Multipart multipart, final String filename, AssertionRegistry registry) throws MessagingException {
+		try {
+<span class="fc" id="L124">			return getAttachment(multipart, filename);</span>
+<span class="fc" id="L125">		} catch (MessagingException e) {</span>
+<span class="fc" id="L126">			registry.register(failure(e));</span>
+<span class="fc" id="L127">			return null;</span>
+<span class="fc" id="L128">		} catch (IllegalStateException e) {</span>
+<span class="fc" id="L129">			registry.register(failure(e));</span>
+<span class="fc" id="L130">			return null;</span>
+		}
+	}
+
+	private static &lt;E extends Exception&gt; Executable&lt;E&gt; failure(E exception) {
+<span class="fc" id="L135">		return () -&gt; {</span>
+<span class="fc" id="L136">			throw exception;</span>
+		};
+	}
+
+	private AssertAttachment() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

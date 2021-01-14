@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>SimpleBeanReadWrapper.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package fr.sii.ogham.core.util.bean;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.getClassName;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.getReadMethods;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.isInvalid;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.lang.reflect.Method;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.ArrayList;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.Collection;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.HashMap;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.Iterator;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.List;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.Map;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.Map.Entry;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.exception.util.InvalidPropertyException;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * Simple implementation that wraps a bean in order to access the properties of</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * the bean.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * This implementation delegates the access to the properties to</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * {@link Accessor}s.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @author Aur&#233;lien Baudet</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class SimpleBeanReadWrapper implements BeanReadWrapper {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_29'/>
+29
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_29'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final Object bean;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final Map&#60;String, Accessor&#60;Object&#62;&#62; accessors;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final boolean failOnMissingProperty;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * Builds the map of accessors for each bean property.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_36'/>
+36
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_36'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * If a property doesn&#39;t exist, an {@link InvalidPropertyException} is</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_37'/>
+37
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_37'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * thrown.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_38'/>
+38
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_38'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_39'/>
+39
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_39'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param bean</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            the bean that may have properties to access later</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_41'/>
+41
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_41'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_42'/>
+42
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_42'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public SimpleBeanReadWrapper(Object bean) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_43'/>
+43
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_43'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this(bean, true);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_44'/>
+44
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_44'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_45'/>
+45
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_45'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_46'/>
+46
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_46'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_47'/>
+47
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_47'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * Builds the map of accessors for each bean property.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_48'/>
+48
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_48'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_49'/>
+49
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_49'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param bean</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_50'/>
+50
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_50'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            the bean that may have properties to access later</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_51'/>
+51
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_51'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; * @param failOnMissingProperty</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_52'/>
+52
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_52'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            if false null is returned if the property doesn&#39;t exist, if</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_53'/>
+53
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_53'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            true an {@link InvalidPropertyException} is thrown if the</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_54'/>
+54
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_54'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; *            property doesn&#39;t exist</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_55'/>
+55
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_55'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9; */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_56'/>
+56
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_56'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public SimpleBeanReadWrapper(Object bean, boolean failOnMissingProperty) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_57'/>
+57
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_57'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;super();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_58'/>
+58
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_58'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.bean = bean;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_59'/>
+59
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_59'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.accessors = new HashMap&#60;&#62;();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_60'/>
+60
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_60'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.failOnMissingProperty = failOnMissingProperty;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_61'/>
+61
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_61'>8</a>
+<span>
+1. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; NO_COVERAGE<br/>
+2. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; TIMED_OUT<br/>
+3. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED<br/>
+4. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED<br/>
+5. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED<br/>
+6. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED<br/>
+7. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED<br/>
+8. &#60;init&#62; : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;initialize(bean);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_62'/>
+62
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_62'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_63'/>
+63
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_63'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_64'/>
+64
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_64'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_65'/>
+65
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_65'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public Object getPropertyValue(String name) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_66'/>
+66
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_66'>8</a>
+<span>
+1. getPropertyValue : negated conditional &rarr; NO_COVERAGE<br/>
+2. getPropertyValue : negated conditional &rarr; TIMED_OUT<br/>
+3. getPropertyValue : negated conditional &rarr; KILLED<br/>
+4. getPropertyValue : negated conditional &rarr; KILLED<br/>
+5. getPropertyValue : negated conditional &rarr; KILLED<br/>
+6. getPropertyValue : negated conditional &rarr; KILLED<br/>
+7. getPropertyValue : negated conditional &rarr; KILLED<br/>
+8. getPropertyValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (getWrappedBean() == null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_67'/>
+67
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_67'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;return null;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_68'/>
+68
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_68'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_69'/>
+69
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_69'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_70'/>
+70
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_70'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;Accessor&#60;Object&#62; accessor = accessors.get(name);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_71'/>
+71
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_71'>14</a>
+<span>
+1. getPropertyValue : negated conditional &rarr; SURVIVED<br/>
+2. getPropertyValue : negated conditional &rarr; SURVIVED<br/>
+3. getPropertyValue : negated conditional &rarr; SURVIVED<br/>
+4. getPropertyValue : negated conditional &rarr; NO_COVERAGE<br/>
+5. getPropertyValue : negated conditional &rarr; NO_COVERAGE<br/>
+6. getPropertyValue : negated conditional &rarr; TIMED_OUT<br/>
+7. getPropertyValue : negated conditional &rarr; TIMED_OUT<br/>
+8. getPropertyValue : negated conditional &rarr; KILLED<br/>
+9. getPropertyValue : negated conditional &rarr; KILLED<br/>
+10. getPropertyValue : negated conditional &rarr; KILLED<br/>
+11. getPropertyValue : negated conditional &rarr; KILLED<br/>
+12. getPropertyValue : negated conditional &rarr; KILLED<br/>
+13. getPropertyValue : negated conditional &rarr; KILLED<br/>
+14. getPropertyValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (failOnMissingProperty &#38;&#38; accessor == null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_72'/>
+72
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_72'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;throw new InvalidPropertyException(&#34;No accessor for property &#39;&#34; + name + &#34;&#39; on bean &#39;&#34; + getClassName(bean) + &#34;&#39;&#34;, bean, name);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_73'/>
+73
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_73'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_74'/>
+74
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_74'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_75'/>
+75
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_75'>16</a>
+<span>
+1. getPropertyValue : negated conditional &rarr; NO_COVERAGE<br/>
+2. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; NO_COVERAGE<br/>
+3. getPropertyValue : negated conditional &rarr; TIMED_OUT<br/>
+4. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; TIMED_OUT<br/>
+5. getPropertyValue : negated conditional &rarr; KILLED<br/>
+6. getPropertyValue : negated conditional &rarr; KILLED<br/>
+7. getPropertyValue : negated conditional &rarr; KILLED<br/>
+8. getPropertyValue : negated conditional &rarr; KILLED<br/>
+9. getPropertyValue : negated conditional &rarr; KILLED<br/>
+10. getPropertyValue : negated conditional &rarr; KILLED<br/>
+11. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED<br/>
+12. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED<br/>
+13. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED<br/>
+14. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED<br/>
+15. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED<br/>
+16. getPropertyValue : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return accessor == null ? null : accessor.getValue();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_76'/>
+76
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_76'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_77'/>
+77
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_77'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_78'/>
+78
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_78'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_79'/>
+79
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_79'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public List&#60;String&#62; getProperties() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_80'/>
+80
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_80'>8</a>
+<span>
+1. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; NO_COVERAGE<br/>
+2. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; TIMED_OUT<br/>
+3. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED<br/>
+4. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED<br/>
+5. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED<br/>
+6. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED<br/>
+7. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED<br/>
+8. getProperties : replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return new ArrayList&#60;&#62;(accessors.keySet());</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_81'/>
+81
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_81'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_82'/>
+82
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_82'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_83'/>
+83
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_83'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_84'/>
+84
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_84'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public Object getWrappedBean() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_85'/>
+85
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_85'>8</a>
+<span>
+1. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; NO_COVERAGE<br/>
+2. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; TIMED_OUT<br/>
+3. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED<br/>
+4. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED<br/>
+5. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED<br/>
+6. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED<br/>
+7. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED<br/>
+8. getWrappedBean : replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return bean;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_86'/>
+86
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_86'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_87'/>
+87
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_87'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_88'/>
+88
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_88'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@SuppressWarnings(&#34;unchecked&#34;)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_89'/>
+89
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_89'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private void initialize(Object bean) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_90'/>
+90
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_90'>8</a>
+<span>
+1. initialize : negated conditional &rarr; NO_COVERAGE<br/>
+2. initialize : negated conditional &rarr; TIMED_OUT<br/>
+3. initialize : negated conditional &rarr; KILLED<br/>
+4. initialize : negated conditional &rarr; KILLED<br/>
+5. initialize : negated conditional &rarr; KILLED<br/>
+6. initialize : negated conditional &rarr; KILLED<br/>
+7. initialize : negated conditional &rarr; KILLED<br/>
+8. initialize : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (bean == null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_91'/>
+91
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_91'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;return;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_92'/>
+92
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_92'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_93'/>
+93
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_93'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_94'/>
+94
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_94'>8</a>
+<span>
+1. initialize : negated conditional &rarr; NO_COVERAGE<br/>
+2. initialize : negated conditional &rarr; TIMED_OUT<br/>
+3. initialize : negated conditional &rarr; KILLED<br/>
+4. initialize : negated conditional &rarr; KILLED<br/>
+5. initialize : negated conditional &rarr; KILLED<br/>
+6. initialize : negated conditional &rarr; KILLED<br/>
+7. initialize : negated conditional &rarr; KILLED<br/>
+8. initialize : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (isInvalid(bean)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_95'/>
+95
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_95'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;throw new IllegalArgumentException(getClassName(bean) + &#34; values can&#39;t be used as bean&#34;);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_96'/>
+96
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_96'>8</a>
+<span>
+1. initialize : negated conditional &rarr; NO_COVERAGE<br/>
+2. initialize : negated conditional &rarr; TIMED_OUT<br/>
+3. initialize : negated conditional &rarr; KILLED<br/>
+4. initialize : negated conditional &rarr; KILLED<br/>
+5. initialize : negated conditional &rarr; KILLED<br/>
+6. initialize : negated conditional &rarr; KILLED<br/>
+7. initialize : negated conditional &rarr; KILLED<br/>
+8. initialize : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;} else if (bean instanceof Collection) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_97'/>
+97
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_97'>2</a>
+<span>
+1. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeCollection &rarr; NO_COVERAGE<br/>
+2. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeCollection &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;initializeCollection((Collection&#60;Object&#62;) bean, accessors);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_98'/>
+98
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_98'>8</a>
+<span>
+1. initialize : negated conditional &rarr; NO_COVERAGE<br/>
+2. initialize : negated conditional &rarr; TIMED_OUT<br/>
+3. initialize : negated conditional &rarr; KILLED<br/>
+4. initialize : negated conditional &rarr; KILLED<br/>
+5. initialize : negated conditional &rarr; KILLED<br/>
+6. initialize : negated conditional &rarr; KILLED<br/>
+7. initialize : negated conditional &rarr; KILLED<br/>
+8. initialize : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;} else if (bean instanceof Map) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_99'/>
+99
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_99'>2</a>
+<span>
+1. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeMap &rarr; NO_COVERAGE<br/>
+2. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeMap &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;initializeMap((Map&#60;Object, Object&#62;) bean, accessors);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_100'/>
+100
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_100'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;} else {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_101'/>
+101
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_101'>8</a>
+<span>
+1. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; NO_COVERAGE<br/>
+2. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; TIMED_OUT<br/>
+3. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED<br/>
+4. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED<br/>
+5. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED<br/>
+6. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED<br/>
+7. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED<br/>
+8. initialize : removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;initializeBean(bean, accessors);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_102'/>
+102
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_102'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_103'/>
+103
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_103'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_104'/>
+104
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_104'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_105'/>
+105
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_105'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private static void initializeCollection(Collection&#60;Object&#62; collection, Map&#60;String, Accessor&#60;Object&#62;&#62; accessors) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_106'/>
+106
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_106'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;int i = 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_107'/>
+107
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_107'>4</a>
+<span>
+1. initializeCollection : Changed increment from 1 to -1 &rarr; NO_COVERAGE<br/>
+2. initializeCollection : negated conditional &rarr; NO_COVERAGE<br/>
+3. initializeCollection : Changed increment from 1 to -1 &rarr; KILLED<br/>
+4. initializeCollection : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;for (Iterator&#60;Object&#62; it = collection.iterator(); it.hasNext(); i++) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_108'/>
+108
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_108'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;accessors.put(Integer.toString(i), new DirectAccessor&#60;&#62;(it.next()));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_109'/>
+109
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_109'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_110'/>
+110
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_110'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_111'/>
+111
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_111'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_112'/>
+112
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_112'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private static void initializeMap(Map&#60;Object, Object&#62; map, Map&#60;String, Accessor&#60;Object&#62;&#62; accessors) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_113'/>
+113
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_113'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;for (Entry&#60;Object, Object&#62; entry : map.entrySet()) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_114'/>
+114
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_114'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;accessors.put(entry.getKey().toString(), new DirectAccessor&#60;&#62;(entry.getValue()));</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_115'/>
+115
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_115'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_116'/>
+116
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_116'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_117'/>
+117
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_117'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_118'/>
+118
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_118'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private static void initializeBean(Object bean, Map&#60;String, Accessor&#60;Object&#62;&#62; accessors) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_119'/>
+119
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_119'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;Map&#60;String, Method&#62; readMethods = getReadMethods(bean);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_120'/>
+120
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_120'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;for(Entry&#60;String, Method&#62; entry : readMethods.entrySet()) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_121'/>
+121
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_121'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;String name = entry.getKey();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_122'/>
+122
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_122'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;Method readMethod = entry.getValue();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_123'/>
+123
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_123'>8</a>
+<span>
+1. initializeBean : negated conditional &rarr; NO_COVERAGE<br/>
+2. initializeBean : negated conditional &rarr; TIMED_OUT<br/>
+3. initializeBean : negated conditional &rarr; KILLED<br/>
+4. initializeBean : negated conditional &rarr; KILLED<br/>
+5. initializeBean : negated conditional &rarr; KILLED<br/>
+6. initializeBean : negated conditional &rarr; KILLED<br/>
+7. initializeBean : negated conditional &rarr; KILLED<br/>
+8. initializeBean : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;if (readMethod != null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_124'/>
+124
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_124'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;&#9;accessors.put(name, new ReadMethodAccessor&#60;&#62;(bean, name, readMethod));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_125'/>
+125
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_125'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_126'/>
+126
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_126'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_127'/>
+127
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_127'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@27e32ae7_128'/>
+128
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_128'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_61'>61</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_61'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initialize &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_66'>66</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_66'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_71'>71</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_71'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamcore.it.core.util.bean.MapBeanReadWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='SURVIVED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPDefaultsTest.invalidTemplate(oghamall.it.email.EmailSMTPDefaultsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafParserTest.invalid(oghamthymeleafv3.it.ThymeleafParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_75'>75</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_75'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED</p> <p class='KILLED'><span class='pop'>15.<span><b>15</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>16.<span><b>16</b><br/><b>Location : </b>getPropertyValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getPropertyValue &rarr; TIMED_OUT</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_80'>80</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_80'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>oghamcore.it.core.util.bean.MapBeanReadWrapperSpec</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>none</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getProperties<br/><b>Killed by : </b>none</span></span> replaced return value with Collections.emptyList for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getProperties &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_85'>85</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_85'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getWrappedBean<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> replaced return value with null for fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::getWrappedBean &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_90'>90</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_90'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='TIMED_OUT'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_94'>94</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_94'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafParserTest.invalid(oghamthymeleafv3.it.ThymeleafParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPDefaultsTest.invalidTemplate(oghamall.it.email.EmailSMTPDefaultsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_96'>96</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_96'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafParserTest.invalid(oghamthymeleafv3.it.ThymeleafParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPDefaultsTest.invalidTemplate(oghamall.it.email.EmailSMTPDefaultsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_97'>97</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_97'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeCollection &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeCollection &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_98'>98</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_98'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv3.it.ThymeleafParserTest.invalid(oghamthymeleafv3.it.ThymeleafParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPDefaultsTest.invalidTemplate(oghamall.it.email.EmailSMTPDefaultsTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_99'>99</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_99'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.MapBeanReadWrapperSpec</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeMap &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeMap &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_101'>101</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_101'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; NO_COVERAGE</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>initialize<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> removed call to fr/sii/ogham/core/util/bean/SimpleBeanReadWrapper::initializeBean &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_107'>107</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_107'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initializeCollection<br/><b>Killed by : </b>none</span></span> Changed increment from 1 to -1 &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initializeCollection<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initializeCollection<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initializeCollection<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@27e32ae7_123'>123</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@27e32ae7_123'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>oghamfremarker.it.FreeMarkerParserTest.nested(oghamfremarker.it.FreeMarkerParserTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>oghamall.it.email.EmailMultiTemplateTest.withFreemarkerOneVariantWithInvalidResourcePath(oghamall.it.email.EmailMultiTemplateTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>oghamthymeleafv2.it.resolver.StringResourceResolverTest.text(oghamthymeleafv2.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>oghamcore.it.core.util.bean.RecursiveBeanReadMethodBeanWrapperSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>oghamthymeleafv3.it.resolver.StringResourceResolverTest.text(oghamthymeleafv3.it.resolver.StringResourceResolverTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>initializeBean<br/><b>Killed by : </b>oghamovh.it.OvhSmsTest.phoneNumberConversion(oghamovh.it.OvhSmsTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+</ul>
+
+<br/>
+
+Report generated by <a href='http://pitest.org'>PIT</a> OGHAM
+
+</body>
+</html>

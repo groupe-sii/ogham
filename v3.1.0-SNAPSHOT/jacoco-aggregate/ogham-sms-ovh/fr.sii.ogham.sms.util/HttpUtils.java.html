@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>HttpUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-ovh</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.util</a> &gt; <span class="el_source">HttpUtils.java</span></div><h1>HttpUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.util;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.util.HttpException;
+import fr.sii.ogham.core.util.BeanUtils;
+import fr.sii.ogham.core.util.IOUtils;
+import fr.sii.ogham.sms.util.http.Parameter;
+import fr.sii.ogham.sms.util.http.Response;
+
+/**
+ * Utility class that helps to send HTTP requests.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class HttpUtils {
+<span class="fc" id="L35">	private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);</span>
+<span class="fc" id="L36">	private static final HttpClient CLIENT = HttpClientBuilder.create().useSystemProperties().build();</span>
+
+	/**
+	 * Do a GET request on the provided URL and construct the Query String part
+	 * with the provided list of parameters. If the URL already contains
+	 * parameters (already contains a '?' character), then the parameters are
+	 * added to the existing parameters. The parameters are converted into
+	 * &lt;code&gt;application/x-www-form-urlencoded&lt;/code&gt;. For example:
+	 * &lt;code&gt;field1=value1&amp;amp;field1=value2&amp;amp;field2=value3&lt;/code&gt;. The special
+	 * characters are encoded. If there is a space, it is encoded into '%20'.
+	 * 
+	 * @param url
+	 *            the base url
+	 * @param params
+	 *            the list of parameters to append to the query string
+	 * @return the response
+	 * @throws HttpException
+	 *             when the request has failed
+	 */
+	public static Response get(String url, List&lt;Parameter&gt; params) throws HttpException {
+<span class="fc" id="L56">		String fullUrl = url;</span>
+<span class="fc" id="L57">		String paramsStr = URLEncodedUtils.format(convert(params), &quot;UTF-8&quot;);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">		fullUrl += (fullUrl.contains(&quot;?&quot;) ? &quot;&amp;&quot; : &quot;?&quot;) + paramsStr;</span>
+		// spaces are replaced by '+' but some servers doesn't handle it
+		// correctly
+		// =&gt; convert space to '%20'
+<span class="fc" id="L62">		fullUrl = fullUrl.replace(&quot;+&quot;, &quot;%20&quot;);</span>
+		try {
+<span class="fc" id="L64">			LOG.debug(&quot;Sending HTTP GET request to {}&quot;, fullUrl);</span>
+<span class="fc" id="L65">			HttpGet request = new HttpGet(fullUrl);</span>
+<span class="fc" id="L66">			HttpResponse response = CLIENT.execute(request);</span>
+<span class="fc" id="L67">			int statusCode = response.getStatusLine().getStatusCode();</span>
+<span class="fc" id="L68">			LOG.debug(&quot;HTTP GET request successfully sent to {}. Status code: {}&quot;, fullUrl, statusCode);</span>
+<span class="fc" id="L69">			return new Response(statusCode, IOUtils.toString(response.getEntity().getContent()));</span>
+<span class="nc" id="L70">		} catch (IOException e) {</span>
+<span class="nc" id="L71">			throw new HttpException(&quot;Failed to send GET request to &quot; + fullUrl, e);</span>
+		}
+	}
+
+	/**
+	 * Do a GET request on the provided URL and construct the Query String part
+	 * with the provided list of parameters. If the URL already contains
+	 * parameters (already contains a '?' character), then the parameters are
+	 * added to the existing parameters. The parameters are converted into
+	 * &lt;code&gt;application/x-www-form-urlencoded&lt;/code&gt;. For example:
+	 * &lt;code&gt;field1=value1&amp;amp;field1=value2&amp;amp;field2=value3&lt;/code&gt;. The special
+	 * characters are encoded. If there is a space, it is encoded into '%20'.
+	 * 
+	 * @param url
+	 *            the base url
+	 * @param params
+	 *            none, one or several parameters to append to the query string
+	 * @return the response
+	 * @throws HttpException
+	 *             when the request has failed
+	 */
+	public static Response get(String url, Parameter... params) throws HttpException {
+<span class="nc" id="L93">		return get(url, Arrays.asList(params));</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Do a GET request on the provided URL and construct the Query String part
+	 * with the provided list of parameters. If the URL already contains
+	 * parameters (already contains a '?' character), then the parameters are
+	 * added to the existing parameters. The parameters are converted into
+	 * &lt;code&gt;application/x-www-form-urlencoded&lt;/code&gt;. For example:
+	 * &lt;code&gt;field1=value1&amp;amp;field1=value2&amp;amp;field2=value3&lt;/code&gt;. The special
+	 * characters are encoded. If there is a space, it is encoded into '%20'.
+	 * &lt;/p&gt;
+	 * The parameters can be anything:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link Parameter}: see {@link #get(String, Parameter...)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Map}: each entry is used as a parameter (see
+	 * {@link #get(String, Map)}). The key of the entry is the name of the
+	 * parameter, the value of the entry is the value of the parameter&lt;/li&gt;
+	 * &lt;li&gt;A bean (any object): each property of the bean is used as parameter
+	 * (see {@link BeanUtils}). The name of the property is the name of the
+	 * parameter, the value of the property is the value of the parameter&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param url
+	 *            the base url
+	 * @param params
+	 *            none, one or several parameters to append to the query string
+	 * @return the response
+	 * @throws HttpException
+	 *             when the request has failed
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public static Response get(String url, Object... params) throws HttpException {
+<span class="fc" id="L127">		Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		for (Object bean : params) {</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">			if (bean instanceof Parameter) {</span>
+<span class="fc" id="L130">				Parameter p = (Parameter) bean;</span>
+<span class="fc" id="L131">				map.put(p.getName(), p.getValue());</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">			} else if (bean instanceof Map) {</span>
+<span class="nc" id="L133">				map.putAll((Map&lt;String, Object&gt;) bean);</span>
+			} else {
+<span class="fc" id="L135">				map.putAll(BeanUtils.convert(bean));</span>
+			}
+		}
+<span class="fc" id="L138">		return get(url, map);</span>
+	}
+
+	/**
+	 * Do a GET request on the provided URL and construct the Query String part
+	 * with the provided list of parameters. If the URL already contains
+	 * parameters (already contains a '?' character), then the parameters are
+	 * added to the existing parameters. The parameters are converted into
+	 * &lt;code&gt;application/x-www-form-urlencoded&lt;/code&gt;. For example:
+	 * &lt;code&gt;field1=value1&amp;amp;field1=value2&amp;amp;field2=value3&lt;/code&gt;. The special
+	 * characters are encoded. If there is a space, it is encoded into '%20'.
+	 * &lt;p&gt;
+	 * Each entry of the map is used as a parameter. The key of the entry is the
+	 * name of the parameter, the value of the entry is the value of the
+	 * parameter
+	 * &lt;/p&gt;
+	 * 
+	 * @param url
+	 *            the base url
+	 * @param params
+	 *            none, one or several parameters to append to the query string
+	 * @return the response
+	 * @throws HttpException
+	 *             when the request has failed
+	 */
+	public static Response get(String url, Map&lt;String, Object&gt; params) throws HttpException {
+<span class="fc" id="L164">		return get(url, convert(params));</span>
+	}
+
+	/**
+	 * Convert the map into a list of parameters
+	 * 
+	 * @param map
+	 *            the map to convert
+	 * @return the list of parameters
+	 */
+	private static List&lt;Parameter&gt; convert(Map&lt;String, Object&gt; map) {
+<span class="fc" id="L175">		Set&lt;Entry&lt;String, Object&gt;&gt; entries = map.entrySet();</span>
+<span class="fc" id="L176">		List&lt;Parameter&gt; parameters = new ArrayList&lt;&gt;(entries.size());</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">		for (Entry&lt;String, Object&gt; entry : entries) {</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">			if (entry.getValue() != null) {</span>
+<span class="fc" id="L179">				parameters.add(new Parameter(entry.getKey(), entry.getValue().toString()));</span>
+			}
+<span class="fc" id="L181">		}</span>
+<span class="fc" id="L182">		return parameters;</span>
+	}
+
+	/**
+	 * Convert a list of parameters to a list of {@link NameValuePair}.
+	 * 
+	 * @param params
+	 *            the parameters abstraction used in the library
+	 * @return the parameters used by the real implementation (Apache Commons
+	 *         HTTP)
+	 */
+	private static List&lt;NameValuePair&gt; convert(List&lt;Parameter&gt; params) {
+<span class="fc" id="L194">		List&lt;NameValuePair&gt; pairs = new ArrayList&lt;&gt;(params.size());</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		for (Parameter param : params) {</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">			if (param.getValue() != null) {</span>
+<span class="fc" id="L197">				pairs.add(new BasicNameValuePair(param.getName(), param.getValue()));</span>
+			}
+<span class="fc" id="L199">		}</span>
+<span class="fc" id="L200">		return pairs;</span>
+	}
+
+	private HttpUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

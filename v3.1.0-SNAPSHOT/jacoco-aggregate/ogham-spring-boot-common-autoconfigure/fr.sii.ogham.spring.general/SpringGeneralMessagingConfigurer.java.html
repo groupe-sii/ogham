@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringGeneralMessagingConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.general</a> &gt; <span class="el_source">SpringGeneralMessagingConfigurer.java</span></div><h1>SpringGeneralMessagingConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.general;
+
+import static fr.sii.ogham.spring.util.PropertiesUtils.asArray;
+import static java.util.Optional.ofNullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.CoreConstants;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.spring.common.OghamMimetypeProperties;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
+import fr.sii.ogham.spring.email.OghamEmailProperties;
+import fr.sii.ogham.spring.sms.OghamSmsProperties;
+
+/**
+ * This configurer is useful to support property naming variants (see &lt;a href=
+ * &quot;https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0&quot;&gt;Relaxed
+ * Binding&lt;/a&gt;).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SpringGeneralMessagingConfigurer implements SpringMessagingConfigurer {
+<span class="fc" id="L28">	private static final Logger LOG = LoggerFactory.getLogger(SpringGeneralMessagingConfigurer.class);</span>
+	
+	private final MessagingProperties messagingProperties;
+	private final OghamEmailProperties emailProperties;
+	private final OghamSmsProperties smsProperties;
+	private final OghamMimetypeProperties mimetypeProperties;
+
+	public SpringGeneralMessagingConfigurer(MessagingProperties messagingProperties, OghamEmailProperties emailProperties, OghamSmsProperties smsProperties,
+			OghamMimetypeProperties mimetypeProperties) {
+<span class="fc" id="L37">		super();</span>
+<span class="fc" id="L38">		this.messagingProperties = messagingProperties;</span>
+<span class="fc" id="L39">		this.emailProperties = emailProperties;</span>
+<span class="fc" id="L40">		this.smsProperties = smsProperties;</span>
+<span class="fc" id="L41">		this.mimetypeProperties = mimetypeProperties;</span>
+<span class="fc" id="L42">	}</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="fc" id="L46">		LOG.debug(&quot;[{}] apply general configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L48">		builder</span>
+<span class="fc" id="L49">			.wrapUncaught().value(ofNullable(messagingProperties.getWrapUncaughtExceptions().isEnable()));</span>
+		// @formatter:on
+<span class="fc" id="L51">		configure(builder.email());</span>
+<span class="fc" id="L52">		configure(builder.sms());</span>
+<span class="fc" id="L53">		configure(builder.mimetype());</span>
+<span class="fc" id="L54">	}</span>
+
+	private void configure(EmailBuilder builder) {
+		// configure mimetype detection for images
+<span class="fc" id="L58">		configureImageInliningMimetype(builder.images().inline().mimetype());</span>
+		// @formatter:off
+<span class="fc" id="L60">		builder</span>
+<span class="fc" id="L61">			.autofill()</span>
+<span class="fc" id="L62">				.subject()</span>
+<span class="fc" id="L63">					.defaultValue().value(ofNullable(emailProperties.getSubject().getDefaultValue())).and()</span>
+<span class="fc" id="L64">					.htmlTitle().value(ofNullable(emailProperties.getSubject().getExtractHtmlTitle().isEnable())).and()</span>
+<span class="fc" id="L65">					.text().value(ofNullable(emailProperties.getSubject().getExtractFromText().getFirstLinePrefix())).and()</span>
+<span class="fc" id="L66">					.and()</span>
+<span class="fc" id="L67">				.from()</span>
+<span class="fc" id="L68">					.defaultValue().value(ofNullable(emailProperties.getFrom().getDefaultValue())).and()</span>
+<span class="fc" id="L69">					.and()</span>
+<span class="fc" id="L70">				.to()</span>
+<span class="fc" id="L71">					.defaultValue().value(ofNullable(asArray(emailProperties.getTo().getDefaultValue(), String.class))).and()</span>
+<span class="fc" id="L72">					.and()</span>
+<span class="fc" id="L73">				.cc()</span>
+<span class="fc" id="L74">					.defaultValue().value(ofNullable(asArray(emailProperties.getCc().getDefaultValue(), String.class))).and()</span>
+<span class="fc" id="L75">					.and()</span>
+<span class="fc" id="L76">				.bcc()</span>
+<span class="fc" id="L77">					.defaultValue().value(ofNullable(asArray(emailProperties.getBcc().getDefaultValue(), String.class))).and()</span>
+<span class="fc" id="L78">					.and()</span>
+<span class="fc" id="L79">				.and()</span>
+<span class="fc" id="L80">			.autoRetry()</span>
+<span class="fc" id="L81">				.fixedDelay()</span>
+<span class="fc" id="L82">					.maxRetries().value(ofNullable(emailProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L83">					.delay().value(ofNullable(emailProperties.getSendRetry().getDelayBetweenAttempts())).and()</span>
+<span class="fc" id="L84">					.and()</span>
+<span class="fc" id="L85">				.exponentialDelay()</span>
+<span class="fc" id="L86">					.maxRetries().value(ofNullable(emailProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L87">					.initialDelay().value(ofNullable(emailProperties.getSendRetry().getExponentialInitialDelay())).and()</span>
+<span class="fc" id="L88">					.and()</span>
+<span class="fc" id="L89">				.perExecutionDelay()</span>
+<span class="fc" id="L90">					.maxRetries().value(ofNullable(emailProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L91">					.delays().value(ofNullable(asArray(emailProperties.getSendRetry().getPerExecutionDelays(), Long.class))).and()</span>
+<span class="fc" id="L92">					.and()</span>
+<span class="fc" id="L93">				.fixedInterval()</span>
+<span class="fc" id="L94">					.maxRetries().value(ofNullable(emailProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L95">					.interval().value(ofNullable(emailProperties.getSendRetry().getExecutionInterval()));</span>
+		// @formatter:on
+<span class="fc" id="L97">	}</span>
+
+	private void configure(SmsBuilder builder) {
+		// @formatter:off
+<span class="fc" id="L101">		builder</span>
+<span class="fc" id="L102">			.autofill()</span>
+<span class="fc" id="L103">				.from()</span>
+<span class="fc" id="L104">					.defaultValue().value(ofNullable(smsProperties.getFrom().getDefaultValue())).and()</span>
+<span class="fc" id="L105">					.and()</span>
+<span class="fc" id="L106">				.to()</span>
+<span class="fc" id="L107">					.defaultValue().value(ofNullable(asArray(smsProperties.getTo().getDefaultValue(), String.class))).and()</span>
+<span class="fc" id="L108">					.and()</span>
+<span class="fc" id="L109">				.and()</span>
+<span class="fc" id="L110">			.numbers()</span>
+<span class="fc" id="L111">				.from()</span>
+<span class="fc" id="L112">					.format()</span>
+<span class="fc" id="L113">						.alphanumericCode().value(ofNullable(smsProperties.getFrom().getAlphanumericCodeFormat().getEnable())).and()</span>
+<span class="fc" id="L114">						.shortCode().value(ofNullable(smsProperties.getFrom().getShortCodeFormat().getEnable())).and()</span>
+<span class="fc" id="L115">						.internationalNumber().value(ofNullable(smsProperties.getFrom().getInternationalFormat().getEnable())).and()</span>
+<span class="fc" id="L116">						.and()</span>
+<span class="fc" id="L117">					.and()</span>
+<span class="fc" id="L118">				.to()</span>
+<span class="fc" id="L119">					.format()</span>
+<span class="fc" id="L120">						.internationalNumber().value(ofNullable(smsProperties.getTo().getInternationalFormat().getEnable())).and()</span>
+<span class="fc" id="L121">						.and()</span>
+<span class="fc" id="L122">					.and()</span>
+<span class="fc" id="L123">				.and()</span>
+<span class="fc" id="L124">			.autoRetry()</span>
+<span class="fc" id="L125">				.fixedDelay()</span>
+<span class="fc" id="L126">					.maxRetries().value(ofNullable(smsProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L127">					.delay().value(ofNullable(smsProperties.getSendRetry().getDelayBetweenAttempts())).and()</span>
+<span class="fc" id="L128">					.and()</span>
+<span class="fc" id="L129">				.exponentialDelay()</span>
+<span class="fc" id="L130">					.maxRetries().value(ofNullable(smsProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L131">					.initialDelay().value(ofNullable(smsProperties.getSendRetry().getExponentialInitialDelay())).and()</span>
+<span class="fc" id="L132">					.and()</span>
+<span class="fc" id="L133">				.perExecutionDelay()</span>
+<span class="fc" id="L134">					.maxRetries().value(ofNullable(smsProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L135">					.delays().value(ofNullable(asArray(smsProperties.getSendRetry().getPerExecutionDelays(), Long.class))).and()</span>
+<span class="fc" id="L136">					.and()</span>
+<span class="fc" id="L137">				.fixedInterval()</span>
+<span class="fc" id="L138">					.maxRetries().value(ofNullable(smsProperties.getSendRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L139">					.interval().value(ofNullable(smsProperties.getSendRetry().getExecutionInterval()));</span>
+		// @formatter:on
+<span class="fc" id="L141">	}</span>
+
+	private void configure(MimetypeDetectionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="fc" id="L145">		builder</span>
+<span class="fc" id="L146">			.tika()</span>
+<span class="fc" id="L147">				.failIfOctetStream().value(ofNullable(mimetypeProperties.getTika().isFailIfOctetStream())).and()</span>
+<span class="fc" id="L148">				.and()</span>
+<span class="fc" id="L149">			.defaultMimetype().value(ofNullable(mimetypeProperties.getDefaultMimetype()));</span>
+		// @formatter:on
+<span class="fc" id="L151">	}</span>
+
+	private void configureImageInliningMimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="fc" id="L155">		builder</span>
+<span class="fc" id="L156">			.allowed().value(ofNullable(asArray(emailProperties.getImageInlining().getMimetype().getAllowedMimetypes(), String.class)));</span>
+		// @formatter:on
+<span class="fc" id="L158">	}</span>
+
+	@Override
+	public int getOrder() {
+<span class="fc" id="L162">		return CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY + 1000;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

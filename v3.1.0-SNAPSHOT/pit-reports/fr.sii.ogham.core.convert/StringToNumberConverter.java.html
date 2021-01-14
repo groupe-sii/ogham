@@ -1,0 +1,2354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>StringToNumberConverter.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package fr.sii.ogham.core.convert;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.math.BigDecimal;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.math.BigInteger;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.exception.convert.ConversionException;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * Converts a string to a number. It also handles {@link Byte}s. This class is</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * copied from Spring.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @author Aur&#233;lien Baudet</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> */</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>public class StringToNumberConverter implements SupportingConverter {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public &#60;T&#62; T convert(Object source, Class&#60;T&#62; targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;String text = (String) source;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;String trimmed = trimAllWhitespace(text);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_21'/>
+21
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_21'>5</a>
+<span>
+1. convert : negated conditional &rarr; NO_COVERAGE<br/>
+2. convert : negated conditional &rarr; KILLED<br/>
+3. convert : negated conditional &rarr; KILLED<br/>
+4. convert : negated conditional &rarr; KILLED<br/>
+5. convert : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if(trimmed==null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;return null;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;try {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;T value = convertNumber(trimmed, targetType);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_26'/>
+26
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_26'>5</a>
+<span>
+1. convert : negated conditional &rarr; NO_COVERAGE<br/>
+2. convert : negated conditional &rarr; KILLED<br/>
+3. convert : negated conditional &rarr; KILLED<br/>
+4. convert : negated conditional &rarr; KILLED<br/>
+5. convert : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;if(value==null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;&#9;throw new ConversionException(&#34;Cannot convert String [&#34; + text + &#34;] to target class [&#34; + targetType.getName() + &#34;]&#34;);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_29'/>
+29
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_29'>5</a>
+<span>
+1. convert : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; NO_COVERAGE<br/>
+2. convert : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED<br/>
+3. convert : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED<br/>
+4. convert : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED<br/>
+5. convert : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return value;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;} catch(NumberFormatException e) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;throw new ConversionException(&#34;Failed to convert &#34;+source+&#34; to &#34;+targetType.getSimpleName(), e);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_36'/>
+36
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_36'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public boolean supports(Class&#60;?&#62; sourceType, Class&#60;?&#62; targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_37'/>
+37
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_37'>21</a>
+<span>
+1. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; NO_COVERAGE<br/>
+2. supports : negated conditional &rarr; SURVIVED<br/>
+3. supports : negated conditional &rarr; NO_COVERAGE<br/>
+4. supports : negated conditional &rarr; NO_COVERAGE<br/>
+5. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; TIMED_OUT<br/>
+6. supports : negated conditional &rarr; TIMED_OUT<br/>
+7. supports : negated conditional &rarr; TIMED_OUT<br/>
+8. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED<br/>
+9. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED<br/>
+10. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED<br/>
+11. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED<br/>
+12. supports : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED<br/>
+13. supports : negated conditional &rarr; KILLED<br/>
+14. supports : negated conditional &rarr; KILLED<br/>
+15. supports : negated conditional &rarr; KILLED<br/>
+16. supports : negated conditional &rarr; KILLED<br/>
+17. supports : negated conditional &rarr; KILLED<br/>
+18. supports : negated conditional &rarr; KILLED<br/>
+19. supports : negated conditional &rarr; KILLED<br/>
+20. supports : negated conditional &rarr; KILLED<br/>
+21. supports : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return String.class.isAssignableFrom(sourceType) &#38;&#38; Number.class.isAssignableFrom(targetType);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_38'/>
+38
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_38'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_39'/>
+39
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_39'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@SuppressWarnings(&#34;unchecked&#34;)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_41'/>
+41
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_41'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private &#60;T&#62; T convertNumber(String trimmed, Class&#60;T&#62; targetType) {&#9;// NOSONAR: code from Spring</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_42'/>
+42
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_42'>5</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : negated conditional &rarr; KILLED<br/>
+5. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (Byte.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_43'/>
+43
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_43'>4</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) (isHexOrOctalNumber(trimmed) ? Byte.decode(trimmed) : Byte.valueOf(trimmed));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_44'/>
+44
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_44'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_45'/>
+45
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_45'>5</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : negated conditional &rarr; KILLED<br/>
+5. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (Short.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_46'/>
+46
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_46'>4</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) (isHexOrOctalNumber(trimmed) ? Short.decode(trimmed) : Short.valueOf(trimmed));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_47'/>
+47
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_47'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_48'/>
+48
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_48'>5</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : negated conditional &rarr; KILLED<br/>
+5. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (Integer.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_49'/>
+49
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_49'>10</a>
+<span>
+1. convertNumber : negated conditional &rarr; SURVIVED<br/>
+2. convertNumber : negated conditional &rarr; SURVIVED<br/>
+3. convertNumber : negated conditional &rarr; SURVIVED<br/>
+4. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+5. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+6. convertNumber : negated conditional &rarr; KILLED<br/>
+7. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+8. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+9. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+10. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) (isHexOrOctalNumber(trimmed) ? Integer.decode(trimmed) : Integer.valueOf(trimmed));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_50'/>
+50
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_50'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_51'/>
+51
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_51'>4</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (Long.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_52'/>
+52
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_52'>8</a>
+<span>
+1. convertNumber : negated conditional &rarr; SURVIVED<br/>
+2. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+3. convertNumber : negated conditional &rarr; SURVIVED<br/>
+4. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+5. convertNumber : negated conditional &rarr; KILLED<br/>
+6. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+7. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+8. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) (isHexOrOctalNumber(trimmed) ? Long.decode(trimmed) : Long.valueOf(trimmed));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_53'/>
+53
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_53'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_54'/>
+54
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_54'>2</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (BigInteger.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_55'/>
+55
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_55'>4</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) (isHexOrOctalNumber(trimmed) ? decodeBigInteger(trimmed) : new BigInteger(trimmed));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_56'/>
+56
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_56'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_57'/>
+57
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_57'>2</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (Float.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_58'/>
+58
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_58'>2</a>
+<span>
+1. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+2. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) Float.valueOf(trimmed);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_59'/>
+59
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_59'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_60'/>
+60
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_60'>2</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (Double.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_61'/>
+61
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_61'>2</a>
+<span>
+1. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+2. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) Double.valueOf(trimmed);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_62'/>
+62
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_62'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_63'/>
+63
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_63'>4</a>
+<span>
+1. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. convertNumber : negated conditional &rarr; NO_COVERAGE<br/>
+3. convertNumber : negated conditional &rarr; KILLED<br/>
+4. convertNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (BigDecimal.class == targetType || Number.class == targetType) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_64'/>
+64
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_64'>2</a>
+<span>
+1. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE<br/>
+2. convertNumber : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return (T) new BigDecimal(trimmed);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_65'/>
+65
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_65'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_66'/>
+66
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_66'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;return null;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_67'/>
+67
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_67'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_68'/>
+68
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_68'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_69'/>
+69
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_69'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private static boolean isHexOrOctalNumber(String value) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_70'/>
+70
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_70'>5</a>
+<span>
+1. isHexOrOctalNumber : negated conditional &rarr; NO_COVERAGE<br/>
+2. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+3. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+4. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+5. isHexOrOctalNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;int index = value.startsWith(&#34;-&#34;) ? 1 : 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_71'/>
+71
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_71'>15</a>
+<span>
+1. isHexOrOctalNumber : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED<br/>
+2. isHexOrOctalNumber : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED<br/>
+3. isHexOrOctalNumber : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED<br/>
+4. isHexOrOctalNumber : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED<br/>
+5. isHexOrOctalNumber : replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; NO_COVERAGE<br/>
+6. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+7. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+8. isHexOrOctalNumber : negated conditional &rarr; NO_COVERAGE<br/>
+9. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+10. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+11. isHexOrOctalNumber : negated conditional &rarr; SURVIVED<br/>
+12. isHexOrOctalNumber : negated conditional &rarr; NO_COVERAGE<br/>
+13. isHexOrOctalNumber : negated conditional &rarr; KILLED<br/>
+14. isHexOrOctalNumber : negated conditional &rarr; KILLED<br/>
+15. isHexOrOctalNumber : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>&#9;&#9;return value.startsWith(&#34;#&#34;, index) || value.startsWith(&#34;0&#34;, index);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_72'/>
+72
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_72'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_73'/>
+73
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_73'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_74'/>
+74
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_74'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private static String trimAllWhitespace(String str) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_75'/>
+75
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_75'>10</a>
+<span>
+1. trimAllWhitespace : negated conditional &rarr; NO_COVERAGE<br/>
+2. trimAllWhitespace : negated conditional &rarr; NO_COVERAGE<br/>
+3. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+4. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+5. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+6. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+7. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+8. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+9. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+10. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (str == null || str.length() == 0) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_76'/>
+76
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_76'>2</a>
+<span>
+1. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; NO_COVERAGE<br/>
+2. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;return null;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_77'/>
+77
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_77'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_78'/>
+78
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_78'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;int len = str.length();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_79'/>
+79
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_79'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;StringBuilder sb = new StringBuilder(str.length());</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_80'/>
+80
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_80'>15</a>
+<span>
+1. trimAllWhitespace : changed conditional boundary &rarr; NO_COVERAGE<br/>
+2. trimAllWhitespace : Changed increment from 1 to -1 &rarr; NO_COVERAGE<br/>
+3. trimAllWhitespace : negated conditional &rarr; NO_COVERAGE<br/>
+4. trimAllWhitespace : changed conditional boundary &rarr; KILLED<br/>
+5. trimAllWhitespace : changed conditional boundary &rarr; KILLED<br/>
+6. trimAllWhitespace : changed conditional boundary &rarr; KILLED<br/>
+7. trimAllWhitespace : changed conditional boundary &rarr; KILLED<br/>
+8. trimAllWhitespace : Changed increment from 1 to -1 &rarr; KILLED<br/>
+9. trimAllWhitespace : Changed increment from 1 to -1 &rarr; KILLED<br/>
+10. trimAllWhitespace : Changed increment from 1 to -1 &rarr; KILLED<br/>
+11. trimAllWhitespace : Changed increment from 1 to -1 &rarr; KILLED<br/>
+12. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+13. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+14. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+15. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;for (int i = 0; i &#60; len; i++) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_81'/>
+81
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_81'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;char c = str.charAt(i);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_82'/>
+82
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_82'>5</a>
+<span>
+1. trimAllWhitespace : negated conditional &rarr; NO_COVERAGE<br/>
+2. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+3. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+4. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+5. trimAllWhitespace : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;if (!Character.isWhitespace(c)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_83'/>
+83
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_83'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;&#9;sb.append(c);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_84'/>
+84
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_84'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_85'/>
+85
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_85'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_86'/>
+86
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_86'>5</a>
+<span>
+1. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; NO_COVERAGE<br/>
+2. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED<br/>
+3. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED<br/>
+4. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED<br/>
+5. trimAllWhitespace : replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return sb.toString();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_87'/>
+87
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_87'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_88'/>
+88
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_88'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_89'/>
+89
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_89'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private static BigInteger decodeBigInteger(String value) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_90'/>
+90
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_90'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;int radix = 10;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_91'/>
+91
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_91'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;int index = 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_92'/>
+92
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_92'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;boolean negative = false;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_93'/>
+93
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_93'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_94'/>
+94
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_94'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;// Handle minus sign, if present.</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_95'/>
+95
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_95'>2</a>
+<span>
+1. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (value.startsWith(&#34;-&#34;)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_96'/>
+96
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_96'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;negative = true;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_97'/>
+97
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_97'>2</a>
+<span>
+1. decodeBigInteger : Changed increment from 1 to -1 &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : Changed increment from 1 to -1 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;index++;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_98'/>
+98
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_98'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_99'/>
+99
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_99'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_100'/>
+100
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_100'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;// Handle radix specifier, if present.</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_101'/>
+101
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_101'>4</a>
+<span>
+1. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+3. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+4. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;if (value.startsWith(&#34;0x&#34;, index) || value.startsWith(&#34;0X&#34;, index)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_102'/>
+102
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_102'>2</a>
+<span>
+1. decodeBigInteger : Changed increment from 2 to -2 &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : Changed increment from 2 to -2 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;index += 2;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_103'/>
+103
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_103'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;radix = 16;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_104'/>
+104
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_104'>2</a>
+<span>
+1. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;} else if (value.startsWith(&#34;#&#34;, index)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_105'/>
+105
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_105'>2</a>
+<span>
+1. decodeBigInteger : Changed increment from 1 to -1 &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : Changed increment from 1 to -1 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;index++;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_106'/>
+106
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_106'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;radix = 16;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_107'/>
+107
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_107'>8</a>
+<span>
+1. decodeBigInteger : changed conditional boundary &rarr; SURVIVED<br/>
+2. decodeBigInteger : changed conditional boundary &rarr; NO_COVERAGE<br/>
+3. decodeBigInteger : Replaced integer addition with subtraction &rarr; NO_COVERAGE<br/>
+4. decodeBigInteger : Replaced integer addition with subtraction &rarr; SURVIVED<br/>
+5. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+6. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+7. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+8. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>&#9;&#9;} else if (value.startsWith(&#34;0&#34;, index) &#38;&#38; value.length() &#62; 1 + index) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_108'/>
+108
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_108'>2</a>
+<span>
+1. decodeBigInteger : Changed increment from 1 to -1 &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : Changed increment from 1 to -1 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;&#9;index++;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_109'/>
+109
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_109'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;&#9;radix = 8;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_110'/>
+110
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_110'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_111'/>
+111
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_111'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_112'/>
+112
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_112'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;BigInteger result = new BigInteger(value.substring(index), radix);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_113'/>
+113
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_113'>4</a>
+<span>
+1. decodeBigInteger : negated conditional &rarr; NO_COVERAGE<br/>
+2. decodeBigInteger : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::decodeBigInteger &rarr; NO_COVERAGE<br/>
+3. decodeBigInteger : negated conditional &rarr; KILLED<br/>
+4. decodeBigInteger : replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::decodeBigInteger &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return negative ? result.negate() : result;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_114'/>
+114
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_114'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fd4b515_115'/>
+115
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_115'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_21'>21</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_21'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPAuthenticationTest.authenticated(oghamall.it.email.EmailSMTPAuthenticationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_26'>26</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_26'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_29'>29</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_29'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPAuthenticationTest.authenticated(oghamall.it.email.EmailSMTPAuthenticationTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convert<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convert &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_37'>37</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_37'/> 
+
+<p class='TIMED_OUT'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcloudhopper.it.ConnectionFailureTest.invalidSystemId(oghamcloudhopper.it.ConnectionFailureTest)</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::supports &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='TIMED_OUT'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='NO_COVERAGE'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>15.<span><b>15</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>16.<span><b>16</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; TIMED_OUT</p> <p class='NO_COVERAGE'><span class='pop'>17.<span><b>17</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>18.<span><b>18</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>19.<span><b>19</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>20.<span><b>20</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>21.<span><b>21</b><br/><b>Location : </b>supports<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_42'>42</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_42'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_43'>43</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_43'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_45'>45</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_45'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_46'>46</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_46'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_48'>48</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_48'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_49'>49</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_49'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_51'>51</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_51'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamall.it.retry.AutoRetryTest.doNotResendEmailIfTemplateNotFound(oghamall.it.retry.AutoRetryTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_52'>52</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_52'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamall.it.retry.AutoRetryTest.doNotResendEmailIfTemplateNotFound(oghamall.it.retry.AutoRetryTest)</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_54'>54</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_54'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_55'>55</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_55'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_57'>57</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_57'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_58'>58</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_58'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_60'>60</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_60'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_61'>61</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_61'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_63'>63</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_63'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_64'>64</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_64'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>convertNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::convertNumber &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_70'>70</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_70'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_71'>71</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_71'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for fr/sii/ogham/core/convert/StringToNumberConverter::isHexOrOctalNumber &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>oghamall.it.sms.SmsSMPPDefaultsTest.longMessage(oghamall.it.sms.SmsSMPPDefaultsTest)</span></span> negated conditional &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>15.<span><b>15</b><br/><b>Location : </b>isHexOrOctalNumber<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_75'>75</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_75'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPAuthenticationTest.authenticated(oghamall.it.email.EmailSMTPAuthenticationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='NO_COVERAGE'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.email.EmailSMTPAuthenticationTest.authenticated(oghamall.it.email.EmailSMTPAuthenticationTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_76'>76</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_76'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_80'>80</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_80'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> changed conditional boundary &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> changed conditional boundary &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> changed conditional boundary &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> changed conditional boundary &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> Changed increment from 1 to -1 &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>15.<span><b>15</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_82'>82</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_82'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_86'>86</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_86'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>none</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>trimAllWhitespace<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with &#34;&#34; for fr/sii/ogham/core/convert/StringToNumberConverter::trimAllWhitespace &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_95'>95</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_95'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_97'>97</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_97'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> Changed increment from 1 to -1 &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_101'>101</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_101'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_102'>102</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_102'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> Changed increment from 2 to -2 &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> Changed increment from 2 to -2 &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_104'>104</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_104'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_105'>105</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_105'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> Changed increment from 1 to -1 &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_107'>107</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_107'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> Replaced integer addition with subtraction &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> Replaced integer addition with subtraction &rarr; SURVIVED</p> <p class='NO_COVERAGE'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_108'>108</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_108'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> Changed increment from 1 to -1 &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> Changed increment from 1 to -1 &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fd4b515_113'>113</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fd4b515_113'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> negated conditional &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>oghamcore.ut.core.convert.StringToNumberConverterSpec</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::decodeBigInteger &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>decodeBigInteger<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/convert/StringToNumberConverter::decodeBigInteger &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+</ul>
+
+<br/>
+
+Report generated by <a href='http://pitest.org'>PIT</a> OGHAM
+
+</body>
+</html>

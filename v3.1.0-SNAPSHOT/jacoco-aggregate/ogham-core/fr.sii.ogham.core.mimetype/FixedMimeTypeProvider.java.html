@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FixedMimeTypeProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.mimetype</a> &gt; <span class="el_source">FixedMimeTypeProvider.java</span></div><h1>FixedMimeTypeProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.mimetype;
+
+import java.io.File;
+import java.io.InputStream;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+
+/**
+ * This mime type provider always return a fixed Mime Type. It is to be used as
+ * fallback when Mime Type can't be detected. By default, the provided Mime Type
+ * is 'text/plain'. You can also provide your own Mime Type
+ */
+public final class FixedMimeTypeProvider implements MimeTypeProvider {
+
+	private final MimeType mimetype;
+
+	/**
+	 * Initialize the provider with &lt;code&gt;text/plain&lt;/code&gt; Mime Type
+	 */
+<span class="nc" id="L23">	public FixedMimeTypeProvider() {</span>
+		try {
+<span class="nc" id="L25">			mimetype = new MimeType(&quot;text/plain&quot;);</span>
+<span class="nc" id="L26">		} catch (MimeTypeParseException e) {</span>
+<span class="nc" id="L27">			throw new AssertionError(&quot;This should never happen as 'text/plain' is a valid MIME type&quot;, e);</span>
+<span class="nc" id="L28">		}</span>
+<span class="nc" id="L29">	}</span>
+
+	/**
+	 * Constructor that uses the provided Mime Type.
+	 * 
+	 * @param mimetype
+	 *            the Mime Type to use as string
+	 * @throws MimeTypeParseException
+	 *             when Mime Type is not valid
+	 */
+	public FixedMimeTypeProvider(String mimetype) throws MimeTypeParseException {
+<span class="fc" id="L40">		this(new MimeType(mimetype));</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Constructor that uses the provided Mime Type.
+	 * 
+	 * @param mimetype
+	 *            the Mime Type to use
+	 */
+<span class="fc" id="L49">	public FixedMimeTypeProvider(MimeType mimetype) {</span>
+<span class="fc" id="L50">		this.mimetype = mimetype;</span>
+<span class="fc" id="L51">	}</span>
+
+	@Override
+	public MimeType getMimeType(final File file) throws MimeTypeDetectionException {
+<span class="nc" id="L55">		return mimetype;</span>
+	}
+
+	@Override
+	public MimeType getMimeType(final String filePath) throws MimeTypeDetectionException {
+<span class="nc" id="L60">		return mimetype;</span>
+	}
+
+	@Override
+	public MimeType detect(final InputStream stream) throws MimeTypeDetectionException {
+<span class="nc" id="L65">		return mimetype;</span>
+	}
+
+	@Override
+	public MimeType detect(final String content) throws MimeTypeDetectionException {
+<span class="fc" id="L70">		return mimetype;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

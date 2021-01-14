@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OptionalParameterAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">OptionalParameterAdapter.java</span></div><h1>OptionalParameterAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+
+import org.jsmpp.bean.SubmitSm;
+
+import com.cloudhopper.commons.util.HexUtil;
+
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+
+/**
+ * Adapts a JSMPP optional parameter to the Ogham abstraction
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class OptionalParameterAdapter implements OptionalParameter {
+	private final SubmitSm original;
+	private final short tag;
+
+	/**
+	 * @param original
+	 *            the JSMPP {@link SubmitSm} request
+	 * @param tag
+	 *            the tag to extract
+	 */
+	public OptionalParameterAdapter(SubmitSm original, short tag) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.original = original;</span>
+<span class="fc" id="L31">		this.tag = tag;</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public Short getTag() {
+<span class="fc" id="L36">		byte[] tagValue = getOptionalParameterBytes(0, 2);</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (tagValue == null) {</span>
+<span class="fc" id="L38">			return null;</span>
+		}
+<span class="fc" id="L40">		return new BigInteger(tagValue).shortValue();</span>
+	}
+
+	@Override
+	public Integer getLength() {
+<span class="fc" id="L45">		byte[] length = getOptionalParameterBytes(2, 4);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">		if (length == null) {</span>
+<span class="fc" id="L47">			return null;</span>
+		}
+<span class="fc" id="L49">		return new BigInteger(length).intValue();</span>
+	}
+
+	@Override
+	public byte[] getValue() {
+<span class="fc" id="L54">		return getOptionalParameterBytes(4, null);</span>
+	}
+	
+	@Override
+	public String toString() {
+<span class="fc" id="L59">		return &quot;[&quot;+getTag()+&quot;|&quot;+getLength()+&quot;|&quot;+HexUtil.toHexString(getValue())+&quot;]&quot;;</span>
+	}
+
+	@SuppressWarnings(&quot;squid:S1168&quot;)
+	private byte[] getOptionalParameterBytes(int from, Integer to) {
+<span class="fc" id="L64">		org.jsmpp.bean.OptionalParameter parameter = original.getOptionalParameter(tag);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		if (parameter == null) {</span>
+<span class="fc" id="L66">			return null;</span>
+		}
+<span class="fc" id="L68">		byte[] bytes = parameter.serialize();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">		if (bytes == null) {</span>
+<span class="nc" id="L70">			return null;</span>
+		}
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		return Arrays.copyOfRange(bytes, from, to == null ? bytes.length : to);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

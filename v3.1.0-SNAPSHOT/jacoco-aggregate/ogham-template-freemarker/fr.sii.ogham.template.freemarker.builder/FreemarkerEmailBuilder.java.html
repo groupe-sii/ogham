@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FreemarkerEmailBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.builder</a> &gt; <span class="el_source">FreemarkerEmailBuilder.java</span></div><h1>FreemarkerEmailBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.builder;
+
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import freemarker.template.Configuration;
+
+/**
+ * Configures parsing of templates using Freemarker.
+ * 
+ * Specific resource resolution can be configured to use template prefix/suffix
+ * paths:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .classpath()
+ *   .pathPrefix(&quot;email/&quot;)
+ *   .pathSuffix(&quot;.html&quot;)
+ *   .and()
+ * .file()
+ *   .pathPrefix(&quot;/data/myapplication/templates/email&quot;)
+ *   .pathSuffix(&quot;.html&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can customize default Freemarker {@link Configuration}:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .configuration()
+ *   .version(Configuration.VERSION_2_3_25)
+ *   .templateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can use a particular Freemarker {@link Configuration}:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .configuration(myConfiguration)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Email protocol supports several contents (main and alternative). The main
+ * content is often an HTML email to display a beautiful email to users. The
+ * alternative content is often a textual fallback (when email client can't
+ * display HTML version like mobile phones that tries to display a summary of
+ * the email). You can configure which file extensions are supported by
+ * Freemarker to automatically load variants (HTML: main, TEXT: alternative):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .variant(EmailVariant.HTML, &quot;html.ftl&quot;)
+ * .variant(EmailVariant.TEXT, &quot;txt.ftl&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Thanks to that configuration, you can send an email without specifying the
+ * extension:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * service.send(new Email()
+ *   .content(new MultiTemplateContent(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;foo.bar@sii.fr&quot;))
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Ogham will then be able to detect which files exist and choose the right
+ * behavior:
+ * &lt;ul&gt;
+ * &lt;li&gt;If you provide an &quot;.html&quot; file (either in classpath or on filesytem), the
+ * HTML template is used as main content&lt;/li&gt;
+ * &lt;li&gt;If you provide an &quot;.txt&quot; file (either in classpath or on filesytem), the
+ * text template is used as main content&lt;/li&gt;
+ * &lt;li&gt;If you provide both files, the HTML template is used as main content and
+ * text template as alternative&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ */
+public class FreemarkerEmailBuilder extends AbstractFreemarkerMultiContentBuilder&lt;FreemarkerEmailBuilder, EmailBuilder&gt; {
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public FreemarkerEmailBuilder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L96">		super(FreemarkerEmailBuilder.class, parent, buildContext);</span>
+<span class="fc" id="L97">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
