@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 public class FilterableClassLoader extends ClassLoader {
 	private static final Logger LOG = LoggerFactory.getLogger(FilterableClassLoader.class);
 
-	private final ClassLoader delegate;
-	private final Predicate<String> predicate;
+	private ClassLoader delegate;
+	private Predicate<String> predicate;
 	private static final Map<ClassLoader, List<Consumer<ClassLoader>>> lateCalls = new ConcurrentHashMap<>();
 
 	public FilterableClassLoader(ClassLoader delegate, Predicate<String> predicate) {

@@ -1,13 +1,11 @@
 package oghamtesting.ut.mock
 
 import java.lang.reflect.Field
-import java.lang.reflect.Modifier
 import java.util.function.Predicate
 
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import fr.sii.ogham.testing.mock.classloader.FilterableClassLoader
 import mock.context.SimpleBean
-import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -136,10 +134,6 @@ class FilterableClassLoaderSpec extends Specification {
 	private static void overrideField(Object instance, String fieldName, Object value) {
 		Field field = instance.getClass().getDeclaredField(fieldName)
 		field.setAccessible(true);
-
-		Field modifiersField = Field.class.getDeclaredField("modifiers");
-		modifiersField.setAccessible(true);
-		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
 		field.set(instance, value)
 	}
