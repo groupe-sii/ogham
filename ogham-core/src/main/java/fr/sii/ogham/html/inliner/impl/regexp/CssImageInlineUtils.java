@@ -1,7 +1,7 @@
 package fr.sii.ogham.html.inliner.impl.regexp;
 
 import static fr.sii.ogham.core.util.HtmlUtils.CSS_IMAGE_PROPERTIES_PATTERN;
-import static fr.sii.ogham.core.util.HtmlUtils.CSS_URL_FUNC_PATTERN;
+import static fr.sii.ogham.core.util.HtmlUtils.getCssUrlFunctions;
 import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.INLINED_URL_FUNC;
 import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.INLINE_MODE_PROPERTY;
 
@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.util.CssUrlFunction;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.InlineMode;
 
@@ -68,22 +69,19 @@ public final class CssImageInlineUtils {
 		Matcher propertyDeclarationMatcher = CSS_IMAGE_PROPERTIES_PATTERN.matcher(escapedHtml);
 		while (propertyDeclarationMatcher.find()) {
 			String value = propertyDeclarationMatcher.group("value");
-			Matcher urlMatcher = CSS_URL_FUNC_PATTERN.matcher(value);
-			StringBuffer newValue = new StringBuffer();
-			while (urlMatcher.find()) {
+			String newValue = value;
+			List<CssUrlFunction> matches = getCssUrlFunctions(value, QUOTE_ENTITY, QUOTE_TEMP_ESCAPE);
+			for (CssUrlFunction match : matches) {
 				boolean inlined = true;
-				MatchedUrl matchedUrl = getUrl(urlMatcher);
-				String newUrl = getInlinedUrl(escapedHtml, propertyDeclarationMatcher, matchedUrl, images, mode, inlineHandler);
+				String newUrl = getInlinedUrl(escapedHtml, propertyDeclarationMatcher, match, images, mode, inlineHandler);
 				// if no new url => use old one
 				if (newUrl == null) {
-					newUrl = matchedUrl.getUrl();
+					newUrl = match.getUrl();
 					inlined = false;
 				}
-				urlMatcher.appendReplacement(newValue,
-						Matcher.quoteReplacement(markAsInlned(inlined, urlMatcher.group("start")) + matchedUrl.getDelim() + newUrl + matchedUrl.getDelim() + urlMatcher.group("end")));
+				newValue = newValue.replace(match.getSource(), markAsInlined(inlined, match.rewriteUrl(newUrl)));
 			}
-			urlMatcher.appendTail(newValue);
-			propertyDeclarationMatcher.appendReplacement(sb, Matcher.quoteReplacement(propertyDeclarationMatcher.group("property") + newValue.toString()));
+			propertyDeclarationMatcher.appendReplacement(sb, Matcher.quoteReplacement(propertyDeclarationMatcher.group("property") + newValue));
 		}
 		propertyDeclarationMatcher.appendTail(sb);
 		return unescapeQuoteEntities(sb.toString());
@@ -131,7 +129,7 @@ public final class CssImageInlineUtils {
 		return cleaned;
 	}
 
-	private static String getInlinedUrl(String htmlContent, Matcher propertyDeclarationMatcher, MatchedUrl matchedUrl, List<ImageResource> images, InlineMode mode,
+	private static String getInlinedUrl(String htmlContent, Matcher propertyDeclarationMatcher, CssUrlFunction matchedUrl, List<ImageResource> images, InlineMode mode,
 			Function<CssImageDeclaration, String> inlineHandler) {
 		String url = matchedUrl.getUrl();
 		ImageResource image = getImage(url, images);
@@ -141,29 +139,11 @@ public final class CssImageInlineUtils {
 			return null;
 		}
 		String enclosingCssRule = getEnclosingCssRule(htmlContent, propertyDeclarationMatcher);
-		CssImageDeclaration imageDeclaration = new CssImageDeclaration(matchedUrl, getInlineProperty(enclosingCssRule, matchedUrl), image);
+		CssImageDeclaration imageDeclaration = new CssImageDeclaration(new MatchedUrl(matchedUrl.getUrl(), matchedUrl.getEnclosingQuoteChar()), getInlineProperty(enclosingCssRule, matchedUrl), image);
 		if (!isInlineModeAllowed(imageDeclaration, mode)) {
 			return null;
 		}
 		return inlineHandler.apply(imageDeclaration);
-	}
-
-	private static MatchedUrl getUrl(Matcher urlMatcher) {
-		String url = urlMatcher.group("unquotedurl");
-		String delim = "";
-		if (url != null && url.contains(QUOTE_TEMP_ESCAPE)) {
-			url = removeQuoteEntities(url);
-			delim = QUOTE_TEMP_ESCAPE;
-		}
-		if (url == null) {
-			url = urlMatcher.group("singlequotedurl");
-			delim = "'";
-		}
-		if (url == null) {
-			url = urlMatcher.group("doublequotedurl");
-			delim = "\"";
-		}
-		return new MatchedUrl(url, delim);
 	}
 
 	private static ImageResource getImage(String url, List<ImageResource> images) {
@@ -177,10 +157,6 @@ public final class CssImageInlineUtils {
 
 	private static String unescapeQuoteEntities(String str) {
 		return UNESCAPE_QUOTE_ENTITIES.matcher(str).replaceAll(QUOTE_ENTITY);
-	}
-
-	private static String removeQuoteEntities(String url) {
-		return UNESCAPE_QUOTE_ENTITIES.matcher(url).replaceAll("");
 	}
 
 	private static String escapeQuoteEntities(String htmlContent) {
@@ -224,7 +200,7 @@ public final class CssImageInlineUtils {
 		return htmlContent.substring(ruleStart, ruleEnd);
 	}
 
-	private static String getInlineProperty(String enclosingCssRule, MatchedUrl matchedUrl) {
+	private static String getInlineProperty(String enclosingCssRule, CssUrlFunction matchedUrl) {
 		Matcher m = INLINE_PROPERTY_PATTERN.matcher(enclosingCssRule);
 		if (m.find()) {
 			String modes = m.group("value");
@@ -252,14 +228,14 @@ public final class CssImageInlineUtils {
 		return null;
 	}
 
-	private static boolean isInlineModeForImage(String inlineUrl, MatchedUrl matchedUrl) {
+	private static boolean isInlineModeForImage(String inlineUrl, CssUrlFunction matchedUrl) {
 		if (inlineUrl == null) {
 			return false;
 		}
 		return matchedUrl.getUrl().contains(inlineUrl);
 	}
 
-	private static String markAsInlned(boolean inlined, String value) {
+	private static String markAsInlined(boolean inlined, String value) {
 		if (inlined) {
 			return value.replace("url", INLINED_URL_FUNC);
 		}

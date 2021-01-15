@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.util;
 
+import static java.util.Arrays.asList;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -7,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,32 +39,9 @@ public final class HtmlUtils {
 	private static final Pattern URI_INVALID_CHARS = Pattern.compile("\\\\'");
 	private static final String URI_ESCAPE = "''";
 	private static final Pattern QUOTE_ENTITY = Pattern.compile("&quot;");
-	private static final String CSS_URL_FUNC = "(?<start>url\\s*\\(\\s*)(?:'(?<singlequotedurl>\\S*?)'|\"(?<doublequotedurl>\\S*?)\"|(?<unquotedurl>(?:\\\\\\s|\\\\\\)|\\\\\\\"|\\\\\\'|\\S)*?))(?<end>\\s*\\))";
-	/**
-	 * Regular expression that matches CSS {@code url()} inclusions. It can be:
-	 * <ul>
-	 * <li>url(http://some-url)</li>
-	 * <li>url("http://some-url")</li>
-	 * <li>url('http://some-url')</li>
-	 * </ul>
-	 * 
-	 * <p>
-	 * It also handle escaping of quotes.
-	 * 
-	 * <p>
-	 * The pattern provides the following named capturing groups:
-	 * <ul>
-	 * <li>{@code "start"}: matches the {@code url(} part</li>
-	 * <li>{@code "end"}: matches the {@code );} part</li>
-	 * <li>{@code "singlequotedurl"}: matches the url that is surrounded by
-	 * {@literal '} character ({@literal '} is not included)</li>
-	 * <li>{@code "doublequotedurl"}: matches the url that is surrounded by
-	 * {@literal "} character ({@literal "} is not included)</li>
-	 * <li>{@code "unquotedurl"}: matches the url that is not surrounded by a
-	 * character</li>
-	 * </ul>
-	 */
-	public static final Pattern CSS_URL_FUNC_PATTERN = Pattern.compile(CSS_URL_FUNC);
+	private static final String UNQUOTED_FORM = "(?<startunquoted>\\s*url\\s*[(]\\s*)(?<urlunquoted>(?:\\\\[()\\s]|[^()\\s])+)(?<endunquoted>\\s*[)]\\s*(?:[\\s;,'\"]|$))";
+	private static final String QUOTED_FORM = "(?<start#QUOTENAME#>\\s*url\\s*[(]\\s*)(?<quote#QUOTENAME#>#QUOTE#)(?<url#QUOTENAME#>(?:\\\\#QUOTE#|(?!#QUOTE#).)+)#QUOTE#(?<end#QUOTENAME#>\\s*[)]\\s*(?:[\\s;,'\"]|$))";
+
 	/**
 	 * Regular expression that matches CSS properties for image inclusions such
 	 * as:
@@ -169,19 +149,67 @@ public final class HtmlUtils {
 		List<String> urls = new ArrayList<>();
 		Matcher m = CSS_IMAGE_PROPERTIES_PATTERN.matcher(QUOTE_ENTITY.matcher(htmlContent).replaceAll("'"));
 		while (m.find()) {
-			String value = m.group("value");
-			Matcher urlMatcher = CSS_URL_FUNC_PATTERN.matcher(value);
-			while (urlMatcher.find()) {
-				String url = urlMatcher.group("unquotedurl");
-				if (url == null) {
-					url = urlMatcher.group("singlequotedurl");
+			for (CssUrlFunction url : getCssUrlFunctions(m.group("value"))) {
+				if (!urls.contains(url.getUrl())) {
+					urls.add(url.getUrl());
 				}
-				if (url == null) {
-					url = urlMatcher.group("doublequotedurl");
+			}
+		}
+		return urls;
+	}
+
+	/**
+	 * Parse the CSS property value that may contain one or several
+	 * {@code url()} CSS function(s).
+	 * 
+	 * Each element of the returned list provides the following information:
+	 * <ul>
+	 * <li>{@code "source"}: the whole match of the {@code url()} function</li>
+	 * <li>{@code "start"}: matches the {@code url(} part (without quote, spaces
+	 * are preserved)</li>
+	 * <li>{@code "end"}: matches the {@code )} part (without quote, spaces are
+	 * preserved)</li>
+	 * <li>{@code "url"}: the url (without surrounding quotes)</li>
+	 * <li>{@code "enclosingQuoteChar"}: either {@literal "} character,
+	 * {@literal '} character or empty string</li>
+	 * </ul>
+	 * 
+	 * <strong>WARNING:</strong> This function doesn't attempt to validate the
+	 * URL at all. It just extracts the different parts for later parsing. If
+	 * either the URL or CSS property value or the {@code url()} function is
+	 * invalid, it may still return a value because it depends on the parsing
+	 * context. It may then return an invalid form. For example
+	 * {@code url('images/h'1.gif')} is not valid due to unscaped single quote,
+	 * however this method will return a result with {@code images/h'1.gif} as
+	 * URL.
+	 * 
+	 * @param cssPropertyValue
+	 *            the value of the CSS property
+	 * @param additionalEnclosingQuotes
+	 *            allow additional forms such as
+	 *            {@code url(&quot;http://some-url&quot;)} that may be used in
+	 *            style attribute
+	 * @return the list of meta information about the matched urls
+	 */
+	public static List<CssUrlFunction> getCssUrlFunctions(String cssPropertyValue, String... additionalEnclosingQuotes) {
+		List<String> possibleQuotes = new ArrayList<>(asList("'", "\""));
+		possibleQuotes.addAll(asList(additionalEnclosingQuotes));
+		Pattern cssUrlFuncPattern = generateUrlFuncPattern(possibleQuotes);
+		List<CssUrlFunction> urls = new ArrayList<>();
+		Matcher urlMatcher = cssUrlFuncPattern.matcher(cssPropertyValue);
+		while (urlMatcher.find()) {
+			CssUrlFunction url = null;
+			for (int i = 0; i < possibleQuotes.size(); i++) {
+				if (urlMatcher.group("quotedform" + i) != null) {
+					url = new CssUrlFunction(urlMatcher.group("quotedform" + i), urlMatcher.group("start" + i), urlMatcher.group("url" + i), urlMatcher.group("end" + i), possibleQuotes.get(i));
+					break;
 				}
-				if (!urls.contains(url)) {
-					urls.add(url);
-				}
+			}
+			if (urlMatcher.group("unquotedform") != null) {
+				url = new CssUrlFunction(urlMatcher.group("unquotedform"), urlMatcher.group("startunquoted"), urlMatcher.group("urlunquoted"), urlMatcher.group("endunquoted"), "");
+			}
+			if (url != null) {
+				urls.add(url);
 			}
 		}
 		return urls;
@@ -232,13 +260,14 @@ public final class HtmlUtils {
 	 * <li>If {@code other} parameter is relative, then it merges {@code other}
 	 * into {@code base}. For example:
 	 * <ul>
-	 * <li>base="css/foo.css", other="bar.png" {@literal =>} returns "css/bar.png"</li>
+	 * <li>base="css/foo.css", other="bar.png" {@literal =>} returns
+	 * "css/bar.png"</li>
 	 * <li>base="css/foo.css", other="../images/bar.png" {@literal =>} returns
 	 * "images/bar.png"</li>
-	 * <li>base="http://some-url/css/foo.css", other="bar.png" {@literal =>} returns
-	 * "http://some-url/css/bar.png"</li>
-	 * <li>base="http://some-url/css/foo.css", other="../images/bar.png" {@literal =>}
-	 * returns "http://some-url/images/bar.png"</li>
+	 * <li>base="http://some-url/css/foo.css", other="bar.png" {@literal =>}
+	 * returns "http://some-url/css/bar.png"</li>
+	 * <li>base="http://some-url/css/foo.css", other="../images/bar.png"
+	 * {@literal =>} returns "http://some-url/images/bar.png"</li>
 	 * </ul>
 	 * </li>
 	 * </ul>
@@ -260,7 +289,7 @@ public final class HtmlUtils {
 		Path basePath = Paths.get(base);
 		return unescapeJavaUri(ResourceUtils.toResourcePath(basePath.resolveSibling(escapeForJavaUri(other)).normalize()));
 	}
-	
+
 	/**
 	 * Indicates if the URL is relative or not.
 	 * 
@@ -303,11 +332,22 @@ public final class HtmlUtils {
 		return URI_INVALID_CHARS.matcher(url).replaceAll(URI_ESCAPE);
 	}
 
-	@SuppressWarnings("java:S5361")
+	@SuppressWarnings({ "java:S5361", "squid:S5361" })
 	private static String unescapeJavaUri(String url) {
 		return url.replaceAll(URI_ESCAPE, URI_INVALID_CHARS.pattern());
 	}
-	
+
+	private static Pattern generateUrlFuncPattern(List<String> possibleQuotes) {
+		StringJoiner joiner = new StringJoiner("|");
+		int i = 0;
+		for (String possibleQuote : possibleQuotes) {
+			joiner.add("(?<quotedform" + i + ">" + QUOTED_FORM.replace("#QUOTE#", Pattern.quote(possibleQuote)).replace("#QUOTENAME#", i + "") + ")");
+			i++;
+		}
+		joiner.add("(?<unquotedform>" + UNQUOTED_FORM + ")");
+		return Pattern.compile(joiner.toString(), Pattern.MULTILINE);
+	}
+
 	private HtmlUtils() {
 		super();
 	}

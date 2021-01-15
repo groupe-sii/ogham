@@ -1,12 +1,11 @@
 package fr.sii.ogham.html.inliner.impl.jsoup;
 
-import static fr.sii.ogham.core.util.HtmlUtils.CSS_URL_FUNC_PATTERN;
+import static fr.sii.ogham.core.util.HtmlUtils.getCssUrlFunctions;
 import static fr.sii.ogham.core.util.HtmlUtils.relativize;
 import static fr.sii.ogham.html.inliner.impl.jsoup.CssInlineUtils.isInlineModeAllowed;
 
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
@@ -18,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.util.CssUrlFunction;
 import fr.sii.ogham.html.inliner.CssInliner;
 import fr.sii.ogham.html.inliner.CssInlinerConstants.InlineModes;
 import fr.sii.ogham.html.inliner.ExternalCss;
@@ -33,6 +33,7 @@ public class JsoupCssInliner implements CssInliner {
 	private static final Pattern NEW_LINES = Pattern.compile("\n");
 	private static final Pattern COMMENTS = Pattern.compile("/\\*.*?\\*/");
 	private static final Pattern SPACES = Pattern.compile(" +");
+	private static final String QUOTE_ENTITY = "&quot;";
 
 	@Override
 	public String inline(String htmlContent, List<ExternalCss> cssContents) {
@@ -244,23 +245,11 @@ public class JsoupCssInliner implements CssInliner {
 	}
 
 	private static String updateRelativeUrls(String content, ExternalCss css) {
-		StringBuffer sb = new StringBuffer();
-		Matcher m = CSS_URL_FUNC_PATTERN.matcher(content);
-		while (m.find()) {
-			String delim = "";
-			String url = m.group("unquotedurl");
-			if (url == null) {
-				url = m.group("doublequotedurl");
-				delim = "\"";
-			}
-			if (url == null) {
-				url = m.group("singlequotedurl");
-				delim = "'";
-			}
-			m.appendReplacement(sb, Matcher.quoteReplacement(m.group("start")+delim+relativize(css.getPath().getOriginalPath(), url)+delim+m.group("end")));
+		String newContent = content;
+		for (CssUrlFunction match : getCssUrlFunctions(content, QUOTE_ENTITY)) {
+			newContent = match.rewriteUrl(newContent, relativize(css.getPath().getOriginalPath(), match.getUrl()));
 		}
-		m.appendTail(sb);
-		return sb.toString();
+		return newContent;
 	}
 
 	private static class AtRuleParserContext {
