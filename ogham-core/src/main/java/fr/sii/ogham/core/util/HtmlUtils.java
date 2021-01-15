@@ -36,7 +36,7 @@ public final class HtmlUtils {
 	private static final Pattern URI_INVALID_CHARS = Pattern.compile("\\\\'");
 	private static final String URI_ESCAPE = "''";
 	private static final Pattern QUOTE_ENTITY = Pattern.compile("&quot;");
-	private static final String CSS_URL_FUNC = "(?<start>url\\s*\\(\\s*)(?:'(?<singlequotedurl>\\S*?)'|\"(?<doublequotedurl>\\S*?)\"|(?<unquotedurl>(?:\\\\\\s|\\\\\\)|\\\\\\\"|\\\\\\'|\\S)*?))(?<end>\\s*\\))";
+	private static final String CSS_URL_FUNC = "(?<start>url\\s*\\(\\s*)(?:'(?<singlequotedurl>\\S*?)'|\"(?<doublequotedurl>\\S*?)\"|(?<unquotedurl>[\\\\\\s\\\\\\)\\\\\\\"\\\\\\'\\S]*?))(?<end>\\s*\\))";
 	/**
 	 * Regular expression that matches CSS {@code url()} inclusions. It can be:
 	 * <ul>
