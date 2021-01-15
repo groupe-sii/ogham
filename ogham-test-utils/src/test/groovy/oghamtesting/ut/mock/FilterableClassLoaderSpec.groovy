@@ -1,10 +1,13 @@
 package oghamtesting.ut.mock
 
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.function.Predicate
 
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import fr.sii.ogham.testing.mock.classloader.FilterableClassLoader
 import mock.context.SimpleBean
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -52,7 +55,7 @@ class FilterableClassLoaderSpec extends Specification {
 			def e = thrown(ClassNotFoundException)
 			e.message == "Class className not accepted"
 	}
-
+	
 	def "non matching resource name should return null or empty enumeration"() {
 		given:
 			ClassLoader delegate = Mock {
@@ -71,5 +74,77 @@ class FilterableClassLoaderSpec extends Specification {
 			resource == null
 			resources == Collections.emptyEnumeration()
 			stream == null
+	}
+
+	// Eclipse OpenJ9 adopt-openj9@1.8.0-242 bug that calls assertion methods directly in the constructor
+	def "early assertion status calls"() {
+		given:
+			ClassLoader delegate = Mock {
+				1 * setDefaultAssertionStatus(false)
+				1 * setDefaultAssertionStatus(true)
+				1 * setPackageAssertionStatus("packageName.1", true)
+				1 * setPackageAssertionStatus("packageName.2", false)
+				1 * setClassAssertionStatus("className.1", true)
+				1 * setClassAssertionStatus("className.2", false)
+				1 * clearAssertionStatus()
+			}
+			def classLoader = new FilterableClassLoader(null, (Predicate) { false })
+			// simulate calls before delegate is set (like it would be done directly from parent constructor)
+			classLoader.setDefaultAssertionStatus(false)
+			classLoader.setDefaultAssertionStatus(true)
+			classLoader.setPackageAssertionStatus("packageName.1", true)
+			classLoader.setPackageAssertionStatus("packageName.2", false)
+			classLoader.setClassAssertionStatus("className.1", true)
+			classLoader.setClassAssertionStatus("className.2", false)
+			classLoader.clearAssertionStatus()
+			// set delegate
+			overrideField(classLoader, 'delegate', delegate)
+			
+		when:
+			callMethod(classLoader, 'applyLateCalls')
+			
+		then:
+			notThrown(NullPointerException)
+	}
+	
+	def "normal assertion status calls"() {
+		given:
+			ClassLoader delegate = Mock {
+				1 * setDefaultAssertionStatus(false)
+				1 * setDefaultAssertionStatus(true)
+				1 * setPackageAssertionStatus("packageName.1", true)
+				1 * setPackageAssertionStatus("packageName.2", false)
+				1 * setClassAssertionStatus("className.1", true)
+				1 * setClassAssertionStatus("className.2", false)
+				1 * clearAssertionStatus()
+			}
+			def classLoader = new FilterableClassLoader(delegate, (Predicate) { false })
+			
+		when:
+			classLoader.setDefaultAssertionStatus(false)
+			classLoader.setDefaultAssertionStatus(true)
+			classLoader.setPackageAssertionStatus("packageName.1", true)
+			classLoader.setPackageAssertionStatus("packageName.2", false)
+			classLoader.setClassAssertionStatus("className.1", true)
+			classLoader.setClassAssertionStatus("className.2", false)
+			classLoader.clearAssertionStatus()
+			
+		then:
+			notThrown(NullPointerException)
+	}
+
+	private static void overrideField(Object instance, String fieldName, Object value) {
+		Field field = instance.getClass().getDeclaredField(fieldName)
+		field.setAccessible(true);
+
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+		modifiersField.setAccessible(true);
+		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+		field.set(instance, value)
+	}
+	
+	private static void callMethod(Object instance, String methodName) {
+		instance.metaClass.getMetaMethod(methodName, null).invoke(instance, null)
 	}
 }
