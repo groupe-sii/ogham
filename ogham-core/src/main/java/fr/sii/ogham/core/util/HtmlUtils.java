@@ -17,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Evaluator.IsEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ public final class HtmlUtils {
 	private static final Pattern URI_INVALID_CHARS = Pattern.compile("\\\\'");
 	private static final String URI_ESCAPE = "''";
 	private static final Pattern QUOTE_ENTITY = Pattern.compile("&quot;");
+	private static final Pattern URL_FUNC_START_PATTERN = Pattern.compile("url\\s*[(]\\s*");
 	private static final String UNQUOTED_FORM = "(?<startunquoted>\\s*url\\s*[(]\\s*)(?<urlunquoted>(?:\\\\[()\\s]|[^()\\s])+)(?<endunquoted>\\s*[)]\\s*(?:[\\s;,'\"]|$))";
 	private static final String QUOTED_FORM = "(?<start#QUOTENAME#>\\s*url\\s*[(]\\s*)(?<quote#QUOTENAME#>#QUOTE#)(?<url#QUOTENAME#>(?:\\\\#QUOTE#|(?!#QUOTE#).)+)#QUOTE#(?<end#QUOTENAME#>\\s*[)]\\s*(?:[\\s;,'\"]|$))";
 
@@ -194,25 +196,103 @@ public final class HtmlUtils {
 	public static List<CssUrlFunction> getCssUrlFunctions(String cssPropertyValue, String... additionalEnclosingQuotes) {
 		List<String> possibleQuotes = new ArrayList<>(asList("'", "\""));
 		possibleQuotes.addAll(asList(additionalEnclosingQuotes));
-		Pattern cssUrlFuncPattern = generateUrlFuncPattern(possibleQuotes);
+//		Pattern cssUrlFuncPattern = generateUrlFuncPattern(possibleQuotes);
 		List<CssUrlFunction> urls = new ArrayList<>();
-		Matcher urlMatcher = cssUrlFuncPattern.matcher(cssPropertyValue);
-		while (urlMatcher.find()) {
-			CssUrlFunction url = null;
-			for (int i = 0; i < possibleQuotes.size(); i++) {
-				if (urlMatcher.group("quotedform" + i) != null) {
-					url = new CssUrlFunction(urlMatcher.group("quotedform" + i), urlMatcher.group("start" + i), urlMatcher.group("url" + i), urlMatcher.group("end" + i), possibleQuotes.get(i));
+//		Matcher urlMatcher = cssUrlFuncPattern.matcher(cssPropertyValue);
+//		while (urlMatcher.find()) {
+//			CssUrlFunction url = null;
+//			for (int i = 0; i < possibleQuotes.size(); i++) {
+//				if (urlMatcher.group("quotedform" + i) != null) {
+//					url = new CssUrlFunction(urlMatcher.group("quotedform" + i), urlMatcher.group("start" + i), urlMatcher.group("url" + i), urlMatcher.group("end" + i), possibleQuotes.get(i));
+//					break;
+//				}
+//			}
+//			if (urlMatcher.group("unquotedform") != null) {
+//				url = new CssUrlFunction(urlMatcher.group("unquotedform"), urlMatcher.group("startunquoted"), urlMatcher.group("urlunquoted"), urlMatcher.group("endunquoted"), "");
+//			}
+//			if (url != null) {
+//				urls.add(url);
+//			}
+//		}
+		Matcher m = URL_FUNC_START_PATTERN.matcher(cssPropertyValue);
+		while (m.find()) {
+			String quote = null;
+			StringBuilder wholeMatch = new StringBuilder();
+			int urlStartIdx = m.end();
+			int urlEndIdx = 0;
+			int endIdx = 0;
+			wholeMatch.append(m.group());
+			for (int i=m.end() ; i<cssPropertyValue.length() ; i++) {
+				char c = cssPropertyValue.charAt(i);
+				wholeMatch.append(c);
+				if (isSpace(c)) {
+					continue;
+				}
+				if (quote == null) {
+					quote = "";
+					for (String possibleQuote : possibleQuotes) {
+						if (cssPropertyValue.length() >= i+possibleQuote.length()) {
+							String mayBeQuote = cssPropertyValue.substring(i, i+possibleQuote.length());
+							if (possibleQuote.equals(mayBeQuote)) {
+								quote = possibleQuote;
+								urlStartIdx = i + quote.length();
+								break;
+							}
+						}
+					}
+					continue;
+				}
+				if (quote != null && quote.isEmpty() && c == ')' && !isEscaped(cssPropertyValue, i)) {
+					urlEndIdx = i;
+					for (int j=i-1 ; j>0 ; j--) {
+						if (isSpace(cssPropertyValue.charAt(j))) {
+							urlEndIdx--;
+						} else {
+							break;
+						}
+					}
+					endIdx = i+1;
+					break;
+				}
+				String mayBeQuote = cssPropertyValue.substring(i, i+quote.length());
+				if (quote != null && !quote.isEmpty() && quote.equals(mayBeQuote) && !isEscaped(cssPropertyValue, i)) {
+					urlEndIdx = i;
+					for (int j=i ; j>0 ; j--) {
+						if (isSpace(cssPropertyValue.charAt(j))) {
+							urlEndIdx--;
+						} else {
+							break;
+						}
+					}
+					for (int j=i+1 ; j<cssPropertyValue.length() ; j++) {
+						wholeMatch.append(cssPropertyValue.charAt(j));
+						if (cssPropertyValue.charAt(j) == ')') {
+							endIdx = j+1;
+							break;
+						}
+					}
 					break;
 				}
 			}
-			if (urlMatcher.group("unquotedform") != null) {
-				url = new CssUrlFunction(urlMatcher.group("unquotedform"), urlMatcher.group("startunquoted"), urlMatcher.group("urlunquoted"), urlMatcher.group("endunquoted"), "");
-			}
-			if (url != null) {
-				urls.add(url);
-			}
+			urls.add(new CssUrlFunction(wholeMatch.toString(), m.group(), cssPropertyValue.substring(urlStartIdx, urlEndIdx), cssPropertyValue.substring(urlEndIdx+quote.length(), endIdx), quote));
 		}
 		return urls;
+	}
+
+	private static boolean isEscaped(String str, int i) {
+		int backslashes = 0;
+		for (int j=i ; j>=0 ; j--) {
+			if (str.charAt(j) == '\\') {
+				backslashes++;
+			} else {
+				break;
+			}
+		}
+		return backslashes % 2 == 1;
+	}
+
+	private static boolean isSpace(char c) {
+		return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 	}
 
 	/**
