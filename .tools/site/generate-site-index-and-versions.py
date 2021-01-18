@@ -14,6 +14,7 @@ def generate(sitedir, siteBaseUrl, codeBaseUrl, logoPath):
 		logo = file.read()
 	generateLatestReleaseResources(sitedir, siteBaseUrl, codeBaseUrl, versions.getLastRelease(), logo)
 	generateNightlyBuildResources(sitedir, siteBaseUrl, codeBaseUrl, versions.getNightlyBuild(), logo)
+	generateRedirect(sitedir+'/donate/thanks.html', baseUrl, version.name+'/donate-thanks.html')
 
 
 def loadVersions(sitedir):

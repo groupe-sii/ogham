@@ -75,7 +75,7 @@ include::{user-manual-dir}/installation/standalone-all.adoc[leveloffset=+2]
 
 === With Spring Boot
 
-.Quick start with Spring Boot
+.Getting started with Spring Boot
 [%collapsible]
 ==========
 include::{user-manual-dir}/installation/springboot-all.adoc[leveloffset=+2]
@@ -92,7 +92,6 @@ See how to {current-version-site-base-url}/user-manual.html#select-features-stan
 
 
 == Usage
-
 
 [NOTE]
 ====
@@ -113,7 +112,18 @@ to know how to send email using SendGrid HTTP API.
 
 ==== First email using an existing SMTP server
 
-.First email using an existing SMTP server
+
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates a basic usage of Ogham. This sample doesn't 
+show real improvement compared to other libraries. However, it is a
+the base for understanding the other samples.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/email/first-email.adoc[leveloffset=+3]
@@ -121,7 +131,16 @@ include::{user-manual-dir}/email/first-email.adoc[leveloffset=+3]
 
 ==== Use an HTML template for email body
 
-.Use an HTML template for email body
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates templating integration to easily externalize
+the email content from the source code.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/email/template-body.adoc[leveloffset=+3]
@@ -129,7 +148,17 @@ include::{user-manual-dir}/email/template-body.adoc[leveloffset=+3]
 
 ==== Use HTML title as email subject
 
-.Use HTML title as email subject
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates that you can use a single source for both the body and
+the subject (same variables and same context). This is particularly useful
+for internationalization.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/email/html-title-subject.adoc[leveloffset=+3]
@@ -138,7 +167,17 @@ include::{user-manual-dir}/email/text-first-line-subject.adoc[leveloffset=+3]
 
 ==== HTML body with CSS and images
 
-.HTML body with CSS and images
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates that you can reference resources like CSS files or
+images as usual without worrying about technical concerns and limitations for
+such resources in email context.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/email/css-and-images.adoc[leveloffset=+3]
@@ -146,7 +185,18 @@ include::{user-manual-dir}/email/css-and-images.adoc[leveloffset=+3]
 
 ==== A working preview of the HTML body (text alternative)
 
-.A working preview of the HTML body (text alternative)
+:note-caption: :grey_question:
+[NOTE]
+====
+Have you never received an email with strange characters in a textual preview ?
+
+This sample demonstrates how to easily provide a text alternative that is
+used as textual preview.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+3]
@@ -154,7 +204,15 @@ include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+3]
 
 ==== Attach files to the email
 
-.Attach files to the email
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates how to send files with the email.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+3]
@@ -181,7 +239,16 @@ See {current-version-site-base-url}/user-manual.html#ovh[Sending SMS through OVH
 
 ==== First SMS using an existing SMPP server
 
-.First SMS using an existing SMPP server
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates a basic usage of Ogham for sending SMS. It is a
+the base for understanding the other samples.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/sms/first-sms.adoc[leveloffset=+3]
@@ -189,7 +256,16 @@ include::{user-manual-dir}/sms/first-sms.adoc[leveloffset=+3]
 
 ==== Use a template for SMS content
 
-.Use a template for SMS content
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates templating integration to easily externalize
+the SMS content from the source code.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/sms/template-content.adoc[leveloffset=+3]
@@ -197,7 +273,16 @@ include::{user-manual-dir}/sms/template-content.adoc[leveloffset=+3]
 
 ==== Send a long SMS
 
-.Send a long SMS
+:note-caption: :grey_question:
+[NOTE]
+====
+This sample demonstrates that you don't have to handle these kind of
+technical concerns.
+====
+:note-caption: :information_source:
+
+
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/sms/long-sms.adoc[leveloffset=+3]
@@ -212,7 +297,7 @@ Ogham provides {current-version-site-base-url}/user-manual.html#sms-usage[many o
 
 === Include test utilities
 
-.Include test utilities
+.Getting started
 [%collapsible]
 ==========
 include::{user-manual-dir}/testing/install.adoc[leveloffset=+2]
@@ -227,7 +312,7 @@ to provide autocompletion for static imports.
 
 === Testing emails
 
-.Testing emails
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/testing/email-assertions.adoc[leveloffset=+1]
@@ -236,7 +321,7 @@ include::{user-manual-dir}/testing/email-assertions.adoc[leveloffset=+1]
 
 === Testing SMS
 
-.Testing SMS
+.Explanations & sample
 [%collapsible]
 ==========
 include::{user-manual-dir}/testing/sms-assertions.adoc[leveloffset=+1]
@@ -258,9 +343,20 @@ Ogham provides many other tool features:
 
 == Extend
 
-{current-version-site-base-url}/user-manual.html#section-extend[See how to extend in full documentation]
+{current-version-site-base-url}/user-manual.html#section-extend[See how to extend Ogham in full documentation]
 
 == Tips
 
 {current-version-site-base-url}/user-manual.html#section-tips[See tips in full documentation]
 
+== Support developer
+
+I am currently the single developer on this project for several years.
+I have many ideas for this project to ease other developer work.
+
+You can help me by either {current-version-site-base-url}/contribute.html[contributing] or by {current-version-site-base-url}/donate.html[making a donation].
+
+image:{images-dir}/donation/paypal-small.png[alt="Donate with PayPal", link="https://www.paypal.com/donate?hosted_button_id=KQKEFU5LE5K2J"]
+image:{images-dir}/donation/coinbase-small.png[alt="Donate crypto (Bitcoin, Ethereum, ...)", link="https://commerce.coinbase.com/checkout/7c322363-b8ef-4624-8957-a750b631f859"]
+
+Thank you !
