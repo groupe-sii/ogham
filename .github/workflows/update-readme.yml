@@ -1,0 +1,97 @@
+name: Update readme on master
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-18.04
+    name: "Update readme on master to latest release"
+    outputs:
+      updated: ${{ steps.has-changed.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/fr/sii/
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}
+      - name: "Get latest release"
+        id: latest-release
+        run: |
+          LATEST_RELEASE=$(git tag -l | sort -Vr | head -n1)
+          echo "::set-output name=version::$LATEST_RELEASE"
+      - name: "Generate README.adoc"
+        run: 
+          ./mvnw install 
+              -DskipTests=true
+              -Dmaven.javadoc.skip=true
+              -Dreadme.skip=false
+              -DdocOghamVersion=${{ steps.latest-release.outputs.version}}
+              -Dgit.branch=master
+      - name: "Has changed"
+        id: has-changed
+        run: |
+          CHANGED=$((git status --porcelain | grep -q README.adoc) && echo 'true' || echo 'false')
+          echo "CHANGED=$CHANGED"
+          echo "::set-output name=changed::$CHANGED"
+      - name: "Update README"
+        run: |
+          if [ "${{ steps.has-changed.outputs.changed }}" != "true" ]; then
+            echo "README already up-to-date"
+            exit 0
+          fi
+          echo "::warning ::Need to update README"
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+          git add .
+          git commit -m "doc(readme) Update README to always show latest release version (${{ steps.latest-release.outputs.version}}) on master"
+          git push
+
+  slack-updated:
+    if: success() && fromJson(needs.update-readme.outputs.updated)
+    needs: [update-readme]
+    runs-on: ubuntu-18.04
+    name: "Slack"
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          fields: workflow,ref
+          username: 'readme'
+          author_name: ''
+          icon_url: https://github.com/groupe-sii/ogham/raw/master/src/site/resources/img/ogham-blue-256x256.png
+          text: |
+            :x: readme has been updated on master
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+  slack-failure:
+    if: failure()
+    needs: [update-readme]
+    runs-on: ubuntu-18.04
+    name: "Slack"
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          fields: workflow,ref
+          username: 'readme'
+          author_name: ''
+          icon_url: https://github.com/groupe-sii/ogham/raw/master/src/site/resources/img/ogham-blue-256x256.png
+          text: |
+            :x: failed to update readme on master
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    
