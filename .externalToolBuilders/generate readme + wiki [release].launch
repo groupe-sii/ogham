@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
+    <booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="false"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;resources&gt;&#10;&lt;item path=&quot;/ogham/src/docs/asciidoc&quot; type=&quot;2&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/docs/resources&quot; type=&quot;2&quot;/&gt;&#10;&lt;/resources&gt;}"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${system_path:bash}"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="auto,"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-c 'if [ &quot;${git_branch}&quot; != &quot;master&quot; ]; then echo &quot;skip generation for latest release (${git_branch})&quot;; else echo -e &quot;=========================\nGenerating for v${OGHAM_LATEST_RELEASE_VERSION}\n=========================\n&quot;; ${workspace_loc:/ogham}/./mvnw spring-boot:run -Dspring-boot.run.arguments=&quot;--generator.doc.source.root-directory=${workspace_loc:/ogham} --generator.github.current-branch=${git_branch} --generator.ogham.current-version=${OGHAM_LATEST_RELEASE_VERSION} --readme --wiki&quot;; fi'"/>
+    <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/documentation-generator}"/>
+</launchConfiguration>
