@@ -83,7 +83,7 @@ jobs:
               -DskipTests=true
               -Dmaven.javadoc.skip=true
               -Dreadme.skip=false
-              -DdocOghamVersion=${{ github.event.inputs.release-version}}
+              -Ddoc.ogham.version=${{ github.event.inputs.release-version}}
               -Dgit.branch=v${{ github.event.inputs.release-version}}
       - name: "Build to ensure that it works fine"
         run:
@@ -181,7 +181,7 @@ jobs:
               -DskipTests=true
               -Dmaven.javadoc.skip=true
               -Dreadme.skip=false
-              -DdocOghamVersion=${{ github.event.inputs.next-dev-version }}
+              -Ddoc.ogham.version=${{ github.event.inputs.next-dev-version }}
               -Dgit.branch=master
       - name: "Commit next development iteration"
         run: |
@@ -236,7 +236,7 @@ jobs:
               -DskipTests=true
               -Dmaven.javadoc.skip=true
               -Dreadme.skip=false
-              -DdocOghamVersion=${{ github.event.inputs.fix-version }}
+              -Ddoc.ogham.version=${{ github.event.inputs.fix-version }}
               -Dgit.branch=$FIX_BRANCH
       - name: "Create fix branch or update it"
         run: |

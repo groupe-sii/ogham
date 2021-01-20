@@ -37,7 +37,7 @@ jobs:
               -DskipTests=true
               -Dmaven.javadoc.skip=true
               -Dreadme.skip=false
-              -DdocOghamVersion=${{ steps.latest-release.outputs.version}}
+              -Ddoc.ogham.version=${{ steps.latest-release.outputs.version}}
               -Dgit.branch=master
       - name: "Has changed"
         id: has-changed

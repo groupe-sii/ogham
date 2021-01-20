@@ -95,7 +95,7 @@ jobs:
         run: |
           export JAVA_TOOL_OPTIONS='-Xmx4096m'
           export MAVEN_OPTS='-Xmx4096m'
-          ci/./generate-documentation.sh
+          ci/./generate-documentation.sh '-Ddoc.ogham.version=${{ github.event.inputs.current-version }}' '-Dgit.branch=${{ github.event.inputs.git-branch }}'
       - name: "Generate showcase video"
         uses: nick-invision/retry@v2
         with:
@@ -144,7 +144,7 @@ jobs:
           ./mvnw site:stage
               '-Pmutation-testing'
               '-Dsite.staging.dir=gh-pages'
-              '-DdocOghamVersion=${{ github.event.inputs.current-version }}'
+              '-Ddoc.ogham.version=${{ github.event.inputs.current-version }}'
               '-Dgit.branch=${{ github.event.inputs.git-branch }}'
       - uses: actions/setup-python@v2
         with:
