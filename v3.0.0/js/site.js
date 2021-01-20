@@ -7,7 +7,7 @@
 		$('.dropdown-menu', ul).empty();
 		$.get($(".navbar-brand").attr("href") + "/versions.json", function(data) {
 			data.forEach(function(version) {
-				$('.dropdown-menu', ul).append('<li><a class="dropdown-item" href="'+$(".brand").attr("href")+'/'+version+'/" title="'+version+'">'+version+'</a></li>');
+				$('.dropdown-menu', ul).append('<li><a class="dropdown-item" href="'+$(".navbar-brand").attr("href")+'/'+version+'/" title="'+version+'">'+version+'</a></li>');
 			});
 		});
 	}
