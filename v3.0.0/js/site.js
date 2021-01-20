@@ -1,7 +1,7 @@
 (function() {
 	
 	var addVersions = function() {
-		var currentVersion = $('.projectVersion').text().replace(/Version: (.+)[.] $/, "$1");
+		var currentVersion = $("a[title='[current-version]'").attr('href');
 		var ul = $("a[title='[version]']").parent().parent();
 		$('.dropdown-toggle', ul).html('v' + currentVersion +' <b class="caret"></b>');
 		$('.dropdown-menu', ul).empty();
