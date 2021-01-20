@@ -162,7 +162,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'fr.sii.ogham:ogham-all:3.0.0'
+  implementation 'fr.sii.ogham:ogham-all:3.1.0-SNAPSHOT'
 }</code></pre></div></div></div></section><section id="_1_easy_usage_quick_start_2" class="stretch vcenter" data-transition="fade"><h2>1. Easy usage <span class="subobjective">Quick start</span></h2><div class="slide-content"><h3>Initialize Ogham</h3><div class="listingblock fragment"><div class="content"><pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs" data-noescape="true">MessagingService service = MessagingBuilder.standard()
   // ... optional configuration
   .build();</code></pre></div></div></div></section><section id="_1_easy_usage_quick_start_3" class="stretch vcenter" data-transition="fade"><h2>1. Easy usage <span class="subobjective">Quick start</span></h2><div class="slide-content"><h3>Send an email</h3><div class="listingblock fragment"><div class="content"><pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs" data-noescape="true">service.send(new Email()
@@ -176,7 +176,7 @@ dependencies {
 
 dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:3.0.0'
+  implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:3.1.0-SNAPSHOT'
   testImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }

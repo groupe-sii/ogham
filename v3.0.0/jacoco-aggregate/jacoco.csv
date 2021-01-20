@@ -34,7 +34,7 @@ reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,ImageInlineUtils,0,51,
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupCssInliner.AtRuleParserContext,0,23,0,0,0,8,0,1,0,1
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupBase64ImageInliner,0,103,0,8,0,17,0,7,0,3
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,CssInlineUtils,2,49,2,6,1,11,2,4,0,2
-reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupCssInliner,9,598,3,73,1,130,3,55,0,20
+reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupCssInliner,9,562,3,69,1,120,3,53,0,20
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupAttachImageInliner,0,136,0,10,0,24,0,8,0,3
 reporting/ogham-core,fr.sii.ogham.core.async,ThreadSleepAwaiter,9,25,0,0,3,9,0,3,0,3
 reporting/ogham-core,fr.sii.ogham.core.message.fluent,SingleContentBuilder,20,58,0,0,4,14,2,7,2,7
@@ -68,6 +68,7 @@ reporting/ogham-core,fr.sii.ogham.sms.builder,PhoneNumberTranslatorPair,0,15,0,0
 reporting/ogham-core,fr.sii.ogham.sms.builder,RecipientNumberBuilder,8,35,1,3,3,10,2,5,1,4
 reporting/ogham-core,fr.sii.ogham.sms.builder,SenderNumberFormatBuilder,0,122,3,3,0,25,3,9,0,9
 reporting/ogham-core,fr.sii.ogham.core.util,WithPriority,15,20,0,0,1,7,1,4,1,4
+reporting/ogham-core,fr.sii.ogham.core.util,CssUrlFunction,53,90,0,0,2,15,2,9,2,9
 reporting/ogham-core,fr.sii.ogham.core.util,LogUtils.Lazy,7,11,0,0,2,4,2,2,2,2
 reporting/ogham-core,fr.sii.ogham.core.util,ArrayUtils,5,49,1,5,1,11,1,4,0,2
 reporting/ogham-core,fr.sii.ogham.core.util,PriorizedList,7,54,0,0,2,14,1,8,1,8
@@ -76,7 +77,7 @@ reporting/ogham-core,fr.sii.ogham.core.util,ClasspathUtils,0,17,0,0,0,7,0,4,0,4
 reporting/ogham-core,fr.sii.ogham.core.util,StringUtils,4,12,0,0,1,3,1,3,1,3
 reporting/ogham-core,fr.sii.ogham.core.util,EqualsBuilder,88,175,13,27,18,31,13,17,4,6
 reporting/ogham-core,fr.sii.ogham.core.util,BeanUtils,11,138,0,12,2,35,1,14,1,8
-reporting/ogham-core,fr.sii.ogham.core.util,HtmlUtils,11,244,3,27,4,61,3,23,0,11
+reporting/ogham-core,fr.sii.ogham.core.util,HtmlUtils,11,424,3,35,4,77,3,29,0,13
 reporting/ogham-core,fr.sii.ogham.core.util,HashCodeBuilder,26,41,0,2,7,9,4,5,4,4
 reporting/ogham-core,fr.sii.ogham.core.util,IOUtils,0,30,0,0,0,6,0,4,0,4
 reporting/ogham-core,fr.sii.ogham.core.util,Base64Utils,0,4,0,0,0,1,0,1,0,1
@@ -252,8 +253,8 @@ reporting/ogham-core,fr.sii.ogham.core.subject.provider,HtmlTitleSubjectProvider
 reporting/ogham-core,fr.sii.ogham.core.subject.provider,TextPrefixSubjectProvider,6,59,2,8,1,15,2,6,0,3
 reporting/ogham-core,fr.sii.ogham.core.builder.env,SimplePropertiesBuilder.Property,0,15,0,0,0,6,0,3,0,3
 reporting/ogham-core,fr.sii.ogham.core.builder.env,SimpleEnvironmentBuilder,5,204,0,10,2,44,1,19,1,14
-reporting/ogham-core,fr.sii.ogham.core.builder.env,ConverterBuilderDelegate,33,0,0,0,10,0,5,0,5,0
 reporting/ogham-core,fr.sii.ogham.core.builder.env,PropertiesBuilderDelegate,28,0,0,0,8,0,4,0,4,0
+reporting/ogham-core,fr.sii.ogham.core.builder.env,ConverterBuilderDelegate,33,0,0,0,10,0,5,0,5,0
 reporting/ogham-core,fr.sii.ogham.core.builder.env,SimpleConverterBuilder,15,71,0,8,4,20,1,10,1,6
 reporting/ogham-core,fr.sii.ogham.core.builder.env,SimplePropertiesBuilder,2,74,3,7,0,15,3,6,0,4
 reporting/ogham-core,fr.sii.ogham.core.builder.env,SimpleEnvironmentBuilder.PriorityComparator,2,21,1,5,0,3,1,3,0,1
@@ -349,8 +350,8 @@ reporting/ogham-core,fr.sii.ogham.core.builder.env.props,PropsBuilder,0,13,0,0,0
 reporting/ogham-core,fr.sii.ogham.core.builder.env.props,AbstractProps,0,15,0,0,0,6,0,3,0,3
 reporting/ogham-core,fr.sii.ogham.core.builder.env.props,Props,0,11,0,0,0,4,0,2,0,2
 reporting/ogham-core,fr.sii.ogham.core.builder.env.props,PropsPath,15,155,0,10,2,32,0,13,0,8
-reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,CssImageInlineUtils,45,403,5,39,5,98,5,32,0,15
-reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,MatchedUrl,0,15,0,0,0,6,0,3,0,3
+reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,CssImageInlineUtils,45,353,4,32,5,82,4,27,0,13
+reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,MatchedUrl,3,12,0,0,1,5,1,2,1,2
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,CssImageInlinerConstants.InlineModes,3,50,0,0,1,8,1,3,1,3
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,RegexBase64BackgroundImageInliner.Encoded,0,15,0,0,0,6,0,3,0,3
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.regexp,CssImageDeclaration,0,21,0,0,0,8,0,4,0,4
@@ -399,8 +400,8 @@ reporting/ogham-email-sendgrid-v2,fr.sii.ogham.email.sendgrid.v2.sender.impl,Sen
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CorrectPackageNameEmailCompat,10,20,2,2,4,7,3,3,1,3
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CorrectPackageNamePersonalizationCompat,0,52,0,0,0,13,0,7,0,7
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CompatUtil,12,19,1,3,3,6,1,3,0,2
-reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CorrectPackageNameMailCompat,0,89,0,4,0,28,0,14,0,12
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CorrectPackageNameAttachmentsCompat,0,36,0,0,0,14,0,7,0,7
+reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CorrectPackageNameMailCompat,0,89,0,4,0,28,0,14,0,12
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat,CorrectPackageNameCompatFactory,0,15,0,0,0,4,0,4,0,4
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.sender.impl,SendGridV4Sender,39,293,2,20,7,75,3,22,1,12
 reporting/ogham-email-sendgrid-v4,fr.sii.ogham.email.sendgrid.v4.builder.sendgrid,DefaultSendGridV4Configurer.SendGridV4Configurer,0,66,1,5,0,13,1,5,0,3
@@ -450,9 +451,9 @@ reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,KeepAliveBu
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,CloudhopperBuilder,120,1190,18,58,36,147,26,79,13,54
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,CloudhopperSessionOptions,4,90,0,0,2,38,1,26,1,26
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,MessageSplitterBuilder,27,193,3,13,6,37,5,15,2,10
-reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,DefaultCloudhopperConfigurer,0,4,0,0,0,1,0,1,0,1
-reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,EncoderBuilder,65,201,7,5,12,39,9,21,5,19
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,LoggingBuilder,12,0,0,0,5,0,3,0,3,0
+reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,EncoderBuilder,65,201,7,5,12,39,9,21,5,19
+reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,DefaultCloudhopperConfigurer,0,4,0,0,0,1,0,1,0,1
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,SslBuilder,40,0,2,0,10,0,6,0,5,0
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,SessionBuilder,54,253,1,11,18,49,10,21,9,16
 reporting/ogham-sms-cloudhopper,fr.sii.ogham.sms.builder.cloudhopper,ReuseSessionBuilder,0,82,0,0,0,19,0,8,0,8
@@ -522,16 +523,16 @@ reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,Ogham
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,OghamEmailProperties.ExtractFromTextProperties,0,13,0,0,0,5,0,3,0,3
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,OghamEmailProperties.SubjectProperties,0,34,0,0,0,12,0,7,0,7
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,SpringMailConfigurer,0,147,1,3,0,35,1,7,0,6
-reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,OghamEmailProperties,0,123,0,0,0,41,0,21,0,21
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,OghamJavaMailProperties,0,41,0,0,0,15,0,9,0,9
+reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,OghamEmailProperties,0,123,0,0,0,41,0,21,0,21
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.email,OghamEmailProperties.FromProperties,0,10,0,0,0,4,0,3,0,3
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.general,MessagingProperties,0,15,0,0,0,5,0,3,0,3
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.general,SpringGeneralMessagingConfigurer,0,436,0,0,0,102,0,8,0,8
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.general,OghamGeneralConfiguration,0,61,0,2,0,12,0,8,0,7
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.general,MessagingProperties.WrapUncaughtExceptionsProperties,0,13,0,0,0,5,0,3,0,3
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,OghamSmsProperties,0,87,0,0,0,29,0,15,0,15
-reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,OghamCloudhopperConfiguration,0,10,0,0,0,2,0,2,0,2
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,OghamSmsProperties.FromAlphanumericCodeProperties,0,10,0,0,0,4,0,3,0,3
+reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,OghamCloudhopperConfiguration,0,10,0,0,0,2,0,2,0,2
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,OghamSmsProperties.FromShortCodeProperties,0,10,0,0,0,4,0,3,0,3
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,OghamCloudhopperProperties.KeepAliveOptions,0,38,0,0,0,16,0,11,0,11
 reporting/ogham-spring-boot-common-autoconfigure,fr.sii.ogham.spring.sms,EncoderProperties.AutoGuessProperties,0,10,0,0,0,4,0,3,0,3
@@ -601,8 +602,8 @@ reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,Str
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter,16,31,0,2,2,8,0,5,0,4
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,StringContentTemplateLoader,0,18,0,0,0,5,0,5,0,5
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FirstSupportingResolverAdapter,3,104,0,12,1,24,1,14,1,8
-reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter.FileTemplateLoaderAllowingAbsolutePaths.new PrivilegedExceptionAction() {...},7,40,3,5,1,7,3,3,0,2
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter.FileTemplateLoaderAllowingAbsolutePaths,6,19,1,1,2,4,1,3,0,3
+reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter.FileTemplateLoaderAllowingAbsolutePaths.new PrivilegedExceptionAction() {...},7,40,3,5,1,7,3,3,0,2
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,ClassPathResolverAdapter,3,31,1,3,1,8,1,5,0,4
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,AbstractFreeMarkerTemplateLoaderOptionsAdapter,3,7,0,0,1,3,1,2,1,2
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,TemplateLoaderOptions,0,3,0,0,0,2,0,1,0,1
@@ -647,8 +648,8 @@ reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.buider,
 reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.buider,ThymeleafV3EmailBuilder,20,95,1,1,3,14,2,5,1,5
 reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.buider,ThymeleafV3EngineConfigBuilder,6,0,0,0,2,0,1,0,1,0
 reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.configure,DefaultThymeleafV3EmailConfigurer.ThymeleafV3EmailConfigurer,5,18,0,4,2,5,1,6,1,4
-reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.configure,DefaultThymeleafV3SmsConfigurer.ThymeleafV3SmsConfigurer,5,18,0,4,2,5,1,6,1,4
 reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.configure,DefaultThymeleafV3EmailConfigurer,0,4,0,0,0,1,0,1,0,1
+reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.configure,DefaultThymeleafV3SmsConfigurer.ThymeleafV3SmsConfigurer,5,18,0,4,2,5,1,6,1,4
 reporting/ogham-template-thymeleaf-v3,fr.sii.ogham.template.thymeleaf.v3.configure,DefaultThymeleafV3SmsConfigurer,0,4,0,0,0,1,0,1,0,1
 reporting/ogham-test-classpath-runtime,junit.filter,Assumptions,58,0,10,0,11,0,7,0,2,0
 reporting/ogham-test-classpath-runtime,fr.sii.ogham.runtime.runner,EmailRunner,134,0,8,0,32,0,10,0,6,0
@@ -716,7 +717,11 @@ reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.config,Credentials
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spock,LoggingTestInterceptor,0,44,0,0,0,14,0,3,0,3
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spock,LoggingTestExtension,11,35,1,3,4,9,2,4,1,3
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.html,AssertHtml,0,75,1,9,0,20,1,9,0,5
-reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader,46,89,8,8,16,21,8,10,4,6
+reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader.SetClassAssertionStatusCall,0,16,0,0,0,6,0,2,0,2
+reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader,0,206,0,18,0,48,0,22,0,13
+reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader.SetDefaultAssertionStatusCall,0,11,0,0,0,5,0,2,0,2
+reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader.ClearAssertionStatusCall,0,3,0,0,0,2,0,1,0,1
+reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader.SetPackageAssertionStatusCall,0,16,0,0,0,6,0,2,0,2
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.cloudhopper,CloudhopperSMPPServer,76,0,0,0,23,0,9,0,9,0
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.cloudhopper,TestSmppServerHandler,73,0,4,0,21,0,10,0,8,0
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.sms,ExpectedSms,0,21,0,0,0,8,0,4,0,4

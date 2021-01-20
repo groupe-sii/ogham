@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>HtmlUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">HtmlUtils.java</span></div><h1>HtmlUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
 
+import static java.util.Arrays.asList;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -7,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,43 +28,20 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class HtmlUtils {
-<span class="fc" id="L28">	private static final Logger LOG = LoggerFactory.getLogger(HtmlUtils.class);</span>
+<span class="fc" id="L31">	private static final Logger LOG = LoggerFactory.getLogger(HtmlUtils.class);</span>
 
-<span class="fc" id="L30">	private static final Pattern HTML_PATTERN = Pattern.compile(&quot;&lt;html&quot;, Pattern.CASE_INSENSITIVE);</span>
+<span class="fc" id="L33">	private static final Pattern HTML_PATTERN = Pattern.compile(&quot;&lt;html&quot;, Pattern.CASE_INSENSITIVE);</span>
 	private static final String CSS_LINKS_SELECTOR = &quot;link[rel*=\&quot;stylesheet\&quot;], link[type=\&quot;text/css\&quot;], link[href$=\&quot;.css\&quot;]&quot;;
 	private static final String HREF_ATTR = &quot;href&quot;;
 	private static final String IMG_SELECTOR = &quot;img&quot;;
 	private static final String SRC_ATTR = &quot;src&quot;;
-<span class="fc" id="L35">	private static final Pattern URL_PATTERN = Pattern.compile(&quot;^https?://.+$&quot;, Pattern.CASE_INSENSITIVE);</span>
-<span class="fc" id="L36">	private static final Pattern URI_INVALID_CHARS = Pattern.compile(&quot;\\\\'&quot;);</span>
+<span class="fc" id="L38">	private static final Pattern URL_PATTERN = Pattern.compile(&quot;^https?://.+$&quot;, Pattern.CASE_INSENSITIVE);</span>
+<span class="fc" id="L39">	private static final Pattern URI_INVALID_CHARS = Pattern.compile(&quot;\\\\'&quot;);</span>
 	private static final String URI_ESCAPE = &quot;''&quot;;
-<span class="fc" id="L38">	private static final Pattern QUOTE_ENTITY = Pattern.compile(&quot;&amp;quot;&quot;);</span>
-	private static final String CSS_URL_FUNC = &quot;(?&lt;start&gt;url\\s*\\(\\s*)(?:'(?&lt;singlequotedurl&gt;\\S*?)'|\&quot;(?&lt;doublequotedurl&gt;\\S*?)\&quot;|(?&lt;unquotedurl&gt;(?:\\\\\\s|\\\\\\)|\\\\\\\&quot;|\\\\\\'|\\S)*?))(?&lt;end&gt;\\s*\\))&quot;;
-	/**
-	 * Regular expression that matches CSS {@code url()} inclusions. It can be:
-	 * &lt;ul&gt;
-	 * &lt;li&gt;url(http://some-url)&lt;/li&gt;
-	 * &lt;li&gt;url(&quot;http://some-url&quot;)&lt;/li&gt;
-	 * &lt;li&gt;url('http://some-url')&lt;/li&gt;
-	 * &lt;/ul&gt;
-	 * 
-	 * &lt;p&gt;
-	 * It also handle escaping of quotes.
-	 * 
-	 * &lt;p&gt;
-	 * The pattern provides the following named capturing groups:
-	 * &lt;ul&gt;
-	 * &lt;li&gt;{@code &quot;start&quot;}: matches the {@code url(} part&lt;/li&gt;
-	 * &lt;li&gt;{@code &quot;end&quot;}: matches the {@code );} part&lt;/li&gt;
-	 * &lt;li&gt;{@code &quot;singlequotedurl&quot;}: matches the url that is surrounded by
-	 * {@literal '} character ({@literal '} is not included)&lt;/li&gt;
-	 * &lt;li&gt;{@code &quot;doublequotedurl&quot;}: matches the url that is surrounded by
-	 * {@literal &quot;} character ({@literal &quot;} is not included)&lt;/li&gt;
-	 * &lt;li&gt;{@code &quot;unquotedurl&quot;}: matches the url that is not surrounded by a
-	 * character&lt;/li&gt;
-	 * &lt;/ul&gt;
-	 */
-<span class="fc" id="L64">	public static final Pattern CSS_URL_FUNC_PATTERN = Pattern.compile(CSS_URL_FUNC);</span>
+<span class="fc" id="L41">	private static final Pattern QUOTE_ENTITY = Pattern.compile(&quot;&amp;quot;&quot;);</span>
+	private static final String UNQUOTED_FORM = &quot;(?&lt;startunquoted&gt;\\s*url\\s*[(]\\s*)(?&lt;urlunquoted&gt;(?:\\\\[()\\s]|[^()\\s])+)(?&lt;endunquoted&gt;\\s*[)]\\s*(?:[\\s;,'\&quot;]|$))&quot;;
+	private static final String QUOTED_FORM = &quot;(?&lt;start#QUOTENAME#&gt;\\s*url\\s*[(]\\s*)(?&lt;quote#QUOTENAME#&gt;#QUOTE#)(?&lt;url#QUOTENAME#&gt;(?:\\\\#QUOTE#|(?!#QUOTE#).)+)#QUOTE#(?&lt;end#QUOTENAME#&gt;\\s*[)]\\s*(?:[\\s;,'\&quot;]|$))&quot;;
+
 	/**
 	 * Regular expression that matches CSS properties for image inclusions such
 	 * as:
@@ -84,7 +64,7 @@ public final class HtmlUtils {
 	 * {@literal ;})&lt;/li&gt;
 	 * &lt;/ul&gt;
 	 */
-<span class="fc" id="L87">	public static final Pattern CSS_IMAGE_PROPERTIES_PATTERN = Pattern.compile(&quot;(?&lt;property&gt;(?&lt;propertyname&gt;((background|list-style)(-image)?)|cursor)\\s*:)(?&lt;value&gt;[^;}&gt;]+)&quot;,</span>
+<span class="fc" id="L67">	public static final Pattern CSS_IMAGE_PROPERTIES_PATTERN = Pattern.compile(&quot;(?&lt;property&gt;(?&lt;propertyname&gt;((background|list-style)(-image)?)|cursor)\\s*:)(?&lt;value&gt;[^;}&gt;]+)&quot;,</span>
 			Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	/**
@@ -97,7 +77,7 @@ public final class HtmlUtils {
 	 * @return true if it is HTML, false otherwise
 	 */
 	public static boolean isHtml(String content) {
-<span class="fc" id="L100">		return HTML_PATTERN.matcher(content).find();</span>
+<span class="fc" id="L80">		return HTML_PATTERN.matcher(content).find();</span>
 	}
 
 	/**
@@ -112,16 +92,16 @@ public final class HtmlUtils {
 	 *         found
 	 */
 	public static List&lt;String&gt; getDistinctCssUrls(String htmlContent) {
-<span class="fc" id="L115">		Document doc = Jsoup.parse(htmlContent);</span>
-<span class="fc" id="L116">		Elements els = doc.select(CSS_LINKS_SELECTOR);</span>
-<span class="fc" id="L117">		List&lt;String&gt; cssFiles = new ArrayList&lt;&gt;(els.size());</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">		for (Element e : els) {</span>
-<span class="fc" id="L119">			String path = e.attr(HREF_ATTR);</span>
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">			if (!cssFiles.contains(path)) {</span>
-<span class="fc" id="L121">				cssFiles.add(path);</span>
+<span class="fc" id="L95">		Document doc = Jsoup.parse(htmlContent);</span>
+<span class="fc" id="L96">		Elements els = doc.select(CSS_LINKS_SELECTOR);</span>
+<span class="fc" id="L97">		List&lt;String&gt; cssFiles = new ArrayList&lt;&gt;(els.size());</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		for (Element e : els) {</span>
+<span class="fc" id="L99">			String path = e.attr(HREF_ATTR);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">			if (!cssFiles.contains(path)) {</span>
+<span class="fc" id="L101">				cssFiles.add(path);</span>
 			}
-<span class="fc" id="L123">		}</span>
-<span class="fc" id="L124">		return cssFiles;</span>
+<span class="fc" id="L103">		}</span>
+<span class="fc" id="L104">		return cssFiles;</span>
 	}
 
 	/**
@@ -134,16 +114,16 @@ public final class HtmlUtils {
 	 * @return the list of found images (paths only) or empty if nothing found
 	 */
 	public static List&lt;String&gt; getDistinctImageUrls(String htmlContent) {
-<span class="fc" id="L137">		Document doc = Jsoup.parse(htmlContent);</span>
-<span class="fc" id="L138">		Elements els = doc.select(IMG_SELECTOR);</span>
-<span class="fc" id="L139">		List&lt;String&gt; images = new ArrayList&lt;&gt;(els.size());</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">		for (Element e : els) {</span>
-<span class="fc" id="L141">			String path = e.attr(SRC_ATTR);</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">			if (!images.contains(path)) {</span>
-<span class="fc" id="L143">				images.add(path);</span>
+<span class="fc" id="L117">		Document doc = Jsoup.parse(htmlContent);</span>
+<span class="fc" id="L118">		Elements els = doc.select(IMG_SELECTOR);</span>
+<span class="fc" id="L119">		List&lt;String&gt; images = new ArrayList&lt;&gt;(els.size());</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		for (Element e : els) {</span>
+<span class="fc" id="L121">			String path = e.attr(SRC_ATTR);</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">			if (!images.contains(path)) {</span>
+<span class="fc" id="L123">				images.add(path);</span>
 			}
-<span class="fc" id="L145">		}</span>
-<span class="fc" id="L146">		return images;</span>
+<span class="fc" id="L125">		}</span>
+<span class="fc" id="L126">		return images;</span>
 	}
 
 	/**
@@ -166,25 +146,73 @@ public final class HtmlUtils {
 	 * @return the list of found images (paths only) or empty if nothing found
 	 */
 	public static List&lt;String&gt; getDistinctCssImageUrls(String htmlContent) {
-<span class="fc" id="L169">		List&lt;String&gt; urls = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L170">		Matcher m = CSS_IMAGE_PROPERTIES_PATTERN.matcher(QUOTE_ENTITY.matcher(htmlContent).replaceAll(&quot;'&quot;));</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">		while (m.find()) {</span>
-<span class="fc" id="L172">			String value = m.group(&quot;value&quot;);</span>
-<span class="fc" id="L173">			Matcher urlMatcher = CSS_URL_FUNC_PATTERN.matcher(value);</span>
-<span class="fc bfc" id="L174" title="All 2 branches covered.">			while (urlMatcher.find()) {</span>
-<span class="fc" id="L175">				String url = urlMatcher.group(&quot;unquotedurl&quot;);</span>
-<span class="pc bpc" id="L176" title="1 of 2 branches missed.">				if (url == null) {</span>
-<span class="fc" id="L177">					url = urlMatcher.group(&quot;singlequotedurl&quot;);</span>
+<span class="fc" id="L149">		List&lt;String&gt; urls = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L150">		Matcher m = CSS_IMAGE_PROPERTIES_PATTERN.matcher(QUOTE_ENTITY.matcher(htmlContent).replaceAll(&quot;'&quot;));</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		while (m.find()) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">			for (CssUrlFunction url : getCssUrlFunctions(m.group(&quot;value&quot;))) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">				if (!urls.contains(url.getUrl())) {</span>
+<span class="fc" id="L154">					urls.add(url.getUrl());</span>
 				}
-<span class="fc bfc" id="L179" title="All 2 branches covered.">				if (url == null) {</span>
-<span class="fc" id="L180">					url = urlMatcher.group(&quot;doublequotedurl&quot;);</span>
+<span class="fc" id="L156">			}</span>
+		}
+<span class="fc" id="L158">		return urls;</span>
+	}
+
+	/**
+	 * Parse the CSS property value that may contain one or several
+	 * {@code url()} CSS function(s).
+	 * 
+	 * Each element of the returned list provides the following information:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@code &quot;source&quot;}: the whole match of the {@code url()} function&lt;/li&gt;
+	 * &lt;li&gt;{@code &quot;start&quot;}: matches the {@code url(} part (without quote, spaces
+	 * are preserved)&lt;/li&gt;
+	 * &lt;li&gt;{@code &quot;end&quot;}: matches the {@code )} part (without quote, spaces are
+	 * preserved)&lt;/li&gt;
+	 * &lt;li&gt;{@code &quot;url&quot;}: the url (without surrounding quotes)&lt;/li&gt;
+	 * &lt;li&gt;{@code &quot;enclosingQuoteChar&quot;}: either {@literal &quot;} character,
+	 * {@literal '} character or empty string&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;strong&gt;WARNING:&lt;/strong&gt; This function doesn't attempt to validate the
+	 * URL at all. It just extracts the different parts for later parsing. If
+	 * either the URL or CSS property value or the {@code url()} function is
+	 * invalid, it may still return a value because it depends on the parsing
+	 * context. It may then return an invalid form. For example
+	 * {@code url('images/h'1.gif')} is not valid due to unscaped single quote,
+	 * however this method will return a result with {@code images/h'1.gif} as
+	 * URL.
+	 * 
+	 * @param cssPropertyValue
+	 *            the value of the CSS property
+	 * @param additionalEnclosingQuotes
+	 *            allow additional forms such as
+	 *            {@code url(&amp;quot;http://some-url&amp;quot;)} that may be used in
+	 *            style attribute
+	 * @return the list of meta information about the matched urls
+	 */
+	public static List&lt;CssUrlFunction&gt; getCssUrlFunctions(String cssPropertyValue, String... additionalEnclosingQuotes) {
+<span class="fc" id="L195">		List&lt;String&gt; possibleQuotes = new ArrayList&lt;&gt;(asList(&quot;'&quot;, &quot;\&quot;&quot;));</span>
+<span class="fc" id="L196">		possibleQuotes.addAll(asList(additionalEnclosingQuotes));</span>
+<span class="fc" id="L197">		Pattern cssUrlFuncPattern = generateUrlFuncPattern(possibleQuotes);</span>
+<span class="fc" id="L198">		List&lt;CssUrlFunction&gt; urls = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L199">		Matcher urlMatcher = cssUrlFuncPattern.matcher(cssPropertyValue);</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">		while (urlMatcher.find()) {</span>
+<span class="fc" id="L201">			CssUrlFunction url = null;</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">			for (int i = 0; i &lt; possibleQuotes.size(); i++) {</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">				if (urlMatcher.group(&quot;quotedform&quot; + i) != null) {</span>
+<span class="fc" id="L204">					url = new CssUrlFunction(urlMatcher.group(&quot;quotedform&quot; + i), urlMatcher.group(&quot;start&quot; + i), urlMatcher.group(&quot;url&quot; + i), urlMatcher.group(&quot;end&quot; + i), possibleQuotes.get(i));</span>
+<span class="fc" id="L205">					break;</span>
 				}
-<span class="fc bfc" id="L182" title="All 2 branches covered.">				if (!urls.contains(url)) {</span>
-<span class="fc" id="L183">					urls.add(url);</span>
-				}
-<span class="fc" id="L185">			}</span>
-<span class="fc" id="L186">		}</span>
-<span class="fc" id="L187">		return urls;</span>
+			}
+<span class="fc bfc" id="L208" title="All 2 branches covered.">			if (urlMatcher.group(&quot;unquotedform&quot;) != null) {</span>
+<span class="fc" id="L209">				url = new CssUrlFunction(urlMatcher.group(&quot;unquotedform&quot;), urlMatcher.group(&quot;startunquoted&quot;), urlMatcher.group(&quot;urlunquoted&quot;), urlMatcher.group(&quot;endunquoted&quot;), &quot;&quot;);</span>
+			}
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">			if (url != null) {</span>
+<span class="fc" id="L212">				urls.add(url);</span>
+			}
+<span class="fc" id="L214">		}</span>
+<span class="fc" id="L215">		return urls;</span>
 	}
 
 	/**
@@ -196,9 +224,9 @@ public final class HtmlUtils {
 	 * @return the title of the HTML or null if none
 	 */
 	public static String getTitle(String htmlContent) {
-<span class="fc" id="L199">		Document doc = Jsoup.parse(htmlContent);</span>
-<span class="fc" id="L200">		Elements titleNode = doc.select(&quot;head &gt; title&quot;);</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">		return titleNode.isEmpty() ? null : doc.title();</span>
+<span class="fc" id="L227">		Document doc = Jsoup.parse(htmlContent);</span>
+<span class="fc" id="L228">		Elements titleNode = doc.select(&quot;head &gt; title&quot;);</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">		return titleNode.isEmpty() ? null : doc.title();</span>
 	}
 
 	/**
@@ -215,13 +243,13 @@ public final class HtmlUtils {
 	 * @return the relative urls only
 	 */
 	public static List&lt;String&gt; skipExternalUrls(List&lt;String&gt; urls) {
-<span class="fc bfc" id="L218" title="All 2 branches covered.">		for (Iterator&lt;String&gt; it = urls.iterator(); it.hasNext();) {</span>
-<span class="fc" id="L219">			String url = it.next();</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">			if (URL_PATTERN.matcher(url).matches()) {</span>
-<span class="fc" id="L221">				it.remove();</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">		for (Iterator&lt;String&gt; it = urls.iterator(); it.hasNext();) {</span>
+<span class="fc" id="L247">			String url = it.next();</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">			if (URL_PATTERN.matcher(url).matches()) {</span>
+<span class="fc" id="L249">				it.remove();</span>
 			}
-<span class="fc" id="L223">		}</span>
-<span class="fc" id="L224">		return urls;</span>
+<span class="fc" id="L251">		}</span>
+<span class="fc" id="L252">		return urls;</span>
 	}
 
 	/**
@@ -232,13 +260,14 @@ public final class HtmlUtils {
 	 * &lt;li&gt;If {@code other} parameter is relative, then it merges {@code other}
 	 * into {@code base}. For example:
 	 * &lt;ul&gt;
-	 * &lt;li&gt;base=&quot;css/foo.css&quot;, other=&quot;bar.png&quot; {@literal =&gt;} returns &quot;css/bar.png&quot;&lt;/li&gt;
+	 * &lt;li&gt;base=&quot;css/foo.css&quot;, other=&quot;bar.png&quot; {@literal =&gt;} returns
+	 * &quot;css/bar.png&quot;&lt;/li&gt;
 	 * &lt;li&gt;base=&quot;css/foo.css&quot;, other=&quot;../images/bar.png&quot; {@literal =&gt;} returns
 	 * &quot;images/bar.png&quot;&lt;/li&gt;
-	 * &lt;li&gt;base=&quot;http://some-url/css/foo.css&quot;, other=&quot;bar.png&quot; {@literal =&gt;} returns
-	 * &quot;http://some-url/css/bar.png&quot;&lt;/li&gt;
-	 * &lt;li&gt;base=&quot;http://some-url/css/foo.css&quot;, other=&quot;../images/bar.png&quot; {@literal =&gt;}
-	 * returns &quot;http://some-url/images/bar.png&quot;&lt;/li&gt;
+	 * &lt;li&gt;base=&quot;http://some-url/css/foo.css&quot;, other=&quot;bar.png&quot; {@literal =&gt;}
+	 * returns &quot;http://some-url/css/bar.png&quot;&lt;/li&gt;
+	 * &lt;li&gt;base=&quot;http://some-url/css/foo.css&quot;, other=&quot;../images/bar.png&quot;
+	 * {@literal =&gt;} returns &quot;http://some-url/images/bar.png&quot;&lt;/li&gt;
 	 * &lt;/ul&gt;
 	 * &lt;/li&gt;
 	 * &lt;/ul&gt;
@@ -254,13 +283,13 @@ public final class HtmlUtils {
 	 * @return the merge path/URL
 	 */
 	public static String relativize(String base, String other) {
-<span class="fc bfc" id="L257" title="All 2 branches covered.">		if (!isRelativeUrl(other)) {</span>
-<span class="fc" id="L258">			return other;</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">		if (!isRelativeUrl(other)) {</span>
+<span class="fc" id="L287">			return other;</span>
 		}
-<span class="fc" id="L260">		Path basePath = Paths.get(base);</span>
-<span class="fc" id="L261">		return unescapeJavaUri(ResourceUtils.toResourcePath(basePath.resolveSibling(escapeForJavaUri(other)).normalize()));</span>
+<span class="fc" id="L289">		Path basePath = Paths.get(base);</span>
+<span class="fc" id="L290">		return unescapeJavaUri(ResourceUtils.toResourcePath(basePath.resolveSibling(escapeForJavaUri(other)).normalize()));</span>
 	}
-	
+
 	/**
 	 * Indicates if the URL is relative or not.
 	 * 
@@ -287,27 +316,38 @@ public final class HtmlUtils {
 	 */
 	public static boolean isRelativeUrl(String url) {
 		try {
-<span class="fc bfc" id="L290" title="All 2 branches covered.">			if (url.startsWith(&quot;/&quot;)) {</span>
-<span class="fc" id="L291">				return false;</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">			if (url.startsWith(&quot;/&quot;)) {</span>
+<span class="fc" id="L320">				return false;</span>
 			}
-<span class="fc" id="L293">			URI u = new URI(escapeForJavaUri(url));</span>
-<span class="fc bfc" id="L294" title="All 2 branches covered.">			return !u.isAbsolute();</span>
-<span class="nc" id="L295">		} catch (URISyntaxException e) {</span>
-<span class="nc" id="L296">			LOG.warn(&quot;Can't determine if '{}' url is relative or absolute =&gt; consider absolute&quot;, url);</span>
-<span class="nc" id="L297">			LOG.trace(&quot;&quot;, e);</span>
-<span class="nc" id="L298">			return false;</span>
+<span class="fc" id="L322">			URI u = new URI(escapeForJavaUri(url));</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">			return !u.isAbsolute();</span>
+<span class="nc" id="L324">		} catch (URISyntaxException e) {</span>
+<span class="nc" id="L325">			LOG.warn(&quot;Can't determine if '{}' url is relative or absolute =&gt; consider absolute&quot;, url);</span>
+<span class="nc" id="L326">			LOG.trace(&quot;&quot;, e);</span>
+<span class="nc" id="L327">			return false;</span>
 		}
 	}
 
 	private static String escapeForJavaUri(String url) {
-<span class="fc" id="L303">		return URI_INVALID_CHARS.matcher(url).replaceAll(URI_ESCAPE);</span>
+<span class="fc" id="L332">		return URI_INVALID_CHARS.matcher(url).replaceAll(URI_ESCAPE);</span>
 	}
 
-	@SuppressWarnings(&quot;java:S5361&quot;)
+	@SuppressWarnings({ &quot;java:S5361&quot;, &quot;squid:S5361&quot; })
 	private static String unescapeJavaUri(String url) {
-<span class="fc" id="L308">		return url.replaceAll(URI_ESCAPE, URI_INVALID_CHARS.pattern());</span>
+<span class="fc" id="L337">		return url.replaceAll(URI_ESCAPE, URI_INVALID_CHARS.pattern());</span>
 	}
-	
+
+	private static Pattern generateUrlFuncPattern(List&lt;String&gt; possibleQuotes) {
+<span class="fc" id="L341">		StringJoiner joiner = new StringJoiner(&quot;|&quot;);</span>
+<span class="fc" id="L342">		int i = 0;</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">		for (String possibleQuote : possibleQuotes) {</span>
+<span class="fc" id="L344">			joiner.add(&quot;(?&lt;quotedform&quot; + i + &quot;&gt;&quot; + QUOTED_FORM.replace(&quot;#QUOTE#&quot;, Pattern.quote(possibleQuote)).replace(&quot;#QUOTENAME#&quot;, i + &quot;&quot;) + &quot;)&quot;);</span>
+<span class="fc" id="L345">			i++;</span>
+<span class="fc" id="L346">		}</span>
+<span class="fc" id="L347">		joiner.add(&quot;(?&lt;unquotedform&gt;&quot; + UNQUOTED_FORM + &quot;)&quot;);</span>
+<span class="fc" id="L348">		return Pattern.compile(joiner.toString(), Pattern.MULTILINE);</span>
+	}
+
 	private HtmlUtils() {
 		super();
 	}

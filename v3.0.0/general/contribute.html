@@ -53,15 +53,15 @@ patches and features.</p>
 <div class="sect2">
 <h3 id="_using_the_issue_tracker"><a class="anchor" href="#_using_the_issue_tracker"></a>Using the issue tracker</h3>
 <div class="paragraph">
-<p>The issue tracker is the preferred channel for [bug reports](#bug-reports),
-[features requests](#feature-requests) and [submitting pull
-requests](#pull-requests), but please respect the following restrictions:</p>
+<p>The <a href="https://github.com/groupe-sii/ogham/issues">issue tracker</a> is the preferred channel for bug reports,
+features requests and <a href="https://github.com/groupe-sii/ogham/pulls">submitting pull
+requests</a>, but please respect the following restrictions:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>Please <strong>do not</strong> use the issue tracker for personal support requests (use
-[Stack Overflow](<a href="http://stackoverflow.com" class="bare">http://stackoverflow.com</a>) with <code>ogham</code> tag).</p>
+<a href="http://stackoverflow.com">Stack Overflow</a> with <code>ogham</code> tag).</p>
 </li>
 <li>
 <p>Please <strong>do not</strong> derail or troll issues. Keep the discussion on topic and
@@ -90,8 +90,8 @@ reported.</p>
 latest <code>master</code> or development branch in the repository.</p>
 </li>
 <li>
-<p><strong>Isolate the problem</strong> &mdash; create a [reduced test
-case](<a href="http://css-tricks.com/reduced-test-cases/" class="bare">http://css-tricks.com/reduced-test-cases/</a>) and a live example.</p>
+<p><strong>Isolate the problem</strong> &mdash; create a
+<a href="http://css-tricks.com/reduced-test-cases/">reduced test case</a> and a live example.</p>
 </li>
 </ol>
 </div>
@@ -102,11 +102,9 @@ your environment ? What steps will reproduce the issue ? What OS/Java environmen
 experience the problem ? What would you expect to be the outcome ? All these
 details will help people to fix any potential bugs.</p>
 </div>
-<div class="paragraph">
-<p>Example:</p>
-</div>
-<div class="quoteblock">
-<blockquote>
+<div class="exampleblock">
+<div class="title">Example</div>
+<div class="content">
 <div class="paragraph">
 <p>Short and descriptive example bug report title</p>
 </div>
@@ -136,7 +134,7 @@ reported. This might include the lines of code that you have identified as
 causing the bug, and potential solutions (and your opinions on their
 merits).</p>
 </div>
-</blockquote>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -172,79 +170,79 @@ project:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>[Fork](<a href="http://help.github.com/fork-a-repo/" class="bare">http://help.github.com/fork-a-repo/</a>) the project, clone your fork,
+<p><a href="http://help.github.com/fork-a-repo/">Fork</a> the project, clone your fork,
 and configure the remotes:</p>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>```bash
-# Clone your fork of the repo into the current directory
+<pre class="CodeRay highlight"><code data-lang="bash"># Clone your fork of the repo into the current directory
 git clone https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;
 # Navigate to the newly cloned directory
 cd &lt;repo-name&gt;
-# Assign the original repo to a remote called "upstream"
-git remote add upstream https://github.com/&lt;upstream-owner&gt;/&lt;repo-name&gt;
-```</pre>
+# Assign the original repo to a remote called &quot;upstream&quot;
+git remote add upstream https://github.com/&lt;upstream-owner&gt;/&lt;repo-name&gt;</code></pre>
 </div>
 </div>
 </li>
 <li>
 <p>If you cloned a while ago, get the latest changes from upstream:</p>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>```bash
-git checkout &lt;dev-branch&gt;
-git pull upstream &lt;dev-branch&gt;
-```</pre>
+<pre class="CodeRay highlight"><code data-lang="bash">git checkout &lt;dev-branch&gt;
+git pull upstream &lt;dev-branch&gt;</code></pre>
 </div>
 </div>
 </li>
 <li>
 <p>Create a new topic branch (off the main project development branch) to
 contain your feature, change, or fix:</p>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>```bash
-git checkout -b &lt;topic-branch-name&gt;
-```</pre>
+<pre class="CodeRay highlight"><code data-lang="bash">git checkout -b &lt;topic-branch-name&gt;</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Commit your changes in logical chunks. Please adhere to these [git commit
-message guidelines](<a href="http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html" class="bare">http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html</a>)
-or your code is unlikely be merged into the main project. Use Git&#8217;s
-[interactive rebase](<a href="https://help.github.com/articles/interactive-rebase" class="bare">https://help.github.com/articles/interactive-rebase</a>)
+<p>Commit your changes in logical chunks. Please adhere to these <a href="http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">git commit
+message guidelines</a> or your code is unlikely be merged into the main project. Use Git&#8217;s
+<a href="https://help.github.com/articles/interactive-rebase">interactive rebase</a>
 feature to tidy up your commits before making them public.</p>
 </li>
 <li>
 <p>Locally merge (or rebase) the upstream development branch into your topic branch:</p>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>```bash
-git pull [--rebase] upstream &lt;dev-branch&gt;
-```</pre>
+<pre class="CodeRay highlight"><code data-lang="bash">git pull [--rebase] upstream &lt;dev-branch&gt;</code></pre>
 </div>
 </div>
 </li>
 <li>
 <p>Push your topic branch up to your fork:</p>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>```bash
-git push origin &lt;topic-branch-name&gt;
-```</pre>
+<pre class="CodeRay highlight"><code data-lang="bash">git push origin &lt;topic-branch-name&gt;</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>[Open a Pull Request](<a href="https://help.github.com/articles/using-pull-requests/" class="bare">https://help.github.com/articles/using-pull-requests/</a>)
+<p><a href="https://help.github.com/articles/using-pull-requests/">Open a Pull Request</a>
 with a clear title and description.</p>
 </li>
 </ol>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p><strong>IMPORTANT</strong>: By submitting a patch, you agree to allow the project owner to
+<p>By submitting a patch, you agree to allow the project owner to
 license your work under the same license as that used by the project.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -252,8 +250,9 @@ license your work under the same license as that used by the project.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-01-13 02:09:36 UTC
+Last updated 2021-01-20 03:52:15 UTC
 </div>
 </div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </body>
 </html>

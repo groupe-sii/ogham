@@ -3,101 +3,189 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * {@link ClassLoader} decorator that can be used to mock some missing classes.
+ * It can be useful to test how some code behaves if a dependency is missing.
+ * 
+ * This is mostly useful for Ogham itself since it adatps to what is present in
+ * the classpath.
+ * 
+ * NOTE: On some Java versions (especially some versions of Eclipse OpenJ9), the
+ * {@link ClassLoader} initializes assertions directly in the constructor (see
+ * https://github.com/eclipse/openj9/blob/cef51dfd748a15b6f8ceb9be065d8a9eb8389a6b/jcl/src/java.base/share/classes/java/lang/ClassLoader.java#L438).
+ * So we need to register method calls to apply them once delegate has been set.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class FilterableClassLoader extends ClassLoader {
-<span class="fc" id="L14">	private static final Logger LOG = LoggerFactory.getLogger(FilterableClassLoader.class);</span>
-	
+<span class="fc" id="L34">	private static final Logger LOG = LoggerFactory.getLogger(FilterableClassLoader.class);</span>
+
 	private ClassLoader delegate;
 	private Predicate&lt;String&gt; predicate;
+<span class="fc" id="L38">	private static final Map&lt;ClassLoader, List&lt;Consumer&lt;ClassLoader&gt;&gt;&gt; lateCalls = new ConcurrentHashMap&lt;&gt;();</span>
 
 	public FilterableClassLoader(ClassLoader delegate, Predicate&lt;String&gt; predicate) {
-<span class="fc" id="L20">		super();</span>
-<span class="fc" id="L21">		this.delegate = delegate;</span>
-<span class="fc" id="L22">		this.predicate = predicate;</span>
-<span class="fc" id="L23">	}</span>
+<span class="fc" id="L41">		super();</span>
+<span class="fc" id="L42">		this.delegate = delegate;</span>
+<span class="fc" id="L43">		this.predicate = predicate;</span>
+<span class="fc" id="L44">		applyLateCalls();</span>
+<span class="fc" id="L45">	}</span>
 
+	@SuppressWarnings(&quot;squid:S2658&quot;)
 	@Override
 	public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException {
-<span class="fc bfc" id="L27" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
-<span class="fc" id="L28">			return delegate.loadClass(name);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">		if (predicate.test(name)) {</span>
+<span class="fc" id="L51">			return delegate.loadClass(name);</span>
 		} else {
-<span class="fc" id="L30">			LOG.info(&quot;Class {} not accepted&quot;, name);</span>
-<span class="fc" id="L31">			throw new ClassNotFoundException(&quot;Class &quot;+name+&quot; not accepted&quot;);</span>
+<span class="fc" id="L53">			LOG.info(&quot;Class {} not accepted&quot;, name);</span>
+<span class="fc" id="L54">			throw new ClassNotFoundException(&quot;Class &quot; + name + &quot; not accepted&quot;);</span>
 		}
 	}
 
 	@Override
 	public URL getResource(String name) {
-<span class="fc bfc" id="L37" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
-<span class="fc" id="L38">			return delegate.getResource(name);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">		if (predicate.test(name)) {</span>
+<span class="fc" id="L61">			return delegate.getResource(name);</span>
 		} else {
-<span class="fc" id="L40">			LOG.info(&quot;Resource {} not accepted&quot;, name);</span>
-<span class="fc" id="L41">			return null;</span>
+<span class="fc" id="L63">			LOG.info(&quot;Resource {} not accepted&quot;, name);</span>
+<span class="fc" id="L64">			return null;</span>
 		}
 	}
 
 	@Override
 	public Enumeration&lt;URL&gt; getResources(String name) throws IOException {
-<span class="fc bfc" id="L47" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
-<span class="fc" id="L48">			return delegate.getResources(name);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		if (predicate.test(name)) {</span>
+<span class="fc" id="L71">			return delegate.getResources(name);</span>
 		} else {
-<span class="fc" id="L50">			LOG.info(&quot;Resources {} not accepted&quot;, name);</span>
-<span class="fc" id="L51">			return Collections.emptyEnumeration();</span>
+<span class="fc" id="L73">			LOG.info(&quot;Resources {} not accepted&quot;, name);</span>
+<span class="fc" id="L74">			return Collections.emptyEnumeration();</span>
 		}
 	}
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
-<span class="fc bfc" id="L57" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
-<span class="fc" id="L58">			return delegate.getResourceAsStream(name);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		if (predicate.test(name)) {</span>
+<span class="fc" id="L81">			return delegate.getResourceAsStream(name);</span>
 		} else {
-<span class="fc" id="L60">			LOG.info(&quot;Resource {} not accepted&quot;, name);</span>
-<span class="fc" id="L61">			return null;</span>
+<span class="fc" id="L83">			LOG.info(&quot;Resource {} not accepted&quot;, name);</span>
+<span class="fc" id="L84">			return null;</span>
 		}
 	}
 
 	@Override
 	public void setDefaultAssertionStatus(boolean enabled) {
-<span class="nc" id="L67">		super.setDefaultAssertionStatus(enabled);</span>
-<span class="nc bnc" id="L68" title="All 2 branches missed.">		if (delegate != null) {</span>
-<span class="nc" id="L69">			delegate.setDefaultAssertionStatus(enabled);</span>
+<span class="fc" id="L90">		super.setDefaultAssertionStatus(enabled);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (delegate != null) {</span>
+<span class="fc" id="L92">			delegate.setDefaultAssertionStatus(enabled);</span>
+		} else {
+<span class="fc" id="L94">			getLateCalls(this).add(new SetDefaultAssertionStatusCall(enabled));</span>
 		}
-		// TODO: should set value when delegate is initialized ?
-<span class="nc" id="L72">	}</span>
+<span class="fc" id="L96">	}</span>
 
 	@Override
 	public void setPackageAssertionStatus(String packageName, boolean enabled) {
-<span class="nc" id="L76">		super.setPackageAssertionStatus(packageName, enabled);</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">		if (delegate != null) {</span>
-<span class="nc" id="L78">			delegate.setPackageAssertionStatus(packageName, enabled);</span>
+<span class="fc" id="L100">		super.setPackageAssertionStatus(packageName, enabled);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		if (delegate != null) {</span>
+<span class="fc" id="L102">			delegate.setPackageAssertionStatus(packageName, enabled);</span>
+		} else {
+<span class="fc" id="L104">			getLateCalls(this).add(new SetPackageAssertionStatusCall(packageName, enabled));</span>
 		}
-		// TODO: should set values when delegate is initialized ?
-<span class="nc" id="L81">	}</span>
+<span class="fc" id="L106">	}</span>
 
 	@Override
 	public void setClassAssertionStatus(String className, boolean enabled) {
-<span class="nc" id="L85">		super.setClassAssertionStatus(className, enabled);</span>
-<span class="nc bnc" id="L86" title="All 2 branches missed.">		if (delegate != null) {</span>
-<span class="nc" id="L87">			delegate.setClassAssertionStatus(className, enabled);</span>
+<span class="fc" id="L110">		super.setClassAssertionStatus(className, enabled);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">		if (delegate != null) {</span>
+<span class="fc" id="L112">			delegate.setClassAssertionStatus(className, enabled);</span>
+		} else {
+<span class="fc" id="L114">			getLateCalls(this).add(new SetClassAssertionStatusCall(className, enabled));</span>
 		}
-		// TODO: should set values when delegate is initialized ?
-<span class="nc" id="L90">	}</span>
+<span class="fc" id="L116">	}</span>
 
 	@Override
 	public void clearAssertionStatus() {
-<span class="nc" id="L94">		super.clearAssertionStatus();</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">		if (delegate != null) {</span>
-<span class="nc" id="L96">			delegate.clearAssertionStatus();</span>
+<span class="fc" id="L120">		super.clearAssertionStatus();</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">		if (delegate != null) {</span>
+<span class="fc" id="L122">			delegate.clearAssertionStatus();</span>
+		} else {
+<span class="fc" id="L124">			getLateCalls(this).add(new ClearAssertionStatusCall());</span>
 		}
-		// TODO: should call when delegate is initialized ?
-<span class="nc" id="L99">	}</span>
-	
-	
+<span class="fc" id="L126">	}</span>
+
+	private void applyLateCalls() {
+<span class="fc bfc" id="L129" title="All 2 branches covered.">		for (Consumer&lt;ClassLoader&gt; lateCall : getLateCalls(this)) {</span>
+<span class="fc" id="L130">			lateCall.accept(delegate);</span>
+<span class="fc" id="L131">		}</span>
+<span class="fc" id="L132">	}</span>
+
+	private static List&lt;Consumer&lt;ClassLoader&gt;&gt; getLateCalls(ClassLoader classLoader) {
+<span class="fc" id="L135">		return lateCalls.computeIfAbsent(classLoader, k -&gt; new ArrayList&lt;&gt;());</span>
+	}
+
+	private static class SetDefaultAssertionStatusCall implements Consumer&lt;ClassLoader&gt; {
+		private final boolean enabled;
+
+		public SetDefaultAssertionStatusCall(boolean enabled) {
+<span class="fc" id="L142">			super();</span>
+<span class="fc" id="L143">			this.enabled = enabled;</span>
+<span class="fc" id="L144">		}</span>
+
+		@Override
+		public void accept(ClassLoader delegate) {
+<span class="fc" id="L148">			delegate.setDefaultAssertionStatus(enabled);</span>
+<span class="fc" id="L149">		}</span>
+	}
+
+	private static class SetPackageAssertionStatusCall implements Consumer&lt;ClassLoader&gt; {
+		private final String packageName;
+		private final boolean enabled;
+
+		public SetPackageAssertionStatusCall(String packageName, boolean enabled) {
+<span class="fc" id="L157">			super();</span>
+<span class="fc" id="L158">			this.packageName = packageName;</span>
+<span class="fc" id="L159">			this.enabled = enabled;</span>
+<span class="fc" id="L160">		}</span>
+
+		@Override
+		public void accept(ClassLoader delegate) {
+<span class="fc" id="L164">			delegate.setPackageAssertionStatus(packageName, enabled);</span>
+<span class="fc" id="L165">		}</span>
+	}
+
+	private static class SetClassAssertionStatusCall implements Consumer&lt;ClassLoader&gt; {
+		private final String className;
+		private final boolean enabled;
+
+		public SetClassAssertionStatusCall(String className, boolean enabled) {
+<span class="fc" id="L173">			super();</span>
+<span class="fc" id="L174">			this.className = className;</span>
+<span class="fc" id="L175">			this.enabled = enabled;</span>
+<span class="fc" id="L176">		}</span>
+
+		@Override
+		public void accept(ClassLoader delegate) {
+<span class="fc" id="L180">			delegate.setClassAssertionStatus(className, enabled);</span>
+<span class="fc" id="L181">		}</span>
+	}
+
+	private static class ClearAssertionStatusCall implements Consumer&lt;ClassLoader&gt; {
+		@Override
+		public void accept(ClassLoader delegate) {
+<span class="fc" id="L187">			delegate.clearAssertionStatus();</span>
+<span class="fc" id="L188">		}</span>
+	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CssUrlFunction.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">CssUrlFunction.java</span></div><h1>CssUrlFunction.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+/**
+ * Wraps a matched CSS {@code url()} function.
+ * 
+ * It provides the following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;{@code &quot;source&quot;}: the whole match of the {@code url()} function&lt;/li&gt;
+ * &lt;li&gt;{@code &quot;start&quot;}: matches the {@code url(} part (without quote, spaces
+ * are preserved)&lt;/li&gt;
+ * &lt;li&gt;{@code &quot;end&quot;}: matches the {@code );} part (without quote, spaces are
+ * preserved)&lt;/li&gt;
+ * &lt;li&gt;{@code &quot;url&quot;}: the url (without surrounding quotes)&lt;/li&gt;
+ * &lt;li&gt;{@code &quot;enclosingQuoteChar&quot;}: either {@literal &quot;} character,
+ * {@literal '} character or empty string&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class CssUrlFunction {
+	private final String source;
+	private final String start;
+	private final String url;
+	private final String end;
+	private final String enclosingQuoteChar;
+
+	/**
+	 * Store information about a CSS {@code url()} function.
+	 * 
+	 * @param source
+	 *            the whole match of the {@code url()} function
+	 * @param start
+	 *            the {@code url(} part (without quote, spaces are
+	 *            preserved)
+	 * @param url
+	 *            the url (without surrounding quotes)
+	 * @param end
+	 *            the {@code );} part (without quote, spaces are preserved)
+	 * @param enclosingQuoteChar
+	 *            either {@literal &quot;} character, {@literal '} character or
+	 *            empty string
+	 */
+	public CssUrlFunction(String source, String start, String url, String end, String enclosingQuoteChar) {
+<span class="fc" id="L45">		super();</span>
+<span class="fc" id="L46">		this.source = source;</span>
+<span class="fc" id="L47">		this.start = start;</span>
+<span class="fc" id="L48">		this.url = url;</span>
+<span class="fc" id="L49">		this.end = end;</span>
+<span class="fc" id="L50">		this.enclosingQuoteChar = enclosingQuoteChar;</span>
+<span class="fc" id="L51">	}</span>
+
+	public String rewriteUrl(String cssPropertyValue, String newUrl) {
+<span class="fc" id="L54">		return cssPropertyValue.replace(source, rewriteUrl(newUrl));</span>
+	}
+
+	public String rewriteUrl(String newUrl) {
+<span class="fc" id="L58">		return start+enclosingQuoteChar+newUrl+enclosingQuoteChar+end;</span>
+	}
+	
+	public String getSource() {
+<span class="fc" id="L62">		return source;</span>
+	}
+
+	public String getStart() {
+<span class="fc" id="L66">		return start;</span>
+	}
+
+	public String getUrl() {
+<span class="fc" id="L70">		return url;</span>
+	}
+
+	public String getEnd() {
+<span class="fc" id="L74">		return end;</span>
+	}
+
+	public String getEnclosingQuoteChar() {
+<span class="fc" id="L78">		return enclosingQuoteChar;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L83">		return start+enclosingQuoteChar+url+enclosingQuoteChar+end;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L88">		return new HashCodeBuilder().append(source, start, url, end, enclosingQuoteChar).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L93">		return new EqualsBuilder(this, obj).appendFields(&quot;source&quot;, &quot;start&quot;, &quot;url&quot;, &quot;end&quot;, &quot;enclosingQuoteChar&quot;).isEqual();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

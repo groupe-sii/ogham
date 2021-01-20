@@ -12614,6 +12614,21 @@ h6 {
   border-top-right-radius: 0.25rem;
 }
 
+footer {
+  padding-top: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid #f3f3f3;
+}
+footer li a[href="donate.html"] {
+  font-size: 0;
+  display: block;
+  width: 91px;
+  height: 30px;
+  background: url(../img/donate/donate-small.png) center center no-repeat;
+  background-size: 91px 30px;
+  margin-left: 0;
+}
+
 .row {
   margin-left: 15px;
   margin-right: 15px;
