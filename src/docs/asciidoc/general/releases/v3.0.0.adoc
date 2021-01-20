@@ -17,21 +17,21 @@ See detailed migration guide to <<migration-guide.adoc#v2.0.0-v3.0.0, upgrade fr
 
 Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.
 
-Ogham now supports all Java versions from 8 and up to 14.
+Ogham now supports all Java versions from 8 and up to 15.
 
 
 .Newer Java versions
 [NOTE]
 ====
 Ogham should support newer Java versions in the future without any changes.
-Currently, the latest tested version through compatibility checks is Java 14. 
+Currently, the latest tested version through compatibility checks is Java 15. 
 ====
 
 === Spring Boot support
 
 Ogham 3.0+ drops support of Spring Boot 1.3.x.
 
-Ogham is compatible with Spring Boot 1.4.x+ and up to 2.3.x.
+Ogham is compatible with Spring Boot 1.4.x+ and up to 2.4.x.
 
 
 .Compatibility check

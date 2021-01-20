@@ -7,7 +7,7 @@
 		<name>Ogham</name>
 		<href>https://groupe-sii.github.io/ogham</href>
 	</bannerLeft>
-	<publishDate position="bottom" format="yyyy-MM-dd" />
+	<publishDate position="none" />
 	<version position="bottom" />
 
 	<skin>
@@ -172,7 +172,8 @@
 				href="${this.github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=4" />
 		</menu>
 		<menu name="Versions" inherit="top">
-			<item name="[version]" href="release-notes.html" />
+			<item name="[version]" href="release-notes.html"/>
+			<item name="[current-version]" href="${this.site.ogham.version}/" />
 		</menu>
 
 		<menu name="Main" inherit="bottom">

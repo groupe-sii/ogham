@@ -128,10 +128,14 @@
 		<site.deploy.url>gitsite:git@github.com/groupe-sii/ogham.git</site.deploy.url>
 
 		<!-- Documentation -->
-		<docOghamVersion>${project.version}</docOghamVersion>
+		<doc.ogham.version>${project.version}</doc.ogham.version>
+		<site.ogham.version>${doc.ogham.version}</site.ogham.version>		<!-- There is a really strange behavior. If using directly ${doc.ogham.version} 
+			in site.xml and we want to override the value from command line (using -Ddoc.ogham.version=...), 
+			the value is not overridden. However, all properties that reference doc.ogham.version 
+			are correctly updated... That's why we have to duplicate the property... -->
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<site.staging.dir>${project.build.directory}/staging</site.staging.dir>
-		<site.output.version-dir>v${docOghamVersion}</site.output.version-dir>
+		<site.output.version-dir>v${doc.ogham.version}</site.output.version-dir>
 		<site.output.dir>${site.staging.dir}/${site.output.version-dir}</site.output.dir>
 		<site.showcase-video.output.dir>${site.output.dir}/presentation</site.showcase-video.output.dir>
 		<doc-theme>cerulean</doc-theme>
@@ -1158,7 +1162,7 @@
 						<experimental>true</experimental>
 						<tabsize>2</tabsize>
 						<imagesdir />
-						<ogham-version>${docOghamVersion}</ogham-version>
+						<ogham-version>${doc.ogham.version}</ogham-version>
 						<docdir>${basedir}/src/docs/asciidoc</docdir>
 						<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 						<sourcedir-url>${github.code.url}</sourcedir-url>
@@ -1319,7 +1323,7 @@
 							<experimental>true</experimental>
 							<tabsize>2</tabsize>
 							<imagesdir />
-							<ogham-version>${docOghamVersion}</ogham-version>
+							<ogham-version>${doc.ogham.version}</ogham-version>
 							<docdir>${basedir}/src/docs/asciidoc</docdir>
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 							<sourcedir-url>${github.code.url}</sourcedir-url>
@@ -1827,7 +1831,7 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<docOghamVersion>${releaseVersion}</docOghamVersion>
+				<doc.ogham.version>${releaseVersion}</doc.ogham.version>
 				<git.branch>v${releaseVersion}</git.branch>
 				<readme.skip>false</readme.skip>
 				<site.showcase-video.skip>false</site.showcase-video.skip>

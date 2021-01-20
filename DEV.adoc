@@ -134,7 +134,7 @@ The new folder `ogham-site` in the example will be the folder where generated do
 ----
 ./mvnw clean site post-site site:stage \
 	-Dsite.staging.dir=<path to ogham-site> \
-	-DdocOghamVersion=<ogham version> \
+	-Ddoc.ogham.version=<ogham version> \
 	-Dgit.branch=v<ogham version>
 ----
 

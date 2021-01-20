@@ -29,7 +29,8 @@ jobs:
       - name: "Get latest release"
         id: latest-release
         run: |
-          LATEST_RELEASE=$(git tag -l | sort -Vr | head -n1)
+          LATEST_RELEASE="$(git tag -l | sort -Vr | head -n1)"
+          LATEST_RELEASE="${LATEST_RELEASE#v}"
           echo "::set-output name=version::$LATEST_RELEASE"
       - name: "Generate README.adoc"
         run: 
@@ -37,7 +38,7 @@ jobs:
               -DskipTests=true
               -Dmaven.javadoc.skip=true
               -Dreadme.skip=false
-              -DdocOghamVersion=${{ steps.latest-release.outputs.version}}
+              -Ddoc.ogham.version=${{ steps.latest-release.outputs.version}}
               -Dgit.branch=master
       - name: "Has changed"
         id: has-changed
