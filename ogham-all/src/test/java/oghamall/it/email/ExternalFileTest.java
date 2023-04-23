@@ -61,7 +61,7 @@ public class ExternalFileTest {
 	}
 
 	@Test
-	public void thymeleafHtmlFileFreemarkerTextFile() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlFileFreemarkerTextFile() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")

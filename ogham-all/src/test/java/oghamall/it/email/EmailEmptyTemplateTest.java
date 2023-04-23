@@ -43,7 +43,7 @@ public class EmailEmptyTemplateTest {
 
 
 	@Test
-	public void emptyThymeleafTemplateShouldNotReportAnError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void emptyThymeleafTemplateShouldNotReportAnError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// TODO: MimeType of empty content string is application/octet-stream
 		// (default mimetype). Then assertions utilities consider any part with
 		// a mimetype that is not text/* as an attachment.
@@ -81,7 +81,7 @@ public class EmailEmptyTemplateTest {
 	}
 
 	@Test
-	public void emptyFreemarkerTemplateShouldNotReportAnError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void emptyFreemarkerTemplateShouldNotReportAnError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// TODO: MimeType of empty content string is application/octet-stream
 		// (default mimetype). Then assertions utilities consider any part with
 		// a mimetype that is not text/* as an attachment.
@@ -119,7 +119,7 @@ public class EmailEmptyTemplateTest {
 	}
 
 	@Test
-	public void emptyThymeleafMultiTemplateShouldNotReportAnError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void emptyThymeleafMultiTemplateShouldNotReportAnError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -137,7 +137,7 @@ public class EmailEmptyTemplateTest {
 	}
 	
 	@Test
-	public void emptyFreemarkerMultiTemplateShouldNotReportAnError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void emptyFreemarkerMultiTemplateShouldNotReportAnError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")

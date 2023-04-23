@@ -5,9 +5,9 @@ import static java.util.regex.Pattern.quote;
 
 import java.util.List;
 
-import javax.mail.internet.InternetAddress;
 
 import fr.sii.ogham.testing.assertion.context.Context;
+import jakarta.mail.internet.InternetAddress;
 
 public class AddressesWithContext implements Context {
 	private final List<InternetAddress> addresses;

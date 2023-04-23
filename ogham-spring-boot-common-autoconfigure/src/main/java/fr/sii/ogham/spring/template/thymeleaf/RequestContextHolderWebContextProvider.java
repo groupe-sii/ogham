@@ -1,14 +1,19 @@
 package fr.sii.ogham.spring.template.thymeleaf;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.spring.util.compat.HttpServletRequestWrapper;
+import fr.sii.ogham.spring.util.compat.HttpServletResponseWrapper;
+import fr.sii.ogham.spring.util.compat.JakartaHttpServletRequestWrapper;
+import fr.sii.ogham.spring.util.compat.JakartaHttpServletResponseWrapper;
+import fr.sii.ogham.spring.util.compat.JakartaServletContextWrapper;
+import fr.sii.ogham.spring.util.compat.ServletContextWrapper;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Implementation that retrieves the current {@link HttpServletRequest} and
@@ -21,18 +26,18 @@ public class RequestContextHolderWebContextProvider implements WebContextProvide
 	private ServletContext servletContext;
 
 	@Override
-	public HttpServletRequest getRequest(Context context) {
-		return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	public HttpServletRequestWrapper getRequest(Context context) {
+		return new JakartaHttpServletRequestWrapper(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());
 	}
 
 	@Override
-	public HttpServletResponse getResponse(Context context) {
-		return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+	public HttpServletResponseWrapper getResponse(Context context) {
+		return new JakartaHttpServletResponseWrapper(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse());
 	}
 
 	@Override
-	public ServletContext getServletContext(Context context) {
-		return servletContext;
+	public ServletContextWrapper getServletContext(Context context) {
+		return new JakartaServletContextWrapper(servletContext);
 	}
 
 	@Override

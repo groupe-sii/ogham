@@ -74,7 +74,7 @@ public class EmailTemplateStringTest {
 	}
 	
 	@Test
-	public void htmlTemplateStringWithThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void htmlTemplateStringWithThymeleaf() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -96,7 +96,7 @@ public class EmailTemplateStringTest {
 
 	
 	@Test
-	public void textTemplateStringWithThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void textTemplateStringWithThymeleaf() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -118,7 +118,7 @@ public class EmailTemplateStringTest {
 
 	
 	@Test
-	public void htmlTemplateStringWithFreemarker() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void htmlTemplateStringWithFreemarker() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -140,7 +140,7 @@ public class EmailTemplateStringTest {
 
 	
 	@Test
-	public void textTemplateStringWithFreemarker() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void textTemplateStringWithFreemarker() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")

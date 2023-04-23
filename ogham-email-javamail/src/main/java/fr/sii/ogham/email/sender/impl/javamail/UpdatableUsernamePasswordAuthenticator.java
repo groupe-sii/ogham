@@ -1,7 +1,7 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
 
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 

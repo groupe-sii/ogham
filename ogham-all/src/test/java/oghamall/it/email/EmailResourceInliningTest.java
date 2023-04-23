@@ -53,7 +53,7 @@ public class EmailResourceInliningTest {
 	}
 	
 	@Test
-	public void inlineResources() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void inlineResources() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")

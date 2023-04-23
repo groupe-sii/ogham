@@ -3,6 +3,7 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.jsmpp.InvalidNumberOfDestinationsException;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
@@ -105,9 +106,9 @@ public class SlowPduSender implements PDUSender {
 	}
 
 	@Override
-	public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber, String messageId) throws PDUStringException, IOException {
+	public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
 		await(delays.getSendSubmitSmRespWaiting());
-		return delegate.sendSubmitSmResp(os, sequenceNumber, messageId);
+		return delegate.sendSubmitSmResp(os, sequenceNumber, messageId, optionalParameters);
 	}
 
 	@Override
@@ -202,10 +203,46 @@ public class SlowPduSender implements PDUSender {
 		return delegate.sendAlertNotification(os, sequenceNumber, sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr, optionalParameters);
 	}
 
+
+	@Override
+	public byte[] sendBroadcastSm(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, String messageId,
+			byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendBroadcastSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendCancelBroadcastSm(OutputStream os, int sequenceNumber, String serviceType, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendCancelBroadcastSmResp(OutputStream os, int sequenceNumber) throws IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendQueryBroadcastSm(OutputStream os, int sequenceNumber, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendQueryBroadcastSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+	
 	private static void await(Awaiter waiting) {
 		if (waiting == null) {
 			return;
 		}
 		waiting.await();
 	}
+
 }

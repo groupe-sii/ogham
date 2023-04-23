@@ -49,7 +49,7 @@ public class EmailBase64ImageInliningTest {
 	}
 	
 	@Test
-	public void imageFormats() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void imageFormats() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.content(new TemplateContent("/inliner/images/jsoup/source/differentImageFormats.html", new SimpleBean("foo", 42)))

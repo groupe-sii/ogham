@@ -43,7 +43,7 @@ public class EmailAttachmentTestSample {
 	}
 
 	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void simple() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")

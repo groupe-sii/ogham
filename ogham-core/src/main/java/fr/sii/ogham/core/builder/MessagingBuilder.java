@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import javax.activation.MimetypesFileTypeMap;
+import jakarta.activation.MimetypesFileTypeMap;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;

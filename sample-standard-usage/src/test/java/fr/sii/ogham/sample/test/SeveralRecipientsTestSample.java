@@ -42,7 +42,7 @@ public class SeveralRecipientsTestSample {
 	}
 
 	@Test
-	public void severalRecipients() throws MessagingException, javax.mail.MessagingException {
+	public void severalRecipients() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")

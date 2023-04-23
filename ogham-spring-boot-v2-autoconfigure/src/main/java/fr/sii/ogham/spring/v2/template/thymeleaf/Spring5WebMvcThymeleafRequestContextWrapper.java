@@ -13,6 +13,9 @@ import org.thymeleaf.spring5.naming.SpringContextVariableNames;
 import org.thymeleaf.spring5.view.ThymeleafView;
 
 import fr.sii.ogham.spring.template.thymeleaf.ThymeleafRequestContextWrapper;
+import fr.sii.ogham.spring.util.compat.HttpServletRequestWrapper;
+import fr.sii.ogham.spring.util.compat.HttpServletResponseWrapper;
+import fr.sii.ogham.spring.util.compat.ServletContextWrapper;
 
 /**
  * Wraps the {@link RequestContext} into a {@link IThymeleafRequestContext} and
@@ -25,11 +28,11 @@ import fr.sii.ogham.spring.template.thymeleaf.ThymeleafRequestContextWrapper;
  * @author Aurélien Baudet
  *
  */
-public class SpringWebMvcThymeleafRequestContextWrapper implements ThymeleafRequestContextWrapper {
+public class Spring5WebMvcThymeleafRequestContextWrapper implements ThymeleafRequestContextWrapper {
 
 	@Override
-	public void wrapAndRegister(RequestContext requestContext, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext, Map<String, Object> springModel) {
-		final SpringWebMvcThymeleafRequestContext thymeleafRequestContext = new SpringWebMvcThymeleafRequestContext(requestContext, request);
+	public void wrapAndRegister(RequestContext requestContext, HttpServletRequestWrapper request, HttpServletResponseWrapper response, ServletContextWrapper servletContext, Map<String, Object> springModel) {
+		final SpringWebMvcThymeleafRequestContext thymeleafRequestContext = new SpringWebMvcThymeleafRequestContext(requestContext, request.get());
 		// Add the Thymeleaf RequestContext wrapper that we will be using in
 		// this dialect (the bare RequestContext
 		// stays in the context to for compatibility with other dialects)

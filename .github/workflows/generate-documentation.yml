@@ -26,6 +26,7 @@ jobs:
           - ogham-all
           - ogham-spring-boot-v1-autoconfigure
           - ogham-spring-boot-v2-autoconfigure
+          - ogham-spring-boot-v3-autoconfigure
     name: "Mutation testing [${{ matrix.module }}]"
     steps:
       - uses: actions/checkout@v2

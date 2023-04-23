@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
 
 import org.junit.Assert;
 import org.junit.ComparisonFailure;

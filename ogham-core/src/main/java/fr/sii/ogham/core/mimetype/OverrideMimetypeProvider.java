@@ -3,8 +3,8 @@ package fr.sii.ogham.core.mimetype;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
+import jakarta.activation.MimeType;
+import jakarta.activation.MimeTypeParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -7,7 +7,7 @@ import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
 /**
- * Represents an email address. javax.mail.internet.InternetAddress also
+ * Represents an email address. jakarta.mail.internet.InternetAddress also
  * provides the same feature but we don't want to be sticked to a particular
  * implementation.
  * 

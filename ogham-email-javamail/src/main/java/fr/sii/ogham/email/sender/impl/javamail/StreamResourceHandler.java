@@ -4,10 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.activation.DataHandler;
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;

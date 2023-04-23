@@ -27,7 +27,7 @@ public class ImplementationSelectionTests {
 	@Before
 	public void setUp() throws IOException {
 		SimpleClasspathHelper helper = new SimpleClasspathHelper();
-		helper.setClassLoader(new FilterableClassLoader(getClass().getClassLoader(), c -> !c.equals("javax.mail.Transport")));
+		helper.setClassLoader(new FilterableClassLoader(getClass().getClassLoader(), c -> !c.equals("jakarta.mail.Transport")));
 		ClasspathUtils.setHelper(helper);
 		Properties additionalProps = new Properties();
 		additionalProps.setProperty("mail.smtp.host", "localhost");
@@ -42,7 +42,7 @@ public class ImplementationSelectionTests {
 	
 	@Test
 	public void javaMailAvailable() {
-		assertFalse(ClasspathUtils.exists("javax.mail.Transport"));
+		assertFalse(ClasspathUtils.exists("jakarta.mail.Transport"));
 	}
 	
 	@After

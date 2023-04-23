@@ -1,4 +1,4 @@
-package fr.sii.ogham.spring.v2.template;
+package fr.sii.ogham.spring.v3.template;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -11,8 +11,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
-import org.thymeleaf.spring5.expression.ThymeleafEvaluationContext;
-import org.thymeleaf.spring5.naming.SpringContextVariableNames;
+import org.thymeleaf.spring6.expression.ThymeleafEvaluationContext;
+import org.thymeleaf.spring6.naming.SpringContextVariableNames;
 
 import fr.sii.ogham.spring.email.OghamEmailProperties;
 import fr.sii.ogham.spring.sms.OghamSmsProperties;
@@ -21,27 +21,28 @@ import fr.sii.ogham.spring.template.OghamThymeleafProperties;
 import fr.sii.ogham.spring.template.ThymeLeafConfigurer;
 import fr.sii.ogham.spring.template.thymeleaf.ContextMerger;
 import fr.sii.ogham.spring.template.thymeleaf.RequestContextHolderWebContextProvider;
+import fr.sii.ogham.spring.template.thymeleaf.RequestContextProvider;
 import fr.sii.ogham.spring.template.thymeleaf.SpringStandaloneThymeleafContextConverter;
 import fr.sii.ogham.spring.template.thymeleaf.SpringWebThymeleafContextConverter;
 import fr.sii.ogham.spring.template.thymeleaf.StaticVariablesProvider;
 import fr.sii.ogham.spring.template.thymeleaf.TemplateEngineSupplier;
 import fr.sii.ogham.spring.template.thymeleaf.ThymeleafEvaluationContextProvider;
 import fr.sii.ogham.spring.template.thymeleaf.WebContextProvider;
-import fr.sii.ogham.spring.v2.template.thymeleaf.SpringWebMvcThymeleafRequestContextWrapper;
-import fr.sii.ogham.spring.v2.template.thymeleaf.UpdateCurrentContextMerger;
-import fr.sii.ogham.spring.v2.template.thymeleaf.WebExpressionContextProvider;
+import fr.sii.ogham.spring.v3.template.thymeleaf.Spring6WebMvcThymeleafRequestContextWrapper;
+import fr.sii.ogham.spring.v3.template.thymeleaf.UpdateCurrentContextMerger;
+import fr.sii.ogham.spring.v3.template.thymeleaf.WebExpressionContextProvider;
 import fr.sii.ogham.template.thymeleaf.common.SimpleThymeleafContextConverter;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafContextConverter;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;
 
 @Configuration
-@ConditionalOnClass({org.thymeleaf.spring5.SpringTemplateEngine.class, fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder.class})
+@ConditionalOnClass({org.thymeleaf.spring6.SpringTemplateEngine.class, fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder.class})
 @EnableConfigurationProperties(OghamThymeleafProperties.class)
-public class OghamThymeleafV3Configuration {
+public class OghamThymeleafSpring6Configuration {
 	@Bean
 	@ConditionalOnMissingBean(TemplateEngineSupplier.class)
-	public TemplateEngineSupplier oghamTemplateEngineSupplier(@Autowired(required=false) org.thymeleaf.spring5.SpringTemplateEngine springTemplateEngine) {
+	public TemplateEngineSupplier oghamTemplateEngineSupplier(@Autowired(required=false) org.thymeleaf.spring6.SpringTemplateEngine springTemplateEngine) {
 		return () -> springTemplateEngine;
 	}
 
@@ -64,15 +65,16 @@ public class OghamThymeleafV3Configuration {
 			ContextMerger contextMerger,
 			ApplicationContext applicationContext,
 			WebContextProvider webContextProvider,
-			@Autowired(required=false) org.thymeleaf.spring5.SpringTemplateEngine springTemplateEngine) {
+			@Autowired(required=false) org.thymeleaf.spring6.SpringTemplateEngine springTemplateEngine) {
 		return new SpringWebThymeleafContextConverter(
 				springThymeleafContextConverter(staticVariablesProvider, thymeleafEvaluationContextProvider, contextMerger), 
 				SpringContextVariableNames.SPRING_REQUEST_CONTEXT, 
 				applicationContext, 
 				webContextProvider,
-				new SpringWebMvcThymeleafRequestContextWrapper(), 
+				new Spring6WebMvcThymeleafRequestContextWrapper(), 
 				new WebExpressionContextProvider(springTemplateEngine),
-				contextMerger);
+				contextMerger,
+				new RequestContextProvider());
 	}
 	
 	@Bean

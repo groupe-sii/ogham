@@ -57,7 +57,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafMulti() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafMulti() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -80,7 +80,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafMissingVariant() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafMissingVariant() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -101,7 +101,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafInvalidPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafInvalidPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
@@ -114,7 +114,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafOneVariantWithParsingError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafOneVariantWithParsingError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
@@ -126,7 +126,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafOneVariantWithInvalidResourcePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafOneVariantWithInvalidResourcePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
@@ -138,7 +138,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withFreemarkerMulti() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerMulti() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -161,7 +161,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withFreemarkerMissingVariant() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerMissingVariant() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -182,7 +182,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withFreemarkerInvalidPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerInvalidPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
@@ -195,7 +195,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withFreemarkerOneVariantWithParsingError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerOneVariantWithParsingError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
@@ -207,7 +207,7 @@ public class EmailMultiTemplateTest {
 	}
 
 	@Test
-	public void withFreemarkerOneVariantWithInvalidResourcePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerOneVariantWithInvalidResourcePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
@@ -219,7 +219,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void thymeleafHtmlFreemarkerText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlFreemarkerText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -244,7 +244,7 @@ public class EmailMultiTemplateTest {
 
 	
 	@Test
-	public void thymeleafHtmlStringFreemarkerTextString() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlStringFreemarkerTextString() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")

@@ -43,7 +43,7 @@ public class EmailHtmlAndTextTestSample {
 	}
 
 	@Test
-	public void multiTemplateContent() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void multiTemplateContent() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")

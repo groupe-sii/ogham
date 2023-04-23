@@ -10,21 +10,29 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.jsmpp.bean.BroadcastSm;
+import org.jsmpp.bean.CancelBroadcastSm;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.QueryBroadcastSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.session.BroadcastSmResult;
 import org.jsmpp.session.DataSmResult;
+import org.jsmpp.session.QueryBroadcastSmResult;
 import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
 import org.jsmpp.session.ServerResponseDeliveryAdapter;
 import org.jsmpp.session.Session;
+import org.jsmpp.session.SubmitMultiResult;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
 import org.slf4j.Logger;
@@ -165,12 +173,14 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		}
 	}
 
+	@Override
 	public QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException {
 		LOG.info("Accepting query sm, but not implemented");
 		return null;
 	}
 
-	public MessageId onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source) throws ProcessRequestException {
+	@Override
+	public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source) throws ProcessRequestException {
 		MessageId messageId = messageIDGenerator.newMessageId();
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Receiving submit_sm '{}', and return message id {}", decode(new SubmitSmAdapter(submitSm)), messageId);
@@ -179,14 +189,10 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		if (SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
 		}
-		return messageId;
+		return new SubmitSmResult(messageId, new OptionalParameter[0]);
 	}
 
 	@Override
-	public void onSubmitSmRespSent(MessageId messageId, SMPPServerSession source) {
-		LOG.debug("submit_sm_resp with message_id {} has been sent", messageId);
-	}
-
 	public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti, SMPPServerSession source) throws ProcessRequestException {
 		MessageId messageId = messageIDGenerator.newMessageId();
 		if (LOG.isDebugEnabled()) {
@@ -196,9 +202,10 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
 		}
 
-		return new SubmitMultiResult(messageId.getValue());
+		return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0], new OptionalParameter[0]);
 	}
 
+	@Override
 	public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
 		LOG.debug("onAcceptDataSm '{}'", dataSm);
 		return null;
@@ -212,6 +219,23 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 	@Override
 	public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source) throws ProcessRequestException {
 		// nothing to do
+	}
+
+	@Override
+	public BroadcastSmResult onAcceptBroadcastSm(BroadcastSm broadcastSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
+		return null;
+	}
+
+	@Override
+	public void onAcceptCancelBroadcastSm(CancelBroadcastSm cancelBroadcastSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
+	}
+
+	@Override
+	public QueryBroadcastSmResult onAcceptQueryBroadcastSm(QueryBroadcastSm queryBroadcastSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
+		return null;
 	}
 
 	public List<SubmitSm> getReceivedMessages() {

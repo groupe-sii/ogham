@@ -49,7 +49,7 @@ public class EmailSMTPAuthenticationTest {
 	}
 	
 	@Test
-	public void authenticated() throws MessagingException, javax.mail.MessagingException {
+	public void authenticated() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")

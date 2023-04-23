@@ -74,7 +74,7 @@ public class FreemarkerRelativeResourcesTests {
 	}
 	
 	@Test
-	public void relativeToAbsolutePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToAbsolutePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -116,7 +116,7 @@ public class FreemarkerRelativeResourcesTests {
 	}
 
 	@Test
-	public void relativeToPrefixAndSuffix() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToPrefixAndSuffix() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.freemarker.path-prefix", "/template/freemarker/source/"), new Property("ogham.email.freemarker.path-suffix", ".html.ftl"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -158,7 +158,7 @@ public class FreemarkerRelativeResourcesTests {
 	}
 
 	@Test
-	public void relativeToPrefixSuffixAndPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToPrefixSuffixAndPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.freemarker.path-prefix", "/template/"), new Property("ogham.email.freemarker.path-suffix", ".html.ftl"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -201,7 +201,7 @@ public class FreemarkerRelativeResourcesTests {
 
 
 	@Test
-	public void relativeToMultiTemplateName() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToMultiTemplateName() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.freemarker.path-prefix", "/template/freemarker/source/"));
 		// @formatter:off
 		oghamService.send(new Email()

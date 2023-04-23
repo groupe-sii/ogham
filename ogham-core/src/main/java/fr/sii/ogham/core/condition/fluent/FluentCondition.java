@@ -12,7 +12,7 @@ import fr.sii.ogham.core.condition.Condition;
  * For example:
  * 
  * <pre>
- * requiredClass("javax.mail.Transport").and(requiredClass("foo.Bar"));
+ * requiredClass("jakarta.mail.Transport").and(requiredClass("foo.Bar"));
  * </pre>
  * 
  * <p>
@@ -54,11 +54,11 @@ public class FluentCondition<T> implements Condition<T> {
 	 * For example:
 	 * 
 	 * <pre>
-	 * requiredClass("javax.mail.Transport").and(requiredClass("foo.Bar"));
+	 * requiredClass("jakarta.mail.Transport").and(requiredClass("foo.Bar"));
 	 * </pre>
 	 * 
 	 * Means that the result will be true only if the result of the current
-	 * condition (<code>requiredClass("javax.mail.Transport")</code>) is true
+	 * condition (<code>requiredClass("jakarta.mail.Transport")</code>) is true
 	 * and the result provided condition (<code>requireClass("foo.Bar")</code>)
 	 * is true.
 	 * 
@@ -86,11 +86,11 @@ public class FluentCondition<T> implements Condition<T> {
 	 * For example:
 	 * 
 	 * <pre>
-	 * requiredClass("javax.mail.Transport").or(requiredClass("foo.Bar"));
+	 * requiredClass("jakarta.mail.Transport").or(requiredClass("foo.Bar"));
 	 * </pre>
 	 * 
 	 * Means that the result will be true if either the result of the current
-	 * condition (<code>requiredClass("javax.mail.Transport")</code>) is true or
+	 * condition (<code>requiredClass("jakarta.mail.Transport")</code>) is true or
 	 * the result provided condition (<code>requireClass("foo.Bar")</code>) is
 	 * true.
 	 * 

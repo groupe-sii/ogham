@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.mail.Multipart;
-import javax.mail.internet.MimePart;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimePart;
 
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.util.PriorityComparator;

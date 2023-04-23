@@ -2,8 +2,8 @@ package oghamtesting.it.assertion
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat
-import static javax.mail.Message.RecipientType.CC
-import static javax.mail.Message.RecipientType.TO
+import static jakarta.mail.Message.RecipientType.CC
+import static jakarta.mail.Message.RecipientType.TO
 import static org.hamcrest.Matchers.allOf
 import static org.hamcrest.Matchers.arrayWithSize
 import static org.hamcrest.Matchers.contains
@@ -19,10 +19,10 @@ import static org.hamcrest.Matchers.startsWith
 import java.util.function.Consumer
 import java.util.function.Predicate
 
-import javax.mail.BodyPart
-import javax.mail.Multipart
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
+import jakarta.mail.BodyPart
+import jakarta.mail.Multipart
+import jakarta.mail.internet.InternetAddress
+import jakarta.mail.internet.MimeMessage
 
 import com.icegreen.greenmail.junit4.GreenMailRule
 

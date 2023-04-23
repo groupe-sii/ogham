@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
-import javax.activation.MimetypesFileTypeMap;
+import jakarta.activation.MimetypesFileTypeMap;
 
 import org.apache.tika.Tika;
 import org.apache.tika.config.TikaConfig;

@@ -69,7 +69,7 @@ public class EmailSMTPDefaultsTest {
 	}
 	
 	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException {
+	public void simple() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
@@ -94,7 +94,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleaf() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -115,7 +115,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleafResources() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafResources() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -161,7 +161,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleafResourcesXhtml() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafResourcesXhtml() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -207,7 +207,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleafSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.content(new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)))
@@ -227,7 +227,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void subjectInTextTemplate() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectInTextTemplate() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.content(new TemplateContent("classpath:/template/thymeleaf/source/withSubject.txt", new SimpleBean("foo", 42)))
@@ -247,7 +247,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void multiContent() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void multiContent() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -272,7 +272,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void multiContentShortcut() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void multiContentShortcut() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -305,7 +305,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void attachmentLookup() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void attachmentLookup() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -332,7 +332,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void attachmentFile() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachmentFile() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -359,7 +359,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void attachmentStream() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachmentStream() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")

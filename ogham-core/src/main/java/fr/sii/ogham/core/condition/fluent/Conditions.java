@@ -18,7 +18,7 @@ import fr.sii.ogham.core.env.PropertyResolver;
  * Helper to write fluent conditions like:
  * 
  * <pre>
- * requiredClass("javax.mail.Transport").and(not(requiredClass("foo.Bar")));
+ * requiredClass("jakarta.mail.Transport").and(not(requiredClass("foo.Bar")));
  * </pre>
  * 
  * To do this, you need to add the following static import:
@@ -74,11 +74,11 @@ public final class Conditions {
 	 * And operator between the provided conditions:
 	 * 
 	 * <pre>
-	 * and(requiredClass("javax.mail.Transport"), requiredClass("foo.Bar"));
+	 * and(requiredClass("jakarta.mail.Transport"), requiredClass("foo.Bar"));
 	 * </pre>
 	 * 
 	 * Means that the result will be true only if
-	 * <code>javax.mail.Transport</code> and <code>foo.Bar</code> classes are
+	 * <code>jakarta.mail.Transport</code> and <code>foo.Bar</code> classes are
 	 * present in the classpath.
 	 * 
 	 * <p>
@@ -103,14 +103,14 @@ public final class Conditions {
 	 * 
 	 * <pre>
 	 * List&lt;Condition&lt;Message&gt;&gt; conditions = new ArrayList&lt;&gt;();
-	 * conditions.add(requiredClass("javax.mail.Transport"));
+	 * conditions.add(requiredClass("jakarta.mail.Transport"));
 	 * conditions.add(requiredClass("foo.Bar"));
 	 * 
 	 * and(conditions);
 	 * </pre>
 	 * 
 	 * Means that the result will be true only if
-	 * <code>javax.mail.Transport</code> and <code>foo.Bar</code> classes are
+	 * <code>jakarta.mail.Transport</code> and <code>foo.Bar</code> classes are
 	 * present in the classpath.
 	 * 
 	 * <p>
@@ -132,11 +132,11 @@ public final class Conditions {
 	 * Or operator between the provided conditions:
 	 * 
 	 * <pre>
-	 * or(requiredClass("javax.mail.Transport"), requiredClass("foo.Bar"));
+	 * or(requiredClass("jakarta.mail.Transport"), requiredClass("foo.Bar"));
 	 * </pre>
 	 * 
 	 * Means that the result will be true if either
-	 * <code>javax.mail.Transport</code> or <code>foo.Bar</code> class is
+	 * <code>jakarta.mail.Transport</code> or <code>foo.Bar</code> class is
 	 * present in the classpath.
 	 * 
 	 * <p>
@@ -161,14 +161,14 @@ public final class Conditions {
 	 * 
 	 * <pre>
 	 * List&lt;Condition&lt;Message&gt;&gt; conditions = new ArrayList&lt;&gt;();
-	 * conditions.add(requiredClass("javax.mail.Transport"));
+	 * conditions.add(requiredClass("jakarta.mail.Transport"));
 	 * conditions.add(requiredClass("foo.Bar"));
 	 * 
 	 * or(conditions);
 	 * </pre>
 	 * 
 	 * Means that the result will be true if either
-	 * <code>javax.mail.Transport</code> or <code>foo.Bar</code> class is
+	 * <code>jakarta.mail.Transport</code> or <code>foo.Bar</code> class is
 	 * present in the classpath.
 	 * 
 	 * <p>
@@ -190,11 +190,11 @@ public final class Conditions {
 	 * Not operator to reverse provided condition:
 	 * 
 	 * <pre>
-	 * not(requiredClass("javax.mail.Transport));
+	 * not(requiredClass("jakarta.mail.Transport));
 	 * </pre>
 	 * 
 	 * Means that the result will be true if the class
-	 * <code>javax.mail.Transport</code> is not present in the classpath.
+	 * <code>jakarta.mail.Transport</code> is not present in the classpath.
 	 * 
 	 * @param condition
 	 *            the condition to reverse
@@ -287,11 +287,11 @@ public final class Conditions {
 	 * Check if a class is present in the classpath.
 	 * 
 	 * <pre>
-	 * requiredClass("javax.mail.Transport");
+	 * requiredClass("jakarta.mail.Transport");
 	 * </pre>
 	 * 
 	 * Means that the result will be true only if the class
-	 * <code>javax.mail.Transport</code> is present in the classpath.
+	 * <code>jakarta.mail.Transport</code> is present in the classpath.
 	 * 
 	 * @param className
 	 *            the class to check

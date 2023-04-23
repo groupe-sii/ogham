@@ -26,11 +26,11 @@ public interface ActivableAtRuntime {
 	 * For example:
 	 * 
 	 * <pre>
-	 * requiredClass("javax.mail.Transport").and(requiredProperty(propertyResolver, "mail.host"));
+	 * requiredClass("jakarta.mail.Transport").and(requiredProperty(propertyResolver, "mail.host"));
 	 * </pre>
 	 * 
 	 * Means that the associated implementation will be used only if
-	 * {@code javax.mail.Transport} class is present in the classpath and the
+	 * {@code jakarta.mail.Transport} class is present in the classpath and the
 	 * property {@code mail.host} exists in defined properties.
 	 * 
 	 * @return the condition to evaluate

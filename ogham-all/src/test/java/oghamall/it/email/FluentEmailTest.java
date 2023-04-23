@@ -67,7 +67,7 @@ public class FluentEmailTest {
 	}
 	
 	@Test
-	public void bodyString() throws MessagingException, javax.mail.MessagingException {
+	public void bodyString() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
@@ -92,7 +92,7 @@ public class FluentEmailTest {
 	}
 	
 	@Test
-	public void bodyTemplateString() throws MessagingException, javax.mail.MessagingException {
+	public void bodyTemplateString() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
@@ -117,7 +117,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void bodyWithHtmlTemplateOnly() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void bodyWithHtmlTemplateOnly() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -138,7 +138,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void htmlTemplateOnly() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void htmlTemplateOnly() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -159,7 +159,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void textTemplateOnly() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void textTemplateOnly() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -181,7 +181,7 @@ public class FluentEmailTest {
 
 
 	@Test
-	public void bodyWithXhtmlTemplate() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void bodyWithXhtmlTemplate() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -228,7 +228,7 @@ public class FluentEmailTest {
 
 
 	@Test
-	public void htmlAndText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void htmlAndText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -252,7 +252,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void bodyHtmlAndText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void bodyHtmlAndText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -275,7 +275,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void bodyHtmlAndMissingTextTemplate() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void bodyHtmlAndMissingTextTemplate() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -306,7 +306,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void attachResource() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void attachResource() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -347,7 +347,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void attachFile() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachFile() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -381,7 +381,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void attachStream() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachStream() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -415,7 +415,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void embedResource() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void embedResource() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -449,7 +449,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void embedFile() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void embedFile() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -483,7 +483,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void embedStream() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void embedStream() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -517,7 +517,7 @@ public class FluentEmailTest {
 	}
 
 	@Test
-	public void attachAndEmbed() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachAndEmbed() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")

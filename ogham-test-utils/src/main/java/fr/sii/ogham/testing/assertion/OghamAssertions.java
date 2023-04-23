@@ -5,7 +5,7 @@ import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.junit4.GreenMailRule;
 import com.icegreen.greenmail.junit5.GreenMailExtension;

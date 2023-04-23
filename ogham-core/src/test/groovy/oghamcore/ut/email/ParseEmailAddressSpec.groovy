@@ -1,6 +1,6 @@
 package oghamcore.ut.email
 
-import javax.mail.internet.InternetAddress
+import jakarta.mail.internet.InternetAddress
 
 import fr.sii.ogham.email.message.EmailAddress
 import fr.sii.ogham.testing.extension.common.LogTestInformation

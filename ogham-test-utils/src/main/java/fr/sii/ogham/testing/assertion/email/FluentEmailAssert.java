@@ -6,8 +6,8 @@ import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAlternativePart;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAttachments;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.getBodyPart;
 import static java.util.Arrays.asList;
-import static javax.mail.Message.RecipientType.CC;
-import static javax.mail.Message.RecipientType.TO;
+import static jakarta.mail.Message.RecipientType.CC;
+import static jakarta.mail.Message.RecipientType.TO;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
@@ -17,11 +17,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
+import jakarta.mail.internet.InternetAddress;
 
 import org.hamcrest.Matcher;
 

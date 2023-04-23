@@ -1,10 +1,10 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimePart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimePart;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

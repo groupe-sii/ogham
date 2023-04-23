@@ -5,7 +5,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import java.io.IOException;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.junit.Rule;
 import org.junit.Test;

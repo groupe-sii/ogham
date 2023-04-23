@@ -41,7 +41,7 @@ public class RandomPortEmailTestSample {
 	}
 
 	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException {
+	public void simple() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")

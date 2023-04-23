@@ -2,10 +2,10 @@ package fr.sii.ogham.email.sender.impl.javamail;
 
 import java.nio.charset.Charset;
 
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimePart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimePart;
 
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;

@@ -2,7 +2,7 @@ package fr.sii.ogham.email.sender.impl.javamail;
 
 import java.io.IOException;
 
-import javax.mail.BodyPart;
+import jakarta.mail.BodyPart;
 
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.NamedResource;

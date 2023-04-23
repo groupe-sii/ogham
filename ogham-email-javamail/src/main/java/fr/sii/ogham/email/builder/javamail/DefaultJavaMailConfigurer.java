@@ -24,8 +24,8 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * templating configurers.
  * </p>
  * 
- * This configurer is applied only if {@code javax.mail.Transport} and
- * {@code javax.mail.internet.MimeMessage} are present in the classpath. If not
+ * This configurer is applied only if {@code jakarta.mail.Transport} and
+ * {@code jakarta.mail.internet.MimeMessage} are present in the classpath. If not
  * present, JavaMail implementation is not registered at all.
  * 
  * <p>
@@ -107,7 +107,7 @@ public final class DefaultJavaMailConfigurer {
 		}
 
 		private static boolean canUseJavaMail() {
-			return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("javax.mail.internet.MimeMessage");
+			return ClasspathUtils.exists("jakarta.mail.Transport") && ClasspathUtils.exists("jakarta.mail.internet.MimeMessage");
 		}
 	}
 

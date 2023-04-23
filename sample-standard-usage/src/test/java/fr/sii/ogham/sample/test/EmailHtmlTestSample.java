@@ -43,7 +43,7 @@ public class EmailHtmlTestSample {
 	}
 
 	@Test
-	public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void registerMessage() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.body().template("/template/register.html",                         // <1>

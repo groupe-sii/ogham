@@ -3,10 +3,10 @@ package fr.sii.ogham.testing.assertion.email;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAttachment;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.getContent;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 
 import org.junit.Assert;
 import org.junit.internal.ArrayComparisonFailure;

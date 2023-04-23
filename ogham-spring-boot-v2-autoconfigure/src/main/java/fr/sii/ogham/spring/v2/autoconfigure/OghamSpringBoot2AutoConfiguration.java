@@ -19,7 +19,7 @@ import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
 import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
 import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
 import fr.sii.ogham.spring.v2.email.OghamSendGridV4Configuration;
-import fr.sii.ogham.spring.v2.template.OghamThymeleafV3Configuration;
+import fr.sii.ogham.spring.v2.template.OghamThymeleafSpring5Configuration;
 
 /**
  * <p>
@@ -52,7 +52,7 @@ import fr.sii.ogham.spring.v2.template.OghamThymeleafV3Configuration;
 		OghamGeneralConfiguration.class,
 		OghamNoTemplateEngineConfiguration.class, 
 		OghamFreemarkerConfiguration.class, 
-		OghamThymeleafV3Configuration.class, 
+		OghamThymeleafSpring5Configuration.class, 
 		OghamJavaMailConfiguration.class,
 		OghamSendGridV4Configuration.class,
 		OghamCloudhopperConfiguration.class,

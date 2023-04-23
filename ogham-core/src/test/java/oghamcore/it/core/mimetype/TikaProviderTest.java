@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThrows;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.activation.MimeTypeParseException;
+import jakarta.activation.MimeTypeParseException;
 
 import org.junit.Before;
 import org.junit.Rule;

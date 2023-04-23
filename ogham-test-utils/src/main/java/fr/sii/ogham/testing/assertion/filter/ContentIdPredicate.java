@@ -4,9 +4,9 @@ import static java.util.Collections.list;
 
 import java.util.function.Predicate;
 
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.Part;
+import jakarta.mail.Header;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
 
 /**
  * Predicate that matches the {@link Part} only if {@link Part#getAllHeaders()}

@@ -52,7 +52,7 @@ public class EmailTemplatePrefixTest {
 	}
 	
 	@Test
-	public void withThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleaf() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")

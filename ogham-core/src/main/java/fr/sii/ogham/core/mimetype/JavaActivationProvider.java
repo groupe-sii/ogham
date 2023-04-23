@@ -3,9 +3,9 @@ package fr.sii.ogham.core.mimetype;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.activation.MimetypesFileTypeMap;
+import jakarta.activation.MimeType;
+import jakarta.activation.MimeTypeParseException;
+import jakarta.activation.MimetypesFileTypeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

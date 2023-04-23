@@ -1,6 +1,6 @@
 package oghamcore.ut.core.mimetype.replace
 
-import javax.activation.MimeType
+import jakarta.activation.MimeType
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException
 import fr.sii.ogham.core.mimetype.MimeTypeProvider

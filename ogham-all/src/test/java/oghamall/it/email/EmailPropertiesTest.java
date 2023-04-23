@@ -50,7 +50,7 @@ public class EmailPropertiesTest {
 	}
 	
 	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException {
+	public void simple() throws MessagingException, jakarta.mail.MessagingException {
 		oghamService.send(new Email()
 							.subject("Simple")
 							.content("string body"));

@@ -68,7 +68,7 @@ public class EmailDifferentPrefixesTest {
 	}
 
 	@Test
-	public void thymeleafHtmlFreemarkerText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlFreemarkerText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Content from files")

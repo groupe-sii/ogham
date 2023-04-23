@@ -1,7 +1,7 @@
 package fr.sii.ogham.spring.email;
 
-import javax.activation.MimeType;
-import javax.mail.internet.MimeMessage;
+import jakarta.activation.MimeType;
+import jakarta.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

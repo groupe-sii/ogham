@@ -74,7 +74,7 @@ public class ThymeleafRelativeResourcesTest {
 	}
 
 	@Test
-	public void relativeToAbsolutePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToAbsolutePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -116,7 +116,7 @@ public class ThymeleafRelativeResourcesTest {
 	}
 
 	@Test
-	public void relativeToPrefixAndSuffix() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToPrefixAndSuffix() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.thymeleaf.path-prefix", "/template/thymeleaf/source/"), new Property("ogham.email.thymeleaf.path-suffix", ".html"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -159,7 +159,7 @@ public class ThymeleafRelativeResourcesTest {
 
 
 	@Test
-	public void relativeToPrefixSuffixAndPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToPrefixSuffixAndPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.thymeleaf.path-prefix", "/template/"), new Property("ogham.email.thymeleaf.path-suffix", ".html"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -202,7 +202,7 @@ public class ThymeleafRelativeResourcesTest {
 
 
 	@Test
-	public void relativeToMultiTemplateName() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToMultiTemplateName() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.thymeleaf.path-prefix", "/template/thymeleaf/source/"));
 		// @formatter:off
 		oghamService.send(new Email()

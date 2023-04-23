@@ -1,6 +1,6 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import javax.mail.BodyPart;
+import jakarta.mail.BodyPart;
 
 import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.email.attachment.Attachment;

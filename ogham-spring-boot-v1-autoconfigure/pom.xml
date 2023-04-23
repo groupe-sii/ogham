@@ -16,7 +16,7 @@
 	<properties>
 		<spring-boot.version>${spring-boot-v1.version}</spring-boot.version>
 		<sendgrid-java.version>${sendgrid-java-v2.version}</sendgrid-java.version>
-		<thymeleaf.version>${thymeleaf-v2.version}</thymeleaf.version>
+		<thymeleaf.version>${thymeleaf-spring4.version}</thymeleaf.version>
 		<mockito.version>1.10.19</mockito.version>
 		<maven.site.skip>true</maven.site.skip>
 	</properties>

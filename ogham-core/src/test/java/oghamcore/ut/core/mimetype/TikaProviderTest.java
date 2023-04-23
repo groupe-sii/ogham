@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
+import jakarta.activation.MimeType;
+import jakarta.activation.MimeTypeParseException;
 
 import org.apache.tika.Tika;
 import org.junit.Rule;

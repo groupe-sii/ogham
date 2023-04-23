@@ -2,15 +2,15 @@ package oghamtesting.it.assertion
 
 import static java.nio.charset.StandardCharsets.UTF_8
 import static java.util.Arrays.asList
-import static javax.mail.Message.RecipientType.BCC
-import static javax.mail.Message.RecipientType.CC
-import static javax.mail.Message.RecipientType.TO
+import static jakarta.mail.Message.RecipientType.BCC
+import static jakarta.mail.Message.RecipientType.CC
+import static jakarta.mail.Message.RecipientType.TO
 
-import javax.mail.BodyPart
-import javax.mail.Message
-import javax.mail.Multipart
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
+import jakarta.mail.BodyPart
+import jakarta.mail.Message
+import jakarta.mail.Multipart
+import jakarta.mail.internet.InternetAddress
+import jakarta.mail.internet.MimeMessage
 
 import org.junit.ComparisonFailure
 

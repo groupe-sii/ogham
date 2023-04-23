@@ -58,11 +58,11 @@ public class ConfigurableSMPPServerSessionListener extends SMPPServerSessionList
 		if (delays == null) {
 			Connection conn = serverConn.accept();
 			conn.setSoTimeout(getInitiationTimer());
-			return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree());
+			return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), getQueueCapacity());
 		}
 		Connection conn = serverConn.accept();
 		conn.setSoTimeout(getInitiationTimer());
-		return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), createPduSender(), createPduReader());
+		return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), getQueueCapacity(), createPduSender(), createPduReader());
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ConfigurableSMPPServerSessionListener extends SMPPServerSessionList
 	}
 
 	@Override
-	public int getTimeout(int timeout) throws IOException {
+	public int getTimeout() throws IOException {
 		return serverConn.getSoTimeout();
 	}
 

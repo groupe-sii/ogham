@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.startsWith;
 import java.io.File;
 import java.io.IOException;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.junit.Before;
 import org.junit.Rule;

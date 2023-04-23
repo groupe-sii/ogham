@@ -1,14 +1,15 @@
 package fr.sii.ogham.spring.template.thymeleaf;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.spring.util.compat.HttpServletRequestWrapper;
+import fr.sii.ogham.spring.util.compat.HttpServletResponseWrapper;
+import fr.sii.ogham.spring.util.compat.ServletContextWrapper;
 
 /**
- * Provides access to {@link HttpServletRequest}, {@link HttpServletResponse}
- * and {@link ServletContext}.
+ * Provides access to {@link javax.servlet.http.HttpServletRequest}, {@link javax.servlet.http.HttpServletResponse}
+ * and {@link javax.servlet.ServletContext} for old versions using javax or 
+ * {@link jakarta.servlet.http.HttpServletRequest}, {@link jakarta.servlet.http.HttpServletResponse}
+ * and {@link jakarta.servlet.ServletContext} for newer versions.
  * 
  * The aim is to retrieve the current web context in a web application in order
  * to provide Spring extensions in Thymeleaf templates such as <a href=
@@ -29,7 +30,7 @@ public interface WebContextProvider {
 	 *            retrieval
 	 * @return the current request
 	 */
-	HttpServletRequest getRequest(Context context);
+	HttpServletRequestWrapper getRequest(Context context);
 
 	/**
 	 * Get the current response
@@ -39,7 +40,7 @@ public interface WebContextProvider {
 	 *            retrieval
 	 * @return the current response
 	 */
-	HttpServletResponse getResponse(Context context);
+	HttpServletResponseWrapper getResponse(Context context);
 
 	/**
 	 * Access to the servlet execution context
@@ -49,6 +50,6 @@ public interface WebContextProvider {
 	 *            retrieval
 	 * @return the servlet context
 	 */
-	ServletContext getServletContext(Context context);
+	ServletContextWrapper getServletContext(Context context);
 
 }

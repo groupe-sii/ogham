@@ -41,7 +41,7 @@ public class SeveralEmailsTestSample {
 	}
 
 	@Test
-	public void severalDisctinctMessages() throws MessagingException, javax.mail.MessagingException {
+	public void severalDisctinctMessages() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")

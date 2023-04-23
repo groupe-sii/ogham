@@ -2,7 +2,7 @@ package fr.sii.ogham.testing.assertion.email;
 
 import java.util.function.Predicate;
 
-import javax.mail.Part;
+import jakarta.mail.Part;
 
 import fr.sii.ogham.testing.assertion.filter.ContentIdPredicate;
 import fr.sii.ogham.testing.assertion.filter.FileNamePredicate;

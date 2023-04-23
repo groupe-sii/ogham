@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 import org.junit.Before;
 import org.junit.Rule;

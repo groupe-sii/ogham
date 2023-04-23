@@ -1,8 +1,8 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeBodyPart;
 
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;

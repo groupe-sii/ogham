@@ -1,10 +1,10 @@
 package oghamtesting.it.assertion
 
-import javax.mail.BodyPart
-import javax.mail.Message
-import javax.mail.MessagingException
-import javax.mail.Multipart
-import javax.mail.internet.MimeMessage
+import jakarta.mail.BodyPart
+import jakarta.mail.Message
+import jakarta.mail.MessagingException
+import jakarta.mail.Multipart
+import jakarta.mail.internet.MimeMessage
 
 import org.junit.ComparisonFailure
 import org.junit.internal.ArrayComparisonFailure

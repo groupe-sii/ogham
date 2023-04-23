@@ -13,6 +13,9 @@ import org.thymeleaf.spring4.view.ThymeleafView;
 
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.spring.template.thymeleaf.ThymeleafWebContextProvider;
+import fr.sii.ogham.spring.util.compat.HttpServletRequestWrapper;
+import fr.sii.ogham.spring.util.compat.HttpServletResponseWrapper;
+import fr.sii.ogham.spring.util.compat.ServletContextWrapper;
 
 /**
  * Generates an instance of {@link SpringWebContext} for Thymeleaf v2.
@@ -28,9 +31,9 @@ import fr.sii.ogham.spring.template.thymeleaf.ThymeleafWebContextProvider;
 public class SpringWebContextProvider implements ThymeleafWebContextProvider {
 
 	@Override
-	public IContext getWebContext(Context context, IContext base, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext, ApplicationContext applicationContext,
+	public IContext getWebContext(Context context, IContext base, HttpServletRequestWrapper request, HttpServletResponseWrapper response, ServletContextWrapper servletContext, ApplicationContext applicationContext,
 			Map<String, Object> springModel) {
-		return new SpringWebContext(request, response, servletContext, base.getLocale(), springModel, applicationContext);
+		return new SpringWebContext(request.get(), response.get(), servletContext.get(), base.getLocale(), springModel, applicationContext);
 	}
 
 }

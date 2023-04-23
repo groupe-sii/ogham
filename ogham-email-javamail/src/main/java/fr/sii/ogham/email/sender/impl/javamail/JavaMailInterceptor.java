@@ -1,6 +1,6 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import fr.sii.ogham.email.message.Email;
 

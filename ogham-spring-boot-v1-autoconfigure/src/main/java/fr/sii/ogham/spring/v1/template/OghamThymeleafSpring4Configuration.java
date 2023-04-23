@@ -21,14 +21,15 @@ import fr.sii.ogham.spring.template.OghamCommonTemplateProperties;
 import fr.sii.ogham.spring.template.OghamThymeleafProperties;
 import fr.sii.ogham.spring.template.ThymeLeafConfigurer;
 import fr.sii.ogham.spring.template.thymeleaf.ContextMerger;
-import fr.sii.ogham.spring.template.thymeleaf.RequestContextHolderWebContextProvider;
 import fr.sii.ogham.spring.template.thymeleaf.SpringStandaloneThymeleafContextConverter;
 import fr.sii.ogham.spring.template.thymeleaf.SpringWebThymeleafContextConverter;
 import fr.sii.ogham.spring.template.thymeleaf.StaticVariablesProvider;
 import fr.sii.ogham.spring.template.thymeleaf.TemplateEngineSupplier;
 import fr.sii.ogham.spring.template.thymeleaf.ThymeleafEvaluationContextProvider;
 import fr.sii.ogham.spring.template.thymeleaf.WebContextProvider;
+import fr.sii.ogham.spring.v1.template.thymeleaf.JavaxRequestContextHolderWebContextProvider;
 import fr.sii.ogham.spring.v1.template.thymeleaf.NoOpRequestContextWrapper;
+import fr.sii.ogham.spring.v1.template.thymeleaf.JavaxRequestContextProvider;
 import fr.sii.ogham.spring.v1.template.thymeleaf.SpringWebContextProvider;
 import fr.sii.ogham.spring.v1.template.thymeleaf.UpdateCurrentContextMerger;
 import fr.sii.ogham.template.thymeleaf.common.SimpleThymeleafContextConverter;
@@ -39,7 +40,7 @@ import fr.sii.ogham.template.thymeleaf.v2.buider.ThymeleafV2SmsBuilder;
 @Configuration
 @ConditionalOnClass({org.thymeleaf.spring4.SpringTemplateEngine.class, fr.sii.ogham.template.thymeleaf.v2.buider.ThymeleafV2EmailBuilder.class})
 @EnableConfigurationProperties(OghamThymeleafProperties.class)
-public class OghamThymeleafV2Configuration {
+public class OghamThymeleafSpring4Configuration {
 	@Bean
 	@ConditionalOnMissingBean(TemplateEngineSupplier.class)
 	public TemplateEngineSupplier oghamTemplateEngineSupplier(@Autowired(required=false) org.thymeleaf.spring4.SpringTemplateEngine springTemplateEngine) {
@@ -72,13 +73,14 @@ public class OghamThymeleafV2Configuration {
 				webContextProvider,
 				new NoOpRequestContextWrapper(), 
 				new SpringWebContextProvider(),
-				contextMerger);
+				contextMerger,
+				new JavaxRequestContextProvider());
 	}
 	
 	@Bean
 	@ConditionalOnWebApplication
 	public WebContextProvider webContextProvider() {
-		return new RequestContextHolderWebContextProvider();
+		return new JavaxRequestContextHolderWebContextProvider();
 	}
 
 	@Bean

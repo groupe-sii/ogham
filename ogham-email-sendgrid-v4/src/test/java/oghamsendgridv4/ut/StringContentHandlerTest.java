@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 import static testutils.SendGridTestUtils.getHtml;
 import static testutils.SendGridTestUtils.getText;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
+import jakarta.activation.MimeType;
+import jakarta.activation.MimeTypeParseException;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -11,11 +11,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-import javax.activation.MimetypesFileTypeMap;
-import javax.mail.Authenticator;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.activation.MimetypesFileTypeMap;
+import jakarta.mail.Authenticator;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

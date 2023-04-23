@@ -5,7 +5,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import java.io.IOException;
 
-import javax.mail.MessagingException;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +31,7 @@ import fr.sii.ogham.testing.assertion.email.ExpectedEmail;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.spring.GreenMailInitializer;
 import fr.sii.ogham.testing.extension.spring.JsmppServerInitializer;
+import jakarta.mail.MessagingException;
 import mock.MockApplication;
 import mock.context.NestedBean;
 import mock.context.SimpleBean;

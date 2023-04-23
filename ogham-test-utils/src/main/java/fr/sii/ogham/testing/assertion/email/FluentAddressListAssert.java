@@ -6,7 +6,7 @@ import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 import org.hamcrest.Matcher;
 

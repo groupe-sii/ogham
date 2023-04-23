@@ -1,7 +1,7 @@
 package fr.sii.ogham.testing.assertion.filter;
 
-import javax.mail.MessagingException;
-import javax.mail.Part;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
 
 import com.google.common.base.Predicate;
 
