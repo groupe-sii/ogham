@@ -1,15 +1,14 @@
 package fr.sii.ogham.testing.assertion.hamcrest;
 
-import java.util.function.Consumer;
-
-import org.custommonkey.xmlunit.DetailedDiff;
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.xmlunit.diff.Diff;
 
-import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import java.util.function.Consumer;
 
 /**
  * Check if the HTML is similar to the expected. The HTML strings are parsed
@@ -36,12 +35,12 @@ public class SimilarHtmlMatcher extends AbstractHtmlDiffMatcher {
 	}
 
 	public SimilarHtmlMatcher(String expected, Consumer<String> printer) {
-		super(expected, printer, "similar");
+		super(expected, printer, "similar", false);
 	}
 
 	@Override
-	protected boolean matches(DetailedDiff diff) {
-		return diff.similar();
+	protected boolean matches(Diff diff) {
+		return !diff.hasDifferences();
 	}
 
 	@Override

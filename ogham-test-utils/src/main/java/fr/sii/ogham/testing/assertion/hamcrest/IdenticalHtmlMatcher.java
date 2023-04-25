@@ -2,7 +2,6 @@ package fr.sii.ogham.testing.assertion.hamcrest;
 
 import java.util.function.Consumer;
 
-import org.custommonkey.xmlunit.DetailedDiff;
 import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,7 @@ import org.w3c.dom.Document;
 
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import org.xmlunit.diff.Diff;
 
 /**
  * Check if the HTML is identical to the expected. The HTML strings are parsed
@@ -36,12 +36,12 @@ public class IdenticalHtmlMatcher extends AbstractHtmlDiffMatcher {
 	}
 
 	public IdenticalHtmlMatcher(String expected, Consumer<String> printer) {
-		super(expected, printer, "identical");
+		super(expected, printer, "identical", true);
 	}
 
 	@Override
-	protected boolean matches(DetailedDiff diff) {
-		return diff.identical();
+	protected boolean matches(Diff diff) {
+		return !diff.hasDifferences();
 	}
 
 	@Override

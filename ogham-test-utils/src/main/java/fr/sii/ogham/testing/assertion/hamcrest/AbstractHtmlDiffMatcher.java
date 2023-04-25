@@ -1,16 +1,15 @@
 package fr.sii.ogham.testing.assertion.hamcrest;
 
-import java.util.function.Consumer;
-
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Difference;
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.ComparisonFailure;
 import org.w3c.dom.Document;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.Difference;
 
-import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import java.util.function.Consumer;
 
 /**
  * Check if the HTML is identical or similar to the expected. The HTML strings are parsed
@@ -34,18 +33,20 @@ public abstract class AbstractHtmlDiffMatcher extends BaseMatcher<String> implem
 	protected final String expected;
 	protected final Consumer<String> printer;
 	protected final String name;
-	protected DetailedDiff diff;
+	protected final boolean identical;
+	protected Diff diff;
 
-	public AbstractHtmlDiffMatcher(String expected, Consumer<String> printer, String name) {
+	public AbstractHtmlDiffMatcher(String expected, Consumer<String> printer, String name, boolean identical) {
 		super();
 		this.expected = expected;
 		this.printer = printer;
 		this.name = name;
+		this.identical = identical;
 	}
 
 	@Override
 	public boolean matches(Object item) {
-		diff = HtmlUtils.compare(expected, (String) item);
+		diff = HtmlUtils.compare(expected, (String) item, identical);
 		boolean matches = matches(diff);
 		if(!matches) {
 			printer.accept(comparisonMessage());
@@ -53,7 +54,7 @@ public abstract class AbstractHtmlDiffMatcher extends BaseMatcher<String> implem
 		return matches;
 	}
 
-	protected abstract boolean matches(DetailedDiff diff);
+	protected abstract boolean matches(Diff diff);
 
 	@Override
 	public void describeTo(Description description) {
@@ -70,7 +71,7 @@ public abstract class AbstractHtmlDiffMatcher extends BaseMatcher<String> implem
 		StringBuilder sb = new StringBuilder();
 		sb.append("The two HTML documents are not ").append(name).append(".\n");
 		sb.append("Here are the differences found:\n");
-		for(Difference d : diff.getAllDifferences()) {
+		for(Difference d : diff.getDifferences()) {
 			sb.append("  - ").append(d.toString()).append("\n");
 		}
 		sb.append("\n");

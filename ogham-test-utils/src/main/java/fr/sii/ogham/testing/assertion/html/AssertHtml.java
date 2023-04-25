@@ -1,15 +1,12 @@
 package fr.sii.ogham.testing.assertion.html;
 
-import java.util.List;
-
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Difference;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-
-import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.Difference;
 
 /**
  * Utility class for checking HTML content.
@@ -38,8 +35,8 @@ public final class AssertHtml {
 	 *            the HTML content to check
 	 */
 	public static void assertEquals(String expected, String actual) {
-		DetailedDiff diff = HtmlUtils.compare(expected, actual);
-		if (!diff.identical()) {
+		Diff diff = HtmlUtils.compare(expected, actual, true);
+		if (diff.hasDifferences()) {
 			logDifferences(diff);
 			throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
 		}
@@ -62,24 +59,16 @@ public final class AssertHtml {
 	 *            the HTML content to check
 	 */
 	public static void assertSimilar(String expected, String actual) {
-		DetailedDiff diff = HtmlUtils.compare(expected, actual);
-		if (!diff.similar()) {
-			logUnrecoverableDifferences(diff);
+		Diff diff = HtmlUtils.compare(expected, actual, false);
+		if (diff.hasDifferences()) {
+			logDifferences(diff);
 			throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
 		}
 	}
 
-	private static void logDifferences(DetailedDiff diff) {
-		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
+	private static void logDifferences(Diff diff) {
+		for (Difference difference : diff.getDifferences()) {
 			LOG.error(difference.toString()); // NOSONAR
-		}
-	}
-
-	private static void logUnrecoverableDifferences(DetailedDiff diff) {
-		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
-			if (!difference.isRecoverable()) {
-				LOG.error(difference.toString()); // NOSONAR
-			}
 		}
 	}
 

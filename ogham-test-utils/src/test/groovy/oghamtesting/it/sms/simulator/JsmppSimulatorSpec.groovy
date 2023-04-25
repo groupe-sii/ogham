@@ -124,7 +124,7 @@ class JsmppSimulatorSpec extends Specification {
 			
 		then:
 			def e = thrown(IOException)
-			e.message.contains("Wait for bind response timed out: No response after waiting for 200 millis when executing bind")
+			e.message.contains("Time out waiting for bind response: No response after waiting for 200 millis when executing bind")
 	
 		cleanup:
 			close(session)

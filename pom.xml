@@ -28,9 +28,9 @@
 		<thymeleaf-spring4.version>2.1.6.RELEASE</thymeleaf-spring4.version>
 		<thymeleaf-spring5.version>3.0.15.RELEASE</thymeleaf-spring5.version>
 		<thymeleaf-spring6.version>3.1.1.RELEASE</thymeleaf-spring6.version>
-		<thymeleaf-v2.version>2.1.6.RELEASE</thymeleaf-v2.version>
-		<thymeleaf-v3.version>${thymeleaf-spring5.version}</thymeleaf-v3.version>
-		<thymeleaf.version>3.1.1.RELEASE</thymeleaf.version>
+		<thymeleaf-v2.version>${thymeleaf-spring4.version}</thymeleaf-v2.version>
+		<thymeleaf-v3.version>${thymeleaf-spring6.version}</thymeleaf-v3.version>
+		<thymeleaf.version>${thymeleaf-spring6.version}</thymeleaf.version>
 		<ognl.version>3.3.4</ognl.version>
 		<freemarker.version>2.3.32</freemarker.version>
 		<javamail.version>1.6.2</javamail.version>
@@ -74,17 +74,18 @@
 		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
 		<byte-buddy.version>1.14.4</byte-buddy.version>
 		<objenesis.version>3.3</objenesis.version>
-		<cloning.version>1.9.12</cloning.version>
+		<cloning.version>1.11.1</cloning.version>
 		<greenmail.version>2.0.0</greenmail.version>
 		<jsmpp.version>3.0.0</jsmpp.version>
 		<equalsverifier.version>3.14.1</equalsverifier.version>
-		<wiremock.version>2.27.2</wiremock.version>
+		<wiremock.version>3.0.0-beta-7</wiremock.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<spock.version>2.3-groovy-4.0</spock.version>
 		<groovy.version>4.0.11</groovy.version>
 		<groovy-eclipse-compiler.version>3.7.0</groovy-eclipse-compiler.version>
 		<groovy-eclipse-batch.version>3.0.8-01</groovy-eclipse-batch.version>
 		<awaitility.version>4.2.0</awaitility.version>
+		<jknack-handlebars.version>4.3.1</jknack-handlebars.version>
 		<!-- Dependencies - documentation -->
 		<asciidoctorj-diagram.version>2.0.2</asciidoctorj-diagram.version>
 		<asciidoctorj.version>2.3.0</asciidoctorj.version>
@@ -161,8 +162,8 @@
 		<lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
 		<!-- Plugins - tests -->
 		<jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
-		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
 		<!-- Plugins - mutation testing -->
 		<pit.version>OGHAM</pit.version>
 		<pitest-maven.version>${pit.version}</pitest-maven.version>
@@ -849,7 +850,7 @@
 				<version>${xmlunit.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>uk.com.robust-it</groupId>
+				<groupId>design.aem</groupId>
 				<artifactId>cloning</artifactId>
 				<version>${cloning.version}</version>
 				<exclusions>
@@ -861,7 +862,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8</artifactId>
+				<artifactId>wiremock-standalone</artifactId>
 				<version>${wiremock.version}</version>
 				<exclusions>
 					<exclusion>
@@ -976,6 +977,12 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>com.github.jknack</groupId>
+				<artifactId>handlebars</artifactId>
+				<version>${jknack-handlebars.version}</version>
+			</dependency>
+
 			<!-- Fix dependency convergence -->
 			<dependency>
 				<groupId>org.ow2.asm</groupId>
@@ -1138,7 +1145,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
-					<argLine>${surefireArgLine}</argLine>
+					<argLine>--add-opens java.base/java.util=ALL-UNNAMED ${surefireArgLine}</argLine>
 					<reuseForks>false</reuseForks>
 					<useSystemClassLoader>false</useSystemClassLoader>
 					<skipTests>${skip.unit.tests}</skipTests>
@@ -1161,7 +1168,7 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
-							<argLine>${failsafeArgLine}</argLine>
+							<argLine>--add-opens java.base/java.util=ALL-UNNAMED ${failsafeArgLine}</argLine>
 							<reuseForks>false</reuseForks>
 							<useSystemClassLoader>false</useSystemClassLoader>
 							<skipTests>${skip.integration.tests}</skipTests>

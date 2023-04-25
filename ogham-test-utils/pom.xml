@@ -30,7 +30,7 @@
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
 		</dependency>
-		<!-- junit-platform-launcher is needed due to junit-platform-testkit test 
+		<!-- junit-platform-launcher is needed due to junit-platform-testkit test
 			scope -->
 		<dependency>
 			<groupId>org.junit.platform</groupId>
@@ -78,14 +78,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<artifactId>wiremock-standalone</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xmlunit</groupId>
 			<artifactId>xmlunit-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>uk.com.robust-it</groupId>
+			<groupId>design.aem</groupId>
 			<artifactId>cloning</artifactId>
 		</dependency>
 		<dependency>
@@ -101,7 +101,11 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.github.jknack</groupId>
+			<artifactId>handlebars</artifactId>
+		</dependency>
+
 		<!-- Dependency convergence -->
 		<!-- This is needed to enforce right versions in projects that use ogham -->
 		<dependency>

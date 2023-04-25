@@ -1,5 +1,9 @@
 package oghamcore.it.core.builder.env.props
 
+import spock.lang.TempDir
+
+import java.nio.file.Path
+
 import static fr.sii.ogham.core.util.IOUtils.copy
 import static fr.sii.ogham.testing.util.ResourceUtils.resource
 
@@ -16,14 +20,10 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @LogTestInformation
-@Unroll
 class PropsPathSpec extends Specification {
-	@Shared @ClassRule TemporaryFolder temp = new TemporaryFolder();
-	
-	@Shared def confFolder;
+	@TempDir @Shared File confFolder;
 	
 	def setupSpec() {
-		confFolder = temp.newFolder()
 		confFolder.mkdirs();
 		copy(resource("config/props-path.properties"), confFolder.toPath().resolve("props-path.properties").toFile())
 	}
