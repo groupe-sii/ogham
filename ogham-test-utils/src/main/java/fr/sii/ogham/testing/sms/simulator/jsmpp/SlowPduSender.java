@@ -3,21 +3,22 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jsmpp.InvalidNumberOfDestinationsException;
-import org.jsmpp.PDUSender;
-import org.jsmpp.PDUStringException;
-import org.jsmpp.bean.BindType;
-import org.jsmpp.bean.DataCoding;
-import org.jsmpp.bean.DestinationAddress;
-import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.InterfaceVersion;
-import org.jsmpp.bean.MessageState;
-import org.jsmpp.bean.NumberingPlanIndicator;
-import org.jsmpp.bean.OptionalParameter;
-import org.jsmpp.bean.RegisteredDelivery;
-import org.jsmpp.bean.ReplaceIfPresentFlag;
-import org.jsmpp.bean.TypeOfNumber;
-import org.jsmpp.bean.UnsuccessDelivery;
+import ogham.testing.org.apache.commons.lang3.NotImplementedException;
+import ogham.testing.org.jsmpp.InvalidNumberOfDestinationsException;
+import ogham.testing.org.jsmpp.PDUSender;
+import ogham.testing.org.jsmpp.PDUStringException;
+import ogham.testing.org.jsmpp.bean.BindType;
+import ogham.testing.org.jsmpp.bean.DataCoding;
+import ogham.testing.org.jsmpp.bean.DestinationAddress;
+import ogham.testing.org.jsmpp.bean.ESMClass;
+import ogham.testing.org.jsmpp.bean.InterfaceVersion;
+import ogham.testing.org.jsmpp.bean.MessageState;
+import ogham.testing.org.jsmpp.bean.NumberingPlanIndicator;
+import ogham.testing.org.jsmpp.bean.OptionalParameter;
+import ogham.testing.org.jsmpp.bean.RegisteredDelivery;
+import ogham.testing.org.jsmpp.bean.ReplaceIfPresentFlag;
+import ogham.testing.org.jsmpp.bean.TypeOfNumber;
+import ogham.testing.org.jsmpp.bean.UnsuccessDelivery;
 
 import fr.sii.ogham.testing.sms.simulator.config.Awaiter;
 import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
@@ -105,9 +106,9 @@ public class SlowPduSender implements PDUSender {
 	}
 
 	@Override
-	public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber, String messageId) throws PDUStringException, IOException {
+	public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
 		await(delays.getSendSubmitSmRespWaiting());
-		return delegate.sendSubmitSmResp(os, sequenceNumber, messageId);
+		return delegate.sendSubmitSmResp(os, sequenceNumber, messageId, optionalParameters);
 	}
 
 	@Override
@@ -202,10 +203,46 @@ public class SlowPduSender implements PDUSender {
 		return delegate.sendAlertNotification(os, sequenceNumber, sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr, optionalParameters);
 	}
 
+
+	@Override
+	public byte[] sendBroadcastSm(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, String messageId,
+			byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendBroadcastSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendCancelBroadcastSm(OutputStream os, int sequenceNumber, String serviceType, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendCancelBroadcastSmResp(OutputStream os, int sequenceNumber) throws IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendQueryBroadcastSm(OutputStream os, int sequenceNumber, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public byte[] sendQueryBroadcastSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+		throw new NotImplementedException();
+	}
+	
 	private static void await(Awaiter waiting) {
 		if (waiting == null) {
 			return;
 		}
 		waiting.await();
 	}
+
 }

@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.File;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;

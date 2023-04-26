@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.icegreen.greenmail.junit5.GreenMailExtension;
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;

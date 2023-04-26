@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.extension.Extension;
 
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
@@ -14,7 +13,7 @@ import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
 
 /**
- * Base class for JUnit {@link Rule} and JUnit {@link Extension}.
+ * Base class for JUnit Rule and JUnit {@link Extension}.
  * 
  * @author Aurélien Baudet
  *

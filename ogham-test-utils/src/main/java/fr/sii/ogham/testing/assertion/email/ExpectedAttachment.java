@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
+import ogham.testing.org.apache.commons.io.IOUtils;
 
 /**
  * Class used in tests for ensuring that the attachment is respected. It

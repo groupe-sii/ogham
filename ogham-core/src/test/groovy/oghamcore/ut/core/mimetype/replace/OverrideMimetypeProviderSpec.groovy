@@ -1,10 +1,9 @@
 package oghamcore.ut.core.mimetype.replace
 
-import javax.activation.MimeType
-
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException
 import fr.sii.ogham.core.mimetype.MimeTypeProvider
 import fr.sii.ogham.core.mimetype.OverrideMimetypeProvider
+import fr.sii.ogham.core.mimetype.ParsedMimeType
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import spock.lang.Specification
@@ -17,7 +16,7 @@ class OverrideMimetypeProviderSpec extends Specification {
 		given:
 			MimeTypeProvider detector = Mock();
 			MimetypeReplacer replacer = Mock();
-			detector.getMimeType(_) >> new MimeType(detectedMimetype)
+			detector.getMimeType(_) >> new ParsedMimeType(detectedMimetype)
 			replacer.replace(_) >> newMimetype
 			
 		when:
@@ -36,7 +35,7 @@ class OverrideMimetypeProviderSpec extends Specification {
 		given:
 			MimeTypeProvider detector = Mock();
 			MimetypeReplacer replacer = Mock();
-			detector.getMimeType(_) >> new MimeType(detectedMimetype)
+			detector.getMimeType(_) >> new ParsedMimeType(detectedMimetype)
 			replacer.replace(_) >> newMimetype
 			
 		when:

@@ -2,7 +2,7 @@ package fr.sii.ogham.testing.assertion.sms;
 
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
-import static org.apache.commons.lang3.ArrayUtils.toObject;
+import static ogham.testing.org.apache.commons.lang3.ArrayUtils.toObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class FluentPduRequestAssert<P, S extends SubmitSm> extends HasParent<P> 
 		String message = "encoding of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
-			registry.register(() -> assertThat(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value(), usingContext(message, rawContentWithContext, matcher)));
+			registry.register(() -> assertThat(ogham.testing.org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value(), usingContext(message, rawContentWithContext, matcher)));
 		}
 		return this;
 	}
@@ -110,7 +110,7 @@ public class FluentPduRequestAssert<P, S extends SubmitSm> extends HasParent<P> 
 		String message = "alphabet of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
-			registry.register(() -> assertThat(Alphabet.from(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value()), usingContext(message, rawContentWithContext, matcher)));
+			registry.register(() -> assertThat(Alphabet.from(ogham.testing.org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value()), usingContext(message, rawContentWithContext, matcher)));
 		}
 		return this;
 	}

@@ -1,17 +1,17 @@
 package oghamcore.it.sms.splitter;
 
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_UCS_2
-import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7
-import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM8
-import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_UCS_2
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM8
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2
 import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_GSM_7BIT_SMS_PACKING_MODE
 import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_GSM_8BIT
 import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_UCS2
 import static java.util.Arrays.asList
 
-import com.cloudhopper.commons.charset.Charset
+import ogham.testing.com.cloudhopper.commons.charset.Charset
 
 import fr.sii.ogham.sms.encoder.EncodedMessage
 import fr.sii.ogham.sms.splitter.GsmBasicCharsetExtensionTableCounter

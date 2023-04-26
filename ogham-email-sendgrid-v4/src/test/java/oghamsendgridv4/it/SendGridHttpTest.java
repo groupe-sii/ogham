@@ -1,43 +1,9 @@
 package oghamsendgridv4.it;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
-import static fr.sii.ogham.testing.assertion.wiremock.WireMockMatchers.similarHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.mockito.quality.Strictness.LENIENT;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.id.generator.IdGenerator;
@@ -53,9 +19,31 @@ import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
 import mock.context.SimpleBean;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+
+import java.io.File;
+import java.io.IOException;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
+import static fr.sii.ogham.testing.assertion.wiremock.WireMockMatchers.similarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.mockito.quality.Strictness.LENIENT;
 
 @LogTestInformation
-@ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
 class SendGridHttpTest {
 	private static final String SUBJECT = "Example email";

@@ -2,7 +2,7 @@ package oghamtesting.ut.assertion.html
 
 import static fr.sii.ogham.testing.assertion.html.AssertHtml.assertSimilar
 
-import org.junit.ComparisonFailure
+import org.opentest4j.AssertionFailedError
 
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import spock.lang.Specification
@@ -31,7 +31,7 @@ class AssertSimilarSpec extends Specification {
 			assertSimilar("<html><head></head><body>${expectedString}</body></html>", "<html><head></head><body>${actualString}</body></html>")
 		
 		then:
-			thrown(ComparisonFailure);
+			thrown(AssertionFailedError);
 		
 		where:
 			desc							| expectedString						| actualString

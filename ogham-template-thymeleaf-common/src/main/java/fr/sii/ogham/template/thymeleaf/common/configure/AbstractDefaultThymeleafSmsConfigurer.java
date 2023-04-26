@@ -1,13 +1,12 @@
 package fr.sii.ogham.template.thymeleaf.common.configure;
 
-import org.slf4j.Logger;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
 
 /**
@@ -89,26 +88,21 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
  *
  */
 public abstract class AbstractDefaultThymeleafSmsConfigurer implements MessagingConfigurer {
-	private final Logger log;
 	private final MessagingConfigurerAdapter delegate;
 
-	public AbstractDefaultThymeleafSmsConfigurer(Logger log) {
-		this(log, new DefaultMessagingConfigurer());
+	public AbstractDefaultThymeleafSmsConfigurer() {
+		this(new DefaultMessagingConfigurer());
 	}
 
-	public AbstractDefaultThymeleafSmsConfigurer(Logger log, MessagingConfigurerAdapter delegate) {
+	public AbstractDefaultThymeleafSmsConfigurer(MessagingConfigurerAdapter delegate) {
 		super();
-		this.log = log;
 		this.delegate = delegate;
 	}
 
 	@Override
-	public void configure(MessagingBuilder msgBuilder) {
-		if (!canUseThymeleaf()) {
-			log.debug("[{}] skip configuration", this);
-			return;
-		}
-		log.debug("[{}] apply configuration", this);
+	public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+		checkCanUseThymeleaf();
+
 		AbstractThymeleafBuilder<?, ?, ?> builder = msgBuilder.sms().template(getBuilderClass());
 		// apply default resource resolution configuration
 		if (delegate != null) {
@@ -157,6 +151,6 @@ public abstract class AbstractDefaultThymeleafSmsConfigurer implements Messaging
 
 	protected abstract Class<? extends AbstractThymeleafBuilder<?, ?, ?>> getBuilderClass();
 
-	protected abstract boolean canUseThymeleaf();
+	protected abstract void checkCanUseThymeleaf() throws ConfigureException;
 
 }

@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.extension.junit.email;
 
-import com.icegreen.greenmail.util.ServerSetup;
+import ogham.testing.com.icegreen.greenmail.util.ServerSetup;
 
 import fr.sii.ogham.testing.util.RandomPortUtils;
 

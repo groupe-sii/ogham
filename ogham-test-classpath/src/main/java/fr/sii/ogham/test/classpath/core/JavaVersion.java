@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum JavaVersion {
+	JAVA_17("17", 17),
 	JAVA_15("15", 15),
 	JAVA_14("14", 14),
 	JAVA_13("13", 13),

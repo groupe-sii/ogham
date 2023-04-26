@@ -1,53 +1,48 @@
 package oghamall.it.email;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
 import mock.context.SimpleBean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.*;
+
+@LogTestInformation
 public class EmailDifferentPrefixesTest {
 	private MessagingService oghamService;
 	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
 	
-	@Rule
-	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
+	@TempDir
+	File temp;
 	
-	@Rule
-	public final TemporaryFolder temp = new TemporaryFolder();
-	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		// copy files
-		File folder = temp.newFolder("template", "mixed", "source");
-		File thymeleafFolder = folder.toPath().resolve("thymeleaf").toFile();
+		Path folder = Paths.get(temp.getPath(), "template", "mixed", "source");
+		File thymeleafFolder = folder.resolve("thymeleaf").toFile();
 		thymeleafFolder.mkdirs();
-		File freemarkerFolder = folder.toPath().resolve("freemarker").toFile();
+		File freemarkerFolder = folder.resolve("freemarker").toFile();
 		freemarkerFolder.mkdirs();
 		IOUtils.copy(resource("template/thymeleaf/source/simple.html"), thymeleafFolder.toPath().resolve("simple.html").toFile());
 		IOUtils.copy(resource("template/freemarker/source/simple.txt.ftl"), freemarkerFolder.toPath().resolve("simple.txt.ftl").toFile());
@@ -68,7 +63,7 @@ public class EmailDifferentPrefixesTest {
 	}
 
 	@Test
-	public void thymeleafHtmlFreemarkerText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlFreemarkerText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Content from files")

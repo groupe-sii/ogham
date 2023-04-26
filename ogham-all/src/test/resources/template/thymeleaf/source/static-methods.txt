@@ -1,2 +1,2 @@
-[[${@mock.UtilityClass@hello(name)}]]
-[[${@mock.UtilityClass$NestedClass@hello(name)}]]
+[# th:with="title=${@mock.UtilityClass@hello(name)}" th:utext="${title}" /]
+[# th:with="text=${@mock.UtilityClass$NestedClass@hello(name)}" th:utext="${text}" /]

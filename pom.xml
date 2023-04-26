@@ -17,72 +17,74 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Java version -->
+		<jdk.version>8</jdk.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- Dependencies -->
 		<ogham.version>${project.version}</ogham.version>
-		<commons-io.version>2.8.0</commons-io.version>
+		<commons-io.version>2.11.0</commons-io.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
-		<thymeleaf-v2.version>2.1.6.RELEASE</thymeleaf-v2.version>
-		<thymeleaf-v3.version>3.0.11.RELEASE</thymeleaf-v3.version>		<!-- TODO: Thymeleaf 3.0.12 introduced a restriction to call static methods. 
-			There is no simple way to enable/disable it (hard coded). -->
-		<thymeleaf.version>${thymeleaf-v3.version}</thymeleaf.version>
-		<ognl.version>3.1.28</ognl.version>		<!-- TODO: ognl 3.2.x not supported by Thymeleaf (https://github.com/thymeleaf/thymeleaf/issues/727) -->
-		<freemarker.version>2.3.30</freemarker.version>
-		<javamail.version>1.6.2</javamail.version>
-		<jakarta-mail.version>1.6.5</jakarta-mail.version>	<!-- TODO: jakarta.mail 2.0.0 changes the base package from javax.mail to 
-			jakarta.mail. Just updating the packages will not work with Spring Boot integration. 
-			Need to provide another module with auto-adaptation (like thymeleaf or sendgrid) -->
-		<slf4j.version>1.7.30</slf4j.version>
-		<logback.version>1.2.3</logback.version>
-		<commons-lang.version>3.11</commons-lang.version>
-		<cloudhopper.version>5.0.9</cloudhopper.version>
-		<cloudhopper-fizzed.version>5.0.9</cloudhopper-fizzed.version>
-		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
-		<cloudhopper-commons-util.version>6.0.2</cloudhopper-commons-util.version>
-		<cloudhopper-commons-charset.version>3.0.2</cloudhopper-commons-charset.version>
-		<jsoup.version>1.13.1</jsoup.version>
+		<thymeleaf-spring4.version>2.1.6.RELEASE</thymeleaf-spring4.version>
+		<thymeleaf-spring5.version>3.0.15.RELEASE</thymeleaf-spring5.version>
+		<thymeleaf-spring6.version>3.1.1.RELEASE</thymeleaf-spring6.version>
+		<thymeleaf-v2.version>${thymeleaf-spring4.version}</thymeleaf-v2.version>
+		<thymeleaf-v3.version>${thymeleaf-spring6.version}</thymeleaf-v3.version>
+		<thymeleaf.version>${thymeleaf-spring6.version}</thymeleaf.version>
+		<ognl-thymeleaf-v2.version>3.0.8</ognl-thymeleaf-v2.version>
+		<ognl-thymeleaf-v3.version>3.3.4</ognl-thymeleaf-v3.version>
+		<ognl.version>${ognl-thymeleaf-v3.version}</ognl.version>
+		<freemarker.version>2.3.32</freemarker.version>
+		<jakarta-mail-api.version>2.1.0</jakarta-mail-api.version>
+		<angus-mail.version>2.0.1</angus-mail.version>
+		<slf4j.version>2.0.7</slf4j.version>
+		<logback.version>1.3.7</logback.version>
+		<commons-lang.version>3.12.0</commons-lang.version>
+		<ch-smpp.version>5.1.0-113</ch-smpp.version>
+		<ch-commons-util.version>7.0.6</ch-commons-util.version>
+		<ch-commons-charset.version>7.0.6</ch-commons-charset.version>
+		<ch-commons-gsm.version>7.0.6</ch-commons-gsm.version>
+		<jsoup.version>1.16.1</jsoup.version>
 		<commons-codec.version>1.15</commons-codec.version>
-		<sendgrid-java-v4.version>4.7.1</sendgrid-java-v4.version>
+		<sendgrid-java-v4.version>4.9.3</sendgrid-java-v4.version>
 		<sendgrid-java-v2.version>2.2.2</sendgrid-java-v2.version>
 		<sendgrid-java.version>${sendgrid-java-v4.version}</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<libphonenumber.version>8.3.2</libphonenumber.version>
-		<tika.version>1.24.1</tika.version>
-		<javax-activation.version>1.2.0</javax-activation.version>
-		<jakarta-activation.version>1.2.2</jakarta-activation.version>	<!-- TODO: as for jakarta.mail, jakarta.activation 2.0.0 changes the base 
-			package. -->
-		<jackson.version>2.12.0</jackson.version>
-		<reflections.version>0.9.11</reflections.version>	<!-- TODO: 0.9.12 has issues with Spring Fat JARs (https://github.com/ronmamo/reflections/issues/273, 
-			https://github.com/ronmamo/reflections/issues/277) -->
-		<guava.version>30.1-jre</guava.version>
-		<httpcore.version>4.4.14</httpcore.version>
-		<httpclient.version>4.5.13</httpclient.version>
-		<httpmime.version>4.5.13</httpmime.version>
+		<libphonenumber.version>8.13.11</libphonenumber.version>
+		<tika.version>2.7.0</tika.version>
+		<jakarta-activation-api.version>2.1.1</jakarta-activation-api.version>
+		<jackson.version>2.15.0</jackson.version>
+		<reflections.version>0.10.2</reflections.version>
+		<guava.version>31.1-jre</guava.version>
 		<spring-boot-v1.version>1.5.22.RELEASE</spring-boot-v1.version>
-		<spring-boot-v2.version>2.4.1</spring-boot-v2.version>
-		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
-		<joda-time.version>2.10.9</joda-time.version>
+		<spring-boot-v2.version>2.7.11</spring-boot-v2.version>
+		<spring-boot-v3.version>3.0.6</spring-boot-v3.version>
+		<spring-boot.version>${spring-boot-v3.version}</spring-boot.version>
+		<joda-time.version>2.12.5</joda-time.version>
 		<!-- Dependencies - tests -->
-		<junit.version>4.13.1</junit.version>
-		<junit-jupiter.version>5.7.0</junit-jupiter.version>
-		<xmlunit.version>2.8.2</xmlunit.version>
-		<mockito-junit-jupiter.version>3.6.28</mockito-junit-jupiter.version>
+		<junit-jupiter.version>5.9.3</junit-jupiter.version>
+		<xmlunit.version>2.9.1</xmlunit.version>
+		<mockito-junit-jupiter.version>4.11.0</mockito-junit-jupiter.version>
 		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
-		<byte-buddy.version>1.10.19</byte-buddy.version>
-		<objenesis.version>3.1</objenesis.version>
-		<cloning.version>1.9.12</cloning.version>
-		<greenmail.version>1.6.1</greenmail.version>
-		<jsmpp.version>2.3.11</jsmpp.version>
-		<equalsverifier.version>3.5</equalsverifier.version>
-		<wiremock.version>2.27.2</wiremock.version>
+		<byte-buddy.version>1.14.4</byte-buddy.version>
+		<objenesis.version>3.3</objenesis.version>
+		<cloning-jdk8.group>io.github.kostaskougios</cloning-jdk8.group>
+		<cloning-jdk8.version>1.10.3</cloning-jdk8.version>
+		<cloning-jdk11.group>design.aem</cloning-jdk11.group>
+		<cloning-jdk11.version>1.11.1</cloning-jdk11.version>
+		<cloning.group>${cloning-jdk8.group}</cloning.group>
+		<cloning.version>${cloning-jdk8.version}</cloning.version>
+		<greenmail.version>2.0.0</greenmail.version>
+		<jsmpp.version>3.0.0</jsmpp.version>
+		<equalsverifier.version>3.14.1</equalsverifier.version>
+		<wiremock.version>2.35.0</wiremock.version>
 		<hamcrest.version>2.2</hamcrest.version>
-		<spock.version>1.3-groovy-2.5</spock.version>
-		<groovy.version>2.5.12</groovy.version>	<!-- TODO: Spock is not compatible with 2.5.14... There are compilation failures -->
+		<spock.version>2.3-groovy-4.0</spock.version>
+		<groovy.version>4.0.11</groovy.version>
 		<groovy-eclipse-compiler.version>3.6.0-03</groovy-eclipse-compiler.version>
 		<groovy-eclipse-batch.version>2.5.8-03</groovy-eclipse-batch.version>
 		<awaitility.version>4.0.3</awaitility.version>
+		<resilience4j-retry.version>1.7.1</resilience4j-retry.version>
 		<!-- Dependencies - documentation -->
 		<asciidoctorj-diagram.version>2.0.2</asciidoctorj-diagram.version>
 		<asciidoctorj.version>2.3.0</asciidoctorj.version>
@@ -90,11 +92,23 @@
 		<asciidoctorj-revealjs.version>4.0.1</asciidoctorj-revealjs.version>
 		<bootstrap.version>4.3.1</bootstrap.version>
 		<bootswatch.version>4.2.1</bootswatch.version>
+		<!-- Dependencies - compatibility -->
+		<javax-mail.version>1.6.2</javax-mail.version>
+		<javax-activation.version>1.1.1</javax-activation.version>
+		<javax-servlet.version>4.0.1</javax-servlet.version>
+		<sun-mail.version>2.0.1</sun-mail.version>
+		<sun-activation.version>2.0.1</sun-activation.version>
+
 		<!-- Fix dependency convergence -->
-		<asm.version>7.0</asm.version>
-		<javassist.version>3.26.0-GA</javassist.version>
+		<asm.version>9.5</asm.version>
+		<javassist.version>3.29.2-GA</javassist.version>
 		<opentest4j.version>1.2.0</opentest4j.version>
-		<conscrypt-openjdk-uber.version>2.4.0</conscrypt-openjdk-uber.version>
+		<conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
+		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
+		<jakarta-xml-bind-api.version>3.0.1</jakarta-xml-bind-api.version>
+		<httpcore.version>4.4.16</httpcore.version>
+		<httpclient.version>4.5.14</httpclient.version>
+		<httpmime.version>4.5.14</httpmime.version>
 
 		<!-- Tests -->
 		<skip.integration.tests>false</skip.integration.tests>
@@ -149,14 +163,15 @@
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
-		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
 		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 		<lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
 		<!-- Plugins - tests -->
-		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
-		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+		<jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
+		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
 		<!-- Plugins - mutation testing -->
 		<pit.version>OGHAM</pit.version>
 		<pitest-maven.version>${pit.version}</pitest-maven.version>
@@ -180,7 +195,7 @@
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-		<gmavenplus-plugin.version>1.7.0</gmavenplus-plugin.version>
+		<gmavenplus-plugin.version>2.1.0</gmavenplus-plugin.version>
 		<maven-scm-provider-gitexe.version>1.11.2</maven-scm-provider-gitexe.version>
 		<maven-scm-manager-plexus.version>1.11.2</maven-scm-manager-plexus.version>
 		<wagon-gitsite.version>0.5</wagon-gitsite.version>
@@ -188,6 +203,11 @@
 		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
 		<!-- Plugins - others -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
+
+		<!-- Plugins - configuration -->
+		<tests.runtime.vmArgs></tests.runtime.vmArgs>
+		<surefire.argLine.additional>${tests.runtime.vmArgs}</surefire.argLine.additional>
+		<failsafe.argLine.additional>${tests.runtime.vmArgs}</failsafe.argLine.additional>
 	</properties>
 
 
@@ -199,6 +219,8 @@
 		<module>ogham-template-thymeleaf</module>
 		<module>ogham-template-freemarker</module>
 		<module>ogham-email-javamail</module>
+		<module>ogham-email-javamail-jakarta</module>
+		<module>ogham-email-javamail-javax</module>
 		<module>ogham-email-sendgrid-common</module>
 		<module>ogham-email-sendgrid-v2</module>
 		<module>ogham-email-sendgrid-v4</module>
@@ -211,16 +233,20 @@
 		<module>ogham-spring-boot-common-autoconfigure</module>
 		<module>ogham-spring-boot-v1-autoconfigure</module>
 		<module>ogham-spring-boot-v2-autoconfigure</module>
+		<module>ogham-spring-boot-v3-autoconfigure</module>
 		<module>ogham-spring-boot-autoconfigure</module>
 		<module>ogham-spring-boot-starter-all</module>
 		<module>ogham-spring-boot-starter-email</module>
 		<module>ogham-spring-boot-starter-sms</module>
+		<module>ogham-test-utils-dependencies</module>
 		<module>ogham-test-utils</module>
 		<module>ogham-test-utils-internal</module>
 		<module>ogham-test-classpath-runtime</module>
+		<module>ogham-test-classpath-templates</module>
 		<module>ogham-test-classpath</module>
 		<module>reporting</module>
 		<module>build-tools</module>
+		<module>maven-shade-plugin-resource-relocation</module>
 	</modules>
 
 	<dependencyManagement>
@@ -239,6 +265,16 @@
 			<dependency>
 				<groupId>fr.sii.ogham</groupId>
 				<artifactId>ogham-email-javamail</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-javamail-jakarta</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-javamail-javax</artifactId>
 				<version>${ogham.version}</version>
 			</dependency>
 			<dependency>
@@ -318,6 +354,11 @@
 			</dependency>
 			<dependency>
 				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-v3-autoconfigure</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
 				<artifactId>ogham-template-freemarker</artifactId>
 				<version>${ogham.version}</version>
 			</dependency>
@@ -352,6 +393,16 @@
 				<version>${ogham.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>fr.sii.ogham.internal</groupId>
+				<artifactId>ogham-test-classpath-templates</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-test-utils-dependencies</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>fr.sii.ogham</groupId>
 				<artifactId>ogham-test-utils</artifactId>
 				<version>${ogham.version}</version>
@@ -364,36 +415,19 @@
 
 			<!-- Mail -->
 			<dependency>
-				<groupId>com.sun.mail</groupId>
-				<artifactId>javax.mail</artifactId>
-				<version>${javamail.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>javax.activation</groupId>
-						<artifactId>activation</artifactId>
-					</exclusion>
-				</exclusions>
+				<groupId>jakarta.mail</groupId>
+				<artifactId>jakarta.mail-api</artifactId>
+				<version>${jakarta-mail-api.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>javax.mail-api</artifactId>
-				<version>${javamail.version}</version>
+				<groupId>org.eclipse.angus</groupId>
+				<artifactId>angus-mail</artifactId>
+				<version>${angus-mail.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.mail</groupId>
 				<artifactId>jakarta.mail</artifactId>
-				<version>${jakarta-mail.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.sun.activation</groupId>
-						<artifactId>jakarta.activation</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>jakarta.mail</groupId>
-				<artifactId>jakarta.mail-api</artifactId>
-				<version>${jakarta-mail.version}</version>
+				<version>${sun-mail.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sendgrid</groupId>
@@ -419,16 +453,24 @@
 					</exclusion>
 					<exclusion>
 						<groupId>org.apache.httpcomponents</groupId>
+						<artifactId>httpcore</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.httpcomponents</groupId>
 						<artifactId>httpclient</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.httpcomponents</groupId>
+						<artifactId>httpmime</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
 
 			<!-- SMS -->
 			<dependency>
-				<groupId>com.fizzed</groupId>
+				<groupId>org.restcomm.smpp</groupId>
 				<artifactId>ch-smpp</artifactId>
-				<version>${cloudhopper-fizzed.version}</version>
+				<version>${ch-smpp.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -437,40 +479,29 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.cloudhopper</groupId>
-				<artifactId>ch-smpp</artifactId>
-				<version>${cloudhopper.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.cloudhopper</groupId>
+				<groupId>org.restcomm.smpp</groupId>
 				<artifactId>ch-commons-gsm</artifactId>
-				<version>${cloudhopper-gsm.version}</version>
+				<version>${ch-commons-gsm.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
 						<artifactId>slf4j-api</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>com.cloudhopper</groupId>
+						<groupId>org.restcomm.smpp</groupId>
 						<artifactId>ch-commons-util</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.cloudhopper</groupId>
+				<groupId>org.restcomm.smpp</groupId>
 				<artifactId>ch-commons-util</artifactId>
-				<version>${cloudhopper-commons-util.version}</version>
+				<version>${ch-commons-util.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.cloudhopper</groupId>
+				<groupId>org.restcomm.smpp</groupId>
 				<artifactId>ch-commons-charset</artifactId>
-				<version>${cloudhopper-commons-charset.version}</version>
+				<version>${ch-commons-charset.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jsmpp</groupId>
@@ -539,27 +570,16 @@
 						<groupId>com.google.guava</groupId>
 						<artifactId>guava</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpcore</artifactId>
-				<version>${httpcore.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>${httpclient.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpmime</artifactId>
-				<version>${httpmime.version}</version>
 			</dependency>
 
 			<!-- Template parsers -->
@@ -581,7 +601,29 @@
 			<dependency>
 				<groupId>org.thymeleaf</groupId>
 				<artifactId>thymeleaf-spring4</artifactId>
-				<version>${thymeleaf-v2.version}</version>
+				<version>${thymeleaf-spring4.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.thymeleaf</groupId>
+				<artifactId>thymeleaf-spring5</artifactId>
+				<version>${thymeleaf-spring5.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.thymeleaf</groupId>
+				<artifactId>thymeleaf-spring6</artifactId>
+				<version>${thymeleaf-spring6.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -611,16 +653,22 @@
 				<groupId>org.apache.tika</groupId>
 				<artifactId>tika-core</artifactId>
 				<version>${tika.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.sun.activation</groupId>
-				<artifactId>javax.activation</artifactId>
-				<version>${javax-activation.version}</version>
+				<groupId>jakarta.activation</groupId>
+				<artifactId>jakarta.activation-api</artifactId>
+				<version>${jakarta-activation-api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.activation</groupId>
 				<artifactId>jakarta.activation</artifactId>
-				<version>${jakarta-activation.version}</version>
+				<version>${sun-activation.version}</version>
 			</dependency>
 
 			<!-- CSS inliners -->
@@ -638,6 +686,17 @@
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${logback.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
 				<exclusions>
@@ -646,6 +705,28 @@
 						<artifactId>slf4j-api</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<!-- Dependency convergence -->
+			<dependency>
+				<groupId>jakarta.servlet</groupId>
+				<artifactId>jakarta.servlet-api</artifactId>
+				<version>${jakarta-servlet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>${httpcore.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpclient.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>${httpmime.version}</version>
 			</dependency>
 
 			<!-- Tests -->
@@ -670,33 +751,11 @@
 				<version>${hamcrest.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.hamcrest</groupId>
-						<artifactId>hamcrest-core</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
 				<groupId>org.junit</groupId>
 				<artifactId>junit-bom</artifactId>
 				<version>${junit-jupiter.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
-				<version>${junit-jupiter.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>junit</groupId>
-						<artifactId>junit</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -706,6 +765,10 @@
 					<exclusion>
 						<groupId>org.objenesis</groupId>
 						<artifactId>objenesis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.bytebuddy</groupId>
+						<artifactId>byte-buddy</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -740,25 +803,14 @@
 				<artifactId>greenmail</artifactId>
 				<version>${greenmail.version}</version>
 				<exclusions>
-					<exclusion>
-						<groupId>com.sun.mail</groupId>
-						<artifactId>javax.mail</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>junit</groupId>
-						<artifactId>junit</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.icegreen</groupId>
-				<artifactId>greenmail-junit4</artifactId>
-				<version>${greenmail.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
+<!--					<exclusion>-->
+<!--						<groupId>jakarta.activation</groupId>-->
+<!--						<artifactId>jakarta.activation-api</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>com.sun.mail</groupId>-->
+<!--						<artifactId>jakarta.mail</artifactId>-->
+<!--					</exclusion>-->
 					<exclusion>
 						<groupId>junit</groupId>
 						<artifactId>junit</artifactId>
@@ -778,20 +830,44 @@
 						<groupId>junit</groupId>
 						<artifactId>junit</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>nl.jqno.equalsverifier</groupId>
 				<artifactId>equalsverifier</artifactId>
 				<version>${equalsverifier.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>net.bytebuddy</groupId>
+						<artifactId>byte-buddy</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.objenesis</groupId>
+						<artifactId>objenesis</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.xmlunit</groupId>
 				<artifactId>xmlunit-core</artifactId>
 				<version>${xmlunit.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>jakarta.activation</groupId>
+						<artifactId>jakarta.activation-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jakarta.xml.bind</groupId>
+						<artifactId>jakarta.xml.bind-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>uk.com.robust-it</groupId>
+				<groupId>${cloning.group}</groupId>
 				<artifactId>cloning</artifactId>
 				<version>${cloning.version}</version>
 				<exclusions>
@@ -803,58 +879,54 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8</artifactId>
+				<artifactId>wiremock-jre8-standalone</artifactId>
 				<version>${wiremock.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.hamcrest</groupId>
-						<artifactId>hamcrest-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.google.guava</groupId>
-						<artifactId>guava</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.conscrypt</groupId>
-						<artifactId>conscrypt-openjdk-uber</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.commons</groupId>
-						<artifactId>commons-lang3</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.fasterxml.jackson.core</groupId>
-						<artifactId>jackson-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.fasterxml.jackson.core</groupId>
-						<artifactId>jackson-databind</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.fasterxml.jackson.core</groupId>
-						<artifactId>jackson-annotations</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.opentest4j</groupId>
-						<artifactId>opentest4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>commons-io</groupId>
-						<artifactId>commons-io</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.xmlunit</groupId>
-						<artifactId>xmlunit-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.httpcomponents</groupId>
-						<artifactId>httpclient</artifactId>
-					</exclusion>
-				</exclusions>
+<!--				<exclusions>-->
+<!--					<exclusion>-->
+<!--						<groupId>org.hamcrest</groupId>-->
+<!--						<artifactId>hamcrest-core</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>org.slf4j</groupId>-->
+<!--						<artifactId>slf4j-api</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>com.google.guava</groupId>-->
+<!--						<artifactId>guava</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>org.conscrypt</groupId>-->
+<!--						<artifactId>conscrypt-openjdk-uber</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>org.apache.commons</groupId>-->
+<!--						<artifactId>commons-lang3</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>com.fasterxml.jackson.core</groupId>-->
+<!--						<artifactId>jackson-core</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>com.fasterxml.jackson.core</groupId>-->
+<!--						<artifactId>jackson-databind</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>com.fasterxml.jackson.core</groupId>-->
+<!--						<artifactId>jackson-annotations</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>org.opentest4j</groupId>-->
+<!--						<artifactId>opentest4j</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>commons-io</groupId>-->
+<!--						<artifactId>commons-io</artifactId>-->
+<!--					</exclusion>-->
+<!--					<exclusion>-->
+<!--						<groupId>org.xmlunit</groupId>-->
+<!--						<artifactId>xmlunit-core</artifactId>-->
+<!--					</exclusion>-->
+<!--				</exclusions>-->
 			</dependency>
 			<dependency>
 				<groupId>org.spockframework</groupId>
@@ -865,45 +937,49 @@
 						<groupId>junit</groupId>
 						<artifactId>junit</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.junit.platform</groupId>
+						<artifactId>junit-platform-engine</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-json</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-nio</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-macro</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-templates</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-test</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-sql</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-xml</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
@@ -918,6 +994,34 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>io.github.resilience4j</groupId>
+				<artifactId>resilience4j-retry</artifactId>
+				<version>${resilience4j-retry.version}</version>
+			</dependency>
+
+			<!-- Compatibility -->
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>javax.mail-api</artifactId>
+				<version>${javax-mail.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
+				<version>${javax-mail.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.activation</groupId>
+				<artifactId>activation</artifactId>
+				<version>${javax-activation.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${javax-servlet.version}</version>
+			</dependency>
+
 			<!-- Fix dependency convergence -->
 			<dependency>
 				<groupId>org.ow2.asm</groupId>
@@ -943,6 +1047,11 @@
 				<groupId>org.conscrypt</groupId>
 				<artifactId>conscrypt-openjdk-uber</artifactId>
 				<version>${conscrypt-openjdk-uber.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.xml.bind</groupId>
+				<artifactId>jakarta.xml.bind-api</artifactId>
+				<version>${jakarta-xml-bind-api.version}</version>
 			</dependency>
 			<!-- Must be at the end to avoid overriding versions explicitly set -->
 			<dependency>
@@ -1003,9 +1112,27 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<!-- Different JDK per module -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-toolchains-plugin</artifactId>
+				<version>${maven-toolchains-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>toolchain</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<toolchains>
+						<jdk>
+							<version>${jdk.version}</version>
+						</jdk>
+					</toolchains>
 				</configuration>
 			</plugin>
 
@@ -1080,7 +1207,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
-					<argLine>${surefireArgLine}</argLine>
+					<argLine>${surefire.argLine.additional} ${surefireArgLine}</argLine>
 					<reuseForks>false</reuseForks>
 					<useSystemClassLoader>false</useSystemClassLoader>
 					<skipTests>${skip.unit.tests}</skipTests>
@@ -1103,7 +1230,7 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
-							<argLine>${failsafeArgLine}</argLine>
+							<argLine>${failsafe.argLine.additional} ${failsafeArgLine}</argLine>
 							<reuseForks>false</reuseForks>
 							<useSystemClassLoader>false</useSystemClassLoader>
 							<skipTests>${skip.integration.tests}</skipTests>
@@ -1871,15 +1998,6 @@
 			</build>
 		</profile>
 		<profile>
-			<id>build-jdk9+</id>
-			<activation>
-				<jdk>[9,)</jdk>
-			</activation>
-			<properties>
-				<maven.compiler.release>8</maven.compiler.release>
-			</properties>
-		</profile>
-		<profile>
 			<!-- Enable mutation testing with other tasks -->
 			<id>mutation-testing</id>
 			<build>
@@ -2004,8 +2122,6 @@
 						<artifactId>maven-compiler-plugin</artifactId>
 						<version>${maven-compiler-plugin.version}</version>
 						<configuration>
-							<source>${maven.compiler.source}</source>
-							<target>${maven.compiler.target}</target>
 							<encoding>${project.build.sourceEncoding}</encoding>
 						</configuration>
 						<executions>

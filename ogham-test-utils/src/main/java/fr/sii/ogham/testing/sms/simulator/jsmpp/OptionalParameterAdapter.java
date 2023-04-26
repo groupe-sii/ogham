@@ -1,13 +1,11 @@
 package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+import ogham.testing.com.cloudhopper.commons.util.HexUtil;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+
 import java.math.BigInteger;
 import java.util.Arrays;
-
-import org.jsmpp.bean.SubmitSm;
-
-import com.cloudhopper.commons.util.HexUtil;
-
-import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
 
 /**
  * Adapts a JSMPP optional parameter to the Ogham abstraction
@@ -61,7 +59,7 @@ public class OptionalParameterAdapter implements OptionalParameter {
 
 	@SuppressWarnings("squid:S1168")
 	private byte[] getOptionalParameterBytes(int from, Integer to) {
-		org.jsmpp.bean.OptionalParameter parameter = original.getOptionalParameter(tag);
+		ogham.testing.org.jsmpp.bean.OptionalParameter parameter = original.getOptionalParameter(tag);
 		if (parameter == null) {
 			return null;
 		}

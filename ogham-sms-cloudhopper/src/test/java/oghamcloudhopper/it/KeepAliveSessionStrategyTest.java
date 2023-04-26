@@ -1,40 +1,31 @@
 package oghamcloudhopper.it;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
-import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.spy;
-import static testutils.SessionStrategyTestHelper.active;
-import static testutils.SessionStrategyTestHelper.by;
-import static testutils.SessionStrategyTestHelper.cleaned;
-import static testutils.SessionStrategyTestHelper.client;
-import static testutils.SessionStrategyTestHelper.clientConnected;
-import static testutils.SessionStrategyTestHelper.closed;
-import static testutils.SessionStrategyTestHelper.connectionAttempts;
-import static testutils.SessionStrategyTestHelper.createdTasks;
-import static testutils.SessionStrategyTestHelper.createdTimers;
-import static testutils.SessionStrategyTestHelper.enquireLinkFailureReceived;
-import static testutils.SessionStrategyTestHelper.enquireLinkReceived;
-import static testutils.SessionStrategyTestHelper.enquireLinkTimeout;
-import static testutils.SessionStrategyTestHelper.isNull;
-import static testutils.SessionStrategyTestHelper.not;
-import static testutils.SessionStrategyTestHelper.opened;
-import static testutils.SessionStrategyTestHelper.reconnectionFailed;
-import static testutils.SessionStrategyTestHelper.requests;
-import static testutils.SessionStrategyTestHelper.sent;
-import static testutils.SessionStrategyTestHelper.session;
-import static testutils.SessionStrategyTestHelper.stopped;
-import static testutils.SessionStrategyTestHelper.track;
-import static testutils.SessionStrategyTestHelper.verifyThat;
-import static testutils.SessionStrategyTestHelper.waitUntil;
+import com.cloudhopper.smpp.SmppClient;
+import com.cloudhopper.smpp.SmppSession;
+import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.testing.assertion.sms.AssertSms;
+import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber;
+import fr.sii.ogham.testing.assertion.sms.ExpectedSms;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
+import fr.sii.ogham.testing.sms.simulator.SmppServerException;
+import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer;
+import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import testutils.TrackClientAndSessionsDecorator;
 
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
@@ -46,48 +37,27 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Supplier;
 
-import org.jsmpp.bean.SubmitSm;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
+import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.spy;
+import static testutils.SessionStrategyTestHelper.*;
 
-import com.cloudhopper.smpp.SmppClient;
-import com.cloudhopper.smpp.SmppSession;
-import com.cloudhopper.smpp.impl.DefaultSmppClient;
-
-import fr.sii.ogham.core.exception.MessageException;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
-import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
-import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
-import fr.sii.ogham.testing.assertion.sms.AssertSms;
-import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber;
-import fr.sii.ogham.testing.assertion.sms.ExpectedSms;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
-import fr.sii.ogham.testing.sms.simulator.SmppServerException;
-import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer;
-import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
-import testutils.SessionStrategyTestHelper.EnquireLinkTaskAware;
-import testutils.SessionStrategyTestHelper.SessionAware;
-import testutils.SessionStrategyTestHelper.TestContext;
-import testutils.TrackClientAndSessionsDecorator;
-
+@LogTestInformation
+@MockitoSettings
 public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 	private static final Logger LOG = LoggerFactory.getLogger(KeepAliveSessionStrategyTest.class);
 	
 	private static final String RECIPIENT = "0203040506";
 	private static final String SENDER = "+33203040506";
-
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
 
 	private CloudhopperSMPPSender sender;
 	private CloudhopperBuilder builder;
@@ -110,7 +80,7 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		}
 	};
 
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		clients = asList(client1, client2, client3);
 		builder = new CloudhopperBuilder()
@@ -127,7 +97,7 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		// @formatter:on
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() throws SmppServerException {
 		if (manualServer != null) {
 			manualServer.stop();
@@ -998,9 +968,9 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		manualServer.stop();
 		LOG.debug("Server stopped");
 		List<SubmitSm> session1Messages = manualServer.getReceivedMessages();
-		MessagingException sendFailure = assertThrows("should indicate that message couldn't be sent", MessagingException.class, () -> {
+		MessagingException sendFailure = assertThrows(MessagingException.class, () -> {
 			sender.send(new Sms().content("can't be sent").from(SENDER).to(RECIPIENT));
-		});
+		}, "should indicate that message couldn't be sent");
 		// restart the server
 		LOG.debug("Restarting server...");
 		manualServer.start();

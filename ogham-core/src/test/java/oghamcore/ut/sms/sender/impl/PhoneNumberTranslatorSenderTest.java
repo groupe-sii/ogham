@@ -1,18 +1,5 @@
 package oghamcore.ut.sms.sender.impl;
 
-import java.io.IOException;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Answers;
-import org.mockito.BDDMockito;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.sms.message.PhoneNumber;
@@ -24,19 +11,24 @@ import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
 import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.ogham.sms.sender.PhoneNumberTranslatorSender;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.io.IOException;
+
+@LogTestInformation
+@MockitoSettings
+@ExtendWith(JsmppServerExtension.class)
 public class PhoneNumberTranslatorSenderTest {
 	private PhoneNumberTranslatorSender sender;
-
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 
 	@Mock(answer = Answers.RETURNS_SMART_NULLS)
 	private PhoneNumberTranslator senderTranslatorMock;
@@ -47,7 +39,7 @@ public class PhoneNumberTranslatorSenderTest {
 	@Mock(answer = Answers.RETURNS_SMART_NULLS)
 	private MessageSender delegateMock;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		sender = new PhoneNumberTranslatorSender(senderTranslatorMock,
 				recipientTranslatorMock,

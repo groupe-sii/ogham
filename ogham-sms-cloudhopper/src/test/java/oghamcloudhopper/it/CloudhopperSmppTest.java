@@ -1,31 +1,29 @@
 package oghamcloudhopper.it;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
-import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
-import static java.lang.Math.ceil;
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.io.IOException;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
+import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
+import static java.lang.Math.ceil;
+import static org.hamcrest.Matchers.*;
+
+@LogTestInformation
 public class CloudhopperSmppTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
 
@@ -33,13 +31,10 @@ public class CloudhopperSmppTest {
 
 	private CloudhopperSMPPSender sender;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		ExtendedSmppSessionConfiguration configuration = new ExtendedSmppSessionConfiguration();
 		configuration.setHost("127.0.0.1");

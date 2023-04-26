@@ -37,7 +37,6 @@ import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
 
 @LogTestInformation
-@ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
 class SendGridFluentEmailTest {
 	private static final String SUBJECT = "Example email";

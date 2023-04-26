@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.builder.configurer;
 
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+
 /**
  * Apply specific configuration to the provided builder instance.
  * 
@@ -18,5 +20,5 @@ public interface Configurer<B> {
 	 * @param builder
 	 *            the builder to configure
 	 */
-	void configure(B builder);
+	void configure(B builder) throws ConfigureException;
 }

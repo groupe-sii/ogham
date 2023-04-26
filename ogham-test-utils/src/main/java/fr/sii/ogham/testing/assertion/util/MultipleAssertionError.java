@@ -7,7 +7,9 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import org.junit.ComparisonFailure;
+import org.junit.jupiter.api.AssertionFailureBuilder;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.ValueWrapper;
 
 public class MultipleAssertionError extends AssertionError {
 	/**
@@ -34,14 +36,18 @@ public class MultipleAssertionError extends AssertionError {
 	}
 
 	/**
-	 * Eclipse can only handle {@link ComparisonFailure} instance (not
+	 * Eclipse can only handle {@link AssertionFailedError} instance (not
 	 * sub-classes...)
 	 * 
-	 * @return the same exception but converted to {@link ComparisonFailure}
+	 * @return the same exception but converted to {@link AssertionFailedError}
 	 *         (list of failures is lost)
 	 */
-	public ComparisonFailure toComparisonFailure() {
-		return new ComparisonFailure(generateMessage(failures), generateExpected(failures), generateActual(failures));
+	public AssertionFailedError toAssertionFailedError() {
+		return AssertionFailureBuilder.assertionFailure()
+				.message(generateMessage(failures))
+				.expected(generateExpected(failures))
+				.actual(generateActual(failures))
+				.build();
 	}
 
 	private static String generateMessage(List<Throwable> failures) {
@@ -55,20 +61,20 @@ public class MultipleAssertionError extends AssertionError {
 	}
 
 	private static String generateExpected(List<Throwable> failures) {
-		return generateComparison(failures, "Expected", ComparisonFailure::getExpected);
+		return generateComparison(failures, "Expected", AssertionFailedError::getExpected);
 	}
 
 	private static String generateActual(List<Throwable> failures) {
-		return generateComparison(failures, "Actual", ComparisonFailure::getActual);
+		return generateComparison(failures, "Actual", AssertionFailedError::getActual);
 	}
 
-	private static String generateComparison(List<Throwable> failures, String name, Function<ComparisonFailure, String> getter) {
+	private static String generateComparison(List<Throwable> failures, String name, Function<AssertionFailedError, ValueWrapper> getter) {
 		StringJoiner joiner = new StringJoiner(FAILURE_SEPARATOR, name + " (" + failures.size() + "):\n", FAILURE_SEPARATOR);
 		int idx = 1;
 		for (Throwable f : failures) {
 			String prefix = "Failure " + idx + ": " + getMessage(f) + "\n\n";
-			if (f instanceof ComparisonFailure) {
-				joiner.add(indent(prefix + getter.apply((ComparisonFailure) f)));
+			if (f instanceof AssertionFailedError) {
+				joiner.add(indent(prefix + getter.apply((AssertionFailedError) f)));
 			} else {
 				joiner.add(indent(prefix + "</!\\ no comparison available>"));
 			}

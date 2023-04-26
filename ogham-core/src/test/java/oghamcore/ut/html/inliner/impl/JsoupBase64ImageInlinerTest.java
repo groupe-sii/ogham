@@ -1,35 +1,31 @@
 package oghamcore.ut.html.inliner.impl;
 
-import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.testing.assertion.html.AssertHtml;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+
+@LogTestInformation
 public class JsoupBase64ImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
-	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
+
 	private JsoupBase64ImageInliner inliner;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		inliner = new JsoupBase64ImageInliner();
 	}

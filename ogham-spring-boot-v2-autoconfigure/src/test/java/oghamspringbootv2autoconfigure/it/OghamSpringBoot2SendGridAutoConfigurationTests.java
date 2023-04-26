@@ -1,29 +1,7 @@
 package oghamspringbootv2autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.internal.matcher.SpringContextAssertions.isSpringBeanInstance;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isA;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.springframework.boot.autoconfigure.AutoConfigurations.of;
-
-import java.nio.charset.StandardCharsets;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.boot.autoconfigure.sendgrid.SendGridAutoConfiguration;
-import org.springframework.boot.autoconfigure.sendgrid.SendGridProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.sendgrid.SendGrid;
-
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
@@ -31,24 +9,38 @@ import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.assertion.OghamInternalAssertions;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.springframework.boot.autoconfigure.sendgrid.SendGridAutoConfiguration;
+import org.springframework.boot.autoconfigure.sendgrid.SendGridProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
+
+import static fr.sii.ogham.testing.assertion.internal.matcher.SpringContextAssertions.isSpringBeanInstance;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.boot.autoconfigure.AutoConfigurations.of;
+
+@LogTestInformation
 public class OghamSpringBoot2SendGridAutoConfigurationTests {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
 
-	@Rule
-	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
-
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
 	private ApplicationContextRunner contextRunner;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		contextRunner = new ApplicationContextRunner()
 				.withPropertyValues( 

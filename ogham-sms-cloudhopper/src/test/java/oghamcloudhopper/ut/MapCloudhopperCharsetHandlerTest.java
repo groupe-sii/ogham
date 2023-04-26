@@ -1,44 +1,39 @@
 package oghamcloudhopper.ut;
 
+import com.cloudhopper.commons.charset.CharsetUtil;
+import fr.sii.ogham.core.charset.CharsetDetector;
+import fr.sii.ogham.sms.encoder.Encoded;
+import fr.sii.ogham.sms.exception.message.EncodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.MapCloudhopperCharsetEncoder;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Answers;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls;
+import org.mockito.junit.jupiter.MockitoSettings;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Answers;
-import org.mockito.BDDMockito;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
-
-import fr.sii.ogham.core.charset.CharsetDetector;
-import fr.sii.ogham.sms.encoder.Encoded;
-import fr.sii.ogham.sms.exception.message.EncodingException;
-import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.MapCloudhopperCharsetEncoder;
-import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-
-@RunWith(MockitoJUnitRunner.class)
+@LogTestInformation
+@MockitoSettings
 public class MapCloudhopperCharsetHandlerTest {
 	@Mock(answer = Answers.RETURNS_SMART_NULLS)
 	private CharsetDetector charsetProviderMock;
 
 	private MapCloudhopperCharsetEncoder charsetHandler;
-	
-	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Before
+
+	@BeforeEach
 	public void before() {
 		charsetHandler = new MapCloudhopperCharsetEncoder(charsetProviderMock);
 	}
@@ -52,9 +47,11 @@ public class MapCloudhopperCharsetHandlerTest {
 		charsetHandler = new MapCloudhopperCharsetEncoder(charsetProviderMock, mapCloudhopperNameByNioName);
 	}
 
-	@Test(expected = EncodingException.class)
+	@Test
 	public void addInvalidCharset() throws EncodingException {
-		charsetHandler.addCharset("charset", "invalid");
+		assertThrows(EncodingException.class, () -> {
+			charsetHandler.addCharset("charset", "invalid");
+		});
 	}
 
 	@Test
@@ -97,10 +94,10 @@ public class MapCloudhopperCharsetHandlerTest {
 		Encoded result = charsetHandler.encode(givenContent);
 		
 		//then
-		Assert.assertArrayEquals(expectedEncodedStr.getBytes(), result.getBytes());
+		assertArrayEquals(expectedEncodedStr.getBytes(), result.getBytes());
 	}
 
-	@Test(expected = EncodingException.class)
+	@Test
 	public void encodeWithUnknownNioCharset() throws EncodingException {
 		// given
 		String givenContent = "méss@ge àvec des acçènts & d€$ cara©tères spécïaùx";
@@ -112,10 +109,12 @@ public class MapCloudhopperCharsetHandlerTest {
 		BDDMockito.given(charsetProviderMock.detect(givenContent)).willReturn(null);
 
 		// when
-		charsetHandler.encode(givenContent);
+		assertThrows(EncodingException.class, () -> {
+			charsetHandler.encode(givenContent);
+		});
 	}
 
-	@Test(expected = EncodingException.class)
+	@Test
 	public void encodeWithUnmappedCloudhopperCharset() throws EncodingException {
 		// given
 		String givenContent = "méss@ge àvec des acçènts & d€$ cara©tères spécïaùx";
@@ -141,6 +140,8 @@ public class MapCloudhopperCharsetHandlerTest {
 		BDDMockito.given(charsetProviderMock.detect(givenContent)).willReturn(nioCharsetMock);
 
 		// when
-		charsetHandler.encode(givenContent);
+		assertThrows(EncodingException.class, () -> {
+			charsetHandler.encode(givenContent);
+		});
 	}
 }

@@ -2,15 +2,15 @@ package fr.sii.ogham.testing.sms.simulator.decode;
 
 /**
  * Wrapper that decodes bytes using Cloudhopper
- * {@link com.cloudhopper.commons.charset.Charset}
+ * {@link ogham.testing.com.cloudhopper.commons.charset.Charset}
  * 
  * @author Aurélien Baudet
  *
  */
 public class CloudhopperCharsetAdapter implements Charset {
-	private final com.cloudhopper.commons.charset.Charset cloudhopperCharset;
+	private final ogham.testing.com.cloudhopper.commons.charset.Charset cloudhopperCharset;
 
-	public CloudhopperCharsetAdapter(com.cloudhopper.commons.charset.Charset cloudhopperCharset) {
+	public CloudhopperCharsetAdapter(ogham.testing.com.cloudhopper.commons.charset.Charset cloudhopperCharset) {
 		super();
 		this.cloudhopperCharset = cloudhopperCharset;
 	}

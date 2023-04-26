@@ -3,17 +3,19 @@ package fr.sii.ogham.testing.assertion.email;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.getAttachment;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.getContent;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-
-import org.junit.Assert;
-import org.junit.internal.ArrayComparisonFailure;
+import fr.sii.ogham.testing.assertion.exception.MessageReadingException;
+import ogham.testing.jakarta.mail.BodyPart;
+import ogham.testing.jakarta.mail.Message;
+import ogham.testing.jakarta.mail.MessagingException;
+import ogham.testing.jakarta.mail.Multipart;
 
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.assertion.util.Executable;
 import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+import org.junit.jupiter.api.Assertions;
+
+import java.io.IOException;
+import java.util.function.Function;
 
 /**
  * Utility class for checking the attachment of the received email is as
@@ -32,12 +34,12 @@ public final class AssertAttachment {
 	 * @param actual
 	 *            the received email that must contain the attachment (the array
 	 *            must have only one email)
-	 * @throws Exception
+	 * @throws MessageReadingException
 	 *             when access to message has failed
 	 */
-	public static void assertEquals(ExpectedAttachment expected, Message[] actual) throws Exception {
+	public static void assertEquals(ExpectedAttachment expected, Message[] actual) throws MessageReadingException {
 		AssertionRegistry registry = new FailAtEndRegistry();
-		registry.register(() -> Assert.assertEquals("should have only one message", 1, actual.length));
+		registry.register(() -> Assertions.assertEquals(1, actual.length, "should have only one message"));
 		assertEquals(expected, actual.length == 1 ? actual[0] : null, registry);
 		registry.execute();
 	}
@@ -56,10 +58,10 @@ public final class AssertAttachment {
 	 *            the expected attachment values
 	 * @param actual
 	 *            the received email that must contain the attachment
-	 * @throws Exception
+	 * @throws MessageReadingException
 	 *             when access to message has failed
 	 */
-	public static void assertEquals(ExpectedAttachment expected, Message actual) throws Exception {
+	public static void assertEquals(ExpectedAttachment expected, Message actual) throws MessageReadingException {
 		AssertionRegistry registry = new FailAtEndRegistry();
 		assertEquals(expected, actual, registry);
 		registry.execute();
@@ -79,39 +81,47 @@ public final class AssertAttachment {
 	 *            the expected attachment values
 	 * @param attachment
 	 *            the received attachment
-	 * @throws ArrayComparisonFailure
+	 * @throws AssertionError
 	 *             when there are unexpected differences
-	 * @throws Exception
+	 * @throws MessageReadingException
 	 *             when access to part has failed
 	 */
-	public static void assertEquals(ExpectedAttachment expected, BodyPart attachment) throws Exception {
+	public static void assertEquals(ExpectedAttachment expected, BodyPart attachment) throws MessageReadingException {
 		AssertionRegistry registry = new FailAtEndRegistry();
 		assertEquals(expected, attachment, registry);
 		registry.execute();
 	}
 
-	private static void assertEquals(ExpectedAttachment expected, Message actual, AssertionRegistry registry) throws Exception {
-		Object content = actual == null ? null : actual.getContent();
-		registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
-		BodyPart part = getAttachmentOrNull((Multipart) content, expected.getName(), registry);
-		assertEquals(expected, part, registry);
+	private static void assertEquals(ExpectedAttachment expected, Message actual, AssertionRegistry registry) throws MessageReadingException {
+		try {
+			Object content = actual == null ? null : actual.getContent();
+			registry.register(() -> Assertions.assertTrue(content instanceof Multipart, "should be multipart message"));
+			BodyPart part = getAttachmentOrNull((Multipart) content, expected.getName(), registry);
+			assertEquals(expected, part, registry);
+		} catch(IOException | MessagingException e) {
+			throw new MessageReadingException("Failed to read content of the message", e);
+		}
 	}
 
-	private static void assertEquals(ExpectedAttachment expected, BodyPart attachment, AssertionRegistry registry) throws Exception {
+	private static void assertEquals(ExpectedAttachment expected, BodyPart attachment, AssertionRegistry registry) throws MessageReadingException {
 		// @formatter:off
-		String prefix = "attachment named '" + expected.getName() + "'" + (attachment==null ? " (/!\\ not found)" : "");
-		String contentType = attachment == null || attachment.getContentType()==null ? null : attachment.getContentType();
-		registry.register(() -> Assert.assertTrue(prefix + " mimetype should match '" + expected.getMimetype() + "' but was " + (contentType==null ? "null" : "'" + contentType + "'"),
-				contentType!=null && expected.getMimetype().matcher(contentType).matches()));
-		registry.register(() -> Assert.assertEquals(prefix + " description should be '" + expected.getDescription() + "'", 
-				expected.getDescription(),
-				attachment == null ? null : attachment.getDescription()));
-		registry.register(() -> Assert.assertEquals(prefix + " disposition should be '" + expected.getDisposition() + "'", 
-				expected.getDisposition(),
-				attachment == null ? null : attachment.getDisposition()));
-		registry.register(() -> Assert.assertArrayEquals(prefix + " has invalid content", 
-				expected.getContent(), 
-				attachment == null ? null : getContent(attachment)));
+		try {
+			String prefix = "attachment named '" + expected.getName() + "'" + (attachment==null ? " (/!\\ not found)" : "");
+			String contentType = attachment == null || attachment.getContentType()==null ? null : attachment.getContentType();
+			registry.register(() -> Assertions.assertTrue(contentType!=null && expected.getMimetype().matcher(contentType).matches(),
+					prefix + " mimetype should match '" + expected.getMimetype() + "' but was " + (contentType==null ? "null" : "'" + contentType + "'")));
+			registry.register(() -> Assertions.assertEquals(expected.getDescription(),
+					attachment == null ? null : attachment.getDescription(),
+					prefix + " description should be '" + expected.getDescription() + "'"));
+			registry.register(() -> Assertions.assertEquals(expected.getDisposition(),
+					attachment == null ? null : attachment.getDisposition(),
+					prefix + " disposition should be '" + expected.getDisposition() + "'"));
+			registry.register(() -> Assertions.assertArrayEquals(expected.getContent(),
+					attachment == null ? null : getContent(attachment),
+					prefix + " has invalid content"));
+		} catch(Exception e) {
+			throw new MessageReadingException("Failed to make assertions on attachment", e);
+		}
 		// @formatter:on
 	}
 
@@ -119,11 +129,11 @@ public final class AssertAttachment {
 										// doesn't compile in that case or we
 										// are force to throw Exception instead
 										// of MessagingException
-	private static BodyPart getAttachmentOrNull(Multipart multipart, final String filename, AssertionRegistry registry) throws MessagingException {
+	private static BodyPart getAttachmentOrNull(Multipart multipart, final String filename, AssertionRegistry registry) throws MessageReadingException {
 		try {
 			return getAttachment(multipart, filename);
 		} catch (MessagingException e) {
-			registry.register(failure(e));
+			registerAndWrap(registry, e, (ex) -> new MessageReadingException("Failed to get attachment "+filename, ex));
 			return null;
 		} catch (IllegalStateException e) {
 			registry.register(failure(e));
@@ -135,6 +145,14 @@ public final class AssertAttachment {
 		return () -> {
 			throw exception;
 		};
+	}
+
+	private static <E extends Exception> void registerAndWrap(AssertionRegistry registry, E originalException, Function<Exception, MessageReadingException> wrapper) throws MessageReadingException {
+		try {
+			registry.register(failure(originalException));
+		} catch (Exception e) {
+			throw wrapper.apply(e);
+		}
 	}
 
 	private AssertAttachment() {

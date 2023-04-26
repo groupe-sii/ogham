@@ -1,9 +1,8 @@
 package oghamcore.ut.email
 
-import javax.mail.internet.InternetAddress
-
 import fr.sii.ogham.email.message.EmailAddress
 import fr.sii.ogham.testing.extension.common.LogTestInformation
+import ogham.testing.jakarta.mail.internet.InternetAddress
 import spock.lang.Specification
 import spock.lang.Unroll
 

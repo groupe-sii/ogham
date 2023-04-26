@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
+import ogham.testing.org.apache.commons.io.IOUtils;
 
 /**
  * Class used in tests for ensuring that the content of an email is respected.

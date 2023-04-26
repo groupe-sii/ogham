@@ -37,6 +37,8 @@ import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WRITE_TIMEOUT;
 import static fr.sii.ogham.sms.builder.cloudhopper.CloudhopperRetryablePredicates.canResendMessage;
 import static fr.sii.ogham.sms.builder.cloudhopper.CloudhopperRetryablePredicates.canRetryConnecting;
 
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+import fr.sii.ogham.core.exception.configurer.MissingImplementationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,12 +170,9 @@ public final class DefaultCloudhopperConfigurer {
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
 	public static class CloudhopperConfigurer implements MessagingConfigurer {
 		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (!canUseCloudhopper()) {
-				LOG.debug("[{}] skip configuration", this);
-				return;
-			}
-			LOG.debug("[{}] apply configuration", this);
+		public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+			checkCanUseCloudhopper();
+
 			// add additional checks to indicate that a message should not be
 			// retried in some circumstances
 			msgBuilder.sms().autoRetry().retryable(canResendMessage()::and);
@@ -254,7 +253,13 @@ public final class DefaultCloudhopperConfigurer {
 			// @formatter:on
 		}
 
-		private static boolean canUseCloudhopper() {
+		private static void checkCanUseCloudhopper() throws ConfigureException {
+			if (!isCloudhopperPresent()) {
+				throw new MissingImplementationException("Can't send SMS through Cloudhopper because Cloudhopper implementation is not present in the classpath", "com.cloudhopper.smpp.SmppClient");
+			}
+		}
+
+		private static boolean isCloudhopperPresent() {
 			return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
 		}
 	}

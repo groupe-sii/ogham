@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
-import org.apache.commons.lang3.StringUtils;
+import ogham.testing.org.apache.commons.lang3.StringUtils;
 
-import com.github.jknack.handlebars.internal.text.WordUtils;
+import wiremock.com.github.jknack.handlebars.internal.text.WordUtils;
 
 /**
  * Write information about test. This is useful when there are many tests:

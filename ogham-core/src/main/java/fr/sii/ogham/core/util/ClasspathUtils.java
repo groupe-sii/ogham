@@ -15,10 +15,10 @@ public final class ClasspathUtils {
 	static {
 		helper = new SimpleClasspathHelper();
 	}
-	
+
 	/**
 	 * Test if the class name is defined in the classpath.
-	 * 
+	 *
 	 * @param className
 	 *            the class name
 	 * @return true if the class exists in the classpath, false otherwise
@@ -26,7 +26,7 @@ public final class ClasspathUtils {
 	public static boolean exists(String className) {
 		return helper.exists(className);
 	}
-	
+
 	public static void setHelper(ClasspathHelper helper) {
 		ClasspathUtils.helper = helper;
 	}

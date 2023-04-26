@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.v1.autoconfigure;
 
+import fr.sii.ogham.spring.email.OghamJavaMailClasspathConsistencyCheckConfiguration;
+import fr.sii.ogham.spring.email.OghamJavaxMailConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,7 +21,7 @@ import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
 import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
 import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
 import fr.sii.ogham.spring.v1.email.OghamSendGridV2Configuration;
-import fr.sii.ogham.spring.v1.template.OghamThymeleafV2Configuration;
+import fr.sii.ogham.spring.v1.template.OghamThymeleafSpring4Configuration;
 
 /**
  * <p>
@@ -52,8 +54,10 @@ import fr.sii.ogham.spring.v1.template.OghamThymeleafV2Configuration;
 		OghamGeneralConfiguration.class,
 		OghamNoTemplateEngineConfiguration.class, 
 		OghamFreemarkerConfiguration.class, 
-		OghamThymeleafV2Configuration.class, 
+		OghamThymeleafSpring4Configuration.class,
+		OghamJavaMailClasspathConsistencyCheckConfiguration.class,
 		OghamJavaMailConfiguration.class,
+		OghamJavaxMailConfiguration.class,
 		OghamSendGridV2Configuration.class,
 		OghamCloudhopperConfiguration.class,
 		OghamOvhSmsConfiguration.class })

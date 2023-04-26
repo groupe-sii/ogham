@@ -1,6 +1,6 @@
 package oghamcore.ut.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -9,8 +9,8 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.LookupResource;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
+import ogham.testing.nl.jqno.equalsverifier.EqualsVerifier;
+import ogham.testing.nl.jqno.equalsverifier.Warning;
 
 public class EqualsTest {
 	@Test

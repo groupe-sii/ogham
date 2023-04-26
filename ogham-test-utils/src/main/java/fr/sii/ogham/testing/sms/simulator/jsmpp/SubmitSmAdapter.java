@@ -14,20 +14,20 @@ import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.sms.simulator.bean.Tag;
 
 /**
- * Adapts JSMPP {@link org.jsmpp.bean.SubmitSm} into {@link SubmitSm}
+ * Adapts JSMPP {@link ogham.testing.org.jsmpp.bean.SubmitSm} into {@link SubmitSm}
  * abstraction.
  * 
  * @author Aurélien Baudet
  *
  */
 public class SubmitSmAdapter implements SubmitSm {
-	protected final org.jsmpp.bean.SubmitSm original;
+	protected final ogham.testing.org.jsmpp.bean.SubmitSm original;
 
 	/**
 	 * @param original
-	 *            the JSMPP {@link org.jsmpp.bean.SubmitSm} to adapt
+	 *            the JSMPP {@link ogham.testing.org.jsmpp.bean.SubmitSm} to adapt
 	 */
-	public SubmitSmAdapter(org.jsmpp.bean.SubmitSm original) {
+	public SubmitSmAdapter(ogham.testing.org.jsmpp.bean.SubmitSm original) {
 		super();
 		this.original = original;
 	}

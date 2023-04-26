@@ -1,24 +1,20 @@
 package oghamcore.ut.core.retry;
 
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+
 import static java.time.Instant.ofEpochMilli;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
-
+@MockitoSettings
 public class PerExecutionDelayRetryExecutorTest {
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	
 	PerExecutionDelayRetry retry;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		retry = new PerExecutionDelayRetry(5, asList(10L, 60L, 170L, 590L, 2630L));
 	}

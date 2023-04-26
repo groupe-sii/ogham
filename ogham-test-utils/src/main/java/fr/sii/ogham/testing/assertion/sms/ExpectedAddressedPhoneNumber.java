@@ -1,7 +1,7 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import ogham.testing.org.apache.commons.lang3.builder.EqualsBuilder;
+import ogham.testing.org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
 import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;

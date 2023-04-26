@@ -4,28 +4,28 @@ import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
 
 import org.awaitility.Awaitility
-import org.jsmpp.bean.AlertNotification
-import org.jsmpp.bean.Alphabet
-import org.jsmpp.bean.BindType
-import org.jsmpp.bean.DataSm
-import org.jsmpp.bean.DeliverSm
-import org.jsmpp.bean.ESMClass
-import org.jsmpp.bean.GeneralDataCoding
-import org.jsmpp.bean.MessageClass
-import org.jsmpp.bean.NumberingPlanIndicator
-import org.jsmpp.bean.RegisteredDelivery
-import org.jsmpp.bean.SMSCDeliveryReceipt
-import org.jsmpp.bean.TypeOfNumber
-import org.jsmpp.extra.ProcessRequestException
-import org.jsmpp.extra.ResponseTimeoutException
-import org.jsmpp.session.BindParameter
-import org.jsmpp.session.DataSmResult
-import org.jsmpp.session.MessageReceiverListener
-import org.jsmpp.session.SMPPSession
-import org.jsmpp.session.Session
-import org.jsmpp.util.AbsoluteTimeFormatter
+import ogham.testing.org.jsmpp.bean.AlertNotification
+import ogham.testing.org.jsmpp.bean.Alphabet
+import ogham.testing.org.jsmpp.bean.BindType
+import ogham.testing.org.jsmpp.bean.DataSm
+import ogham.testing.org.jsmpp.bean.DeliverSm
+import ogham.testing.org.jsmpp.bean.ESMClass
+import ogham.testing.org.jsmpp.bean.GeneralDataCoding
+import ogham.testing.org.jsmpp.bean.MessageClass
+import ogham.testing.org.jsmpp.bean.NumberingPlanIndicator
+import ogham.testing.org.jsmpp.bean.RegisteredDelivery
+import ogham.testing.org.jsmpp.bean.SMSCDeliveryReceipt
+import ogham.testing.org.jsmpp.bean.TypeOfNumber
+import ogham.testing.org.jsmpp.extra.ProcessRequestException
+import ogham.testing.org.jsmpp.extra.ResponseTimeoutException
+import ogham.testing.org.jsmpp.session.BindParameter
+import ogham.testing.org.jsmpp.session.DataSmResult
+import ogham.testing.org.jsmpp.session.MessageReceiverListener
+import ogham.testing.org.jsmpp.session.SMPPSession
+import ogham.testing.org.jsmpp.session.Session
+import ogham.testing.org.jsmpp.util.AbsoluteTimeFormatter
 
-import com.cloudhopper.commons.charset.CharsetUtil
+import ogham.testing.com.cloudhopper.commons.charset.CharsetUtil
 
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig
@@ -124,7 +124,7 @@ class JsmppSimulatorSpec extends Specification {
 			
 		then:
 			def e = thrown(IOException)
-			e.message.contains("Wait for bind response timed out: No response after waiting for 200 millis when executing bind")
+			e.message.contains("Time out waiting for bind response: No response after waiting for 200 millis when executing bind")
 	
 		cleanup:
 			close(session)

@@ -1,25 +1,12 @@
 package fr.sii.ogham.email.builder;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.List;
-
-import javax.activation.MimetypesFileTypeMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
-import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
-import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
-import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
-import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
-import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.*;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
@@ -30,6 +17,12 @@ import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.html.inliner.EveryImageInliner;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Configures how images declared in the HTML content are automatically
@@ -307,7 +300,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 * 
 	 * There exists several implementations to provide the mimetype:
 	 * <ul>
-	 * <li>Using Java {@link MimetypesFileTypeMap}</li>
+	 * <li>Using Java activation</li>
 	 * <li>Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}</li>
 	 * <li>Using <a href="http://tika.apache.org/">Apache Tika</a></li>
 	 * <li>Using

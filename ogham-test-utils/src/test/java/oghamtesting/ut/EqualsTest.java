@@ -1,10 +1,10 @@
 package oghamtesting.ut;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
+import ogham.testing.nl.jqno.equalsverifier.EqualsVerifier;
+import ogham.testing.nl.jqno.equalsverifier.Warning;
 
 public class EqualsTest {
 	@Test

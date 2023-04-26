@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.MimeMessage;
+import ogham.testing.jakarta.mail.BodyPart;
+import ogham.testing.jakarta.mail.Message;
+import ogham.testing.jakarta.mail.MessagingException;
+import ogham.testing.jakarta.mail.Multipart;
+import ogham.testing.jakarta.mail.Part;
+import ogham.testing.jakarta.mail.internet.MimeMessage;
 
-import org.apache.commons.io.IOUtils;
+import ogham.testing.org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

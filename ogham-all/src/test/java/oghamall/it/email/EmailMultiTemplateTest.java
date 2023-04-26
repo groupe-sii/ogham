@@ -1,26 +1,6 @@
 package oghamall.it.email;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThrows;
-
-import java.io.IOException;
-import java.util.Properties;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -32,17 +12,32 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
 import mock.context.SimpleBean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@LogTestInformation
 public class EmailMultiTemplateTest {
 	private MessagingService oghamService;
 	
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		Properties additionalProps = new Properties();
 		additionalProps.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
@@ -57,7 +52,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafMulti() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafMulti() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -80,7 +75,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafMissingVariant() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafMissingVariant() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -101,44 +96,44 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withThymeleafInvalidPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafInvalidPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
 					.subject("Template")
 					.content(new MultiTemplateContent("thymeleaf/source/unexisting", new SimpleBean("foo", 42)))
 					.to("recipient@sii.fr"));
-		});
+		}, "should throw");
 		// @formatter:on					
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoContentException.class));
 	}
 	
 	@Test
-	public void withThymeleafOneVariantWithParsingError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafOneVariantWithParsingError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
 							.content(new MultiTemplateContent("thymeleaf/source/parsing-error", new SimpleBean("foo", 42)))
 							.to("recipient@sii.fr"));
-		});
+		}, "should throw");
 		// @formatter:on					
 		assertThat("should indicate cause", e.getCause(), instanceOf(TemplateParsingFailedException.class));
 	}
 	
 	@Test
-	public void withThymeleafOneVariantWithInvalidResourcePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafOneVariantWithInvalidResourcePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
 							.content(new MultiTemplateContent("thymeleaf/source/invalid-resources", new SimpleBean("foo", 42)))
 							.to("recipient@sii.fr"));
-		});
+		}, "should throw");
 		// @formatter:on					
 		assertThat("should indicate cause", e.getCause(), instanceOf(ImageInliningException.class));
 	}
 	
 	@Test
-	public void withFreemarkerMulti() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerMulti() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -161,7 +156,7 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withFreemarkerMissingVariant() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerMissingVariant() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -182,44 +177,44 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
-	public void withFreemarkerInvalidPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerInvalidPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
 							.subject("Template")
 							.content(new MultiTemplateContent("freemarker/source/unexisting", new SimpleBean("foo", 42)))
 							.to("recipient@sii.fr"));
-		});
+		}, "should throw");
 		// @formatter:on					
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoContentException.class));
 	}
 	
 	@Test
-	public void withFreemarkerOneVariantWithParsingError() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerOneVariantWithParsingError() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
 							.content(new MultiTemplateContent("freemarker/source/parsing-error", new SimpleBean("foo", 42)))
 							.to("recipient@sii.fr"));
-		});
+		}, "should throw");
 		// @formatter:on					
 		assertThat("should indicate cause", e.getCause(), instanceOf(TemplateParsingFailedException.class));
 	}
 
 	@Test
-	public void withFreemarkerOneVariantWithInvalidResourcePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withFreemarkerOneVariantWithInvalidResourcePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			oghamService.send(new Email()
 							.content(new MultiTemplateContent("freemarker/source/invalid-resources", new SimpleBean("foo", 42)))
 							.to("recipient@sii.fr"));
-		});
+		}, "should throw");
 		// @formatter:on					
 		assertThat("should indicate cause", e.getCause(), instanceOf(ImageInliningException.class));
 	}
 	
 	@Test
-	public void thymeleafHtmlFreemarkerText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlFreemarkerText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")
@@ -244,7 +239,7 @@ public class EmailMultiTemplateTest {
 
 	
 	@Test
-	public void thymeleafHtmlStringFreemarkerTextString() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void thymeleafHtmlStringFreemarkerTextString() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 							.subject("Template")

@@ -3,7 +3,7 @@ package fr.sii.ogham.testing.assertion.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
 
 /**
  * The aim of this registry is to report all errors at once.
@@ -15,7 +15,7 @@ import org.junit.ComparisonFailure;
  * {@link MultipleAssertionError}.
  * 
  * <p>
- * A {@link ComparisonFailure} exception is thrown. Therefore Eclipse can handle
+ * A {@link AssertionFailedError} exception is thrown. Therefore Eclipse can handle
  * this exception and provide a comparison view with all differences.
  * 
  * @author Aurélien Baudet
@@ -23,20 +23,20 @@ import org.junit.ComparisonFailure;
  */
 public class FailAtEndRegistry implements AssertionRegistry {
 	private final List<Executable<?>> assertions;
-	private final boolean convertToComparisonFailure;
+	private final boolean convertToAssertionFailedError;
 
 	/**
 	 * Initializes an empty registry.
 	 * 
 	 * If the system property
 	 * {@code "ogham.testing.assertions.fail-at-end.throw-comparison-failure"}
-	 * is set to true (or not set at all), a {@link ComparisonFailure} exception
-	 * is thrown. Using a {@link ComparisonFailure} lets Eclipse handle it
+	 * is set to true (or not set at all), a {@link AssertionFailedError} exception
+	 * is thrown. Using a {@link AssertionFailedError} lets Eclipse handle it
 	 * specifically and provides a comparison view (Eclipse doesn't handle
-	 * sub-classes of {@link ComparisonFailure}).
+	 * sub-classes of {@link AssertionFailedError}).
 	 * 
 	 * To throw {@link MultipleAssertionError} instead of
-	 * {@link ComparisonFailure}, you can set the
+	 * {@link AssertionFailedError}, you can set the
 	 * {@code "ogham.testing.assertions.fail-at-end.throw-comparison-failure"}
 	 * system property to {@code "false"}. This can be useful if you need to
 	 * manually handle every failure/failed assertions.
@@ -48,20 +48,20 @@ public class FailAtEndRegistry implements AssertionRegistry {
 	/**
 	 * Initializes an empty registry.
 	 * 
-	 * If {@code convertToComparisonFailure} parameter is set to true, a
-	 * {@link ComparisonFailure} exception is thrown. Using a
-	 * {@link ComparisonFailure} lets Eclipse handle it specifically and
+	 * If {@code convertToAssertionFailedError} parameter is set to true, a
+	 * {@link AssertionFailedError} exception is thrown. Using a
+	 * {@link AssertionFailedError} lets Eclipse handle it specifically and
 	 * provides a comparison view (Eclipse doesn't handle sub-classes of
-	 * {@link ComparisonFailure}).
+	 * {@link AssertionFailedError}).
 	 * 
-	 * @param convertToComparisonFailure
-	 *            true to generate a {@link ComparisonFailure} to let Eclipse
+	 * @param convertToAssertionFailedError
+	 *            true to generate a {@link AssertionFailedError} to let Eclipse
 	 *            display a comparison view.
 	 */
-	public FailAtEndRegistry(boolean convertToComparisonFailure) {
+	public FailAtEndRegistry(boolean convertToAssertionFailedError) {
 		super();
 		assertions = new ArrayList<>();
-		this.convertToComparisonFailure = convertToComparisonFailure;
+		this.convertToAssertionFailedError = convertToAssertionFailedError;
 	}
 
 	public <E extends Exception> void register(Executable<E> executable) throws E {
@@ -87,8 +87,8 @@ public class FailAtEndRegistry implements AssertionRegistry {
 
 	private void throwFailures(List<Throwable> failures) {
 		MultipleAssertionError e = new MultipleAssertionError(failures);
-		if (convertToComparisonFailure) {
-			throw e.toComparisonFailure();
+		if (convertToAssertionFailedError) {
+			throw e.toAssertionFailedError();
 		}
 		throw e;
 	}

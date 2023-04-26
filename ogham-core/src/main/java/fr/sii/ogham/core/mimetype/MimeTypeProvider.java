@@ -3,7 +3,7 @@ package fr.sii.ogham.core.mimetype;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.activation.MimeType;
+import fr.sii.ogham.core.mimetype.MimeType;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 

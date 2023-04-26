@@ -1,25 +1,6 @@
 package oghamall.it.resolver;
 
-import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.IOException;
-import java.util.Properties;
-
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
@@ -29,20 +10,31 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.classpath.SimpleClasspathHelper;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
 import fr.sii.ogham.testing.mock.classloader.FilterableClassLoader;
 import mock.context.SimpleBean;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.*;
+
+@LogTestInformation
 public class ThymeleafRelativeResourcesTest {
 
 	private MessagingService oghamService;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-
-	@Rule
-	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
 
 	// TODO: test prefix alone
 	// TODO: test suffix alone
@@ -74,7 +66,7 @@ public class ThymeleafRelativeResourcesTest {
 	}
 
 	@Test
-	public void relativeToAbsolutePath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToAbsolutePath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -116,7 +108,7 @@ public class ThymeleafRelativeResourcesTest {
 	}
 
 	@Test
-	public void relativeToPrefixAndSuffix() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToPrefixAndSuffix() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.thymeleaf.path-prefix", "/template/thymeleaf/source/"), new Property("ogham.email.thymeleaf.path-suffix", ".html"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -159,7 +151,7 @@ public class ThymeleafRelativeResourcesTest {
 
 
 	@Test
-	public void relativeToPrefixSuffixAndPath() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToPrefixSuffixAndPath() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.thymeleaf.path-prefix", "/template/"), new Property("ogham.email.thymeleaf.path-suffix", ".html"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -202,7 +194,7 @@ public class ThymeleafRelativeResourcesTest {
 
 
 	@Test
-	public void relativeToMultiTemplateName() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void relativeToMultiTemplateName() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		setup(new Property("ogham.email.thymeleaf.path-prefix", "/template/thymeleaf/source/"));
 		// @formatter:off
 		oghamService.send(new Email()
@@ -245,7 +237,7 @@ public class ThymeleafRelativeResourcesTest {
 		// @formatter:on
 	}
 	
-	@After
+	@AfterEach
 	public void reset() {
 		ClasspathUtils.reset();
 	}

@@ -26,6 +26,10 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-email-javamail-javax</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-email-sendgrid</artifactId>
 		</dependency>
 		<dependency>

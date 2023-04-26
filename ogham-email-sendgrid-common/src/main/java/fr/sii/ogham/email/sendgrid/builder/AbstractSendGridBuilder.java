@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -445,7 +444,7 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	 * 
 	 * There exists several implementations to provide the mimetype:
 	 * <ul>
-	 * <li>Using Java {@link MimetypesFileTypeMap}</li>
+	 * <li>Using Java activation</li>
 	 * <li>Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}</li>
 	 * <li>Using <a href="http://tika.apache.org/">Apache Tika</a></li>
 	 * <li>Using

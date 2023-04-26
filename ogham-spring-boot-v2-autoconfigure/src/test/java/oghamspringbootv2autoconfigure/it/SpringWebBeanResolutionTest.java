@@ -1,19 +1,25 @@
 package oghamspringbootv2autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-
-import java.io.IOException;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
+import fr.sii.ogham.core.exception.MessageNotSentException;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import fr.sii.ogham.testing.extension.spring.GreenMailInitializer;
+import fr.sii.ogham.testing.extension.spring.JsmppServerInitializer;
+import mock.context.SimpleBean;
+import oghamspringbootv2autoconfigure.it.SpringWebBeanResolutionTest.TestApplication;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +30,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,27 +38,18 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.icegreen.greenmail.junit4.GreenMailRule;
+import java.io.IOException;
 
-import fr.sii.ogham.core.exception.MessageNotSentException;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
-import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
-import fr.sii.ogham.testing.extension.spring.GreenMailInitializer;
-import fr.sii.ogham.testing.extension.spring.JsmppServerInitializer;
-import mock.context.SimpleBean;
-import oghamspringbootv2autoconfigure.it.SpringWebBeanResolutionTest.TestApplication;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {OghamSpringBoot2AutoConfiguration.class, TestApplication.class}, 
+@LogTestInformation
+@SpringBootTest(classes = {OghamSpringBoot2AutoConfiguration.class, TestApplication.class},
 				webEnvironment=RANDOM_PORT,
 				properties= {
 						"spring.mail.host=127.0.0.1", 
@@ -63,9 +59,8 @@ import oghamspringbootv2autoconfigure.it.SpringWebBeanResolutionTest.TestApplica
 						"ogham.sms.smpp.port=${jsmpp.server.port}"})
 @ContextConfiguration(initializers = {GreenMailInitializer.class, JsmppServerInitializer.class})
 public class SpringWebBeanResolutionTest {
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule @Autowired public GreenMailRule greenMail;
-	@Rule @Autowired public SmppServerRule<SubmitSm> smppServer;
+	@RegisterExtension @Autowired public GreenMailExtension greenMail;
+	@RegisterExtension @Autowired public SmppServerExtension<SubmitSm> smppServer;
 
 
 	@Value("${local.server.port}")

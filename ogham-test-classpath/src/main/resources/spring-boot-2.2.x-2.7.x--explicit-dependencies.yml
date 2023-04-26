@@ -1,0 +1,49 @@
+classpath-tests:
+  spring-matrices:
+    "[spring-boot-2.2.x-2.7.x--explicit-dependencies]":
+      java:
+        - 1.8
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+      build:
+        - maven
+      spring-boot-version:
+        - 2.2.13.RELEASE
+        - 2.3.12.RELEASE
+        - 2.4.13
+        - 2.5.14
+        - 2.6.14
+        - 2.7.11
+      spring-boot-dependencies:
+        -
+        - web
+        - thymeleaf
+        - freemarker
+        - mail
+        - web + thymeleaf
+        - web + freemarker
+      ogham-dependencies:
+        - spring-boot-autoconfigure + core
+        - spring-boot-autoconfigure + email-javamail
+        - spring-boot-autoconfigure + email-javamail + template-thymeleaf
+        - spring-boot-autoconfigure + email-javamail + template-freemarker
+        - spring-boot-autoconfigure + email-javamail + template-thymeleaf + template-freemarker
+        - spring-boot-autoconfigure + email-sendgrid
+        - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf
+        - spring-boot-autoconfigure + email-sendgrid + template-freemarker
+        - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf + template-freemarker
+        - spring-boot-autoconfigure + sms-cloudhopper
+        - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf
+        - spring-boot-autoconfigure + sms-cloudhopper + template-freemarker
+        - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf + template-freemarker
+        - spring-boot-autoconfigure + sms-ovh
+        - spring-boot-autoconfigure + all
+        - spring-boot-starter-email
+        - spring-boot-starter-sms
+        - spring-boot-starter-all
+      additional-dependencies:
+        - jakarta.mail:jakarta.mail-api:2.1.1
+        - jakarta.activation:jakarta.activation-api:2.1.1

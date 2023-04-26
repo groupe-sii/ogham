@@ -38,12 +38,12 @@ public @interface RequiredClasses {
 	 * to use the implementation. For example:
 	 * 
 	 * <pre>
-	 * &#064;RequiredClasses(&quot;javax.mail.Transport&quot;)
+	 * &#064;RequiredClasses(&quot;jakarta.mail.Transport&quot;)
 	 * public class JavaMailBuilder implements ImplementationBuilder&lt;JavaMailSender&gt; {
 	 * }
 	 * </pre>
 	 * 
-	 * Means that the class <code>javax.mail.Transport</code> must be present in
+	 * Means that the class <code>jakarta.mail.Transport</code> must be present in
 	 * the classpath for using the implementation <code>JavaMailSender</code>.
 	 * 
 	 * 
@@ -53,12 +53,12 @@ public @interface RequiredClasses {
 	 * being able to use the implementation. For Example:
 	 * 
 	 * <pre>
-	 * &#064;RequiredClasses({ &quot;javax.mail.Transport&quot;, &quot;com.sun.mail.smtp.SMTPTransport&quot; })
+	 * &#064;RequiredClasses({ &quot;jakarta.mail.Transport&quot;, &quot;com.sun.mail.smtp.SMTPTransport&quot; })
 	 * public class JavaMailBuilder implements ImplementationBuilder&lt;JavaMailSender&gt; {
 	 * }
 	 * </pre>
 	 * 
-	 * Means that the classes <code>javax.mail.Transport</code> and
+	 * Means that the classes <code>jakarta.mail.Transport</code> and
 	 * <code>com.sun.mail.smtp.SMTPTransport</code> must be present in the
 	 * classpath for using the implementation <code>JavaMailSender</code>.
 	 * 
@@ -77,24 +77,24 @@ public @interface RequiredClasses {
 	 * For example:
 	 * 
 	 * <pre>
-	 * &#064;RequiredClasses(classes = { &#064;RequiredClass(value = &quot;javax.mail.Transport&quot;, exclude = &quot;org.apache.commons.mail.HtmlEmail&quot;) })
+	 * &#064;RequiredClasses(classes = { &#064;RequiredClass(value = &quot;jakarta.mail.Transport&quot;, exclude = &quot;org.apache.commons.mail.HtmlEmail&quot;) })
 	 * public class JavaMailBuilder implements ImplementationBuilder&lt;JavaMailSender&gt; {
 	 * }
 	 * </pre>
 	 * 
 	 * Means that <code>JavaMailSender</code> implementation can be used if
-	 * <code>javax.mail.Transport</code> class is present but can't be used if
+	 * <code>jakarta.mail.Transport</code> class is present but can't be used if
 	 * <code>org.apache.commons.mail.HtmlEmail</code> class is present.
 	 * 
 	 * <pre>
-	 * &#064;RequiredClasses(classes = &#064;RequiredClass(value = &quot;javax.mail.Transport&quot;, alternatives = &quot;java.mail.Transport&quot;))
+	 * &#064;RequiredClasses(classes = &#064;RequiredClass(value = &quot;jakarta.mail.Transport&quot;, alternatives = &quot;java.mail.Transport&quot;))
 	 * public class JavaMailBuilder implements ImplementationBuilder&lt;JavaMailSender&gt; {
 	 * }
 	 * </pre>
 	 * 
 	 * Means that <code>JavaMailSender</code> implementation can be used if
-	 * <code>javax.mail.Transport</code> class is present or
-	 * <code>javax.mail.Transportm</code> class is present.
+	 * <code>jakarta.mail.Transport</code> class is present or
+	 * <code>jakarta.mail.Transportm</code> class is present.
 	 * 
 	 * @return list of advanced class inclusions
 	 */

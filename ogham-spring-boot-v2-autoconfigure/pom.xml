@@ -16,7 +16,12 @@
 	<properties>
 		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
 		<sendgrid-java.version>${sendgrid-java-v4.version}</sendgrid-java.version>
-		<thymeleaf.version>${thymeleaf-v3.version}</thymeleaf.version>
+		<thymeleaf.version>${thymeleaf-spring5.version}</thymeleaf.version>
+		<sun-mail.version>1.6.7</sun-mail.version>
+		<sun-activation.version>1.2.1</sun-activation.version>
+		<logback.version>1.2.12</logback.version>
+		<slf4j.version>1.7.36</slf4j.version>
+
 		<maven.site.skip>true</maven.site.skip>
 	</properties>
 
@@ -47,6 +52,16 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
@@ -62,28 +77,23 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Compatibility -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Tests -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham.internal</groupId>
 			<artifactId>ogham-test-utils-internal</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

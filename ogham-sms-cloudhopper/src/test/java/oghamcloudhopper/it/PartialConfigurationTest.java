@@ -1,24 +1,5 @@
 package oghamcloudhopper.it;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
-import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
-import static java.lang.Math.ceil;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThrows;
-
-import java.io.IOException;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
@@ -27,21 +8,37 @@ import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.MessagePreparationException;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
+import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
+import static java.lang.Math.ceil;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@LogTestInformation
 public class PartialConfigurationTest {
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
 	private static final String INTERNATIONAL_PHONE_NUMBER = "+33203040506";
 
 	CloudhopperBuilder builder;
 
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		// @formatter:off
 		builder = new CloudhopperBuilder();
@@ -88,9 +85,9 @@ public class PartialConfigurationTest {
 	public void splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured() throws MessagingException, IOException {
 		builder.splitter().enable(true);
 
-		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+		BuildException e = assertThrows(BuildException.class, () -> {
 			builder.build();
-		});
+		}, "should throw");
 		assertThat("should indicate cause", e.getMessage(), is("Split of SMS is enabled but no splitter is configured"));
 	}
 
@@ -103,14 +100,14 @@ public class PartialConfigurationTest {
 		CloudhopperSMPPSender sender = builder.build();
 		// @formatter:on
 
-		MessagePreparationException e = assertThrows("should throw", MessagePreparationException.class, () -> {
+		MessagePreparationException e = assertThrows(MessagePreparationException.class, () -> {
 			// @formatter:off
 			sender.send(new Sms()
 					.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split")
 					.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
 					.to(NATIONAL_PHONE_NUMBER));
 			// @formatter:on
-		});
+		}, "should throw");
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoSplitterAbleToSplitMessageException.class));
 		assertThat("should indicate cause", e.getCause(), hasMessage("Failed to split message because no splitter is able to split the message"));
 	}
@@ -178,14 +175,14 @@ public class PartialConfigurationTest {
 		CloudhopperSMPPSender sender = builder.build();
 		// @formatter:on
 
-		MessagePreparationException e = assertThrows("should throw", MessagePreparationException.class, () -> {
+		MessagePreparationException e = assertThrows(MessagePreparationException.class, () -> {
 			// @formatter:off
 			sender.send(new Sms()
 					.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split but there is an unsupported character like ê")
 					.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
 					.to(NATIONAL_PHONE_NUMBER));
 			// @formatter:on
-		});
+		}, "should throw");
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoSplitterAbleToSplitMessageException.class));
 		assertThat("should indicate cause", e.getCause(), hasMessage("Failed to split message because no splitter is able to split the message"));
 	}

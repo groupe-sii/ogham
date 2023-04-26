@@ -58,6 +58,10 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 			LOG.debug("Class {} not found", className);
 			LOG.trace("Cause:", e);
 			return false;
+		} catch (NoClassDefFoundError e) {
+			LOG.debug("Class {} can't be loaded", className);
+			LOG.trace("Cause:", e);
+			return isForSameClass(className, e);
 		}
 	}
 
@@ -69,7 +73,15 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 			LOG.debug("Class {} not found", className);
 			LOG.trace("Cause:", e);
 			return false;
+		} catch (NoClassDefFoundError e) {
+			LOG.debug("Class {} can't be loaded", className);
+			LOG.trace("Cause:", e);
+			return !isForSameClass(className, e);
 		}
+	}
+
+	private static boolean isForSameClass(String className, NoClassDefFoundError e) {
+		return className.equals(e.getMessage().replace("/", "."));
 	}
 
 	public void setClassLoader(ClassLoader classLoader) {

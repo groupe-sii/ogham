@@ -1,24 +1,5 @@
 package oghamcloudhopper.it;
 
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -31,17 +12,28 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.MessagePreparationException;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.SmppException;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@LogTestInformation
+@MockitoSettings
 public class AutoRetryExtensionTest {
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	
+
 	@Mock MessageSender smsSender;
 	
 	MessagingService service;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		// @formatter:off
 		MessagingBuilder builder = MessagingBuilder.standard();
@@ -60,9 +52,9 @@ public class AutoRetryExtensionTest {
 	@Test
 	public void smsNotRetriedDueToCloudhopperError() throws MessagingException {
 		doThrow(new MessageException("", new Sms(), new SmppException("foo", new MessagePreparationException("bar", new Sms())))).when(smsSender).send(any());
-		MessageNotSentException e = assertThrows("should indicate that message can't be sent", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			service.send(new Sms());
-		});
+		}, "should indicate that message can't be sent");
 		verify(smsSender, times(1)).send(any());
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasSize(1))));
@@ -72,9 +64,9 @@ public class AutoRetryExtensionTest {
 	@Test
 	public void extensionShouldBeCombinedWithDefaultOne() throws MessagingException {
 		doThrow(new MessageException("foo", new Sms(), new ContentTranslatorException("bar", new TemplateParsingFailedException("parse")))).when(smsSender).send(any());
-		MessageNotSentException e = assertThrows("should indicate that message can't be sent", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			service.send(new Sms());
-		});
+		}, "should indicate that message can't be sent");
 		verify(smsSender, times(1)).send(any());
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasSize(1))));

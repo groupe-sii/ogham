@@ -1,36 +1,30 @@
 package oghamcore.ut.email.subject.provider;
 
-import static org.mockito.quality.Strictness.LENIENT;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.subject.provider.MultiContentSubjectProvider;
 import fr.sii.ogham.core.subject.provider.SubjectProvider;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import static org.mockito.quality.Strictness.LENIENT;
+
+@LogTestInformation
+@MockitoSettings(strictness = LENIENT)
 public class MultiContentSubjectProviderTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final MockitoRule mockito = MockitoJUnit.rule().strictness(LENIENT);
-	
+
 	private MultiContentSubjectProvider provider;
 	
 	@Mock
 	private SubjectProvider delegate;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		provider = new MultiContentSubjectProvider(delegate);
 		Mockito.when(delegate.provide(new Email().content("single content"))).thenReturn("single subject");
@@ -43,30 +37,30 @@ public class MultiContentSubjectProviderTest {
 	@Test
 	public void single() {
 		String subject = provider.provide(new Email().content("single content"));
-		Assert.assertNull("Subject should be null", subject);
+		Assertions.assertNull( subject, "Subject should be null");
 	}
 	
 	@Test
 	public void htmlAndTxt() {
 		String subject = provider.provide(new Email().content(new MultiContent(new StringContent("html"), new StringContent("txt"))));
-		Assert.assertEquals("Subject should be provided by html", "html subject", subject);
+		Assertions.assertEquals("html subject", subject, "Subject should be provided by html");
 	}
 	
 	@Test
 	public void noneAndTxt() {
 		String subject = provider.provide(new Email().content(new MultiContent(new StringContent("none"), new StringContent("txt"))));
-		Assert.assertEquals("Subject should be provided by txt", "txt subject", subject);
+		Assertions.assertEquals("txt subject", subject, "Subject should be provided by txt");
 	}
 	
 	@Test
 	public void noneAndNone() {
 		String subject = provider.provide(new Email().content(new MultiContent(new StringContent("none"), new StringContent("none"))));
-		Assert.assertNull("No subject should be provided", subject);
+		Assertions.assertNull(subject, "No subject should be provided");
 	}
 	
 	@Test
 	public void noneAndEmpty() {
 		String subject = provider.provide(new Email().content(new MultiContent(new StringContent("none"), new StringContent("empty"))));
-		Assert.assertEquals("Subject should be provided by empty", "", subject);
+		Assertions.assertEquals("", subject, "Subject should be provided by empty");
 	}
 }

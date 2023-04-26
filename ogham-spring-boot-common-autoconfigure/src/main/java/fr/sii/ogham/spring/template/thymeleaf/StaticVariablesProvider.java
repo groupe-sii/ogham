@@ -2,15 +2,13 @@ package fr.sii.ogham.spring.template.thymeleaf;
 
 import java.util.Map;
 
-import org.thymeleaf.spring5.view.AbstractThymeleafView;
-
 import fr.sii.ogham.core.template.context.Context;
 
 /**
- * Spring {@link AbstractThymeleafView} allows to provide static variables.
+ * Spring org.thymeleaf.spring5.view.AbstractThymeleafView allows to provide static variables.
  * 
- * The aim of this interface is to mimic {@link AbstractThymeleafView} behavior
- * and to let the possibility to register static variables like in web context.
+ * The aim of this interface is to mimic org.thymeleaf.spring5.view.AbstractThymeleafView behavior
+ * and to let the possibility register static variables like in web context.
  * 
  * @author Aurélien Baudet
  *

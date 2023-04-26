@@ -1,17 +1,17 @@
 package oghamtesting.it.sms.simulator
 
-import org.jsmpp.bean.Alphabet
-import org.jsmpp.bean.BindType
-import org.jsmpp.bean.ESMClass
-import org.jsmpp.bean.GeneralDataCoding
-import org.jsmpp.bean.MessageClass
-import org.jsmpp.bean.NumberingPlanIndicator
-import org.jsmpp.bean.RegisteredDelivery
-import org.jsmpp.bean.SMSCDeliveryReceipt
-import org.jsmpp.bean.TypeOfNumber
-import org.jsmpp.session.BindParameter
-import org.jsmpp.session.SMPPSession
-import org.jsmpp.util.AbsoluteTimeFormatter
+import ogham.testing.org.jsmpp.bean.Alphabet
+import ogham.testing.org.jsmpp.bean.BindType
+import ogham.testing.org.jsmpp.bean.ESMClass
+import ogham.testing.org.jsmpp.bean.GeneralDataCoding
+import ogham.testing.org.jsmpp.bean.MessageClass
+import ogham.testing.org.jsmpp.bean.NumberingPlanIndicator
+import ogham.testing.org.jsmpp.bean.RegisteredDelivery
+import ogham.testing.org.jsmpp.bean.SMSCDeliveryReceipt
+import ogham.testing.org.jsmpp.bean.TypeOfNumber
+import ogham.testing.org.jsmpp.session.BindParameter
+import ogham.testing.org.jsmpp.session.SMPPSession
+import ogham.testing.org.jsmpp.util.AbsoluteTimeFormatter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

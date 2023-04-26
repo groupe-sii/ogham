@@ -1,9 +1,10 @@
 package fr.sii.ogham.testing.assertion.filter;
 
-import javax.mail.MessagingException;
-import javax.mail.Part;
+import ogham.testing.jakarta.mail.MessagingException;
+import ogham.testing.jakarta.mail.Part;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
+
 
 /**
  * Predicate that matches the {@link Part} only if {@link Part#getFileName()}
@@ -21,7 +22,7 @@ public class FileNamePredicate implements Predicate<Part> {
 	}
 
 	@Override
-	public boolean apply(Part input) {
+	public boolean test(Part input) {
 		try {
 			return filename.equals(input.getFileName());
 		} catch (MessagingException e) {

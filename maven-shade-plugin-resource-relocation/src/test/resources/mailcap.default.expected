@@ -1,0 +1,9 @@
+#
+# This is a very simple 'mailcap' file as an example.
+# Example JavaBean viewers and editors are no longer
+# provided as they conflicted with applications.
+#
+#image/gif;;		x-java-view=package-prefix-for-sun.com.sun.activation.viewers.ImageViewer
+#image/jpeg;;		x-java-view=package-prefix-for-sun.com.sun.activation.viewers.ImageViewer
+#text/*;;		x-java-view=package-prefix-for-sun.com.sun.activation.viewers.TextViewer
+#text/*;;		x-java-edit=package-prefix-for-sun.com.sun.activation.viewers.TextEditor

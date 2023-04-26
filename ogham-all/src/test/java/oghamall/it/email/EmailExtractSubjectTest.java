@@ -1,37 +1,31 @@
 package oghamall.it.email;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.matchesRegex;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static org.hamcrest.Matchers.*;
+
+@LogTestInformation
 public class EmailExtractSubjectTest {
-	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();;
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();;
 
 	private MessagingBuilder builder;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		builder = MessagingBuilder.standard();
 		builder.environment()
@@ -41,7 +35,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void noSubjectInContentsWithoutDefaultSubjectShouldSendWithoutSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void noSubjectInContentsWithoutDefaultSubjectShouldSendWithoutSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -65,7 +59,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void noSubjectInContentsWithDefaultSubjectShouldSendWithDefaultSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void noSubjectInContentsWithDefaultSubjectShouldSendWithDefaultSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
@@ -90,7 +84,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void noSubjectInContentsWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void noSubjectInContentsWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
@@ -116,7 +110,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void subjectExtractedFromHtmlWithoutDefaultSubjectShouldSendWithHtmlTitle() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectExtractedFromHtmlWithoutDefaultSubjectShouldSendWithHtmlTitle() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -140,7 +134,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void subjectExtractedFromHtmlWithDefaultSubjectShouldSendWithHtmlTitle() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectExtractedFromHtmlWithDefaultSubjectShouldSendWithHtmlTitle() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
@@ -165,7 +159,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void subjectExtractedFromHtmlWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectExtractedFromHtmlWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
@@ -191,7 +185,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void subjectExtractedFromTextWithoutDefaultSubjectShouldSendWithSubjectExtractedFromText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectExtractedFromTextWithoutDefaultSubjectShouldSendWithSubjectExtractedFromText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -215,7 +209,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void subjectExtractedFromTextWithDefaultSubjectShouldSendWithSubjectExtractedFromText() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectExtractedFromTextWithDefaultSubjectShouldSendWithSubjectExtractedFromText() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
@@ -240,7 +234,7 @@ public class EmailExtractSubjectTest {
 	}
 	
 	@Test
-	public void subjectExtractedFromTextWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectExtractedFromTextWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off

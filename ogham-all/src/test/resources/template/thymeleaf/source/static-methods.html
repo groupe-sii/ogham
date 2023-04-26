@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
     </head>
     <body>
-    	<h1 class="title" th:utext="${@mock.UtilityClass@hello(name)}"></h1>
-        <p th:utext="${@mock.UtilityClass$NestedClass@hello(name)}"></p>
+    	<h1 class="title" th:with="title=${@mock.UtilityClass@hello(name)}" th:utext="${title}"></h1>
+        <p th:with="text=${@mock.UtilityClass$NestedClass@hello(name)}" th:utext="${text}"></p>
     </body>
 </html>

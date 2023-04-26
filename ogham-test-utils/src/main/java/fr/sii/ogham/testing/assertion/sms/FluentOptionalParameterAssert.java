@@ -2,7 +2,7 @@ package fr.sii.ogham.testing.assertion.sms;
 
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
-import static org.apache.commons.lang3.ArrayUtils.toObject;
+import static ogham.testing.org.apache.commons.lang3.ArrayUtils.toObject;
 
 import java.util.List;
 

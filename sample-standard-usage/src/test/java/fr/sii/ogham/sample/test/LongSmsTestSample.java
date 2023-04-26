@@ -5,25 +5,27 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 
-import org.jsmpp.bean.SubmitSm;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class LongSmsTestSample {
 	private MessagingService oghamService;
 	
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		oghamService = MessagingBuilder.standard()
 				.environment()

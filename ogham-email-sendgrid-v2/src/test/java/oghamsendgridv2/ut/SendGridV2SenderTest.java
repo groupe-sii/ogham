@@ -15,9 +15,10 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 @LogTestInformation
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings
 class SendGridV2SenderTest {
 	@Mock SendGridClient service;
 	@Mock SendGridContentHandler handler;

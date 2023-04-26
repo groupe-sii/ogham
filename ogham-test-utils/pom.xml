@@ -14,23 +14,30 @@
 	</description>
 
 	<properties>
+		<!-- Force Spring Boot 2 because Spring Boot 3 is not compatible with Java 8 -->
+		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
+
 		<sonar.tests>src/test/groovy,src/test/java</sonar.tests>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils-dependencies</artifactId>
+			<!-- This is needed for IntelliJ to avoid using dependencies declared in source pom -->
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-		</dependency>
-		<!-- junit-platform-launcher is needed due to junit-platform-testkit test 
+		<!-- junit-platform-launcher is needed due to junit-platform-testkit test
 			scope -->
 		<dependency>
 			<groupId>org.junit.platform</groupId>
@@ -49,44 +56,12 @@
 			<artifactId>hamcrest</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.icegreen</groupId>
-			<artifactId>greenmail-junit4</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.icegreen</groupId>
-			<artifactId>greenmail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.icegreen</groupId>
-			<artifactId>greenmail-junit5</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>jakarta.mail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>nl.jqno.equalsverifier</groupId>
-			<artifactId>equalsverifier</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jsmpp</groupId>
-			<artifactId>jsmpp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fizzed</groupId>
-			<artifactId>ch-smpp</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<artifactId>wiremock-jre8-standalone</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xmlunit</groupId>
 			<artifactId>xmlunit-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>uk.com.robust-it</groupId>
-			<artifactId>cloning</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>
@@ -105,56 +80,20 @@
 		<!-- Dependency convergence -->
 		<!-- This is needed to enforce right versions in projects that use ogham -->
 		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.conscrypt</groupId>
-			<artifactId>conscrypt-openjdk-uber</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opentest4j</groupId>
-			<artifactId>opentest4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.activation</groupId>
-			<artifactId>jakarta.activation</artifactId>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
 		</dependency>
 
 		<!-- dependencies for testing -->

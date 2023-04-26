@@ -1,7 +1,7 @@
 package mock.context;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import ogham.testing.org.apache.commons.lang3.builder.EqualsBuilder;
+import ogham.testing.org.apache.commons.lang3.builder.HashCodeBuilder;
 
 
 

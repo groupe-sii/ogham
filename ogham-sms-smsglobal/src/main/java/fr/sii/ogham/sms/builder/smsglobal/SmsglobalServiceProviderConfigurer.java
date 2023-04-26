@@ -7,6 +7,9 @@ import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_UCS2_ENCODING_PRIORI
 import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
 import static java.util.Arrays.asList;
 
+import fr.sii.ogham.core.exception.configurer.AutomaticServiceProviderConfigurationSkippedException;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+import fr.sii.ogham.core.exception.configurer.MissingImplementationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,12 +89,10 @@ public final class SmsglobalServiceProviderConfigurer {
 	public static class SmsglobalConfigurer implements MessagingConfigurer {
 
 		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (!canUseCloudhopper() || !usingSmsGlobal(msgBuilder.environment().build())) {
-				LOG.debug("[{}] skip service provider configuration", this);
-				return;
-			}
-			LOG.debug("[{}] apply service provider configuration", this);
+		public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+			checkCanUseCloudhopper();
+			checkCanApplySmsGlobalConfiguration(msgBuilder.environment().build());
+
 			CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);
 			// @formatter:off
 			builder
@@ -117,20 +118,29 @@ public final class SmsglobalServiceProviderConfigurer {
 			// @formatter:on
 		}
 
-		private static boolean usingSmsGlobal(PropertyResolver propertyResolver) {
+		private static void checkCanApplySmsGlobalConfiguration(PropertyResolver propertyResolver) throws ConfigureException {
 			Boolean skip = evaluate(asList("${ogham.sms.smsglobal.service-provider.auto-conf.skip}"), propertyResolver, Boolean.class);
-			if (skip != null && !skip) {
-				return false;
-			}
-			String host = evaluate(asList("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}"), propertyResolver, String.class);
-			if (SMSGLOBAL_HOST.equals(host)) {
-				return true;
+			if (skip != null && skip) {
+				throw new AutomaticServiceProviderConfigurationSkippedException("SmsGlobal service auto-configuration manually skipped");
 			}
 			Boolean force = evaluate("${ogham.sms.smsglobal.service-provider.auto-conf.force}", propertyResolver, Boolean.class);
-			return force != null && force;
+			if (force != null && force) {
+				return;
+			}
+			String host = evaluate(asList("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}"), propertyResolver, String.class);
+			if (!SMSGLOBAL_HOST.equals(host)) {
+				throw new AutomaticServiceProviderConfigurationSkippedException("SmsGlobal service auto-configuration skipped because configured SMPP host doesn't target Sms Global");
+			}
 		}
 
-		private static boolean canUseCloudhopper() {
+
+		private static void checkCanUseCloudhopper() throws ConfigureException {
+			if (!isCloudhopperPresent()) {
+				throw new MissingImplementationException("Can't send SMS through SmsGlobal because Cloudhopper implementation is not present in the classpath", "com.cloudhopper.smpp.SmppClient");
+			}
+		}
+
+		private static boolean isCloudhopperPresent() {
 			return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
 		}
 	}

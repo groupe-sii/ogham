@@ -1,21 +1,20 @@
 package fr.sii.ogham.runtime.checker;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static org.hamcrest.Matchers.is;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
 
 import java.io.IOException;
 
-import org.jsmpp.bean.SubmitSm;
-
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
-import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
-import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.is;
 
 
 public class CloudhopperChecker {
-	private final SmppServerRule<SubmitSm> smppServer;
+	private final SmppServerExtension<SubmitSm> smppServer;
 	
-	public CloudhopperChecker(SmppServerRule<SubmitSm> smppServer) {
+	public CloudhopperChecker(SmppServerExtension<SubmitSm> smppServer) {
 		super();
 		this.smppServer = smppServer;
 	}

@@ -1,14 +1,11 @@
 package fr.sii.ogham.spring.sms;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-
+import com.cloudhopper.smpp.SmppBindType;
+import com.cloudhopper.smpp.pdu.EnquireLink;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import com.cloudhopper.smpp.SmppBindType;
-import com.cloudhopper.smpp.pdu.EnquireLink;
+import java.util.List;
 
 @ConfigurationProperties("ogham.sms.cloudhopper")
 public class OghamCloudhopperProperties {
@@ -236,7 +233,6 @@ public class OghamCloudhopperProperties {
 		 * 
 		 * Default: <i>1</i>
 		 */
-		@Min(0)
 		private Integer windowSize;
 		/**
 		 * Set the amount of time (milliseconds) to wait until a slot opens up

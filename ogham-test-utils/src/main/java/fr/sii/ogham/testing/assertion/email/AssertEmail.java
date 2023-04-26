@@ -1,28 +1,24 @@
 package fr.sii.ogham.testing.assertion.email;
 
-import static fr.sii.ogham.testing.assertion.util.EmailUtils.getBodyParts;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyList;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-
-import org.junit.Assert;
-import org.junit.ComparisonFailure;
-
+import fr.sii.ogham.testing.assertion.exception.MessageReadingException;
 import fr.sii.ogham.testing.assertion.html.AssertHtml;
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.assertion.util.EmailUtils;
 import fr.sii.ogham.testing.assertion.util.Executable;
 import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+import ogham.testing.jakarta.mail.*;
+import ogham.testing.jakarta.mail.Message.RecipientType;
+import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getBodyParts;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
 
 /**
  * Utility class for checking if the received email content is as expected.
@@ -57,12 +53,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmail
 	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the content of the email fails
 	 */
-	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
 		assertEquals(expectedEmail, actualEmail, true, assertions);
 		assertions.execute();
@@ -94,12 +88,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmails
 	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the content of the email fails
 	 */
-	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessageReadingException {
 		assertEquals(new ExpectedMultiPartEmail[] { expectedEmail }, actualEmails);
 	}
 
@@ -113,14 +105,12 @@ public final class AssertEmail {
 	 *            the list of expected emails
 	 * @param actualEmails
 	 *            the received emails
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the content of the email fails
 	 */
-	public static void assertEquals(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertEquals(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length));
+		assertions.register(() -> Assertions.assertEquals(expectedEmails.length, actualEmails.length, "should have received " + expectedEmails.length + " email"));
 		for (int i = 0; i < expectedEmails.length; i++) {
 			assertEquals(expectedEmails[i], i < actualEmails.length ? actualEmails[i] : null, true, assertions);
 		}
@@ -151,12 +141,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmails
 	 *            the received emails
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the email content fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the email content fails
 	 */
-	public static void assertEquals(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertEquals(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessageReadingException {
 		assertEquals(new ExpectedEmail[] { expectedEmail }, actualEmails);
 	}
 
@@ -170,14 +158,12 @@ public final class AssertEmail {
 	 *            the expected email
 	 * @param actualEmails
 	 *            the received emails
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the email content fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the email content fails
 	 */
-	public static void assertEquals(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertEquals(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length));
+		assertions.register(() -> Assertions.assertEquals(expectedEmail.length, actualEmails.length, "should have received " + expectedEmail.length + " email"));
 		for (int i = 0; i < expectedEmail.length; i++) {
 			assertEquals(expectedEmail[i], i < actualEmails.length ? actualEmails[i] : null, true, assertions);
 		}
@@ -203,12 +189,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmail
 	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the email content fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the email content fails
 	 */
-	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
 		assertEquals(expectedEmail, actualEmail, true, assertions);
 		assertions.execute();
@@ -236,12 +220,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmail
 	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the content of the email fails
 	 */
-	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
 		assertEquals(expectedEmail, actualEmail, false, assertions);
 		assertions.execute();
@@ -273,12 +255,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmails
 	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the content of the email fails
 	 */
-	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessageReadingException {
 		assertSimilar(new ExpectedMultiPartEmail[] { expectedEmail }, actualEmails);
 	}
 
@@ -292,14 +272,12 @@ public final class AssertEmail {
 	 *            the list of expected emails
 	 * @param actualEmails
 	 *            the received emails
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the content of the email fails
 	 */
-	public static void assertSimilar(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertSimilar(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length));
+		assertions.register(() -> Assertions.assertEquals(expectedEmails.length, actualEmails.length, "should have received " + expectedEmails.length + " email"));
 		for (int i = 0; i < expectedEmails.length; i++) {
 			assertEquals(expectedEmails[i], i < actualEmails.length ? actualEmails[i] : null, false, assertions);
 		}
@@ -330,12 +308,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmails
 	 *            the received emails
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the email content fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the email content fails
 	 */
-	public static void assertSimilar(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertSimilar(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessageReadingException {
 		assertSimilar(new ExpectedEmail[] { expectedEmail }, actualEmails);
 	}
 
@@ -349,14 +325,12 @@ public final class AssertEmail {
 	 *            the expected email
 	 * @param actualEmails
 	 *            the received emails
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the email content fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the email content fails
 	 */
-	public static void assertSimilar(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+	public static void assertSimilar(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length));
+		assertions.register(() -> Assertions.assertEquals(expectedEmail.length, actualEmails.length, "should have received " + expectedEmail.length + " email"));
 		for (int i = 0; i < expectedEmail.length; i++) {
 			assertEquals(expectedEmail[i], i < actualEmails.length ? actualEmails[i] : null, false, assertions);
 		}
@@ -382,12 +356,10 @@ public final class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmail
 	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the email content fails
+	 * @throws MessageReadingException
+	 *             when accessing the received email fails or when reading the email content fails
 	 */
-	public static void assertSimilar(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+	public static void assertSimilar(ExpectedEmail expectedEmail, Message actualEmail) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
 		assertEquals(expectedEmail, actualEmail, false, assertions);
 		assertions.execute();
@@ -444,10 +416,10 @@ public final class AssertEmail {
 	 *            the expected header values
 	 * @param actualEmail
 	 *            the received header values
-	 * @throws MessagingException
+	 * @throws MessageReadingException
 	 *             when accessing the received email fails
 	 */
-	public static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail) throws MessagingException {
+	public static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
 		assertHeaders(expectedEmail, actualEmail, assertions);
 		assertions.execute();
@@ -469,38 +441,42 @@ public final class AssertEmail {
 	 *            the received header values
 	 * @param recipientType
 	 *            the type of the recipient to compare
-	 * @throws MessagingException
+	 * @throws MessageReadingException
 	 *             when accessing the received email fails
 	 */
-	public static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType) throws MessagingException {
+	public static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType) throws MessageReadingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
 		assertRecipients(expectedRecipients, actualEmail, recipientType, assertions);
 		assertions.execute();
 	}
 
-	private static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict, AssertionRegistry assertions) throws MessagingException, IOException {
+	private static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict, AssertionRegistry assertions) throws MessageReadingException {
 		assertHeaders(expectedEmail, actualEmail, assertions);
-		assertions.register(() -> Assert.assertNotNull("Expected at least one body part but none found", getBodyOrNull(actualEmail, assertions)));
+		assertions.register(() -> Assertions.assertNotNull(getBodyOrNull(actualEmail, assertions), "Expected at least one body part but none found"));
 		assertBody("body", expectedEmail.getExpectedContent().getBody(), getBodyContentOrNull(actualEmail, assertions), strict, assertions);
 		assertMimetype(expectedEmail.getExpectedContent(), getBodyMimetypeOrNull(actualEmail, assertions), assertions);
 	}
 
-	private static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail, boolean strict, AssertionRegistry assertions) throws MessagingException, IOException {
-		assertHeaders(expectedEmail, actualEmail, assertions);
-		Object content = actualEmail == null ? null : actualEmail.getContent();
-		assertions.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
-		List<Part> bodyParts = actualEmail == null ? emptyList() : getBodyParts(actualEmail);
-		assertions.register(() -> Assert.assertEquals("should have " + expectedEmail.getExpectedContents().size() + " parts", expectedEmail.getExpectedContents().size(), bodyParts.size()));
-		for (int i = 0; i < expectedEmail.getExpectedContents().size(); i++) {
-			Part part = i < bodyParts.size() ? bodyParts.get(i) : null;
-			assertBody("body[" + i + "]", expectedEmail.getExpectedContents().get(i).getBody(), part == null || part.getContent() == null ? null : part.getContent().toString(), strict, assertions);
-			assertMimetype(expectedEmail.getExpectedContents().get(i), part == null ? null : part.getContentType(), assertions);
+	private static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail, boolean strict, AssertionRegistry assertions) throws MessageReadingException {
+		try {
+			assertHeaders(expectedEmail, actualEmail, assertions);
+			Object content = actualEmail == null ? null : actualEmail.getContent();
+			assertions.register(() -> Assertions.assertTrue(content instanceof Multipart, "should be multipart message"));
+			List<Part> bodyParts = actualEmail == null ? emptyList() : getBodyParts(actualEmail);
+			assertions.register(() -> Assertions.assertEquals(expectedEmail.getExpectedContents().size(), bodyParts.size(), "should have " + expectedEmail.getExpectedContents().size() + " parts"));
+			for (int i = 0; i < expectedEmail.getExpectedContents().size(); i++) {
+				Part part = i < bodyParts.size() ? bodyParts.get(i) : null;
+				assertBody("body[" + i + "]", expectedEmail.getExpectedContents().get(i).getBody(), part == null || part.getContent() == null ? null : part.getContent().toString(), strict, assertions);
+				assertMimetype(expectedEmail.getExpectedContents().get(i), part == null ? null : part.getContentType(), assertions);
+			}
+		} catch (MessagingException | IOException e) {
+			throw new MessageReadingException("Failed to read message", e);
 		}
 	}
 
 	private static void assertMimetype(ExpectedContent expectedContent, String contentType, AssertionRegistry assertions) {
-		assertions.register(() -> Assert.assertTrue("mimetype should match " + expectedContent.getMimetype() + " instead of " + contentType,
-				contentType != null && expectedContent.getMimetype().matcher(contentType).matches()));
+		assertions.register(() -> Assertions.assertTrue(contentType != null && expectedContent.getMimetype().matcher(contentType).matches(),
+				"mimetype should match " + expectedContent.getMimetype() + " instead of " + contentType));
 	}
 
 	private static void assertBody(String name, String expectedBody, String actualBody, boolean strict, AssertionRegistry assertions) {
@@ -515,43 +491,52 @@ public final class AssertEmail {
 		}
 	}
 
-	private static void compareText(String name, String expectedBody, String actualBody, boolean strict) throws ComparisonFailure {
+	private static void compareText(String name, String expectedBody, String actualBody, boolean strict) throws AssertionFailedError {
 		if (expectedBody == null && actualBody != null) {
-			throw new ComparisonFailure(name + " should be null", expectedBody, actualBody);
+			Assertions.assertNull(actualBody, name + " should be null");
 		}
 		if (expectedBody == null) {
 			return;
 		}
 		if (strict ? !expectedBody.equals(actualBody) : !sanitize(expectedBody).equals(sanitize(actualBody))) {
-			throw new ComparisonFailure(name + " should be '" + expectedBody + "'", expectedBody, actualBody);
+			Assertions.assertEquals(expectedBody, actualBody, name + " should be '" + expectedBody + "'");
 		}
 	}
 
-	private static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail, AssertionRegistry assertions) throws MessagingException {
-		Address[] from = actualEmail == null || actualEmail.getFrom() == null ? null : actualEmail.getFrom();
-		assertions.register(() -> Assert.assertEquals("subject should be '" + expectedEmail.getSubject() + "'", expectedEmail.getSubject(), actualEmail == null ? null : actualEmail.getSubject()));
-		assertions.register(() -> Assert.assertEquals("should have only one from", (Integer) 1, from == null ? null : from.length));
-		assertions.register(() -> Assert.assertEquals("from should be '" + expectedEmail.getFrom() + "'", expectedEmail.getFrom(), from == null ? null : from[0].toString()));
-		int recipients = expectedEmail.getTo().size() + expectedEmail.getBcc().size() + expectedEmail.getCc().size();
-		assertions.register(() -> Assert.assertEquals("should be received by " + recipients + " recipients", (Integer) recipients,
-				actualEmail == null || actualEmail.getAllRecipients() == null ? null : actualEmail.getAllRecipients().length));
-		assertRecipients(expectedEmail.getTo(), actualEmail, RecipientType.TO, assertions);
-		assertRecipients(expectedEmail.getCc(), actualEmail, RecipientType.CC, assertions);
-		assertRecipients(expectedEmail.getBcc(), actualEmail, RecipientType.BCC, assertions);
+	private static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail, AssertionRegistry assertions) throws MessageReadingException {
+		try {
+			Address[] from = actualEmail == null || actualEmail.getFrom() == null ? null : actualEmail.getFrom();
+			assertions.register(() -> Assertions.assertEquals(expectedEmail.getSubject(), actualEmail == null ? null : actualEmail.getSubject(), "subject should be '" + expectedEmail.getSubject() + "'"));
+			assertions.register(() -> Assertions.assertEquals((Integer) 1, from == null ? null : from.length, "should have only one from"));
+			assertions.register(() -> Assertions.assertEquals(expectedEmail.getFrom(), from == null ? null : from[0].toString(), "from should be '" + expectedEmail.getFrom() + "'"));
+			int recipients = expectedEmail.getTo().size() + expectedEmail.getBcc().size() + expectedEmail.getCc().size();
+			assertions.register(() -> Assertions.assertEquals((Integer) recipients,
+					actualEmail == null || actualEmail.getAllRecipients() == null ? null : actualEmail.getAllRecipients().length,
+					"should be received by " + recipients + " recipients"));
+			assertRecipients(expectedEmail.getTo(), actualEmail, RecipientType.TO, assertions);
+			assertRecipients(expectedEmail.getCc(), actualEmail, RecipientType.CC, assertions);
+			assertRecipients(expectedEmail.getBcc(), actualEmail, RecipientType.BCC, assertions);
+		} catch (MessagingException e) {
+			throw new MessageReadingException("Failed to read headers of the message", e);
+		}
 	}
 
-	private static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType, AssertionRegistry assertions) throws MessagingException {
-		Address[] actualRecipients = actualEmail == null ? null : actualEmail.getRecipients(recipientType);
-		if (expectedRecipients.isEmpty()) {
-			assertions.register(() -> Assert.assertTrue("should be received by no recipients (of type RecipientType." + recipientType + ")", actualRecipients == null || actualRecipients.length == 0));
-		} else {
-			assertions.register(() -> Assert.assertEquals("should be received by " + expectedRecipients.size() + " recipients (of type RecipientType." + recipientType + ")",
-					(Integer) expectedRecipients.size(), actualRecipients == null ? null : actualRecipients.length));
-			for (int i = 0; i < expectedRecipients.size(); i++) {
-				final int idx = i;
-				assertions.register(() -> Assert.assertEquals("recipient " + recipientType + "[" + idx + "] should be '" + expectedRecipients.get(idx) + "'", expectedRecipients.get(idx),
-						actualRecipients != null && idx < actualRecipients.length ? actualRecipients[idx].toString() : null));
+	private static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType, AssertionRegistry assertions) throws MessageReadingException {
+		try {
+			Address[] actualRecipients = actualEmail == null ? null : actualEmail.getRecipients(recipientType);
+			if (expectedRecipients.isEmpty()) {
+				assertions.register(() -> Assertions.assertTrue(actualRecipients == null || actualRecipients.length == 0, "should be received by no recipients (of type RecipientType." + recipientType + ")"));
+			} else {
+				assertions.register(() -> Assertions.assertEquals((Integer) expectedRecipients.size(), actualRecipients == null ? null : actualRecipients.length, "should be received by " + expectedRecipients.size() + " recipients (of type RecipientType." + recipientType + ")"));
+				for (int i = 0; i < expectedRecipients.size(); i++) {
+					final int idx = i;
+					assertions.register(() -> Assertions.assertEquals(expectedRecipients.get(idx),
+							actualRecipients != null && idx < actualRecipients.length ? actualRecipients[idx].toString() : null,
+							"recipient " + recipientType + "[" + idx + "] should be '" + expectedRecipients.get(idx) + "'"));
+				}
 			}
+		} catch (MessagingException e) {
+			throw new MessageReadingException("Failed to get "+recipientType+" recipients", e);
 		}
 	}
 
@@ -573,14 +558,14 @@ public final class AssertEmail {
 										// doesn't compile in that case or we
 										// are force to throw Exception instead
 										// of MessagingException
-	private static Part getBodyOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException {
+	private static Part getBodyOrNull(Part actualEmail, AssertionRegistry registry) throws MessageReadingException {
 		try {
 			if (actualEmail == null) {
 				return null;
 			}
 			return EmailUtils.getBodyPart(actualEmail);
 		} catch (MessagingException e) {
-			registry.register(failure(e));
+			registerAndWrap(registry, e, (ex) -> new MessageReadingException("Failed to get body part", ex));
 			return null;
 		} catch (IllegalStateException e) {
 			registry.register(failure(e));
@@ -592,36 +577,28 @@ public final class AssertEmail {
 										// doesn't compile in that case or we
 										// are force to throw Exception instead
 										// of MessagingException
-	private static String getBodyContentOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException, IOException {
+	private static String getBodyContentOrNull(Part actualEmail, AssertionRegistry registry) throws MessageReadingException {
 		try {
 			Part bodyPart = getBodyOrNull(actualEmail, registry);
 			if (bodyPart == null) {
 				return null;
 			}
 			return EmailUtils.getContent(bodyPart, UTF_8);
-		} catch (MessagingException e) {
-			registry.register(failure(e));
+		} catch (MessagingException | IOException e) {
+			registerAndWrap(registry, e, (ex) -> new MessageReadingException("Failed to get body content", ex));
 			return null;
 		} catch (IllegalStateException e) {
-			registry.register(failure(e));
-			return null;
-		} catch (IOException e) {
 			registry.register(failure(e));
 			return null;
 		}
 	}
 
-	private static <E extends Exception> Executable<E> failure(E exception) {
-		return () -> {
-			throw exception;
-		};
-	}
 
 	@SuppressWarnings("squid:S2147") // false positive: merging exception
 										// doesn't compile in that case or we
 										// are force to throw Exception instead
 										// of MessagingException
-	private static String getBodyMimetypeOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException {
+	private static String getBodyMimetypeOrNull(Part actualEmail, AssertionRegistry registry) throws MessageReadingException {
 		try {
 			Part bodyPart = getBodyOrNull(actualEmail, registry);
 			if (bodyPart == null) {
@@ -629,7 +606,7 @@ public final class AssertEmail {
 			}
 			return bodyPart.getContentType();
 		} catch (MessagingException e) {
-			registry.register(failure(e));
+			registerAndWrap(registry , e, (ex) -> new MessageReadingException("Failed to read content-type of the body", ex));
 			return null;
 		} catch (IllegalStateException e) {
 			registry.register(failure(e));
@@ -641,6 +618,19 @@ public final class AssertEmail {
 		return HTML_PATTERN.matcher(expectedBody).find();
 	}
 
+	private static <E extends Exception> Executable<E> failure(E exception) {
+		return () -> {
+			throw exception;
+		};
+	}
+
+	private static <E extends Exception> void registerAndWrap(AssertionRegistry registry, E originalException, Function<Exception, MessageReadingException> wrapper) throws MessageReadingException {
+		try {
+			registry.register(failure(originalException));
+		} catch (Exception e) {
+			throw wrapper.apply(e);
+		}
+	}
 	private AssertEmail() {
 		super();
 	}

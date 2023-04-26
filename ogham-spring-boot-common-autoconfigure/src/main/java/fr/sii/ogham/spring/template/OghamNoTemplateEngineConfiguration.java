@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 @Configuration
-@ConditionalOnMissingClass({"freemarker.template.Configuration", "org.thymeleaf.spring4.SpringTemplateEngine", "org.thymeleaf.spring5.SpringTemplateEngine"})
+@ConditionalOnMissingClass({"freemarker.template.Configuration", "org.thymeleaf.spring4.SpringTemplateEngine", "org.thymeleaf.spring5.SpringTemplateEngine", "org.thymeleaf.spring6.SpringTemplateEngine"})
 public class OghamNoTemplateEngineConfiguration {
 	@Bean
 	public List<SpringMessagingConfigurer> defaultMessagingBuilderConfigurer() {

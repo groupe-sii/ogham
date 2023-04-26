@@ -1,11 +1,10 @@
 package fr.sii.ogham.testing.extension.spock;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
-
-import fr.sii.ogham.testing.extension.common.LogTestInformation;
 
 /**
  * Register {@link LoggingTestInterceptor} for tests annotated with
@@ -14,7 +13,7 @@ import fr.sii.ogham.testing.extension.common.LogTestInformation;
  * @author Aurélien Baudet
  *
  */
-public class LoggingTestExtension extends AbstractAnnotationDrivenExtension<LogTestInformation> {
+public class LoggingTestExtension implements IAnnotationDrivenExtension<LogTestInformation> {
 
 	@Override
 	public void visitSpecAnnotation(LogTestInformation annotation, SpecInfo spec) {

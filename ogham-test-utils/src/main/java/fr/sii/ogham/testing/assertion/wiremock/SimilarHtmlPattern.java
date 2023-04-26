@@ -1,14 +1,18 @@
 package fr.sii.ogham.testing.assertion.wiremock;
 
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.w3c.dom.Document;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
-
+import fr.sii.ogham.testing.assertion.exception.ComparisonException;
 import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xmlunit.diff.Diff;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.github.tomakehurst.wiremock.matching.MatchResult.*;
 
 /**
  * Check if the HTML is similar to the expected. The HTML strings are parsed
@@ -25,30 +29,34 @@ import fr.sii.ogham.testing.assertion.util.HtmlUtils;
  *
  */
 public class SimilarHtmlPattern extends StringValuePattern {
+	private static final Logger LOG = LoggerFactory.getLogger(SimilarHtmlPattern.class);
+
 	/**
 	 * Initialized with the expected HTML
-	 * 
+	 *
 	 * @param expectedValue
 	 *            the expected HTML
 	 */
-	public SimilarHtmlPattern(@JsonProperty("similarHtml") String expectedValue) {
+	public SimilarHtmlPattern(@wiremock.com.fasterxml.jackson.annotation.JsonProperty("similarHtml") String expectedValue) {
 		super(expectedValue);
 	}
 
 	@Override
 	public MatchResult match(String value) {
-		DetailedDiff diff = HtmlUtils.compare(expectedValue, value);
-		return new MatchResult() {
+		try {
+			Diff diff = HtmlUtils.compare(expectedValue, value, false);
+			return diff.hasDifferences() ? partialMatch(computeDistance(diff)) : exactMatch();
+		} catch(ComparisonException e) {
+			// ignore because WireMock will try each value (body, multipart files, ...) so comparison may fail
+			// due to not xml value
+			LOG.debug("Can't match since ", e);
+			return noMatch();
+		}
+	}
 
-			@Override
-			public boolean isExactMatch() {
-				return diff.similar();
-			}
-
-			@Override
-			public double getDistance() {
-				return diff.getAllDifferences().size();
-			}
-		};
+	private double computeDistance(Diff diff) {
+		final AtomicInteger count = new AtomicInteger();
+		diff.getDifferences().forEach((d) -> count.incrementAndGet());
+		return count.doubleValue();
 	}
 }

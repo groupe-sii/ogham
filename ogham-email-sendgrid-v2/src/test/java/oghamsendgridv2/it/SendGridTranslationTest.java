@@ -1,17 +1,7 @@
 package oghamsendgridv2.it;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
 import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridException;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -23,6 +13,14 @@ import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.sendgrid.v2.builder.sendgrid.SendGridV2Builder;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests regarding the integration between {@code ogham} and the
@@ -50,7 +48,7 @@ public final class SendGridTranslationTest {
 	private SendGridClient sendGridClient;
 	private MessagingService messagingService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sendGridClient = mock(SendGridClient.class);
 		messagingService = MessagingBuilder.standard()

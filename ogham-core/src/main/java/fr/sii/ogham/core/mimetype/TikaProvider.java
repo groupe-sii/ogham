@@ -1,19 +1,16 @@
 package fr.sii.ogham.core.mimetype;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
+import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeParseException;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
-import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Mime Type detection based on <a href="http://tika.apache.org/">Apache
@@ -69,7 +66,7 @@ public class TikaProvider implements MimeTypeProvider {
 			String mimetype = tika.detect(file);
 			LOG.debug("Detect mime type for file {}: {}", file, mimetype);
 			checkMimeType(mimetype);
-			return new MimeType(mimetype);
+			return new ParsedMimeType(mimetype);
 		} catch (MimeTypeParseException e) {
 			throw new InvalidMimetypeException("Invalid mimetype", e);
 		} catch (IOException e) {
@@ -89,7 +86,7 @@ public class TikaProvider implements MimeTypeProvider {
 			String mimetype = tika.detect(stream);
 			LOG.debug("Detect mime type from stream: {}", mimetype);
 			checkMimeType(mimetype);
-			return new MimeType(mimetype);
+			return new ParsedMimeType(mimetype);
 		} catch (MimeTypeParseException e) {
 			throw new InvalidMimetypeException("Invalid mimetype", e);
 		} catch (IOException e) {
@@ -104,7 +101,7 @@ public class TikaProvider implements MimeTypeProvider {
 			String mimetype = tika.detect(content.getBytes());
 			LOG.debug("Detect mime type from stream: {}", mimetype);
 			checkMimeType(mimetype);
-			return new MimeType(mimetype);
+			return new ParsedMimeType(mimetype);
 		} catch (MimeTypeParseException e) {
 			throw new InvalidMimetypeException("Invalid mimetype", e);
 		}

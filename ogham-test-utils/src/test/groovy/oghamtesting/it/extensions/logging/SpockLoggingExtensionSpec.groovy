@@ -294,7 +294,7 @@ class SpockLoggingExtensionSpec extends Specification {
 		given:
 			System.setProperty("execute-fake-test-for-testing-logging-extension", "success");
 		when:
-			EngineTestKit.engine("junit-vintage")
+			EngineTestKit.engine("spock")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
 					.testEvents()
@@ -309,7 +309,7 @@ class SpockLoggingExtensionSpec extends Specification {
 		given:
 			System.setProperty("execute-fake-test-for-testing-logging-extension", "failure");
 		when:
-			EngineTestKit.engine("junit-vintage")
+			EngineTestKit.engine("spock")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
 					.testEvents()
@@ -324,7 +324,7 @@ class SpockLoggingExtensionSpec extends Specification {
 		given:
 			System.setProperty("execute-fake-test-for-testing-logging-extension", "caught");
 		when:
-			EngineTestKit.engine("junit-vintage")
+			EngineTestKit.engine("spock")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
 					.testEvents()
@@ -339,11 +339,11 @@ class SpockLoggingExtensionSpec extends Specification {
 		given:
 			System.setProperty("execute-fake-test-for-testing-logging-extension", "data table success");
 		when:
-			EngineTestKit.engine("junit-vintage")
+			EngineTestKit.engine("spock")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
 					.testEvents()
-						.assertStatistics({s -> s.failed(0).succeeded(4)});
+						.assertStatistics({s -> s.failed(0).succeeded(5)}); // 5 because now there is an event for the feature too
 			def logs = writer.toString();
 		then:
 			(isAscii() ? DATA_TABLE_SUCCESS_HEADERS_ASCII : DATA_TABLE_SUCCESS_HEADERS).each {
@@ -358,11 +358,11 @@ class SpockLoggingExtensionSpec extends Specification {
 		given:
 			System.setProperty("execute-fake-test-for-testing-logging-extension", "data table failure");
 		when:
-			EngineTestKit.engine("junit-vintage")
+			EngineTestKit.engine("spock")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
 					.testEvents()
-						.assertStatistics({s -> s.failed(2).succeeded(2)});
+						.assertStatistics({s -> s.failed(2).succeeded(3)}); // 3 succeeded because now there is an event for the feature too
 			def logs = writer.toString();
 		then:
 			(isAscii() ? DATA_TABLE_FAILURE_HEADERS_ASCII : DATA_TABLE_FAILURE_HEADERS).each {
@@ -374,7 +374,6 @@ class SpockLoggingExtensionSpec extends Specification {
 	}
 
 	
-	@Unroll
 	@LogTestInformation(maxLength = 100, marker = "foo", printer = TestPrinterFactoryAdapter.class)
 	public static class FakeSpec extends Specification {
 		

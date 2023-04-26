@@ -1,5 +1,13 @@
 package oghamcore.ut.core.condition.fluent;
 
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+
 import static fr.sii.ogham.core.condition.fluent.MessageConditions.$;
 import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;
 import static org.hamcrest.CoreMatchers.is;
@@ -7,23 +15,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import fr.sii.ogham.core.condition.Condition;
-import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.message.Message;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-
+@LogTestInformation
+@MockitoSettings
 public class FluentConditionsTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final MockitoRule mockito = MockitoJUnit.rule();
 
 	@Mock
 	PropertyResolver propertyResolver;

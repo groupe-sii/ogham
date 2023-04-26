@@ -1,20 +1,21 @@
 package oghamcore.ut.core.env;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import fr.sii.ogham.core.builder.env.SimplePropertiesBuilder;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
-import fr.sii.ogham.core.builder.env.SimplePropertiesBuilder;
-
+@LogTestInformation
 public class SimplePropertiesTest {
 	SimplePropertiesBuilder<?> builder;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		builder = new SimplePropertiesBuilder<>(null);
 	}

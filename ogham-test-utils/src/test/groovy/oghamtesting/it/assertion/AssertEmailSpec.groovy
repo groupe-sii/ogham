@@ -1,28 +1,20 @@
 package oghamtesting.it.assertion
 
-import static java.nio.charset.StandardCharsets.UTF_8
-import static java.util.Arrays.asList
-import static javax.mail.Message.RecipientType.BCC
-import static javax.mail.Message.RecipientType.CC
-import static javax.mail.Message.RecipientType.TO
-
-import javax.mail.BodyPart
-import javax.mail.Message
-import javax.mail.Multipart
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
-
-import org.junit.ComparisonFailure
-
-import fr.sii.ogham.testing.assertion.email.AssertEmail
-import fr.sii.ogham.testing.assertion.email.ExpectedContent
-import fr.sii.ogham.testing.assertion.email.ExpectedEmail
-import fr.sii.ogham.testing.assertion.email.ExpectedEmailHeader
-import fr.sii.ogham.testing.assertion.email.ExpectedMultiPartEmail
+import fr.sii.ogham.testing.assertion.email.*
 import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
 import fr.sii.ogham.testing.extension.common.LogTestInformation
+import ogham.testing.jakarta.mail.BodyPart
+import ogham.testing.jakarta.mail.Message
+import ogham.testing.jakarta.mail.Multipart
+import ogham.testing.jakarta.mail.internet.InternetAddress
+import ogham.testing.jakarta.mail.internet.MimeMessage
+import org.opentest4j.AssertionFailedError
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static ogham.testing.jakarta.mail.Message.RecipientType.*
+import static java.nio.charset.StandardCharsets.UTF_8
+import static java.util.Arrays.asList
 
 @LogTestInformation
 @Unroll
@@ -75,14 +67,14 @@ class AssertEmailSpec extends Specification {
 			desc					| subject	| body		| contentType	| from					| to													| cc 										|| expected
 			"should pass"			| "subject"	| "body"	| "text/plain"	| "sender@yopmail.com"	| ["recipient1@yopmail.com", "recipient2@yopmail.com"]	| ["cc1@yopmail.com", "cc2@yopmail.com"]	||  []
 			"should detect all"		| "foo"		| "bar"		| "text/html"	| "sender@gmail.com"	| ["recipient1@gmail.com", "recipient2@gmail.com"]		| ["cc1@gmail.com", "cc2@gmail.com"]		||  [
-				 [klass: ComparisonFailure, message: 'subject should be \'subject\' expected:<[subject]> but was:<[foo]>'], 
-				 [klass: ComparisonFailure, message: 'from should be \'sender@yopmail.com\' expected:<sender@[yop]mail.com> but was:<sender@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@[yop]mail.com> but was:<cc1@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@[yop]mail.com> but was:<cc2@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<b[ody]> but was:<b[ar]>'], 
-				 [klass: AssertionError, message: 'mimetype should match text/plain instead of text/html']
+				 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <foo>'],
+				 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <sender@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <cc1@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <cc2@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'body should be \'body\' ==> expected: <body> but was: <bar>'],
+				 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of text/html ==> expected: <true> but was: <false>']
 				]
 	}
 
@@ -94,79 +86,79 @@ class AssertEmailSpec extends Specification {
 				"sender@yopmail.com",
 				"recipient1@yopmail.com", "recipient2@yopmail.com")
 			expectedEmail.setCc("cc1@yopmail.com", "cc2@yopmail.com")
-			
+
 		when:
 			def failures = collectFailures(
 				{ AssertEmail.assertEquals(expectedEmail, (Message[]) actual()) },
 				{ AssertEmail.assertSimilar(expectedEmail, (Message[]) actual()) }
 			)
-		
+
 		then:
 			failures == expected
-		
+
 		where:
 			actualEmailName		| actual								|| expected
 			"null message"		| { [null] }							|| [
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'], 
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
-					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'Expected at least one body part but none found ==> expected: not <null>'],
+					 [klass: AssertionFailedError, message: 'body should be \'body\' ==> expected: <body> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>']
 					] * 2
 			"empty mock"		| { [Mock(Message)] }					|| [
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'], 
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
-					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'Expected at least one body part but none found ==> expected: not <null>'],
+					 [klass: AssertionFailedError, message: 'body should be \'body\' ==> expected: <body> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>']
 					] * 2
 			"no message"		| { [] }								|| [
-					 [klass: AssertionError, message: 'should have received 1 email expected:<1> but was:<0>'], 
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'], 
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
-					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
+					 [klass: AssertionFailedError, message: 'should have received 1 email ==> expected: <1> but was: <0>'],
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'Expected at least one body part but none found ==> expected: not <null>'],
+					 [klass: AssertionFailedError, message: 'body should be \'body\' ==> expected: <body> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>']
 					] * 2
 			"several messages"	| { [Mock(Message), Mock(Message)] }	|| [
-					 [klass: AssertionError, message: 'should have received 1 email expected:<1> but was:<2>'], 
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'], 
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
-					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
+					 [klass: AssertionFailedError, message: 'should have received 1 email ==> expected: <1> but was: <2>'],
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'Expected at least one body part but none found ==> expected: not <null>'],
+					 [klass: AssertionFailedError, message: 'body should be \'body\' ==> expected: <body> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>']
 					] * 2
 	}
 	
@@ -211,14 +203,14 @@ class AssertEmailSpec extends Specification {
 			desc					| subject	| body							| contentType	| from					| to													| cc 										|| expected
 			"should pass"			| "subject"	| ' <div b="2" a="1">\n</div> '	| "text/html"	| "sender@yopmail.com"	| ["recipient1@yopmail.com", "recipient2@yopmail.com"]	| ["cc1@yopmail.com", "cc2@yopmail.com"]	||  []
 			"should detect all"		| "foo"		| '<div c="1" d="2"></div>' 	| "text/foo"	| "sender@gmail.com"	| ["recipient1@gmail.com", "recipient2@gmail.com"]		| ["cc1@gmail.com", "cc2@gmail.com"]		||  [
-				 [klass: ComparisonFailure, message: 'subject should be \'subject\' expected:<[subject]> but was:<[foo]>'], 
-				 [klass: ComparisonFailure, message: 'from should be \'sender@yopmail.com\' expected:<sender@[yop]mail.com> but was:<sender@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@[yop]mail.com> but was:<cc1@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@[yop]mail.com> but was:<cc2@[g]mail.com>'], 
-				 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<...d></head><body><div [a="1" b]="2"></div></body></...> but was:<...d></head><body><div [c="1" d]="2"></div></body></...>'],
-				 [klass: AssertionError, message: 'mimetype should match text/html instead of text/foo']
+				 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <foo>'],
+				 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <sender@gmail.com>'], 
+				 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'], 
+				 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'], 
+				 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <cc1@gmail.com>'], 
+				 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <cc2@gmail.com>'], 
+				 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected attribute name \'/html[1]/body[1]/div[1]/@a\' - comparing <div...> at /html[1]/body[1]/div[1]/@a to <div...> at /html[1]/body[1]/div[1], expected: <<html><head></head><body><div a="1" b="2"></div></body></html>> but was: <<html><head></head><body><div c="1" d="2"></div></body></html>>'],
+				 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of text/foo ==> expected: <true> but was: <false>']
 				]
 	}
 	
@@ -270,16 +262,16 @@ class AssertEmailSpec extends Specification {
 			desc					| subject	| body				| bodyContentType	| alternative	| altContentType	| from					| to													| cc 										|| expected
 			"should pass"			| "subject"	| "<div a=1></div>"	| "text/html"		| "alternative"	| "text/plain"		| "sender@yopmail.com"	| ["recipient1@yopmail.com", "recipient2@yopmail.com"]	| ["cc1@yopmail.com", "cc2@yopmail.com"]	||  []
 			"should detect all"		| "foo"		| "<p>bar</p>"		| "text/foo"		| "alt"			| "text/bar"		| "sender@gmail.com"	| ["recipient1@gmail.com", "recipient2@gmail.com"]		| ["cc1@gmail.com", "cc2@gmail.com"]		||  [
-				 [klass: ComparisonFailure, message: 'subject should be \'subject\' expected:<[subject]> but was:<[foo]>'],
-				 [klass: ComparisonFailure, message: 'from should be \'sender@yopmail.com\' expected:<sender@[yop]mail.com> but was:<sender@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@[yop]mail.com> but was:<cc1@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@[yop]mail.com> but was:<cc2@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'body[0] should be \'alternative\' expected:<alt[ernative]> but was:<alt[]>'], 
-				 [klass: AssertionError, message: 'mimetype should match text/plain instead of text/bar'], 
-				 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<...<head></head><body><[div a=1></div]></body></html>> but was:<...<head></head><body><[p>bar</p]></body></html>>'], 
-				 [klass: AssertionError, message: 'mimetype should match text/html instead of text/foo']
+				 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <foo>'],
+				 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <sender@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <cc1@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <cc2@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'body[0] should be \'alternative\' ==> expected: <alternative> but was: <alt>'],
+				 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of text/bar ==> expected: <true> but was: <false>'], 
+				 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected child nodelist length \'0\' but was \'1\' - comparing <div...> at /html[1]/body[1]/div[1] to <p...> at /html[1]/body[1]/p[1], expected: <<html><head></head><body><div a=1></div></body></html>> but was: <<html><head></head><body><p>bar</p></body></html>>'],
+				 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of text/foo ==> expected: <true> but was: <false>']
 				]
 	}
 	
@@ -331,16 +323,16 @@ class AssertEmailSpec extends Specification {
 			desc					| subject	| body							| bodyContentType	| alternative	| altContentType	| from					| to													| cc 										|| expected
 			"should pass"			| "subject"	| ' <div b="2" a="1">\n</div> '	| "text/html"		| "alternative"	| "text/plain"		| "sender@yopmail.com"	| ["recipient1@yopmail.com", "recipient2@yopmail.com"]	| ["cc1@yopmail.com", "cc2@yopmail.com"]	||  []
 			"should detect all"		| "foo"		| '<div c="2" d="1"></div>'		| "text/foo"		| "alt"			| "text/bar"		| "sender@gmail.com"	| ["recipient1@gmail.com", "recipient2@gmail.com"]		| ["cc1@gmail.com", "cc2@gmail.com"]		||  [
-				 [klass: ComparisonFailure, message: 'subject should be \'subject\' expected:<[subject]> but was:<[foo]>'],
-				 [klass: ComparisonFailure, message: 'from should be \'sender@yopmail.com\' expected:<sender@[yop]mail.com> but was:<sender@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@[yop]mail.com> but was:<cc1@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@[yop]mail.com> but was:<cc2@[g]mail.com>'],
-				 [klass: ComparisonFailure, message: 'body[0] should be \'alternative\' expected:<alt[ernative]> but was:<alt[]>'],
-				 [klass: AssertionError, message: 'mimetype should match text/plain instead of text/bar'],
-				 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<...d></head><body><div [a=1 b=2]></div></body></html...> but was:<...d></head><body><div [c="2" d="1"]></div></body></html...>'],
-				 [klass: AssertionError, message: 'mimetype should match text/html instead of text/foo']
+				 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <foo>'],
+				 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <sender@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <cc1@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <cc2@gmail.com>'],
+				 [klass: AssertionFailedError, message: 'body[0] should be \'alternative\' ==> expected: <alternative> but was: <alt>'],
+				 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of text/bar ==> expected: <true> but was: <false>'],
+				 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected attribute name \'/html[1]/body[1]/div[1]/@a\' - comparing <div...> at /html[1]/body[1]/div[1]/@a to <div...> at /html[1]/body[1]/div[1], expected: <<html><head></head><body><div a=1 b=2></div></body></html>> but was: <<html><head></head><body><div c="2" d="1"></div></body></html>>'],
+				 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of text/foo ==> expected: <true> but was: <false>']
 				]
 	}
 	
@@ -367,78 +359,78 @@ class AssertEmailSpec extends Specification {
 		where:
 			actualEmailName		| actual								|| expected
 			"null message"		| { [null] }							|| [
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'],
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'],
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be multipart message'], 
-					 [klass: AssertionError, message: 'should have 2 parts expected:<2> but was:<0>'], 
-					 [klass: ComparisonFailure, message: 'body[0] should be \'alternative\' expected:<alternative> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null'], 
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<<html><head></head><body><div a=1 b=2></div></body></html>> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/html instead of null']
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be multipart message ==> expected: <true> but was: <false>'],
+					 [klass: AssertionFailedError, message: 'should have 2 parts ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'body[0] should be \'alternative\' ==> expected: <alternative> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>'], 
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected child nodelist length \'1\' but was \'0\' - comparing <html...> at / to <NULL> at /, expected: <<html><head></head><body><div a=1 b=2></div></body></html>> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of null ==> expected: <true> but was: <false>']
 					] * 2
 			"empty mock"		| { [Mock(Message)] }					|| [
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'],
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'],
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be multipart message'], 
-					 [klass: AssertionError, message: 'should have 2 parts expected:<2> but was:<0>'], 
-					 [klass: ComparisonFailure, message: 'body[0] should be \'alternative\' expected:<alternative> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null'], 
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<<html><head></head><body><div a=1 b=2></div></body></html>> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/html instead of null']
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be multipart message ==> expected: <true> but was: <false>'],
+					 [klass: AssertionFailedError, message: 'should have 2 parts ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'body[0] should be \'alternative\' ==> expected: <alternative> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>'], 
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected child nodelist length \'1\' but was \'0\' - comparing <html...> at / to <NULL> at /, expected: <<html><head></head><body><div a=1 b=2></div></body></html>> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of null ==> expected: <true> but was: <false>']
 					] * 2
 			"no message"		| { [] }								|| [
-					 [klass: AssertionError, message: 'should have received 1 email expected:<1> but was:<0>'], 
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'],
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'],
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be multipart message'], 
-					 [klass: AssertionError, message: 'should have 2 parts expected:<2> but was:<0>'], 
-					 [klass: ComparisonFailure, message: 'body[0] should be \'alternative\' expected:<alternative> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null'], 
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<<html><head></head><body><div a=1 b=2></div></body></html>> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/html instead of null']
+					 [klass: AssertionFailedError, message: 'should have received 1 email ==> expected: <1> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be multipart message ==> expected: <true> but was: <false>'],
+					 [klass: AssertionFailedError, message: 'should have 2 parts ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'body[0] should be \'alternative\' ==> expected: <alternative> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>'], 
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected child nodelist length \'1\' but was \'0\' - comparing <html...> at / to <NULL> at /, expected: <<html><head></head><body><div a=1 b=2></div></body></html>> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of null ==> expected: <true> but was: <false>']
 					] * 2
 			"several messages"	| { [Mock(Message), Mock(Message)] }	|| [
-					 [klass: AssertionError, message: 'should have received 1 email expected:<1> but was:<2>'], 
-					 [klass: AssertionError, message: 'subject should be \'subject\' expected:<subject> but was:<null>'],
-					 [klass: AssertionError, message: 'should have only one from expected:<1> but was:<null>'],
-					 [klass: AssertionError, message: 'from should be \'sender@yopmail.com\' expected:<sender@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 4 recipients expected:<4> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be multipart message'], 
-					 [klass: AssertionError, message: 'should have 2 parts expected:<2> but was:<0>'], 
-					 [klass: ComparisonFailure, message: 'body[0] should be \'alternative\' expected:<alternative> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null'], 
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<<html><head></head><body><div a=1 b=2></div></body></html>> but was:<null>'], 
-					 [klass: AssertionError, message: 'mimetype should match text/html instead of null']
+					 [klass: AssertionFailedError, message: 'should have received 1 email ==> expected: <1> but was: <2>'], 
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have only one from ==> expected: <1> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 4 recipients ==> expected: <4> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be multipart message ==> expected: <true> but was: <false>'],
+					 [klass: AssertionFailedError, message: 'should have 2 parts ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'body[0] should be \'alternative\' ==> expected: <alternative> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'mimetype should match text/plain instead of null ==> expected: <true> but was: <false>'], 
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected child nodelist length \'1\' but was \'0\' - comparing <html...> at / to <NULL> at /, expected: <<html><head></head><body><div a=1 b=2></div></body></html>> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'mimetype should match text/html instead of null ==> expected: <true> but was: <false>']
 					] * 2
 	}
 	
@@ -456,25 +448,25 @@ class AssertEmailSpec extends Specification {
 			"should pass"							| "foo"										| "foo"								| true		|| []
 			"should pass"							| "foo"										| "foo"								| false		|| []
 			"should detect different spaces"		| " foo "									| "foo"								| true		|| [
-					 [klass: ComparisonFailure, message: 'body should be \' foo \' expected:<[ foo ]> but was:<[foo]>']
+					 [klass: AssertionFailedError, message: 'body should be \' foo \' ==> expected: < foo > but was: <foo>']
 					]
 			"should detect different spaces"		| " foo "									| "foo"								| false		|| [
-					 [klass: ComparisonFailure, message: 'body should be \' foo \' expected:<[ foo ]> but was:<[foo]>']
+					 [klass: AssertionFailedError, message: 'body should be \' foo \' ==> expected: < foo > but was: <foo>']
 					]
 			"should detect different new lines"		| "\nfoo\n"									| "foo"								| true		|| [
-					 [klass: ComparisonFailure, message: 'body should be \' foo \' expected:<[ foo ]> but was:<[foo]>']
+					 [klass: AssertionFailedError, message: 'body should be \' foo \' ==> expected: < foo > but was: <foo>']
 					]
 			"should ignore different spaces"		| "\nfoo\n"									| "foo"								| false		|| []
 			"should pass"							| wrapHtml('<div a="1" b="2">')				| wrapHtml('<div a="1" b="2">')		| true		|| []
 			"should pass"							| wrapHtml('<div a="1" b="2">')				| wrapHtml('<div b=2 a=1 >')		| false		|| []
 			"should detect different attributes"	| wrapHtml('<div a="1" b="2" c="3">')		| wrapHtml('<div b=2 a=1>')			| true		|| [
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<...ead> <body> <div [a="1" b="2" c="3"]> <body> <html>> but was:<...ead> <body> <div [b=2 a=1]> <body> <html>>']
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected number of attributes \'3\' but was \'2\' - comparing <div...> at /html[1]/body[1]/div[1] to <div...> at /html[1]/body[1]/div[1], expected: <<html> <head></head> <body> <div a="1" b="2" c="3"> <body> <html>> but was: <<html> <head></head> <body> <div b=2 a=1> <body> <html>>']
 					]
 			"should detect different attributes"	| wrapHtml('<div a="1" b="2" c="3">')		| wrapHtml('<div b=2 a=1>')			| false		|| [
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<...ead> <body> <div [a="1" b="2" c="3"]> <body> <html>> but was:<...ead> <body> <div [b=2 a=1]> <body> <html>>']
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected number of attributes \'3\' but was \'2\' - comparing <div...> at /html[1]/body[1]/div[1] to <div...> at /html[1]/body[1]/div[1], expected: <<html> <head></head> <body> <div a="1" b="2" c="3"> <body> <html>> but was: <<html> <head></head> <body> <div b=2 a=1> <body> <html>>']
 					]
 			"should detect different order"			| wrapHtml('<div></div><p></p>')			| wrapHtml('<p></p><div></div>')	| true		|| [
-					 [klass: ComparisonFailure, message: 'HTML element different to expected one. See logs for details about found differences. expected:<...></head> <body> <[div></div><p></p]> <body> <html>> but was:<...></head> <body> <[p></p><div></div]> <body> <html>>']
+					 [klass: AssertionFailedError, message: 'HTML element different to expected one. See logs for details about found differences. ==> Expected element tag name \'div\' but was \'p\' - comparing <div...> at /html[1]/body[1]/div[1] to <p...> at /html[1]/body[1]/p[1], expected: <<html> <head></head> <body> <div></div><p></p> <body> <html>> but was: <<html> <head></head> <body> <p></p><div></div> <body> <html>>']
 					]
 			"should ignore different order"			| wrapHtml('<div></div><p></p>')			| wrapHtml('<p></p><div></div>')	| false		|| []
 	}
@@ -509,41 +501,41 @@ class AssertEmailSpec extends Specification {
 			desc					| subject	| from					| to																				| cc 														| bcc 															|| expected
 			"should pass"			| "subject"	| "sender@yopmail.com"	| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								| ["cc1@yopmail.com", "cc2@yopmail.com"]					| ["bcc1@yopmail.com", "bcc2@yopmail.com"]						||  []
 			"should detect all"		| "foo"		| "sender@gmail.com"	| ["recipient1@gmail.com", "recipient2@gmail.com"]									| ["cc1@gmail.com", "cc2@gmail.com"]						| ["bcc1@gmail.com", "bcc2@gmail.com"]							||  [
-					 [klass: ComparisonFailure, message: 'subject should be \'subject\' expected:<[subject]> but was:<[foo]>'],
-					 [klass: ComparisonFailure, message: 'from should be \'sender@yopmail.com\' expected:<sender@[yop]mail.com> but was:<sender@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@[yop]mail.com> but was:<cc1@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@[yop]mail.com> but was:<cc2@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient Bcc[0] should be \'bcc1@yopmail.com\' expected:<bcc1@[yop]mail.com> but was:<bcc1@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient Bcc[1] should be \'bcc2@yopmail.com\' expected:<bcc2@[yop]mail.com> but was:<bcc2@[g]mail.com>'],
+					 [klass: AssertionFailedError, message: 'subject should be \'subject\' ==> expected: <subject> but was: <foo>'],
+					 [klass: AssertionFailedError, message: 'from should be \'sender@yopmail.com\' ==> expected: <sender@yopmail.com> but was: <sender@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <cc1@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <cc2@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient Bcc[0] should be \'bcc1@yopmail.com\' ==> expected: <bcc1@yopmail.com> but was: <bcc1@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient Bcc[1] should be \'bcc2@yopmail.com\' ==> expected: <bcc2@yopmail.com> but was: <bcc2@gmail.com>'],
 					]
 			"no recipient"			| "subject"	| "sender@yopmail.com"	| []																				| []														| []															||  [
-					 [klass: AssertionError, message: 'should be received by 6 recipients expected:<6> but was:<0>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<0>'], 
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<0>'], 
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) expected:<2> but was:<0>'], 
-					 [klass: AssertionError, message: 'recipient Bcc[0] should be \'bcc1@yopmail.com\' expected:<bcc1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Bcc[1] should be \'bcc2@yopmail.com\' expected:<bcc2@yopmail.com> but was:<null>']
+					 [klass: AssertionFailedError, message: 'should be received by 6 recipients ==> expected: <6> but was: <0>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' ==> expected: <cc1@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[0] should be \'bcc1@yopmail.com\' ==> expected: <bcc1@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[1] should be \'bcc2@yopmail.com\' ==> expected: <bcc2@yopmail.com> but was: <null>']
 					]
 			"missing recipient"		| "subject"	| "sender@yopmail.com"	| ["recipient1@yopmail.com"]														| ["cc1@yopmail.com"]										| ["bcc1@yopmail.com"]											||  [
-					 [klass: AssertionError, message: 'should be received by 6 recipients expected:<6> but was:<3>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<1>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<1>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) expected:<2> but was:<1>'], 
-					 [klass: AssertionError, message: 'recipient Bcc[1] should be \'bcc2@yopmail.com\' expected:<bcc2@yopmail.com> but was:<null>']
+					 [klass: AssertionFailedError, message: 'should be received by 6 recipients ==> expected: <6> but was: <3>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <1>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <1>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' ==> expected: <cc2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) ==> expected: <2> but was: <1>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[1] should be \'bcc2@yopmail.com\' ==> expected: <bcc2@yopmail.com> but was: <null>']
 					]
 			"too many recipients"	| "subject"	| "sender@yopmail.com"	| ["recipient1@yopmail.com", "recipient2@yopmail.com", "recipient3@yopmail.com"]	| ["cc1@yopmail.com", "cc2@yopmail.com", "cc3@yopmail.com"]	| ["bcc1@yopmail.com", "bcc2@yopmail.com", "bcc3@yopmail.com"]	||  [
-					 [klass: AssertionError, message: 'should be received by 6 recipients expected:<6> but was:<9>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<3>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<3>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) expected:<2> but was:<3>']
+					 [klass: AssertionFailedError, message: 'should be received by 6 recipients ==> expected: <6> but was: <9>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <3>'], 
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <3>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) ==> expected: <2> but was: <3>']
 					]
 	}
 	
@@ -569,42 +561,42 @@ class AssertEmailSpec extends Specification {
 			desc					| expectedRecipients																| recipients																		|| expected
 			"should pass"			| []																				| []																				||  []
 			"no expected recipient"	| []																				| ["recipient1@yopmail.com"]														||  [
-					 [klass: AssertionError, message: 'should be received by no recipients (of type RecipientType.To)'], 
-					 [klass: AssertionError, message: 'should be received by no recipients (of type RecipientType.Cc)'], 
-					 [klass: AssertionError, message: 'should be received by no recipients (of type RecipientType.Bcc)']
+					 [klass: AssertionFailedError, message: 'should be received by no recipients (of type RecipientType.To) ==> expected: <true> but was: <false>'],
+					 [klass: AssertionFailedError, message: 'should be received by no recipients (of type RecipientType.Cc) ==> expected: <true> but was: <false>'],
+					 [klass: AssertionFailedError, message: 'should be received by no recipients (of type RecipientType.Bcc) ==> expected: <true> but was: <false>']
 					]
 			"should pass"			| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								||  []
 			"should detect"			| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								| ["recipient1@gmail.com", "recipient2@gmail.com"]									||  [
-					 [klass: ComparisonFailure, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'], 
-					 [klass: ComparisonFailure, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient Cc[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'], 
-					 [klass: ComparisonFailure, message: 'recipient Cc[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>'],
-					 [klass: ComparisonFailure, message: 'recipient Bcc[0] should be \'recipient1@yopmail.com\' expected:<recipient1@[yop]mail.com> but was:<recipient1@[g]mail.com>'], 
-					 [klass: ComparisonFailure, message: 'recipient Bcc[1] should be \'recipient2@yopmail.com\' expected:<recipient2@[yop]mail.com> but was:<recipient2@[g]mail.com>']
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>'],
+					 [klass: AssertionFailedError, message: 'recipient Bcc[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <recipient1@gmail.com>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <recipient2@gmail.com>']
 					]
 			"no recipient"			| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								| []																				||  [
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<0>'], 
-					 [klass: AssertionError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<0>'], 
-					 [klass: AssertionError, message: 'recipient Cc[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) expected:<2> but was:<0>'], 
-					 [klass: AssertionError, message: 'recipient Bcc[0] should be \'recipient1@yopmail.com\' expected:<recipient1@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'recipient Bcc[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>']
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) ==> expected: <2> but was: <0>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[0] should be \'recipient1@yopmail.com\' ==> expected: <recipient1@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>']
 					]
 			"missing recipient"		| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								| ["recipient1@yopmail.com"]														||  [
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<1>'], 
-					 [klass: AssertionError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<1>'], 
-					 [klass: AssertionError, message: 'recipient Cc[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) expected:<2> but was:<1>'], 
-					 [klass: AssertionError, message: 'recipient Bcc[1] should be \'recipient2@yopmail.com\' expected:<recipient2@yopmail.com> but was:<null>']
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <1>'], 
+					 [klass: AssertionFailedError, message: 'recipient To[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <1>'], 
+					 [klass: AssertionFailedError, message: 'recipient Cc[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) ==> expected: <2> but was: <1>'], 
+					 [klass: AssertionFailedError, message: 'recipient Bcc[1] should be \'recipient2@yopmail.com\' ==> expected: <recipient2@yopmail.com> but was: <null>']
 					]
 			"too many recipients"	| ["recipient1@yopmail.com", "recipient2@yopmail.com"]								| ["recipient1@yopmail.com", "recipient2@yopmail.com", "recipient3@yopmail.com"]	||  [
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.To) expected:<2> but was:<3>'], 
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<3>'],
-					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) expected:<2> but was:<3>']
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.To) ==> expected: <2> but was: <3>'], 
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Cc) ==> expected: <2> but was: <3>'],
+					 [klass: AssertionFailedError, message: 'should be received by 2 recipients (of type RecipientType.Bcc) ==> expected: <2> but was: <3>']
 					]
 	}
 

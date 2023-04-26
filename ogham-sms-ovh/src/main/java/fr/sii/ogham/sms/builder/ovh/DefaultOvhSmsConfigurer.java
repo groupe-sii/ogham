@@ -1,19 +1,16 @@
 package fr.sii.ogham.sms.builder.ovh;
 
-import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_CONFIGURER_PRIORITY;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_CONFIGURER_PRIORITY;
 
 /**
  * Default configurer that configures sending of SMS through OVH HTTP API .The
@@ -69,13 +66,10 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  *
  */
 public final class DefaultOvhSmsConfigurer {
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultOvhSmsConfigurer.class);
-
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_OVHSMS_CONFIGURER_PRIORITY)
 	public static class OvhSmsConfigurer implements MessagingConfigurer {
 		@Override
 		public void configure(MessagingBuilder msgBuilder) {
-			LOG.debug("[{}] apply configuration", this);
 			OvhSmsBuilder builder = msgBuilder.sms().sender(OvhSmsBuilder.class);
 			// @formatter:off
 			builder

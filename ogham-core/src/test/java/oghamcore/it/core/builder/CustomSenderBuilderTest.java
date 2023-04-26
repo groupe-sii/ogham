@@ -1,33 +1,27 @@
 package oghamcore.it.core.builder;
 
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThrows;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.sender.EmailSender;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
 import mock.builder.FluentChainingBuilderWithEnv;
 import mock.builder.MockBuilder;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@LogTestInformation
+@MockitoSettings
 public class CustomSenderBuilderTest {
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	
+
 	@Mock EmailSender configuredSender;
 	
 	@Test
@@ -54,7 +48,7 @@ public class CustomSenderBuilderTest {
 	public void asDeveloperICantRegisterANonVisible() {
 		MessagingBuilder builder = MessagingBuilder.empty();
 
-		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+		BuildException e = assertThrows(BuildException.class, () -> {
 			builder.email().sender(InvisibleBuilder.class);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(IllegalAccessException.class));
@@ -64,7 +58,7 @@ public class CustomSenderBuilderTest {
 	public void asDeveloperICantRegisterABuilderWithWrongConstructor() {
 		MessagingBuilder builder = MessagingBuilder.empty();
 		
-		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+		BuildException e = assertThrows(BuildException.class, () -> {
 			builder.email().sender(InvalidBuilder.class);
 		});
 		assertThat("should indicate cause", e, hasMessage(containsString("No matching constructor found")));

@@ -1,23 +1,5 @@
 package oghamcore.ut.html.inliner.impl;
 
-import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
@@ -27,23 +9,38 @@ import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.ogham.testing.assertion.html.AssertHtml;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.mockito.quality.Strictness.LENIENT;
+
+@LogTestInformation
+@MockitoSettings(strictness = LENIENT)
 public class JsoupAttachImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
-	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
+
 	private JsoupAttachImageInliner inliner;
 	
 	@Mock
 	private IdGenerator generator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Mockito.when(generator.generate("fb.gif")).thenReturn("fb.gif");
 		Mockito.when(generator.generate("h1.gif")).thenReturn("h1.gif");
@@ -68,8 +65,8 @@ public class JsoupAttachImageInlinerTest {
 		List<Attachment> expectedAttachments = getAttachments(images);
 		// assertions
 		AssertHtml.assertEquals(expected, inlinedHtml);
-		Assert.assertEquals("should have 5 attachments", 5, inlined.getAttachments().size());
-		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
+		Assertions.assertEquals(5, inlined.getAttachments().size(), "should have 5 attachments");
+		Assertions.assertEquals(expectedAttachments, inlined.getAttachments(), "should have valid attachments");
 	}
 	
 	@Test
@@ -87,15 +84,15 @@ public class JsoupAttachImageInlinerTest {
 		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif"));
 		// assertions
 		AssertHtml.assertEquals(expected, inlinedHtml);
-		Assert.assertEquals("should have 2 attachments", 2, inlined.getAttachments().size());
-		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
+		Assertions.assertEquals(2, inlined.getAttachments().size(), "should have 2 attachments");
+		Assertions.assertEquals(expectedAttachments, inlined.getAttachments(), "should have valid attachments");
 	}
 	
 	@Test
-	@Ignore("Not yet implemented")
+	@Disabled("Not yet implemented")
 	public void duplicatedImage() {
 		// TODO: when the html contains the same image several times, it should generate only one attachment for it
-		Assert.fail("Not implemented");
+		Assertions.fail("Not implemented");
 	}
 	
 	

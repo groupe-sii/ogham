@@ -8,16 +8,30 @@ initializr:
     - id: 2.1.18.RELEASE
       name: 2.1.18
       default: true
-    - id: 2.2.12.RELEASE
-      name: 2.2.12
+    - id: 2.2.13.RELEASE
+      name: 2.2.13
       default: false
-    - id: 2.3.7.RELEASE
-      name: 2.3.7
+    - id: 2.3.12.RELEASE
+      name: 2.3.12
       default: false
-    - id: 2.4.1
-      name: 2.4.1
+    - id: 2.4.13
+      name: 2.4.13
+      default: false
+    - id: 2.5.14
+      name: 2.5.14
+      default: false
+    - id: 2.6.14
+      name: 2.6.14
+      default: false
+    - id: 2.7.11
+      name: 2.7.11
+      default: false
+    - id: 3.0.6
+      name: 3.0.6
       default: false
   javaVersions:
+    - id: 17
+      default: false
     - id: 15
       default: false
     - id: 14

@@ -1,47 +1,26 @@
 package oghamcore.ut.core.condition.provider;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.builder.condition.RequiredClasses;
-import fr.sii.ogham.core.condition.AndCondition;
-import fr.sii.ogham.core.condition.Condition;
-import fr.sii.ogham.core.condition.NotCondition;
-import fr.sii.ogham.core.condition.OrCondition;
-import fr.sii.ogham.core.condition.RequiredClassCondition;
+import fr.sii.ogham.core.condition.*;
 import fr.sii.ogham.core.condition.provider.RequiredClassesAnnotationProvider;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.classpath.ClasspathHelper;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import mock.condition.annotation.AllPossibilities;
-import mock.condition.annotation.NoAnnotation;
-import mock.condition.annotation.OneRequiredClass;
-import mock.condition.annotation.OneRequiredClassWithAlternatives;
-import mock.condition.annotation.OneRequiredClassWithExcludes;
-import mock.condition.annotation.SeveralRequiredClassWithAlternatives;
-import mock.condition.annotation.SeveralRequiredClassWithExcludes;
-import mock.condition.annotation.SeveralRequiredClasses;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import mock.condition.annotation.*;
+import org.junit.jupiter.api.*;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+@LogTestInformation
+@MockitoSettings
 public class RequiredClassesAnnotationProviderTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final MockitoRule mockito = MockitoJUnit.rule();
-	
+
 	RequiredClassesAnnotationProvider<Message> provider;
 
 	@Mock
@@ -50,13 +29,13 @@ public class RequiredClassesAnnotationProviderTest {
 	@Mock
 	Message message;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		provider = new RequiredClassesAnnotationProvider<>();
 		ClasspathUtils.setHelper(helper);
 	}
 
-	@After
+	@AfterEach
 	public void clean() {
 		ClasspathUtils.reset();
 	}
@@ -171,18 +150,11 @@ public class RequiredClassesAnnotationProviderTest {
 	}
 
 	@Test
-	@Ignore("TODO")
+	@Disabled("TODO")
 	public void allPossibilities() {
 		Condition<Message> condition = provider.provide(AllPossibilities.class.getAnnotation(RequiredClasses.class));
 		// @formatter:off
-		Assert.assertEquals("Should generate "
-				+ "'class.required.2' and "
-				+ "'class.required.3' and "
-				+ "('class.required.1' and not ('class.exclude.1' or 'class.exclude.2')) and "
-				+ "('class.required.4' or 'class.alt.1' or 'class.alt.2') and"
-				+ "('class.required.5' or 'class.alt.3' or 'class.alt.4' and not ('class.exclude.3' or 'class.exclude.4')) and"
-				+ "'class.required.6'", 
-				new AndCondition<>(															// and for required classes that comes from @RequiredClasses#value()
+		Assertions.assertEquals(new AndCondition<>(															// and for required classes that comes from @RequiredClasses#value()
 					new RequiredClassCondition<>("class.required.2"),
 					new RequiredClassCondition<>("class.required.3"),
 					// FIXME: Java should infer Message argument
@@ -215,7 +187,14 @@ public class RequiredClassesAnnotationProviderTest {
 							new OrCondition<>(
 									new RequiredClassCondition<>("class.required.6")),		// or for @RequiredClass#alternatives()
 							new NotCondition<>(new OrCondition<>()))),						// not for @RequiredClass#excludes()
-				condition);
+				condition,
+				"Should generate "
+						+ "'class.required.2' and "
+						+ "'class.required.3' and "
+						+ "('class.required.1' and not ('class.exclude.1' or 'class.exclude.2')) and "
+						+ "('class.required.4' or 'class.alt.1' or 'class.alt.2') and"
+						+ "('class.required.5' or 'class.alt.3' or 'class.alt.4' and not ('class.exclude.3' or 'class.exclude.4')) and"
+						+ "'class.required.6'");
 		// @formatter:on
 	}
 }

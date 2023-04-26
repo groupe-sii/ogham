@@ -1,6 +1,8 @@
 package oghamtesting.it.assertion
 
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
+import org.junit.jupiter.api.Assertions
+
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
 import static fr.sii.ogham.testing.sms.simulator.bean.Alphabet.ALPHA_8_BIT
 import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.DATA
 import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ERMES
@@ -11,7 +13,7 @@ import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.ALPHANUMERIC
 import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.INTERNATIONAL
 import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN
 
-import org.junit.ComparisonFailure
+import org.opentest4j.AssertionFailedError
 
 import fr.sii.ogham.testing.assertion.sms.AssertSms
 import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber
@@ -69,13 +71,13 @@ class AssertSmsSpec extends Specification {
 			desc					| message		| senderNumber	| senderTon		| senderNpi	| receiverNumber	| receiverTon	| receiverNpi	|| expected
 			"should pass"			| "message"		| "0102030405"	| INTERNATIONAL	| NATIONAL	| "0605040302"		| ALPHANUMERIC	| DATA			|| []
 			"should detect all"		| "foo"			| "0000000000"	| ABBREVIATED	| ISDN		| "1111111111"		| UNKNOWN		| ERMES			|| [
-				 [klass: ComparisonFailure, message: 'Sender number of message 1/1 should be 0000000000 expected:<0[000000000]> but was:<0[102030405]>'], 
-				 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 6 expected:<6> but was:<1>'], 
-				 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 1 expected:<1> but was:<8>'], 
-				 [klass: ComparisonFailure, message: 'Receiver number of message 1/1 should be 1111111111 expected:<[1111111111]> but was:<[0605040302]>'], 
-				 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 0 expected:<0> but was:<5>'], 
-				 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 10 expected:<10> but was:<3>'], 
-				 [klass: ComparisonFailure, message: 'Message 1/1 not consistent with expected expected:<[foo]> but was:<[message]>']
+				 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be 0000000000 ==> expected: <0000000000> but was: <0102030405>'], 
+				 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 6 ==> expected: <6> but was: <1>'],
+				 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 1 ==> expected: <1> but was: <8>'],
+				 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be 1111111111 ==> expected: <1111111111> but was: <0605040302>'],
+				 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 0 ==> expected: <0> but was: <5>'],
+				 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 10 ==> expected: <10> but was: <3>'],
+				 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <foo> but was: <message>']
 				]
 	}
 	
@@ -97,58 +99,58 @@ class AssertSmsSpec extends Specification {
 		where:
 			desc					| actual								|| expected
 			"null message"			| { [null] }							|| [
-					 [klass: AssertionError, message: 'Sender number of message 1/1 should be senderNumber expected:<senderNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 1 expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 8 expected:<8> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver number of message 1/1 should be receiverNumber expected:<receiverNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 5 expected:<5> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 3 expected:<3> but was:<null>'], 
-					 [klass: AssertionError, message: 'Message 1/1 not consistent with expected expected:<message> but was:<null>']
+					 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be senderNumber ==> expected: <senderNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 1 ==> expected: <1> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 8 ==> expected: <8> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be receiverNumber ==> expected: <receiverNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 5 ==> expected: <5> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 3 ==> expected: <3> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <message> but was: <null>']
 					] * 2
 			"empty mock"			| { [Mock(SubmitSm)] }					|| [
-					 [klass: AssertionError, message: 'Sender number of message 1/1 should be senderNumber expected:<senderNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 1 expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 8 expected:<8> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver number of message 1/1 should be receiverNumber expected:<receiverNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 5 expected:<5> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 3 expected:<3> but was:<null>'], 
-					 [klass: AssertionError, message: 'Message 1/1 not consistent with expected expected:<message> but was:<null>']
+					 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be senderNumber ==> expected: <senderNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 1 ==> expected: <1> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 8 ==> expected: <8> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be receiverNumber ==> expected: <receiverNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 5 ==> expected: <5> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 3 ==> expected: <3> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <message> but was: <null>']
 					] * 2
 			"no message"			| { [] }								|| [
-					 [klass: AssertionError, message: 'should have received exactly one message expected:<1> but was:<0>'],
-					 [klass: AssertionError, message: 'Sender number of message 1/1 should be senderNumber expected:<senderNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 1 expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 8 expected:<8> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver number of message 1/1 should be receiverNumber expected:<receiverNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 5 expected:<5> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 3 expected:<3> but was:<null>'], 
-					 [klass: AssertionError, message: 'Message 1/1 not consistent with expected expected:<message> but was:<null>'],
-					 [klass: AssertionError, message: 'should have received exactly 1 message(s) expected:<1> but was:<0>'],
-					 [klass: AssertionError, message: 'Sender number of message 1/1 should be senderNumber expected:<senderNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 1 expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 8 expected:<8> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver number of message 1/1 should be receiverNumber expected:<receiverNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 5 expected:<5> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 3 expected:<3> but was:<null>'], 
-					 [klass: AssertionError, message: 'Message 1/1 not consistent with expected expected:<message> but was:<null>']
+					 [klass: AssertionFailedError, message: 'should have received exactly one message ==> expected: <1> but was: <0>'],
+					 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be senderNumber ==> expected: <senderNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 1 ==> expected: <1> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 8 ==> expected: <8> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be receiverNumber ==> expected: <receiverNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 5 ==> expected: <5> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 3 ==> expected: <3> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <message> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have received exactly 1 message(s) ==> expected: <1> but was: <0>'],
+					 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be senderNumber ==> expected: <senderNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 1 ==> expected: <1> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 8 ==> expected: <8> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be receiverNumber ==> expected: <receiverNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 5 ==> expected: <5> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 3 ==> expected: <3> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <message> but was: <null>']
 					]
 			"too many messages"		| { [Mock(SubmitSm), Mock(SubmitSm)] }	|| [
-					 [klass: AssertionError, message: 'should have received exactly one message expected:<1> but was:<2>'],
-					 [klass: AssertionError, message: 'Sender number of message 1/1 should be senderNumber expected:<senderNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 1 expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 8 expected:<8> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver number of message 1/1 should be receiverNumber expected:<receiverNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 5 expected:<5> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 3 expected:<3> but was:<null>'], 
-					 [klass: AssertionError, message: 'Message 1/1 not consistent with expected expected:<message> but was:<null>'],
-					 [klass: AssertionError, message: 'should have received exactly 1 message(s) expected:<1> but was:<2>'],
-					 [klass: AssertionError, message: 'Sender number of message 1/1 should be senderNumber expected:<senderNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender ton of message 1/1 should be 1 expected:<1> but was:<null>'], 
-					 [klass: AssertionError, message: 'Sender npi of message 1/1 should be 8 expected:<8> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver number of message 1/1 should be receiverNumber expected:<receiverNumber> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver ton of message 1/1 should be 5 expected:<5> but was:<null>'], 
-					 [klass: AssertionError, message: 'Receiver npi of message 1/1 should be 3 expected:<3> but was:<null>'], 
-					 [klass: AssertionError, message: 'Message 1/1 not consistent with expected expected:<message> but was:<null>']
+					 [klass: AssertionFailedError, message: 'should have received exactly one message ==> expected: <1> but was: <2>'],
+					 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be senderNumber ==> expected: <senderNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 1 ==> expected: <1> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 8 ==> expected: <8> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be receiverNumber ==> expected: <receiverNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 5 ==> expected: <5> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 3 ==> expected: <3> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <message> but was: <null>'],
+					 [klass: AssertionFailedError, message: 'should have received exactly 1 message(s) ==> expected: <1> but was: <2>'],
+					 [klass: AssertionFailedError, message: 'Sender number of message 1/1 should be senderNumber ==> expected: <senderNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender ton of message 1/1 should be 1 ==> expected: <1> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Sender npi of message 1/1 should be 8 ==> expected: <8> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver number of message 1/1 should be receiverNumber ==> expected: <receiverNumber> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver ton of message 1/1 should be 5 ==> expected: <5> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Receiver npi of message 1/1 should be 3 ==> expected: <3> but was: <null>'], 
+					 [klass: AssertionFailedError, message: 'Message 1/1 not consistent with expected ==> expected: <message> but was: <null>']
 					]
 	}
 
@@ -195,33 +197,33 @@ class AssertSmsSpec extends Specification {
 			desc					| messages						| senderNumber	| senderTon		| senderNpi	| receiverNumber	| receiverTon	| receiverNpi	|| expected
 			"should pass"			| ["part1", "part2"]			| "0102030405"	| INTERNATIONAL	| NATIONAL	| "0605040302"		| ALPHANUMERIC	| DATA			|| []
 			"should detect all"		| ["foo", "bar"]				| "0000000000"	| ABBREVIATED	| ISDN		| "1111111111"		| UNKNOWN		| ERMES			|| [
-				 [klass: ComparisonFailure, message: 'Sender number of message 1/2 should be 0000000000 expected:<0[000000000]> but was:<0[102030405]>'],
-				 [klass: AssertionError, message: 'Sender ton of message 1/2 should be 6 expected:<6> but was:<1>'],
-				 [klass: AssertionError, message: 'Sender npi of message 1/2 should be 1 expected:<1> but was:<8>'],
-				 [klass: ComparisonFailure, message: 'Receiver number of message 1/2 should be 1111111111 expected:<[1111111111]> but was:<[0605040302]>'],
-				 [klass: AssertionError, message: 'Receiver ton of message 1/2 should be 0 expected:<0> but was:<5>'],
-				 [klass: AssertionError, message: 'Receiver npi of message 1/2 should be 10 expected:<10> but was:<3>'],
-				 [klass: ComparisonFailure, message: 'Message 1/2 not consistent with expected expected:<[foo]> but was:<[part1]>'],
-				 [klass: ComparisonFailure, message: 'Sender number of message 2/2 should be 0000000000 expected:<0[000000000]> but was:<0[102030405]>'],
-				 [klass: AssertionError, message: 'Sender ton of message 2/2 should be 6 expected:<6> but was:<1>'],
-				 [klass: AssertionError, message: 'Sender npi of message 2/2 should be 1 expected:<1> but was:<8>'],
-				 [klass: ComparisonFailure, message: 'Receiver number of message 2/2 should be 1111111111 expected:<[1111111111]> but was:<[0605040302]>'],
-				 [klass: AssertionError, message: 'Receiver ton of message 2/2 should be 0 expected:<0> but was:<5>'],
-				 [klass: AssertionError, message: 'Receiver npi of message 2/2 should be 10 expected:<10> but was:<3>'],
-				 [klass: ComparisonFailure, message: 'Message 2/2 not consistent with expected expected:<[bar]> but was:<[part2]>']
+				 [klass: AssertionFailedError, message: 'Sender number of message 1/2 should be 0000000000 ==> expected: <0000000000> but was: <0102030405>'],
+				 [klass: AssertionFailedError, message: 'Sender ton of message 1/2 should be 6 ==> expected: <6> but was: <1>'],
+				 [klass: AssertionFailedError, message: 'Sender npi of message 1/2 should be 1 ==> expected: <1> but was: <8>'],
+				 [klass: AssertionFailedError, message: 'Receiver number of message 1/2 should be 1111111111 ==> expected: <1111111111> but was: <0605040302>'],
+				 [klass: AssertionFailedError, message: 'Receiver ton of message 1/2 should be 0 ==> expected: <0> but was: <5>'],
+				 [klass: AssertionFailedError, message: 'Receiver npi of message 1/2 should be 10 ==> expected: <10> but was: <3>'],
+				 [klass: AssertionFailedError, message: 'Message 1/2 not consistent with expected ==> expected: <foo> but was: <part1>'],
+				 [klass: AssertionFailedError, message: 'Sender number of message 2/2 should be 0000000000 ==> expected: <0000000000> but was: <0102030405>'],
+				 [klass: AssertionFailedError, message: 'Sender ton of message 2/2 should be 6 ==> expected: <6> but was: <1>'],
+				 [klass: AssertionFailedError, message: 'Sender npi of message 2/2 should be 1 ==> expected: <1> but was: <8>'],
+				 [klass: AssertionFailedError, message: 'Receiver number of message 2/2 should be 1111111111 ==> expected: <1111111111> but was: <0605040302>'],
+				 [klass: AssertionFailedError, message: 'Receiver ton of message 2/2 should be 0 ==> expected: <0> but was: <5>'],
+				 [klass: AssertionFailedError, message: 'Receiver npi of message 2/2 should be 10 ==> expected: <10> but was: <3>'],
+				 [klass: AssertionFailedError, message: 'Message 2/2 not consistent with expected ==> expected: <bar> but was: <part2>']
 				]
 			"missing part"			| ["part1", "part2", "part3"]	| "0102030405"	| INTERNATIONAL	| NATIONAL	| "0605040302"		| ALPHANUMERIC	| DATA			|| [
-				 [klass: AssertionError, message: 'should have received exactly 3 message(s) expected:<3> but was:<2>'],
-				 [klass: AssertionError, message: 'Sender number of message 3/3 should be 0102030405 expected:<0102030405> but was:<null>'],
-				 [klass: AssertionError, message: 'Sender ton of message 3/3 should be 1 expected:<1> but was:<null>'],
-				 [klass: AssertionError, message: 'Sender npi of message 3/3 should be 8 expected:<8> but was:<null>'],
-				 [klass: AssertionError, message: 'Receiver number of message 3/3 should be 0605040302 expected:<0605040302> but was:<null>'],
-				 [klass: AssertionError, message: 'Receiver ton of message 3/3 should be 5 expected:<5> but was:<null>'],
-				 [klass: AssertionError, message: 'Receiver npi of message 3/3 should be 3 expected:<3> but was:<null>'],
-				 [klass: AssertionError, message: 'Message 3/3 not consistent with expected expected:<part3> but was:<null>']
+				 [klass: AssertionFailedError, message: 'should have received exactly 3 message(s) ==> expected: <3> but was: <2>'],
+				 [klass: AssertionFailedError, message: 'Sender number of message 3/3 should be 0102030405 ==> expected: <0102030405> but was: <null>'],
+				 [klass: AssertionFailedError, message: 'Sender ton of message 3/3 should be 1 ==> expected: <1> but was: <null>'],
+				 [klass: AssertionFailedError, message: 'Sender npi of message 3/3 should be 8 ==> expected: <8> but was: <null>'],
+				 [klass: AssertionFailedError, message: 'Receiver number of message 3/3 should be 0605040302 ==> expected: <0605040302> but was: <null>'],
+				 [klass: AssertionFailedError, message: 'Receiver ton of message 3/3 should be 5 ==> expected: <5> but was: <null>'],
+				 [klass: AssertionFailedError, message: 'Receiver npi of message 3/3 should be 3 ==> expected: <3> but was: <null>'],
+				 [klass: AssertionFailedError, message: 'Message 3/3 not consistent with expected ==> expected: <part3> but was: <null>']
 				]
 			"too many parts"		| ["part1"]						| "0102030405"	| INTERNATIONAL	| NATIONAL	| "0605040302"		| ALPHANUMERIC	| DATA			|| [
-				 [klass: AssertionError, message: 'should have received exactly 1 message(s) expected:<1> but was:<2>'],
+				 [klass: AssertionFailedError, message: 'should have received exactly 1 message(s) ==> expected: <1> but was: <2>'],
 				]
 	}
 

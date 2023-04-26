@@ -1,16 +1,15 @@
 package fr.sii.ogham.email.sendgrid.v2.builder.sendgrid;
 
-import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+import fr.sii.ogham.core.exception.configurer.MissingImplementationException;
 import fr.sii.ogham.core.util.ClasspathUtils;
+
+import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY;
 
 /**
  * Default SendGrid configurer that is automatically applied every time a
@@ -54,17 +53,12 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  *
  */
 public final class DefaultSendGridV2Configurer {
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultSendGridV2Configurer.class);
-
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY)
 	public static class SendGridV2Configurer implements MessagingConfigurer {
 		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (!canUseSendGrid()) {
-				LOG.debug("[{}] skip configuration", this);
-				return;
-			}
-			LOG.debug("[{}] apply configuration", this);
+		public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+			checkCanUseSendGrid();
+
 			// @formatter:off
 			SendGridV2Builder builder = msgBuilder.email().sender(SendGridV2Builder.class);
 			// inherit mimetype configuration as parent builder
@@ -77,7 +71,13 @@ public final class DefaultSendGridV2Configurer {
 			// @formatter:on
 		}
 
-		private static boolean canUseSendGrid() {
+		private static void checkCanUseSendGrid() throws ConfigureException {
+			if (!isSendGridV2Present()) {
+				throw new MissingImplementationException("Can't send Email using SendGrid v2 sender because SendGrid v2 implementation is not present in the classpath", "com.sendgrid.SendGrid", "com.sendgrid.SendGrid$Email");
+			}
+		}
+
+		private static boolean isSendGridV2Present() {
 			return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.SendGrid$Email");
 		}
 	}

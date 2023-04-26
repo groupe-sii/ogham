@@ -1,17 +1,14 @@
 package fr.sii.ogham.core.mimetype;
 
-import java.io.File;
-import java.io.InputStream;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
+import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeParseException;
+import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
-import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
-import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * A mimetype provider implementation that request mimetype detection to a
@@ -76,7 +73,7 @@ public class OverrideMimetypeProvider implements MimeTypeProvider {
 
 	private static MimeType toMimetype(String original, String replaced) throws MimeTypeDetectionException {
 		try {
-			return new MimeType(replaced);
+			return new ParsedMimeType(replaced);
 		} catch (MimeTypeParseException e) {
 			throw new InvalidMimetypeException("Replacing mimetype " + original + " by " + replaced + " failed because " + replaced + " is not valid", e);
 		}

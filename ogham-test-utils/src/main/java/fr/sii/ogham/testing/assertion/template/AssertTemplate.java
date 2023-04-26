@@ -1,15 +1,14 @@
 package fr.sii.ogham.testing.assertion.template;
 
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.assertion.util.Executable;
+import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import org.junit.Assert;
-
-import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
-import fr.sii.ogham.testing.assertion.util.Executable;
-import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 
 /**
  * Assertion class that simplifies checking template content.
@@ -88,7 +87,7 @@ public final class AssertTemplate {
 		String expected = strict ? expectedContent : sanitize(expectedContent);
 		String contentAsString = content==null ? null : content.toString();
 		String actual = strict ? contentAsString : sanitize(contentAsString);
-		registry.register(() -> Assert.assertEquals("parsed template is different to expected content", expected == null ? null : expected.replace("\r", ""), actual == null ? null : actual.replace("\r", "")));
+		registry.register(() -> Assertions.assertEquals(expected == null ? null : expected.replace("\r", ""), actual == null ? null : actual.replace("\r", ""), "parsed template is different to expected content"));
 	}
 	
 	private static String loadOrNull(String path, AssertionRegistry registry) throws IOException {

@@ -1,6 +1,6 @@
 package oghamtesting.it.assertion
 
-import org.junit.ComparisonFailure
+import org.opentest4j.AssertionFailedError
 
 import fr.sii.ogham.testing.assertion.template.AssertTemplate
 import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
@@ -32,20 +32,20 @@ class AssertTemplateSpec extends Specification {
 			desc										| path				| content					|| expected
 			"shoud pass"								| "expected.txt"	| "template content"		|| []
 			"shoud detect differences"					| "expected.txt"	| "foo"						|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[foo]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <foo>']
 						]
 			"shoud detect differences with new lines"	| "expected.txt"	| "\ntemplate content\n"	|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[ template content ]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: < template content >']
 						]
 			"load expected content error"				| "not found"		| "foo"						|| [
 						 [klass: FileNotFoundException, message: 'No resource found for path \'not found\''], 
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<null> but was:<foo>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <null> but was: <foo>']
 						]
 			"null path"									| null				| "foo"						|| [
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<null> but was:<foo>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <null> but was: <foo>']
 						]
 			"null content"								| "expected.txt"	| null						|| [
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<template content> but was:<null>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <null>']
 						]
 	}
 	
@@ -63,18 +63,18 @@ class AssertTemplateSpec extends Specification {
 			desc										| path				| content					|| expected
 			"shoud pass"								| "expected.txt"	| "template content"		|| []
 			"shoud detect differences"					| "expected.txt"	| "foo"						|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[foo]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <foo>']
 						]
 			"shoud skip differences with new lines"		| "expected.txt"	| "\ntemplate content\n"	|| []
 			"load expected content error"				| "not found"		| "foo"						|| [
 						 [klass: FileNotFoundException, message: 'No resource found for path \'not found\''],
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<null> but was:<foo>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <null> but was: <foo>']
 						]
 			"null path"									| null				| "foo"						|| [
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<null> but was:<foo>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <null> but was: <foo>']
 						]
 			"null content"								| "expected.txt"	| null						|| [
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<template content> but was:<null>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <null>']
 						]
 	}
 
@@ -92,16 +92,16 @@ class AssertTemplateSpec extends Specification {
 			desc										| str					| content					|| expected
 			"shoud pass"								| "template content"	| "template content"		|| []
 			"shoud detect differences"					| "template content"	| "foo"						|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[foo]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <foo>']
 						]
 			"shoud detect differences with new lines"	| "template content"	| "\ntemplate content\n"	|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[ template content ]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: < template content >']
 						]
 			"shoud detect differences with new lines"	| "\ntemplate content\n"| "template content"		|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[ template content ]> but was:<[template content]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: < template content > but was: <template content>']
 						]
 			"null content"								| "template content"	| null						|| [
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<template content> but was:<null>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <null>']
 						]
 	}
 	
@@ -119,11 +119,11 @@ class AssertTemplateSpec extends Specification {
 			desc										| str					| content					|| expected
 			"shoud pass"								| "template content"	| "template content"		|| []
 			"shoud detect differences"					| "template content"	| "foo"						|| [
-						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[foo]>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <foo>']
 						]
 			"shoud skip differences with new lines"		| "template content"	| "\ntemplate content\n"	|| []
 			"null content"								| "template content"	| null						|| [
-						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<template content> but was:<null>']
+						 [klass: AssertionFailedError, message: 'parsed template is different to expected content ==> expected: <template content> but was: <null>']
 						]
 	}
 

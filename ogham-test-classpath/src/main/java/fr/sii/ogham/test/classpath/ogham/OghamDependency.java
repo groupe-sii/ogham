@@ -12,6 +12,7 @@ import lombok.Getter;
 public enum OghamDependency {
 	CORE("ogham-core", Facet.CORE),
 	EMAIL_JAVAMAIL("ogham-email-javamail", Facet.CORE, Facet.EMAIL_JAVAMAIL),
+	EMAIL_JAVAMAIL_JAVAX("ogham-email-javamail-javax", Facet.CORE, Facet.EMAIL_JAVAMAIL),
 	EMAIL_SENDGRID("ogham-email-sendgrid", Facet.CORE, Facet.EMAIL_SENDGRID),
 	SMS_OVH("ogham-sms-ovh", Facet.CORE, Facet.SMS_OVH),
 	SMS_CLOUDHOPPER("ogham-sms-cloudhopper", Facet.CORE, Facet.SMS_CLOUDHOPPER),

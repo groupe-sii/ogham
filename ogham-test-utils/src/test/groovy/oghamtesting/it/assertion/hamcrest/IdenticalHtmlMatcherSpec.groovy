@@ -56,20 +56,19 @@ class IdenticalHtmlMatcherSpec extends Specification {
 		where:
 			desc												| actualHtml							| expectedHtml								|| expected
 			"different elements order should fail"				| wrapHtml("<div></div><p></p>")		| wrapHtml("<p></p><div></div>")			|| [
-						 "- Expected sequence of child nodes \'0\' but was \'1\'",
-						 "- Expected sequence of child nodes \'1\' but was \'0\'",
+						 "- Expected element tag name 'p' but was 'div'",
+						 "- Expected element tag name 'div' but was 'p'",
 						]
 			"different html structure should fail"				| wrapHtml("<div></div><span></span>")	| wrapHtml("<p></p><p></p>")				|| [
-						 "- Expected element tag name \'p\' but was \'div\'",
-						 "- Expected element tag name \'p\' but was \'span\'",
+						 "- Expected element tag name 'p' but was 'div'",
+						 "- Expected element tag name 'p' but was 'span'",
 						]
 			"different attributes should fail"					| wrapHtml("<div a=1 b=2></div>")		| wrapHtml("<div a=1 b=2 c=3></div>")		|| [
-						 "- Expected number of element attributes \'3\' but was \'2\'",
-						 "- Expected attribute name \'c\' but was \'null\'"
+						 "- Expected number of attributes '3' but was '2'",
+						 "- Expected attribute name '/html[1]/body[1]/div[1]/@c'"
 						]
 	}
-	
-	
+
 	private String oneline(String message) {
 		if (message == null) {
 			return null

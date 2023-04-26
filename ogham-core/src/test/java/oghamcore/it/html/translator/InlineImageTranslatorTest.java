@@ -1,26 +1,5 @@
 package oghamcore.it.html.translator;
 
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static java.util.Arrays.asList;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
@@ -28,6 +7,7 @@ import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.RawMimeType;
 import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
 import fr.sii.ogham.core.resource.path.RelativePathResolver;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
@@ -42,23 +22,37 @@ import fr.sii.ogham.html.inliner.impl.regexp.RegexAttachBackgroudImageInliner;
 import fr.sii.ogham.html.inliner.impl.regexp.RegexBase64BackgroundImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
 import fr.sii.ogham.testing.assertion.html.AssertHtml;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static java.util.Arrays.asList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@LogTestInformation
+@MockitoSettings
 public class InlineImageTranslatorTest {
 	private static String FOLDER = "/inliner/images/translator/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
 
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-
 	@Mock MimeTypeProvider mimeTypeProvider;
 	
 	InlineImageTranslator translator;
 	
-	@Before
-	public void setup() throws MimeTypeDetectionException, MimeTypeParseException {
-		when(mimeTypeProvider.detect(any(InputStream.class))).thenReturn(new MimeType("image/gif"));
+	@BeforeEach
+	public void setup() throws MimeTypeDetectionException {
+		when(mimeTypeProvider.detect(any(InputStream.class))).thenReturn(new RawMimeType("image/gif"));
 		SequentialIdGenerator idGenerator = new SequentialIdGenerator();
 		ImageInliner inliner = new EveryImageInliner(
 				new JsoupAttachImageInliner(idGenerator),

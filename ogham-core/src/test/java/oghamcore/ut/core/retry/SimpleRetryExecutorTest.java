@@ -1,26 +1,5 @@
 package oghamcore.ut.core.retry;
 
-import static java.time.Instant.ofEpochMilli;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.concurrent.Callable;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.exception.async.WaitException;
 import fr.sii.ogham.core.exception.retry.ExecutionFailedNotRetriedException;
@@ -28,10 +7,25 @@ import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.retry.RetryStrategy;
 import fr.sii.ogham.core.retry.RetryStrategyProvider;
 import fr.sii.ogham.core.retry.SimpleRetryExecutor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+import java.util.concurrent.Callable;
+
+import static java.time.Instant.ofEpochMilli;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.mockito.quality.Strictness.LENIENT;
+
+@MockitoSettings(strictness = LENIENT)
 public class SimpleRetryExecutorTest {
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	
 	@Mock RetryStrategyProvider provider;
 	@Mock RetryStrategy strategy;
 	@Mock Callable<String> action;
@@ -40,7 +34,7 @@ public class SimpleRetryExecutorTest {
 	
 	SimpleRetryExecutor retryExecutor;
 	
-	@Before
+	@BeforeEach
 	public void setup() throws WaitException {
 		when(provider.provide()).thenReturn(strategy);
 		// provide 4 next dates

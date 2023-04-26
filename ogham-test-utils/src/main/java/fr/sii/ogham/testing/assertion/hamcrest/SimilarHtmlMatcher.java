@@ -1,15 +1,14 @@
 package fr.sii.ogham.testing.assertion.hamcrest;
 
-import java.util.function.Consumer;
-
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.junit.ComparisonFailure;
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.xmlunit.diff.Diff;
 
-import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import java.util.function.Consumer;
 
 /**
  * Check if the HTML is similar to the expected. The HTML strings are parsed
@@ -19,7 +18,7 @@ import fr.sii.ogham.testing.assertion.util.HtmlUtils;
  * <p>
  * This matcher is a {@link ExpectedValueProvider} for knowing the original expected
  * value. Thanks to this information, {@link OghamAssertions} will generate a
- * {@link ComparisonFailure} with the expected string and actual string in order
+ * {@link AssertionFailedError} with the expected string and actual string in order
  * to be able to visualize the differences on sources directly in the IDE.
  * 
  * <p>
@@ -36,12 +35,12 @@ public class SimilarHtmlMatcher extends AbstractHtmlDiffMatcher {
 	}
 
 	public SimilarHtmlMatcher(String expected, Consumer<String> printer) {
-		super(expected, printer, "similar");
+		super(expected, printer, "similar", false);
 	}
 
 	@Override
-	protected boolean matches(DetailedDiff diff) {
-		return diff.similar();
+	protected boolean matches(Diff diff) {
+		return !diff.hasDifferences();
 	}
 
 	@Override

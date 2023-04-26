@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import fr.sii.ogham.test.classpath.runner.common.NamedMatricesProperties;
+import fr.sii.ogham.test.classpath.runner.exception.SkipRunException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -37,7 +39,7 @@ public class StandaloneProjectRunner implements ApplicationRunner {
 	OghamProperties oghamProperties;
 
 	@Autowired
-	StandaloneMatrixProperties standaloneMatrixProperties;
+	NamedMatricesProperties matricesProperties;
 
 	@Autowired
 	ProjectsCreator<StandaloneProjectParams, OghamDependency> projectsCreator;
@@ -45,32 +47,52 @@ public class StandaloneProjectRunner implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		try {
+			checkShouldRun();
 			run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
-		} catch (Exception e) {
+		} catch(SkipRunException e) {
+			log.info(e.getMessage());
+		} catch(Exception e) {
 			log.error("Failed to create standalone projects", e);
 			System.exit(1);
 		}
 	}
-	
+
+	private void checkShouldRun() throws SkipRunException {
+		if (!matricesProperties.hasStandaloneMatrices()) {
+			throw new SkipRunException("No standalone matrix configured. Skipping");
+		}
+	}
+
 	public void run(String parentFolderPath, boolean override) throws IOException, InterruptedException, ExecutionException, XmlPullParserException, ProjectInitializationException, AddDependencyException, SingleProjectCreationException {
 		Path parentFolder = Paths.get(parentFolderPath);
 		log.info("Generating standalone projects...");
 		List<String> modules = projectsCreator.createProjects(parentFolder, override, generateStandaloneMatrix(), emptyList());
-		addModules(parentFolder, standaloneMatrixProperties.getJavaVersions(), modules);
-		addMavenWrapper(parentFolder, standaloneMatrixProperties.getJavaVersions());
+		addModules(parentFolder, getStandaloneMatrix().getJavaVersions(), modules);
+		addMavenWrapper(parentFolder, getStandaloneMatrix().getJavaVersions());
 		log.info("{} standalone projects created", modules.size());
 	}
 
 
 	private List<StandaloneProjectParams> generateStandaloneMatrix() {
 		List<StandaloneProjectParams> expanded = new ArrayList<>();
-		for (JavaVersion javaVersion : standaloneMatrixProperties.getJavaVersions()) {
-			for (BuildTool buildTool : standaloneMatrixProperties.getBuild()) {
-				for (List<OghamDependency> oghamDeps : standaloneMatrixProperties.getExpandedOghamDependencies()) {
-					expanded.add(new StandaloneProjectParams(javaVersion, buildTool, oghamDeps, standaloneMatrixProperties.getAdditionalDependencies()));
+		StandaloneMatrixProperties matrix = getStandaloneMatrix();
+		for (JavaVersion javaVersion : matrix.getJavaVersions()) {
+			for (BuildTool buildTool : matrix.getBuild()) {
+				for (List<OghamDependency> oghamDeps : matrix.getExpandedOghamDependencies()) {
+					expanded.add(new StandaloneProjectParams(
+							javaVersion,
+							buildTool,
+							oghamDeps,
+							matrix.getAdditionalDependencies(),
+							matrix.getBuildProperties(),
+							matrix.getRepositories()));
 				}
 			}
 		}
 		return expanded;
+	}
+
+	private StandaloneMatrixProperties getStandaloneMatrix() {
+		return matricesProperties.getStandaloneMatrix();
 	}
 }

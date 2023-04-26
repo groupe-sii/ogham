@@ -1,52 +1,53 @@
 package oghamcore.ut.core;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.MessagingRuntimeException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+
+@LogTestInformation
+@MockitoSettings
 public class WrapExceptionMessagingServiceTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final MockitoRule mockito = MockitoJUnit.rule();
 
 	@Mock MessagingService delegate;
-	
+
 	MessagingService wrapper;
-	
-	@Before
+
+	@BeforeEach
 	public void setup() {
 		wrapper = new WrapExceptionMessagingService(delegate);
 	}
-	
-	@Test(expected=MessagingException.class)
+
+	@Test
 	public void runtimeExceptionShouldBeWrapped() throws MessagingException {
 		doThrow(IllegalArgumentException.class).when(delegate).send(any());
-		wrapper.send(null);
+		assertThrows(MessagingException.class, () -> {
+			wrapper.send(null);
+		});
 	}
-	
-	@Test(expected=MessagingException.class)
+
+	@Test
 	public void messagingRuntimeExceptionShouldBeWrapped() throws MessagingException {
 		doThrow(MessagingRuntimeException.class).when(delegate).send(any());
-		wrapper.send(null);
+		assertThrows(MessagingException.class, () -> {
+			wrapper.send(null);
+		});
 	}
-	
-	@Test(expected=OutOfMemoryError.class)
+
+	@Test
 	public void errorShouldNotBeWrapped() throws MessagingException {
 		doThrow(OutOfMemoryError.class).when(delegate).send(any());
-		wrapper.send(null);
+        assertThrows(OutOfMemoryError.class, () -> {
+			wrapper.send(null);
+        });
 	}
 }

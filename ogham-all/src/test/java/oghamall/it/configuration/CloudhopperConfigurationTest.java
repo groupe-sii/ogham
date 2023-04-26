@@ -3,7 +3,7 @@ package oghamall.it.configuration;
 import static fr.sii.ogham.testing.assertion.OghamInternalAssertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.service.MessagingService;

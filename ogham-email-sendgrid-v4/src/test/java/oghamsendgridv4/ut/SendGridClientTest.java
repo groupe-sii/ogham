@@ -1,24 +1,20 @@
 package oghamsendgridv4.ut;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.RETURNS_SMART_NULLS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
-
 import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CorrectPackageNameMailCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public final class SendGridClientTest {
 
@@ -29,20 +25,24 @@ public final class SendGridClientTest {
 		super();
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		delegate = mock(SendGrid.class, RETURNS_SMART_NULLS);
 		instance = new DelegateSendGridClient(delegate);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sendEmailParamCannotBeNull() throws SendGridException {
-		instance.send(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			instance.send(null);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void constructorDelegateParamCannotBeNull() {
-		new DelegateSendGridClient((SendGrid) null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			new DelegateSendGridClient((SendGrid) null);
+		});
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public final class SendGridClientTest {
 		verify(delegate).api(any());
 	}
 
-	@Test(expected = SendGridException.class)
+	@Test
 	public void send_errorResponse() throws SendGridException, IOException {
 		final Response response = new Response(403, "FORBIDDEN", null);
 		final Mail email = new Mail();
@@ -66,7 +66,9 @@ public final class SendGridClientTest {
 
 		when(delegate.api(any())).thenReturn(response);
 
-		instance.send(exp);
+		assertThrows(SendGridException.class, () -> {
+			instance.send(exp);
+		});
 	}
 
 }

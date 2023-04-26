@@ -1,26 +1,23 @@
 package fr.sii.ogham.core.builder.mimetype;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.List;
-
-import javax.activation.MimetypesFileTypeMap;
-
-import org.apache.tika.Tika;
-import org.apache.tika.config.TikaConfig;
-
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.fluent.Parent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import org.apache.tika.Tika;
+import org.apache.tika.config.TikaConfig;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Builder that configures mimetype detection.
  * 
  * There exists several implementations to provide the mimetype:
  * <ul>
- * <li>Using Java {@link MimetypesFileTypeMap}</li>
+ * <li>Using Java activation</li>
  * <li>Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}</li>
  * <li>Using <a href="http://tika.apache.org/">Apache Tika</a></li>
  * <li>Using <a href="https://github.com/arimus/jmimemagic">JMimeMagic</a></li>

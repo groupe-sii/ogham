@@ -1,11 +1,5 @@
 package fr.sii.ogham.template.freemarker.configurer;
 
-import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -13,11 +7,18 @@ import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+import fr.sii.ogham.core.exception.configurer.MissingImplementationException;
 import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import freemarker.template.TemplateExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY;
 
 /**
  * Default configurer for Freemarker template engine that is automatically
@@ -136,12 +137,9 @@ public final class DefaultFreemarkerEmailConfigurer {
 		}
 
 		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (!canUseFreemaker()) {
-				LOG.debug("[{}] skip configuration", this);
-				return;
-			}
-			LOG.debug("[{}] apply configuration", this);
+		public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+			checkCanUseFreemarker();
+
 			FreemarkerEmailBuilder builder = msgBuilder.email().template(FreemarkerEmailBuilder.class);
 			// apply default resource resolution configuration
 			if (delegate != null) {
@@ -195,7 +193,13 @@ public final class DefaultFreemarkerEmailConfigurer {
 			// @formatter:on
 		}
 
-		private static boolean canUseFreemaker() {
+		private static void checkCanUseFreemarker() throws ConfigureException {
+			if (!isFreemarkerPresent()) {
+				throw new MissingImplementationException("Can't parse FreeMarker templates because FreeMarker implementation is not present in the classpath", "freemarker.template.Configuration", "freemarker.template.Template");
+			}
+		}
+
+		private static boolean isFreemarkerPresent() {
 			return ClasspathUtils.exists("freemarker.template.Configuration") && ClasspathUtils.exists("freemarker.template.Template");
 		}
 	}

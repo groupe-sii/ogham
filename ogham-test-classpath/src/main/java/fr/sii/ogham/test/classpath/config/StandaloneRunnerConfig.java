@@ -1,5 +1,8 @@
 package fr.sii.ogham.test.classpath.config;
 
+import fr.sii.ogham.test.classpath.core.property.PropertyAdder;
+import fr.sii.ogham.test.classpath.core.repository.RepositoryAdder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,11 +21,14 @@ import fr.sii.ogham.test.classpath.runner.standalone.TemplatedProjectInitializer
 @Configuration
 public class StandaloneRunnerConfig {
 	@Bean
-	public ProjectInitializer<StandaloneProjectParams> standaloneProjectInitializer(OghamProperties oghamProperties, DependencyAdder dependencyAdder) {
+	public ProjectInitializer<StandaloneProjectParams> standaloneProjectInitializer(OghamProperties oghamProperties,
+																					@Qualifier("dependencyAdder") DependencyAdder dependencyAdder,
+																					PropertyAdder propertyAdder,
+																					RepositoryAdder repositoryAdder) {
 		freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_28);
 		cfg.setClassForTemplateLoading(TemplatedProjectInitializer.class, "/");
 		cfg.setDefaultEncoding("UTF-8");
-		return new TemplatedProjectInitializer(cfg, oghamProperties, dependencyAdder);
+		return new TemplatedProjectInitializer(cfg, oghamProperties, dependencyAdder, propertyAdder, repositoryAdder);
 	}
 	
 	@Bean

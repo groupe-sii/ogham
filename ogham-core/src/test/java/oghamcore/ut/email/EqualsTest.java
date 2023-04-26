@@ -1,6 +1,6 @@
 package oghamcore.ut.email;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
 import fr.sii.ogham.email.attachment.Attachment;
@@ -10,8 +10,8 @@ import fr.sii.ogham.email.message.Recipient;
 import fr.sii.ogham.email.message.fluent.AttachBuilder;
 import fr.sii.ogham.email.message.fluent.BodyBuilder;
 import fr.sii.ogham.email.message.fluent.EmbedBuilder;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
+import ogham.testing.nl.jqno.equalsverifier.EqualsVerifier;
+import ogham.testing.nl.jqno.equalsverifier.Warning;
 
 public class EqualsTest {
 	@Test

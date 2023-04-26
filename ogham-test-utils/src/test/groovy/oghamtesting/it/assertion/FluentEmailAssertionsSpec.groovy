@@ -1,35 +1,23 @@
 package oghamtesting.it.assertion
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat
-import static javax.mail.Message.RecipientType.CC
-import static javax.mail.Message.RecipientType.TO
-import static org.hamcrest.Matchers.allOf
-import static org.hamcrest.Matchers.arrayWithSize
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.containsString
-import static org.hamcrest.Matchers.everyItem
-import static org.hamcrest.Matchers.hasItems
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.Matchers.nullValue
-import static org.hamcrest.Matchers.startsWith
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension
+import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
+import fr.sii.ogham.testing.extension.common.LogTestInformation
+import ogham.testing.jakarta.mail.BodyPart
+import ogham.testing.jakarta.mail.Multipart
+import ogham.testing.jakarta.mail.internet.InternetAddress
+import ogham.testing.jakarta.mail.internet.MimeMessage
+import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.function.Consumer
 import java.util.function.Predicate
 
-import javax.mail.BodyPart
-import javax.mail.Multipart
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
-
-import com.icegreen.greenmail.junit4.GreenMailRule
-
-import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
-import fr.sii.ogham.testing.extension.common.LogTestInformation
-import spock.lang.Specification
-import spock.lang.Unroll
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat
+import static ogham.testing.jakarta.mail.Message.RecipientType.CC
+import static ogham.testing.jakarta.mail.Message.RecipientType.TO
+import static org.hamcrest.Matchers.*
 
 @LogTestInformation
 @Unroll
@@ -50,7 +38,7 @@ class FluentEmailAssertionsSpec extends Specification {
 			MimeMessage message2 = Mock {
 				getSubject() >> subject2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -86,7 +74,7 @@ class FluentEmailAssertionsSpec extends Specification {
 	
 	def "every().subject(#matcher) with #subject1 & #subject2 #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
+			GreenMailExtension greenMail = Mock()
 			MimeMessage message1 = Mock()
 			message1.getSubject() >> subject1
 			MimeMessage message2 = Mock()
@@ -138,7 +126,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getFrom() >> ([from2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -203,7 +191,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getFrom() >> ([from2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -259,7 +247,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getRecipients(TO) >> ([to2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 						
@@ -323,7 +311,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getRecipients(TO) >> ([to2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -380,7 +368,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getRecipients(CC) >> ([cc2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -445,7 +433,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getRecipients(CC) >> ([cc2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -513,7 +501,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}			
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -593,7 +581,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -671,7 +659,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -763,7 +751,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -816,7 +804,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				getContent() >> multipart1
 			}
 
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1] as MimeMessage[])
 			}
 			
@@ -899,7 +887,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -1015,7 +1003,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -1110,7 +1098,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getContent() >> multipart2
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -1162,7 +1150,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				getContent() >> multipart2
 			}
 
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -1217,7 +1205,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				getContent() >> multipart2
 			}
 
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -1253,7 +1241,7 @@ class FluentEmailAssertionsSpec extends Specification {
 			MimeMessage message2 = Mock {
 				getContent() >> "foo"
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			
@@ -1283,7 +1271,7 @@ class FluentEmailAssertionsSpec extends Specification {
 	
 	def "assertions on message #index but only #messages.size() messages received"() {
 		given:
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> (messages as MimeMessage[])
 			}
 		
@@ -1320,7 +1308,7 @@ class FluentEmailAssertionsSpec extends Specification {
 
 	def "#messages.size() messages received & receivedMessages(#matcher) & count(#countMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> (messages as MimeMessage[])
 			}
 		
@@ -1364,7 +1352,7 @@ class FluentEmailAssertionsSpec extends Specification {
 				}
 				getFrom() >> ([from2] as InternetAddress[])
 			}
-			GreenMailRule greenMail = Mock {
+			GreenMailExtension greenMail = Mock {
 				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			}
 			

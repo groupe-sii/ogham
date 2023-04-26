@@ -3,11 +3,11 @@ package fr.sii.ogham.testing.sms.simulator.cloudhopper;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cloudhopper.smpp.SmppServerConfiguration;
-import com.cloudhopper.smpp.SmppServerHandler;
-import com.cloudhopper.smpp.impl.DefaultSmppServer;
-import com.cloudhopper.smpp.pdu.PduRequest;
-import com.cloudhopper.smpp.type.SmppChannelException;
+import ogham.testing.com.cloudhopper.smpp.SmppServerConfiguration;
+import ogham.testing.com.cloudhopper.smpp.SmppServerHandler;
+import ogham.testing.com.cloudhopper.smpp.impl.DefaultSmppServer;
+import ogham.testing.com.cloudhopper.smpp.pdu.PduRequest;
+import ogham.testing.com.cloudhopper.smpp.type.SmppChannelException;
 
 import fr.sii.ogham.testing.sms.simulator.SmppServerException;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;

@@ -7,6 +7,7 @@ import java.util.SortedSet;
 
 import javax.net.ServerSocketFactory;
 
+import fr.sii.ogham.testing.util.port.CrossJvmPortFinderLock;
 import fr.sii.ogham.testing.util.port.DefaultPortFinder;
 import fr.sii.ogham.testing.util.port.PortFinder;
 
@@ -189,9 +190,7 @@ public final class RandomPortUtils {
 		TCP {
 			@Override
 			protected boolean isPortAvailable(int port) {
-				try {
-					ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(port, 1, InetAddress.getByName("localhost"));
-					serverSocket.close();
+				try (ServerSocket ignored = ServerSocketFactory.getDefault().createServerSocket(port, 1, InetAddress.getByName("localhost"))) {
 					return true;
 				} catch (Exception ex) {
 					return false;
@@ -202,9 +201,7 @@ public final class RandomPortUtils {
 		UDP {
 			@Override
 			protected boolean isPortAvailable(int port) {
-				try {
-					DatagramSocket socket = new DatagramSocket(port, InetAddress.getByName("localhost"));
-					socket.close();
+				try (DatagramSocket ignored = new DatagramSocket(port, InetAddress.getByName("localhost"))) {
 					return true;
 				} catch (Exception ex) {
 					return false;

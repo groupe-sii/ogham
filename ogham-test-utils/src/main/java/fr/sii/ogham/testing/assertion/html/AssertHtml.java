@@ -1,15 +1,13 @@
 package fr.sii.ogham.testing.assertion.html;
 
-import java.util.List;
-
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Difference;
-import org.junit.ComparisonFailure;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import org.junit.jupiter.api.AssertionFailureBuilder;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-
-import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.Difference;
 
 /**
  * Utility class for checking HTML content.
@@ -27,7 +25,7 @@ public final class AssertHtml {
 	 * order.
 	 * <p>
 	 * For each difference, the difference will be logged with error level. It
-	 * will generate a {@link ComparisonFailure} with the expected string and
+	 * will generate a {@link AssertionFailedError} with the expected string and
 	 * actual string in order to be able to visualize the differences on sources
 	 * directly in the IDE.
 	 * </p>
@@ -38,10 +36,15 @@ public final class AssertHtml {
 	 *            the HTML content to check
 	 */
 	public static void assertEquals(String expected, String actual) {
-		DetailedDiff diff = HtmlUtils.compare(expected, actual);
-		if (!diff.identical()) {
+		Diff diff = HtmlUtils.compare(expected, actual, true);
+		if (diff.hasDifferences()) {
 			logDifferences(diff);
-			throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
+			AssertionFailureBuilder.assertionFailure()
+					.message("HTML element different to expected one. See logs for details about found differences.\n")
+					.expected(expected)
+					.actual(actual)
+					.reason(diff.toString())
+					.buildAndThrow();
 		}
 	}
 
@@ -51,7 +54,7 @@ public final class AssertHtml {
 	 * they contain the same elements and attributes regardless of order.
 	 * <p>
 	 * For each difference, the difference will be logged with error level. It
-	 * will generate a {@link ComparisonFailure} with the expected string and
+	 * will generate a {@link AssertionFailedError} with the expected string and
 	 * actual string in order to be able to visualize the differences on sources
 	 * directly in the IDE.
 	 * </p>
@@ -62,24 +65,21 @@ public final class AssertHtml {
 	 *            the HTML content to check
 	 */
 	public static void assertSimilar(String expected, String actual) {
-		DetailedDiff diff = HtmlUtils.compare(expected, actual);
-		if (!diff.similar()) {
-			logUnrecoverableDifferences(diff);
-			throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
+		Diff diff = HtmlUtils.compare(expected, actual, false);
+		if (diff.hasDifferences()) {
+			logDifferences(diff);
+			AssertionFailureBuilder.assertionFailure()
+					.message("HTML element different to expected one. See logs for details about found differences.\n")
+					.expected(expected)
+					.actual(actual)
+					.reason(diff.toString())
+					.buildAndThrow();
 		}
 	}
 
-	private static void logDifferences(DetailedDiff diff) {
-		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
+	private static void logDifferences(Diff diff) {
+		for (Difference difference : diff.getDifferences()) {
 			LOG.error(difference.toString()); // NOSONAR
-		}
-	}
-
-	private static void logUnrecoverableDifferences(DetailedDiff diff) {
-		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
-			if (!difference.isRecoverable()) {
-				LOG.error(difference.toString()); // NOSONAR
-			}
 		}
 	}
 

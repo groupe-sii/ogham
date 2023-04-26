@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeParseException;
+import fr.sii.ogham.core.mimetype.MimeType;
 
 import org.apache.tika.Tika;
 

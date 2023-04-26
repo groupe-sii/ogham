@@ -1,30 +1,6 @@
 package oghamspringbootv2autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThrows;
-import static org.springframework.boot.autoconfigure.AutoConfigurations.of;
-
-import java.io.IOException;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
@@ -32,21 +8,44 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
 import freemarker.core.InvalidReferenceException;
 import mock.context.SimpleBean;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.boot.autoconfigure.AutoConfigurations.of;
+
+@LogTestInformation
 public class SpringBeanResolutionTest {
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
+	@RegisterExtension public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
 	private ApplicationContextRunner contextRunner;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		contextRunner = new ApplicationContextRunner()
 				.withPropertyValues(
@@ -93,7 +92,7 @@ public class SpringBeanResolutionTest {
 
 	@Test
 	public void missingBeanErrorUsingThymeleaf() throws MessagingException, IOException {
-		MessagingException e = assertThrows("should throw", MessagingException.class, () -> {
+		MessagingException e = assertThrows(MessagingException.class, () -> {
 			contextRunner.run((context) -> {
 				MessagingService messagingService = context.getBean(MessagingService.class);
 				messagingService.send(new Email()
@@ -140,7 +139,7 @@ public class SpringBeanResolutionTest {
 
 	@Test
 	public void missingBeanErrorUsingFreemarker() throws MessagingException, IOException {
-		MessagingException e = assertThrows("should throw", MessagingException.class, () -> {
+		MessagingException e = assertThrows(MessagingException.class, () -> {
 			contextRunner.run((context) -> {
 				MessagingService messagingService = context.getBean(MessagingService.class);
 				messagingService.send(new Email()

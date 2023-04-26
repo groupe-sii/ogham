@@ -1,27 +1,24 @@
 package fr.sii.ogham.runtime.checker;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aMultipart;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static fr.sii.ogham.testing.assertion.wiremock.WireMockMatchers.similarHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 import java.io.IOException;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static fr.sii.ogham.testing.assertion.wiremock.WireMockMatchers.similarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 
 public class SendGridV2Checker implements SendGridChecker {
-	private final WireMockServer server;
+	private final WireMock server;
 	
-	public SendGridV2Checker(WireMockServer server) {
+	public SendGridV2Checker(WireMock server) {
 		super();
 		this.server = server;
 	}
 
 	@Override
 	public void assertEmailWithoutTemplate() throws IOException {
-		server.verify(postRequestedFor(urlEqualTo("/api/mail.send.json"))
+		server.verifyThat(postRequestedFor(urlEqualTo("/api/mail.send.json"))
 				.withAnyRequestBodyPart(aMultipart("from").withBody(equalTo("sender@sii.fr")))
 				.withAnyRequestBodyPart(aMultipart("fromname").withBody(equalTo("Sender Name")))
 				.withAnyRequestBodyPart(aMultipart("to[]").withBody(equalTo("recipient@sii.fr")))
@@ -46,7 +43,7 @@ public class SendGridV2Checker implements SendGridChecker {
 	}
 	
 	private void assertEmailWithTemplates(String subject, String templateEngine) throws IOException {
-		server.verify(postRequestedFor(urlEqualTo("/api/mail.send.json"))
+		server.verifyThat(postRequestedFor(urlEqualTo("/api/mail.send.json"))
 				.withAnyRequestBodyPart(aMultipart("from").withBody(equalTo("sender@sii.fr")))
 				.withAnyRequestBodyPart(aMultipart("fromname").withBody(equalTo("Sender Name")))
 				.withAnyRequestBodyPart(aMultipart("to[]").withBody(equalTo("recipient@sii.fr")))

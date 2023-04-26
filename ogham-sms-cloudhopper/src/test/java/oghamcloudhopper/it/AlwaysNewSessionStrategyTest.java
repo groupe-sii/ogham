@@ -1,31 +1,8 @@
 package oghamcloudhopper.it;
 
-import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
-import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
-import static java.util.Arrays.asList;
-import static testutils.SessionStrategyTestHelper.cleaned;
-import static testutils.SessionStrategyTestHelper.closed;
-import static testutils.SessionStrategyTestHelper.opened;
-import static testutils.SessionStrategyTestHelper.verifyThat;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import com.cloudhopper.smpp.SmppClient;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.impl.DefaultSmppClient;
-
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
 import fr.sii.ogham.sms.message.Sms;
@@ -34,20 +11,35 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration
 import fr.sii.ogham.testing.assertion.sms.AssertSms;
 import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber;
 import fr.sii.ogham.testing.assertion.sms.ExpectedSms;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
-import testutils.SessionStrategyTestHelper.SessionAware;
-import testutils.SessionStrategyTestHelper.TestContext;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
 import testutils.TrackClientAndSessionsDecorator;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+
+import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
+import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
+import static java.util.Arrays.asList;
+import static testutils.SessionStrategyTestHelper.*;
+
+@LogTestInformation
+@MockitoSettings
 public class AlwaysNewSessionStrategyTest implements Supplier<TestContext> {
 	private static final String RECIPIENT = "0203040506";
 	private static final String SENDER = "+33203040506";
 
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
+	@RegisterExtension public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
 	private CloudhopperSMPPSender sender;
 	private CloudhopperBuilder builder;
@@ -58,7 +50,7 @@ public class AlwaysNewSessionStrategyTest implements Supplier<TestContext> {
 	List<SmppSession> allSessions = new ArrayList<>();
 	@Spy SmppClientSupplier supplier = new TrackClientAndSessionsDecorator(() -> clients, () -> allSessions);
 
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		clients = asList(client1, client2);
 		ExtendedSmppSessionConfiguration configuration = new ExtendedSmppSessionConfiguration();

@@ -11,8 +11,12 @@ import fr.sii.ogham.test.classpath.core.Project;
 import fr.sii.ogham.test.classpath.core.ProjectInitializer;
 import fr.sii.ogham.test.classpath.core.dependency.DependencyAdder;
 import fr.sii.ogham.test.classpath.core.exception.AddDependencyException;
+import fr.sii.ogham.test.classpath.core.exception.AddPropertyException;
+import fr.sii.ogham.test.classpath.core.exception.AddRepositoryException;
 import fr.sii.ogham.test.classpath.core.exception.ProjectInitializationException;
 import fr.sii.ogham.test.classpath.core.facet.Facet;
+import fr.sii.ogham.test.classpath.core.property.PropertyAdder;
+import fr.sii.ogham.test.classpath.core.repository.RepositoryAdder;
 import fr.sii.ogham.test.classpath.ogham.OghamProperties;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
@@ -26,23 +30,28 @@ public class TemplatedProjectInitializer implements ProjectInitializer<Standalon
 	private final Configuration freemarkerConfig;
 	private final OghamProperties oghamProperties;
 	private final DependencyAdder dependencyAdder;
+	private final PropertyAdder propertyAdder;
+	private final RepositoryAdder repositoryAdder;
 
 	@Override
 	public Project<StandaloneProjectParams> initialize(Path parentFolder, String identifier, StandaloneProjectParams variables) throws ProjectInitializationException {
 		try {
 			Path generatedProjectPath = parentFolder.resolve(identifier);
-			String resourceFolder = "/standalone/" + variables.getBuildTool().name().toLowerCase();
 			// copy templated project
-			copy("/common", generatedProjectPath);
-			copy("/standalone/src", generatedProjectPath.resolve("src"));
-			copy(resourceFolder, generatedProjectPath);
+			copy("/src/templates/common", generatedProjectPath);
+			copy("/src/templates/standalone", generatedProjectPath);
 			// evaluate templates
-			write(resourceFolder + "/pom.xml.ftl", new TemplateModel(new GeneratedProject(identifier, identifier), oghamProperties.getOghamVersion(), generateActiveFacets(variables)), generatedProjectPath.resolve("pom.xml"));
+			write("/src/templates/standalone/pom.xml.ftl", new TemplateModel(new GeneratedProject(identifier, identifier), oghamProperties.getOghamVersion(), generateActiveFacets(variables)), generatedProjectPath.resolve("pom.xml"));
 			Project<StandaloneProjectParams> project = new Project<>(generatedProjectPath, variables);
+			// configure some properties
+			propertyAdder.addProperties(project, variables.getBuildProperties());
 			// add additional dependencies
 			dependencyAdder.addDependencies(project, variables.getAdditionalDependencies());
+			// add custom repositories
+			repositoryAdder.addRepositories(project, variables.getRepositories());
 			return project;
-		} catch (IOException | TemplateException | AddDependencyException e) {
+		} catch (IOException | TemplateException | AddDependencyException | AddPropertyException |
+				 AddRepositoryException e) {
 			log.error("Failed to initialize project {}: {}", identifier, e.getMessage());
 			throw new ProjectInitializationException("Failed to initialize project " + identifier, e);
 		}

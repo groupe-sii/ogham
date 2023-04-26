@@ -1,19 +1,5 @@
 package oghamall.it.sms;
 
-import static fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator.ISDN_TELEPHONE;
-import static fr.sii.ogham.sms.message.addressing.TypeOfNumber.INTERNATIONAL;
-import static fr.sii.ogham.sms.message.addressing.TypeOfNumber.UNKNOWN;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.sender.MessageSender;
@@ -21,9 +7,21 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.io.IOException;
+
+import static fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator.ISDN_TELEPHONE;
+import static fr.sii.ogham.sms.message.addressing.TypeOfNumber.INTERNATIONAL;
+import static fr.sii.ogham.sms.message.addressing.TypeOfNumber.UNKNOWN;
+
+@LogTestInformation
+@MockitoSettings
 public class SmsCustomImplTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
 
@@ -31,13 +29,10 @@ public class SmsCustomImplTest {
 
 	private MessagingService oghamService;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
 	@Mock
 	MessageSender customSender;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		oghamService = MessagingBuilder.standard()
 				.environment()

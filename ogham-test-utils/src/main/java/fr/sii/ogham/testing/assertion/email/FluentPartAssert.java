@@ -11,9 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.Part;
+import ogham.testing.jakarta.mail.Header;
+import ogham.testing.jakarta.mail.MessagingException;
+import ogham.testing.jakarta.mail.Part;
 
 import org.hamcrest.Matcher;
 

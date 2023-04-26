@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.lessThan;
 import java.util.Collection;
 import java.util.List;
 
-import javax.mail.Message;
+import ogham.testing.jakarta.mail.Message;
 
 import org.hamcrest.Matcher;
 

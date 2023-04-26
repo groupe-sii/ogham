@@ -1,5 +1,6 @@
 package fr.sii.ogham.testing.extension.spring;
 
+import fr.sii.ogham.testing.util.RandomPortUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
@@ -11,15 +12,11 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
-import fr.sii.ogham.testing.util.RandomPortUtils;
-
 /**
  * Initializer for Spring Boot tests that registers:
  * <ul>
  * <li>{@code "greenmail.smtp.port"} property in Spring {@link Environment}</li>
- * <li>{@link GreenMailRule} bean in Spring {@link ApplicationContext} through
+ * <li>{@link ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension} bean in Spring {@link ApplicationContext} through
  * {@link GreenMailTestConfiguration} in order to use the port defined by
  * {@code "greenmail.smtp.port"} property</li>
  * </ul>

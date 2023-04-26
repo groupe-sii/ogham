@@ -1,23 +1,6 @@
 package oghamsendgridv4.it;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static testutils.SendGridTestUtils.getFromAddress;
-import static testutils.SendGridTestUtils.getFromName;
-import static testutils.SendGridTestUtils.getHtml;
-import static testutils.SendGridTestUtils.getText;
-import static testutils.SendGridTestUtils.getToNames;
-import static testutils.SendGridTestUtils.getTos;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
 import com.sendgrid.helpers.mail.Mail;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -31,7 +14,16 @@ import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static testutils.SendGridTestUtils.*;
 
 /**
  * Tests regarding the integration between {@code ogham} and the
@@ -39,9 +31,8 @@ import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
  * the {@code ogham}-aware code and the {@code SendGrid-java}
  * -aware code, i.e. the {@link SendGridClient} interface.
  */
+@LogTestInformation
 public final class SendGridTranslationTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	private static final String SUBJECT = "Example email";
 	private static final String CONTENT_TEXT = "This is a default content.";
@@ -61,7 +52,7 @@ public final class SendGridTranslationTest {
 	private SendGridClient sendGridClient;
 	private MessagingService messagingService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sendGridClient = mock(SendGridClient.class);
 		messagingService = MessagingBuilder.standard()

@@ -1,18 +1,5 @@
 package oghamcore.it.core.service;
 
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -21,19 +8,29 @@ import fr.sii.ogham.core.exception.clean.MultipleCleanException;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.service.CleanableMessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
+@LogTestInformation
+@MockitoSettings
 public class CleanupTest {
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	
+
 	@Mock CleanableSender emailSender;
 	@Mock CleanableSender smsSender;
 	@Mock Email email;
 	
 	MessagingBuilder builder;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		builder = MessagingBuilder.minimal();
 		builder.email().customSender(emailSender);
@@ -59,9 +56,9 @@ public class CleanupTest {
 		
 		service.send(email);
 		
-		assertThrows("should throw with all failures", MultipleCleanException.class, () -> {
+		assertThrows(MultipleCleanException.class, () -> {
 			service.clean();
-		});
+		}, "should throw with all failures");
 	}
 	
 	@Test

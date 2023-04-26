@@ -1,26 +1,6 @@
 package oghamall.it.configuration;
 
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUILD;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThrows;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.util.GreenMail;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -43,22 +23,32 @@ import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.GreenMailServer;
+import fr.sii.ogham.testing.extension.junit.sms.JSmppServer;
+import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
 import mock.context.SimpleBean;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
+import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUILD;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@LogTestInformation
+@GreenMailServer
+@JSmppServer
 public class EmptyBuilderTest {
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-	
-	
 	MessagingBuilder builder;
 	
-	@Before
-	public void setup() {
+	@BeforeEach
+	public void setup(GreenMail greenMail, SmppServerSimulator<SubmitSm> smppServer) {
 		builder = MessagingBuilder.empty();
 		builder
 			.environment()
@@ -79,7 +69,7 @@ public class EmptyBuilderTest {
 
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("body");
 		
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate that there is no sender", e.getMessage(), is("No sender available to send the message"));
@@ -92,7 +82,7 @@ public class EmptyBuilderTest {
 		
 		Sms message = new Sms().from("010203040506").to("060504030201").content("sms");
 		
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate that there is no sender", e.getMessage(), is("No sender available to send the message"));
@@ -104,7 +94,7 @@ public class EmptyBuilderTest {
 	public void noMimetypeConfigurationCantSendEmail() throws MessagingException {
 		builder.email().sender(JavaMailBuilder.class);
 		
-		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+		BuildException e = assertThrows(BuildException.class, () -> {
 			builder.build();
 		});
 		assertThat("should indicate that there is no mimetype detector", e.getMessage(), is("No mimetype detector configured"));
@@ -112,7 +102,7 @@ public class EmptyBuilderTest {
 	
 
 	@Test
-	public void manualJavaMailConfigurationCanSendEmail() throws MessagingException {
+	public void manualJavaMailConfigurationCanSendEmail(GreenMail greenMail) throws MessagingException {
 		builder.email().sender(JavaMailBuilder.class)
 			.mimetype()
 				.defaultMimetype("text/plain");
@@ -121,7 +111,7 @@ public class EmptyBuilderTest {
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("body");
 		service.send(message);
 		
-		assertThat(greenMail)
+		OghamAssertions.assertThat(greenMail)
 			.receivedMessages(hasSize(1))
 			.message(0)
 				.from().address(contains("sender@yopmail.com")).and()
@@ -140,7 +130,7 @@ public class EmptyBuilderTest {
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("body")
 				.attach(new Attachment("attachment/04-Java-OOP-Basics.pdf"));
 		
-		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+		MessageException e = assertThrows(MessageException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(UnresolvableAttachmentResourceHandlerException.class));
@@ -158,7 +148,7 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("<html><head></head><body><img src='template/freemarker/source/images/h1.gif' /></body></html>");
 		
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(ImageInliningException.class));
@@ -176,7 +166,7 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new TemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+		MessageException e = assertThrows(MessageException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoContentHandlerException.class));
@@ -193,7 +183,7 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new TemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		ResolverAdapterNotFoundException e = assertThrows("should throw", ResolverAdapterNotFoundException.class, () -> {
+		ResolverAdapterNotFoundException e = assertThrows(ResolverAdapterNotFoundException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoResolverAdapterException.class));
@@ -208,7 +198,7 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new MultiTemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+		MessageException e = assertThrows(MessageException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(NoContentHandlerException.class));
@@ -225,7 +215,7 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new MultiTemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			service.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), allOf(instanceOf(NoContentException.class), hasMessage(containsString("Template not found for simple.txt.ftl"))));

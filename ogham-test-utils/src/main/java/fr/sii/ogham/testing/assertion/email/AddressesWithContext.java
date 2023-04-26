@@ -5,7 +5,7 @@ import static java.util.regex.Pattern.quote;
 
 import java.util.List;
 
-import javax.mail.internet.InternetAddress;
+import ogham.testing.jakarta.mail.internet.InternetAddress;
 
 import fr.sii.ogham.testing.assertion.context.Context;
 

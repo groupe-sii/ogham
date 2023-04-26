@@ -2,18 +2,18 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
 import java.io.IOException;
 
-import org.jsmpp.DefaultPDUReader;
-import org.jsmpp.DefaultPDUSender;
-import org.jsmpp.PDUReader;
-import org.jsmpp.PDUSender;
-import org.jsmpp.SynchronizedPDUSender;
-import org.jsmpp.session.SMPPServerSession;
-import org.jsmpp.session.SMPPServerSessionListener;
-import org.jsmpp.session.ServerResponseDeliveryListener;
-import org.jsmpp.session.connection.Connection;
-import org.jsmpp.session.connection.ServerConnection;
-import org.jsmpp.session.connection.ServerConnectionFactory;
-import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
+import ogham.testing.org.jsmpp.DefaultPDUReader;
+import ogham.testing.org.jsmpp.DefaultPDUSender;
+import ogham.testing.org.jsmpp.PDUReader;
+import ogham.testing.org.jsmpp.PDUSender;
+import ogham.testing.org.jsmpp.SynchronizedPDUSender;
+import ogham.testing.org.jsmpp.session.SMPPServerSession;
+import ogham.testing.org.jsmpp.session.SMPPServerSessionListener;
+import ogham.testing.org.jsmpp.session.ServerResponseDeliveryListener;
+import ogham.testing.org.jsmpp.session.connection.Connection;
+import ogham.testing.org.jsmpp.session.connection.ServerConnection;
+import ogham.testing.org.jsmpp.session.connection.ServerConnectionFactory;
+import ogham.testing.org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
 
 import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
 
@@ -58,11 +58,11 @@ public class ConfigurableSMPPServerSessionListener extends SMPPServerSessionList
 		if (delays == null) {
 			Connection conn = serverConn.accept();
 			conn.setSoTimeout(getInitiationTimer());
-			return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree());
+			return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), getQueueCapacity());
 		}
 		Connection conn = serverConn.accept();
 		conn.setSoTimeout(getInitiationTimer());
-		return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), createPduSender(), createPduReader());
+		return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), getQueueCapacity(), createPduSender(), createPduReader());
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ConfigurableSMPPServerSessionListener extends SMPPServerSessionList
 	}
 
 	@Override
-	public int getTimeout(int timeout) throws IOException {
+	public int getTimeout() throws IOException {
 		return serverConn.getSoTimeout();
 	}
 

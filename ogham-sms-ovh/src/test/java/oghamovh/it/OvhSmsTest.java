@@ -1,28 +1,7 @@
 package oghamovh.it;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThrows;
-
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.util.PhoneNumberException;
@@ -31,19 +10,30 @@ import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@LogTestInformation
+@WireMockTest
 public class OvhSmsTest {
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public WireMockRule serverRule = new WireMockRule(wireMockConfig().dynamicPort());
-	
+
 	OvhSmsBuilder builder;
 	
-	@Before
-	public void setUp() throws IOException {
+	@BeforeEach
+	public void setUp(WireMockRuntimeInfo wireMock) throws IOException {
 		builder = new OvhSmsBuilder();
 		builder
-			.url("http://localhost:"+serverRule.port()+"/cgi-bin/sms/http2sms.cgi")
+			.url("http://localhost:"+wireMock.getHttpPort()+"/cgi-bin/sms/http2sms.cgi")
 			.account("sms-nic-foobar42")
 			.login("login")
 			.password("password")
@@ -101,7 +91,7 @@ public class OvhSmsTest {
 					.withQueryParam("message", equalTo("sms content\rwith new lines\rof all\rtypes")));
 	}
 
-	@Test(expected=MessagingException.class)
+	@Test
 	public void badRequest() throws MessagingException, IOException, InterruptedException {
 		stubFor(get(urlMatching(".*"))
 				.willReturn(aResponse()
@@ -109,13 +99,15 @@ public class OvhSmsTest {
 						.withHeader("Content-Type", "application/json")));
 		
 		OvhSmsSender sender = builder.build();
-		sender.send(new Sms()
-						.content("sms content")
-						.from(new Sender("0033203040506"))
-						.to("0033605040302"));
+		assertThrows(MessagingException.class, () -> {
+			sender.send(new Sms()
+					.content("sms content")
+					.from(new Sender("0033203040506"))
+					.to("0033605040302"));
+		});
 	}
 
-	@Test(expected=MessagingException.class)
+	@Test
 	public void errorInResponse() throws MessagingException, IOException, InterruptedException {
 		stubFor(get(urlMatching(".*"))
 				.willReturn(aResponse()
@@ -124,17 +116,19 @@ public class OvhSmsTest {
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ko.json")))));
 		
 		OvhSmsSender sender = builder.build();
-		sender.send(new Sms()
-						.content("sms content")
-						.from(new Sender("0033203040506"))
-						.to("0033605040302"));
+		assertThrows(MessagingException.class, () -> {
+			sender.send(new Sms()
+					.content("sms content")
+					.from(new Sender("0033203040506"))
+					.to("0033605040302"));
+		});
 	}
 
 	@Test
-	@Ignore("Not yet implemented")
+	@Disabled("Not yet implemented")
 	public void longMessage() throws MessagingException, IOException {
 		// TODO: implement test
-		Assert.fail("Not yet implemented");
+		fail("Not yet implemented");
 	}
 
 	@Test
@@ -194,12 +188,12 @@ public class OvhSmsTest {
 	public void nationalNumber() throws MessagingException, IOException {
 		OvhSmsSender sender = builder.build();
 		
-		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+		MessageException e = assertThrows(MessageException.class, () -> {
 			sender.send(new Sms()
 					.content("sms content")
 					.from(new Sender("02 03 04 05 06"))
 					.to("06 05 04 03 02"));
-		});
+		}, "should throw");
 		assertThat("should indicate cause", e.getCause(), instanceOf(PhoneNumberException.class));
 	}
 
@@ -217,7 +211,8 @@ public class OvhSmsTest {
 						.content("sms content")
 						.from(new Sender("0033203040506"))
 						.to("0033605040302"));
-		
+		System.out.println("pouet");
+
 		verify(getRequestedFor(urlPathEqualTo("/cgi-bin/sms/http2sms.cgi"))
 					.withQueryParam("account", equalTo("sms-nic-foobar42"))
 					.withQueryParam("login", equalTo("login"))

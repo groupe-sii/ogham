@@ -1,16 +1,13 @@
 package fr.sii.ogham.core.mimetype;
 
-import java.io.File;
-import java.io.InputStream;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.activation.MimetypesFileTypeMap;
-
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeParseException;
+import jakarta.activation.MimetypesFileTypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * Mime Type detection implementation based on Java {@link MimetypesFileTypeMap}.
@@ -39,7 +36,7 @@ public class JavaActivationProvider implements MimeTypeProvider {
 			LOG.debug("Detect mime type for file {}", file);
 			String contentType = map.getContentType(file);
 			LOG.debug("Detected mime type for file {}: {}", file, contentType);
-			return new MimeType(contentType);
+			return JavaActivationMimeType.fromString(contentType);
 		} catch (MimeTypeParseException e) {
 			throw new MimeTypeDetectionException("Failed to detect mimetype for " + file, e);
 		}

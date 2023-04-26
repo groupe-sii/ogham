@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Spring beans resolution</title>
+        <meta charset="utf-8" />
+        <script type="text/javascript" th:src="@{/fake/resources/foo.js}"></script>
+    </head>
+    <body>
+        <h1 class="title" th:text="${@fakeService.hello(name)}"></h1>
+        <a th:href="${(#mvc.url('FC#hello').arg(0, 'world')).build()}">Get Data Param</a>
+    </body>
+</html>

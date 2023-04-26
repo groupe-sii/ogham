@@ -1,5 +1,7 @@
 package oghamcore.it.core.configuration
 
+import fr.sii.ogham.core.builder.configuration.MayOverride
+
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUILD
@@ -226,7 +228,7 @@ class ConfigurationLifecycleSpec extends Specification {
 		void configure(TestMessagingBuilder builder) {
 			builder.confValue().properties("\${after-init}")
 			if (registerDefaultValues) {
-				builder.confValue().defaultValue(overrideIfNotSet("after-init default value"))
+				builder.confValue().defaultValue(MayOverride.overrideIfNotSet("after-init default value"))
 			}
 			if (registerOptionalValue != null) {
 				builder.confValue().value(registerOptionalValue)
@@ -256,7 +258,7 @@ class ConfigurationLifecycleSpec extends Specification {
 		void configure(TestMessagingBuilder builder) {
 			builder.confValue().properties("\${before-build}")
 			if (registerDefaultValues) {
-				builder.confValue().defaultValue(overrideIfNotSet("before-build default value"))
+				builder.confValue().defaultValue(MayOverride.overrideIfNotSet("before-build default value"))
 			}
 			if (registerOptionalValue != null) {
 				builder.confValue().value(registerOptionalValue)

@@ -1,18 +1,13 @@
 package fr.sii.ogham.spring.template;
 
-import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
-
-import java.io.IOException;
-
-import javax.servlet.Servlet;
-
+import fr.sii.ogham.spring.email.OghamEmailProperties;
+import fr.sii.ogham.spring.sms.OghamSmsProperties;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -21,11 +16,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import fr.sii.ogham.spring.email.OghamEmailProperties;
-import fr.sii.ogham.spring.sms.OghamSmsProperties;
-import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
+import java.io.IOException;
+
+import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
 
 @Configuration
 @ConditionalOnClass({ freemarker.template.Configuration.class, FreemarkerEmailBuilder.class })
@@ -67,7 +60,7 @@ public class OghamFreemarkerConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnClass({ Servlet.class, FreeMarkerConfigurer.class })
+	@ConditionalOnClass({ FreeMarkerConfigurer.class })
 	@ConditionalOnWebApplication
 	@ConditionalOnBean({ FreeMarkerConfigurer.class })
 	public static class OghamFreeMarkerWebConfiguration {
@@ -85,7 +78,7 @@ public class OghamFreemarkerConfiguration {
 			return configurer.createConfiguration();
 		}
 	}
-	
+
 	
 	@Configuration
 	@ConditionalOnMissingBean(type= {"org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer", "org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"})

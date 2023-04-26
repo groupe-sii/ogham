@@ -1,27 +1,5 @@
 package oghamall.it.html.translator;
 
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
@@ -45,23 +23,40 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
-import fr.sii.ogham.testing.assertion.html.AssertHtml;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.io.IOException;
+import java.util.*;
+
+import static fr.sii.ogham.testing.assertion.html.AssertHtml.assertEquals;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.quality.Strictness.LENIENT;
+
+@LogTestInformation
+@MockitoSettings(strictness = LENIENT)
 public class JsoupInlineImageTranslatorTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER + "source/";
 	private static String EXPECTED_FOLDER = FOLDER + "expected/";
-
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 
 	private InlineImageTranslator translator;
 
 	@Mock
 	private IdGenerator generator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Mockito.when(generator.generate("fb.gif")).thenReturn("fb.gif");
 		Mockito.when(generator.generate("h1.gif")).thenReturn("h1.gif");
@@ -97,11 +92,11 @@ public class JsoupInlineImageTranslatorTest {
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif"));
 		// assertions
-		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
+		assertTrue(result instanceof ContentWithAttachments, "should be ContentWithAttachments");
 		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
-		AssertHtml.assertEquals(expected, contentWithAttachments.getContent().toString());
-		Assert.assertEquals("should have 5 attachments", 5, contentWithAttachments.getAttachments().size());
-		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
+		assertEquals(expected, contentWithAttachments.getContent().toString());
+		Assertions.assertEquals(5, contentWithAttachments.getAttachments().size(), "should have 5 attachments");
+		Assertions.assertEquals(new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()), "should have valid attachments");
 	}
 
 	@Test
@@ -115,11 +110,11 @@ public class JsoupInlineImageTranslatorTest {
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(loadImages("h1.gif", "left.gif", "right.gif", "tw.gif"));
 		// assertions
-		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
+		assertTrue(result instanceof ContentWithAttachments, "should be ContentWithAttachments");
 		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
-		AssertHtml.assertEquals(expected, contentWithAttachments.getContent().toString());
-		Assert.assertEquals("should have 4 attachments", 4, contentWithAttachments.getAttachments().size());
-		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
+		assertEquals(expected, contentWithAttachments.getContent().toString());
+		Assertions.assertEquals(4, contentWithAttachments.getAttachments().size(), "should have 4 attachments");
+		Assertions.assertEquals(new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()), "should have valid attachments");
 	}
 
 	@Test
@@ -133,19 +128,19 @@ public class JsoupInlineImageTranslatorTest {
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif"));
 		// assertions
-		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
+		assertTrue(result instanceof ContentWithAttachments, "should be ContentWithAttachments");
 		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
-		AssertHtml.assertEquals(expected, contentWithAttachments.getContent().toString());
-		Assert.assertEquals("should have 2 attachments", 2, contentWithAttachments.getAttachments().size());
-		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
+		assertEquals(expected, contentWithAttachments.getContent().toString());
+		Assertions.assertEquals(2, contentWithAttachments.getAttachments().size(), "should have 2 attachments");
+		Assertions.assertEquals(new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()), "should have valid attachments");
 	}
 
 	@Test
 	public void unreadableImage() throws ContentTranslatorException {
-		ImageInliningException e = Assert.assertThrows("should throw", ImageInliningException.class, () -> {
+		ImageInliningException e = assertThrows(ImageInliningException.class, () -> {
 			StringContent sourceContent = new StringContent("<html><head></head><body><img src='INVALID_FILE' /></body></html>");
 			translator.translate(sourceContent);
-		});
+		}, "should throw");
 		assertThat("should indicate file path", e.getMessage(), containsString("INVALID_FILE"));
 	}
 

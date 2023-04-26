@@ -1,24 +1,28 @@
 package fr.sii.ogham.test.classpath.maven;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.springframework.stereotype.Service;
-
 import fr.sii.ogham.test.classpath.core.Project;
 import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import fr.sii.ogham.test.classpath.core.dependency.DependencyAdder;
 import fr.sii.ogham.test.classpath.core.exception.AddDependencyException;
 import lombok.Data;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
-@Service
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
+import static fr.sii.ogham.test.classpath.maven.MavenDependencyUtil.convert;
+import static fr.sii.ogham.test.classpath.maven.MavenDependencyUtil.isSameDependency;
+
 @Data
+@Service
+@Qualifier("dependencyAdder")
 public class AddMavenDependency implements DependencyAdder {
 	
 	public void addDependencies(Project<?> project, List<Dependency> dependencies) throws AddDependencyException {
@@ -55,22 +59,9 @@ public class AddMavenDependency implements DependencyAdder {
 		}
 	}
 
-	private org.apache.maven.model.Dependency convert(Dependency dep) {
-		org.apache.maven.model.Dependency dependency = new org.apache.maven.model.Dependency();
-		dependency.setGroupId(dep.getGroupId());
-		dependency.setArtifactId(dep.getArtifactId());
-		dependency.setVersion(dep.getVersion());
-		dependency.setScope(dep.getScope().getValue());
-		return dependency;
-	}
 
 	private boolean alreadyContainsDependency(Model model, Dependency dep) {
 		return model.getDependencies().stream().anyMatch(mavenDep -> isSameDependency(mavenDep, dep));
 	}
-	
-	private boolean isSameDependency(org.apache.maven.model.Dependency mavenDep, Dependency newDep) {
-		return mavenDep.getArtifactId().equals(newDep.getArtifactId())
-				&& mavenDep.getGroupId().equals(newDep.getGroupId())
-				&& mavenDep.getVersion().equals(newDep.getVersion());
-	}
+
 }

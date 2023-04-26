@@ -1,32 +1,27 @@
 package oghamcore.ut.util;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.rits.cloning.Cloner;
-
+import ogham.testing.com.rits.cloning.Cloner;
 import fr.sii.ogham.core.exception.util.BeanException;
 import fr.sii.ogham.core.util.BeanUtils;
 import fr.sii.ogham.core.util.BeanUtils.Options;
 import mock.context.NestedBean;
 import mock.context.SimpleBean;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanUtilsTest {
 	private List<TestParam> params = new ArrayList<>();
 	private Date overrideDate;
 	private Date initialDate;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Calendar initialCal = Calendar.getInstance();
 		initialCal.set(2015, 6, 16);
@@ -148,7 +143,7 @@ public class BeanUtilsTest {
 		map.put("unknown.property", "bar");
 		SimpleBean bean = new SimpleBean("initial", 10);
 		BeanUtils.populate(bean, map, new Options(false, true, true, true));
-		Assert.assertEquals("Should not have any effect", new SimpleBean("initial", 10), bean);
+		assertEquals(new SimpleBean("initial", 10), bean, "Should not have any effect");
 	}
 	
 	@Test
@@ -158,7 +153,7 @@ public class BeanUtilsTest {
 		map.put("unknown.property", "bar");
 		NestedBean bean = new NestedBean(new SimpleBean("initial", 10));
 		BeanUtils.populate(bean, map, new Options(true, true, true, true));
-		Assert.assertEquals("Should not have any effect", new NestedBean(new SimpleBean("initial", 10)), bean);
+		assertEquals(new NestedBean(new SimpleBean("initial", 10)), bean, "Should not have any effect");
 	}
 	
 	@Test
@@ -167,7 +162,7 @@ public class BeanUtilsTest {
 		map.put("nested.name", "foo");
 		NestedBean bean = new NestedBean(null);
 		BeanUtils.populate(bean, map, new Options(false, true, true, true));
-		Assert.assertEquals("Should not have any effect", new NestedBean(null), bean);
+		assertEquals(new NestedBean(null), bean, "Should not have any effect");
 	}
 	
 	@Test
@@ -176,31 +171,37 @@ public class BeanUtilsTest {
 		map.put("nested.value", "foo");
 		NestedBean bean = new NestedBean(new SimpleBean("initial", 10));
 		BeanUtils.populate(bean, map, new Options(true, true, true, true));
-		Assert.assertEquals("Should not have any effect", new NestedBean(new SimpleBean("initial", 10)), bean);
+		assertEquals(new NestedBean(new SimpleBean("initial", 10)), bean, "Should not have any effect");
 	}
 	
-	@Test(expected=BeanException.class)
+	@Test
 	public void nullNestedBean() throws BeanException {
 		Map<String, Object> map = new HashMap<>();
 		map.put("nested.name", "foo");
 		NestedBean bean = new NestedBean(null);
-		BeanUtils.populate(bean, map, new Options(true, false, true, true));
+		assertThrows(BeanException.class, () -> {
+			BeanUtils.populate(bean, map, new Options(true, false, true, true));
+		});
 	}
 	
-	@Test(expected=BeanException.class)
+	@Test
 	public void wrongType() throws BeanException {
 		Map<String, Object> map = new HashMap<>();
 		map.put("nested.value", "foo");
 		NestedBean bean = new NestedBean(new SimpleBean("initial", 10));
-		BeanUtils.populate(bean, map, new Options(true, false, false, true));
+		assertThrows(BeanException.class, () -> {
+			BeanUtils.populate(bean, map, new Options(true, false, false, true));
+		});
 	}
 	
-	@Test(expected=BeanException.class)
+	@Test
 	public void setValueFailsDueToUnexpectedException() throws BeanException {
 		Map<String, Object> map = new HashMap<>();
 		map.put("nested.value", "foo");
 		NestedBean bean = new NestedBean(new BeanWithSetterThatFails("initial"));
-		BeanUtils.populate(bean, map, new Options(true, false, false, false));
+		assertThrows(BeanException.class, () -> {
+			BeanUtils.populate(bean, map, new Options(true, false, false, false));
+		});
 	}
 	
 	@Test
@@ -209,7 +210,7 @@ public class BeanUtilsTest {
 		map.put("nested.value", "foo");
 		NestedBean bean = new NestedBean(new BeanWithSetterThatFails("initial"));
 		BeanUtils.populate(bean, map, new Options(true, true, true, true));
-		Assert.assertEquals("Should not have any effect", new NestedBean(new BeanWithSetterThatFails("initial")), bean);
+		assertEquals(new NestedBean(new BeanWithSetterThatFails("initial")), bean, "Should not have any effect");
 	}
 
 	
@@ -299,7 +300,7 @@ public class BeanUtilsTest {
 	private void verify(List<TestResult> results) {
 		int i=0;
 		for(TestResult result : results) {
-			Assert.assertEquals("Test "+i+" with param "+result.getParam().toString()+" not valid", result.getExpected(), result.getActual());
+			assertEquals(result.getExpected(), result.getActual(), "Test "+i+" with param "+result.getParam().toString()+" not valid");
 		}
 		
 	}

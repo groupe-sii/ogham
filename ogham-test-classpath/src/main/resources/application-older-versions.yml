@@ -1,82 +1,52 @@
-spring-matrix:
-  matrix:
-  - java:
-      - 1.8
-    build:
-      - maven
-    spring-boot-version:
-      - 1.4.7.RELEASE
-    spring-boot-dependencies:
-      -
-      - web
-      - thymeleaf
-      - freemarker
-      - mail
-      - web + thymeleaf
-      - web + freemarker
-    ogham-dependencies:
-      - spring-boot-autoconfigure + core
-      - spring-boot-autoconfigure + email-javamail
-      - spring-boot-autoconfigure + email-javamail + template-thymeleaf
-      - spring-boot-autoconfigure + email-javamail + template-freemarker
-      - spring-boot-autoconfigure + email-javamail + template-thymeleaf + template-freemarker
-      - spring-boot-autoconfigure + email-sendgrid
-      - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf
-      - spring-boot-autoconfigure + email-sendgrid + template-freemarker
-      - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf + template-freemarker
-      - spring-boot-autoconfigure + sms-cloudhopper
-      - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf
-      - spring-boot-autoconfigure + sms-cloudhopper + template-freemarker
-      - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf + template-freemarker
-      - spring-boot-autoconfigure + sms-ovh
-      - spring-boot-autoconfigure + all
-      - spring-boot-starter-email
-      - spring-boot-starter-sms
-      - spring-boot-starter-all
-  additional-dependencies:
-    - com.github.tomakehurst:wiremock-jre8:2.23.2:test
-        
-standalone-matrix:
-  java:
-    - 1.8
-  build:
-    - maven
-  ogham-dependencies:
-    - core
-    - email-javamail
-    - email-sendgrid
-    - sms-ovh
-    - sms-cloudhopper
-    - all
-    - email-javamail + template-thymeleaf
-    - email-javamail + template-freemarker
-    - email-javamail + template-thymeleaf + template-freemarker
-    - email-sendgrid + template-thymeleaf
-    - email-sendgrid + template-freemarker
-    - email-sendgrid + template-thymeleaf + template-freemarker
-    - sms-ovh + template-thymeleaf
-    - sms-ovh + template-freemarker
-    - sms-ovh + template-thymeleaf + template-freemarker
-    - sms-cloudhopper + template-thymeleaf
-    - sms-cloudhopper + template-freemarker
-    - sms-cloudhopper + template-thymeleaf + template-freemarker
-    - spring-boot-autoconfigure + core
-    - spring-boot-autoconfigure + email-javamail
-    - spring-boot-autoconfigure + email-javamail + template-thymeleaf
-    - spring-boot-autoconfigure + email-javamail + template-freemarker
-    - spring-boot-autoconfigure + email-javamail + template-thymeleaf + template-freemarker
-    - spring-boot-autoconfigure + email-sendgrid
-    - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf
-    - spring-boot-autoconfigure + email-sendgrid + template-freemarker
-    - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf + template-freemarker
-    - spring-boot-autoconfigure + sms-cloudhopper
-    - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf
-    - spring-boot-autoconfigure + sms-cloudhopper + template-freemarker
-    - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf + template-freemarker
-    - spring-boot-autoconfigure + sms-ovh
-    - spring-boot-autoconfigure + all
-    - spring-boot-starter-email
-    - spring-boot-starter-sms
-    - spring-boot-starter-all
+spring:
+  config:
+    import:
+      - spring-boot-1.4.x.yml
+
+#standalone-matrix:
+#  java:
+#    - 1.8
+#  build:
+#    - maven
+#  ogham-dependencies:
+#    - core
+#    - email-javamail
+#    - email-sendgrid
+#    - sms-ovh
+#    - sms-cloudhopper
+#    - all
+#    - email-javamail + template-thymeleaf
+#    - email-javamail + template-freemarker
+#    - email-javamail + template-thymeleaf + template-freemarker
+#    - email-sendgrid + template-thymeleaf
+#    - email-sendgrid + template-freemarker
+#    - email-sendgrid + template-thymeleaf + template-freemarker
+#    - sms-ovh + template-thymeleaf
+#    - sms-ovh + template-freemarker
+#    - sms-ovh + template-thymeleaf + template-freemarker
+#    - sms-cloudhopper + template-thymeleaf
+#    - sms-cloudhopper + template-freemarker
+#    - sms-cloudhopper + template-thymeleaf + template-freemarker
+#    - spring-boot-autoconfigure + core
+#    - spring-boot-autoconfigure + email-javamail
+#    - spring-boot-autoconfigure + email-javamail + template-thymeleaf
+#    - spring-boot-autoconfigure + email-javamail + template-freemarker
+#    - spring-boot-autoconfigure + email-javamail + template-thymeleaf + template-freemarker
+#    - spring-boot-autoconfigure + email-sendgrid
+#    - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf
+#    - spring-boot-autoconfigure + email-sendgrid + template-freemarker
+#    - spring-boot-autoconfigure + email-sendgrid + template-thymeleaf + template-freemarker
+#    - spring-boot-autoconfigure + sms-cloudhopper
+#    - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf
+#    - spring-boot-autoconfigure + sms-cloudhopper + template-freemarker
+#    - spring-boot-autoconfigure + sms-cloudhopper + template-thymeleaf + template-freemarker
+#    - spring-boot-autoconfigure + sms-ovh
+#    - spring-boot-autoconfigure + all
+#    - spring-boot-starter-email
+#    - spring-boot-starter-sms
+#    - spring-boot-starter-all
 
 spring.initializer.url: http://localhost:8052/starter.zip
+
+server:
+  port: 7896

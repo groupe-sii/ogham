@@ -1,34 +1,30 @@
 package oghamcore.ut.html.inliner.impl;
 
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.html.inliner.ExternalCss;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
+import fr.sii.ogham.testing.assertion.html.AssertHtml;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 
-import fr.sii.ogham.core.resource.path.UnresolvedPath;
-import fr.sii.ogham.html.inliner.ExternalCss;
-import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
-import fr.sii.ogham.testing.assertion.html.AssertHtml;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-
+@LogTestInformation
 public class JsoupCssInlinerTest {
 	private static String FOLDER = "/inliner/css/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
 	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
 	private JsoupCssInliner inliner;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		inliner = new JsoupCssInliner();
 	}
@@ -74,7 +70,7 @@ public class JsoupCssInlinerTest {
 	}
 	
 	@Test
-	@Ignore("Not yet implemented")
+	@Disabled("Not yet implemented")
 	public void overrideStyles() throws IOException {
 		String source = resourceAsString(SOURCE_FOLDER+"overrideStyles.html");
 		String css1 = resourceAsString(SOURCE_FOLDER+"css/external1.css");
@@ -85,10 +81,10 @@ public class JsoupCssInlinerTest {
 	}
 	
 	@Test
-	@Ignore("Not yet implemented")
+	@Disabled("Not yet implemented")
 	public void cssPriority() throws IOException {
 		// TODO: test css with rules with higher priority before rules with lower priority
-		Assert.fail("Not implemented");
+		Assertions.fail("Not implemented");
 	}
 
 	@Test

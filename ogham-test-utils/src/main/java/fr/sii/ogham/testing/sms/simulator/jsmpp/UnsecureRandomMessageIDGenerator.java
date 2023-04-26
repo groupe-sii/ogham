@@ -3,10 +3,10 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import org.jsmpp.PDUStringException;
-import org.jsmpp.util.MessageIDGenerator;
-import org.jsmpp.util.MessageId;
-import org.jsmpp.util.RandomMessageIDGenerator;
+import ogham.testing.org.jsmpp.PDUStringException;
+import ogham.testing.org.jsmpp.util.MessageIDGenerator;
+import ogham.testing.org.jsmpp.util.MessageId;
+import ogham.testing.org.jsmpp.util.RandomMessageIDGenerator;
 
 /**
  * This implementation doesn't use {@link SecureRandom} (unlike

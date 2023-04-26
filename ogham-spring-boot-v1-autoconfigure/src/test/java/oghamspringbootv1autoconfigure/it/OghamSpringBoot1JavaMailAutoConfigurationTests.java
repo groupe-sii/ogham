@@ -1,35 +1,34 @@
 package oghamspringbootv1autoconfigure.it;
 
-import static org.hamcrest.Matchers.equalTo;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
+import fr.sii.ogham.testing.assertion.OghamInternalAssertions;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
-import fr.sii.ogham.testing.assertion.OghamInternalAssertions;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import static org.hamcrest.Matchers.equalTo;
 
+@LogTestInformation
+@ExtendWith(SpringExtension.class)
 public class OghamSpringBoot1JavaMailAutoConfigurationTests {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-
 	private AnnotationConfigApplicationContext context;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		context = new AnnotationConfigApplicationContext();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (context != null) {
 			context.close();

@@ -1,16 +1,5 @@
 package oghamcore.it.core.resource.resolver;
 
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
@@ -23,18 +12,27 @@ import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 import fr.sii.ogham.core.util.IOUtils;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import java.io.File;
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static org.junit.jupiter.api.Assertions.*;
+
+@LogTestInformation
+@MockitoSettings
 public class FirstSupportingResolverTest {
 	private FirstSupportingResourceResolver firstSupportingResolver;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	File folder;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws ResourceResolutionException {
 		firstSupportingResolver = new FirstSupportingResourceResolver(
 				new StringResourceResolver("string:", "s:"),
@@ -45,41 +43,43 @@ public class FirstSupportingResolverTest {
 	@Test
 	public void classpath() throws ResourceResolutionException, IOException {
 		ResourcePath path = new UnresolvedPath("classpath:/template/resolver/foo/bar.html");
-		Assert.assertTrue("should be able to support classpath path", firstSupportingResolver.supports(path));
+		assertTrue(firstSupportingResolver.supports(path), "should be able to support classpath path");
 		Resource resource = firstSupportingResolver.getResource(path);
-		Assert.assertNotNull("template should not be null", resource);
-		Assert.assertSame("should be classpath resolver", resource.getClass(), ByteResource.class);
+		assertNotNull(resource, "template should not be null");
+		assertSame(resource.getClass(), ByteResource.class, "should be classpath resolver");
 	}
 
 	@Test
 	public void file() throws ResourceResolutionException, IOException {
-		File tempFile = folder.newFile("bar.html");
+		File tempFile = new File(folder, "bar.html");
 		IOUtils.copy(resource("/template/resolver/foo/bar.html"), tempFile);
 		ResourcePath path = new UnresolvedPath("file:"+tempFile.getAbsolutePath());
-		Assert.assertTrue("should be able to support file path", firstSupportingResolver.supports(path));
+		assertTrue(firstSupportingResolver.supports(path), "should be able to support file path");
 		Resource resource = firstSupportingResolver.getResource(path);
-		Assert.assertSame("should be file resolver", resource.getClass(), FileResource.class);
+		assertSame(resource.getClass(), FileResource.class, "should be file resolver");
 	}
 
 	@Test
 	public void string() throws ResourceResolutionException {
 		ResourcePath path = new UnresolvedPath("string:ma ressource");
-		Assert.assertTrue("should be able to support string path", firstSupportingResolver.supports(path));
+		assertTrue(firstSupportingResolver.supports(path), "should be able to support string path");
 		Resource resource = firstSupportingResolver.getResource(path);
-		Assert.assertSame("should be string resolver", resource.getClass(), SimpleResource.class);
+		assertSame(resource.getClass(), SimpleResource.class, "should be string resolver");
 	}
 
 	@Test
 	public void none() throws ResourceResolutionException {
 		ResourcePath path = new UnresolvedPath("/template/resolver/foo/bar.html");
-		Assert.assertTrue("should be able to support template path", firstSupportingResolver.supports(path));
+		assertTrue(firstSupportingResolver.supports(path), "should be able to support template path");
 		Resource resource = firstSupportingResolver.getResource(path);
-		Assert.assertSame("should be classpath resolver", resource.getClass(), ByteResource.class);
+		assertSame(resource.getClass(), ByteResource.class, "should be classpath resolver");
 	}
 
-	@Test(expected=ResourceResolutionException.class)
+	@Test
 	public void unknown() throws ResourceResolutionException {
-		ResourcePath path = new UnresolvedPath("fake:/template/resolver/foo/bar.html");
-		firstSupportingResolver.getResource(path);
+		assertThrows(ResourceResolutionException.class, () -> {
+			ResourcePath path = new UnresolvedPath("fake:/template/resolver/foo/bar.html");
+			firstSupportingResolver.getResource(path);
+		});
 	}
 }

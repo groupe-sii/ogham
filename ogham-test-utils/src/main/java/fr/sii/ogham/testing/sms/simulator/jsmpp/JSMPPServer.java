@@ -2,7 +2,7 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
 import java.util.List;
 
-import org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class JSMPPServer implements SmppServerSimulator<SubmitSm> {
 			simulator.waitTillRunning(5000L);
 			LOG.debug("simulator started");
 		} catch (ServerStartupException e) {
-			throw new SmppServerException("Failed to start JSMPP server", e);
+			throw new SmppServerException("Failed to start JSMPP server ("+e.getMessage()+")", e);
 		}
 	}
 

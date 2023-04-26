@@ -8,13 +8,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 
 /**
  * Test configuration that registers:
  * <ul>
- * <li>{@link JsmppServerRule} bean for JUnit 4</li>
  * <li>{@link JsmppServerExtension} bean for JUnit 5</li>
  * <li>Configure port defined by {@code jsmpp.server.port} property.</li>
  * </ul>
@@ -24,13 +22,6 @@ import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
  */
 @TestConfiguration
 public class JsmppServerTestConfiguration {
-	@Bean
-	@ConditionalOnMissingBean(JsmppServerRule.class)
-	@ConditionalOnProperty("jsmpp.server.port")
-	public JsmppServerRule randomJsmppPortRule(@Value("${jsmpp.server.port}") int port, @Autowired(required = false) ServerConfig config) {
-		return new JsmppServerRule(initConfig(port, config));
-	}
-	
 	@Bean
 	@ConditionalOnMissingBean(JsmppServerExtension.class)
 	@ConditionalOnProperty("jsmpp.server.port")

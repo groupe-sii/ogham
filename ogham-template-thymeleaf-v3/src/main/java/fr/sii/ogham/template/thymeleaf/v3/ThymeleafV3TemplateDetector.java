@@ -39,6 +39,11 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("(\\[\\[\\$\\{[^}]+\\}\\]\\])|(\\[\\(\\$\\{[^}]+\\}\\)\\])");
 
 	/**
+	 * The pattern to search into the template
+	 */
+	private static final Pattern TEXT_TEMPLATE_TH_PATTERN = Pattern.compile("(\\[#\\s*th:)");
+
+	/**
 	 * The template resolver used to find the template
 	 */
 	private final ResourceResolver resolver;
@@ -72,7 +77,7 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 		String line;
 		do {
 			line = br.readLine();
-			if (line != null && (containsThymeleafNamespace(line) || containsThymeleafVariables(line))) {
+			if (line != null && (containsThymeleafNamespace(line) || containsThymeleafVariables(line) || containsThymeleafDirectives(line))) {
 				return true;
 			}
 		} while (line != null);
@@ -91,6 +96,10 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 
 	private static boolean containsThymeleafVariables(String line) {
 		return VARIABLE_PATTERN.matcher(line).find();
+	}
+
+	private static boolean containsThymeleafDirectives(String line) {
+		return TEXT_TEMPLATE_TH_PATTERN.matcher(line).find();
 	}
 
 	private Resource getTemplate(ResourcePath templateName) {

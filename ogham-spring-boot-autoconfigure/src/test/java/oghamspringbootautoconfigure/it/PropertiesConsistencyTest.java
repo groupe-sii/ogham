@@ -1,27 +1,12 @@
 package oghamspringbootautoconfigure.it;
 
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import mock.MockApplication;
+import oghamspringbootautoconfigure.it.PropertiesConsistencyTest.DecorateBuildContext;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +17,24 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.context.BuildContext;
-import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import mock.MockApplication;
-import oghamspringbootautoconfigure.it.PropertiesConsistencyTest.DecorateBuildContext;
 import utils.properties.ConfigurationPropertiesMetadata;
 import utils.properties.PropertiesAndValue;
 import utils.properties.TrackConfigurationValueBuilder;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
+
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
 /**
  * Test that check if properties defined by Ogham are well-formed and consistent
@@ -59,14 +51,12 @@ import utils.properties.TrackConfigurationValueBuilder;
  * @author Aurélien Baudet
  *
  */
-@RunWith(SpringRunner.class)
+@LogTestInformation
 @SpringBootTest(classes = MockApplication.class, webEnvironment = NONE)
 @ActiveProfiles("consistency-check")
 @Import(DecorateBuildContext.class)
 public class PropertiesConsistencyTest {
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesConsistencyTest.class);
-	
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Autowired MessagingBuilder builder;
 	@Autowired ApplicationContext context;
@@ -103,7 +93,7 @@ public class PropertiesConsistencyTest {
 		
 	@Test
 	public void contextLoads() {
-		assertNotNull("context can't load if one property name is malformed or if value is of wrong type", builder);
+		assertNotNull(builder, "context can't load if one property name is malformed or if value is of wrong type");
 	}
 
 	@Test

@@ -1,22 +1,18 @@
 package fr.sii.ogham.runtime.checker;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 
 import java.io.IOException;
 
-import com.icegreen.greenmail.junit4.GreenMailRule;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.*;
 
 public class JavaMailChecker {
-	private final GreenMailRule greenMail;
+	private final GreenMailExtension greenMail;
 	
-	public JavaMailChecker(GreenMailRule greenMail) {
+	public JavaMailChecker(GreenMailExtension greenMail) {
 		super();
 		this.greenMail = greenMail;
 	}

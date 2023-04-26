@@ -1,12 +1,10 @@
 package fr.sii.ogham.core.mimetype;
 
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeParseException;
+
 import java.io.File;
 import java.io.InputStream;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
-import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 
 /**
  * This mime type provider always return a fixed Mime Type. It is to be used as
@@ -22,7 +20,7 @@ public final class FixedMimeTypeProvider implements MimeTypeProvider {
 	 */
 	public FixedMimeTypeProvider() {
 		try {
-			mimetype = new MimeType("text/plain");
+			mimetype = new ParsedMimeType("text/plain");
 		} catch (MimeTypeParseException e) {
 			throw new AssertionError("This should never happen as 'text/plain' is a valid MIME type", e);
 		}
@@ -37,7 +35,7 @@ public final class FixedMimeTypeProvider implements MimeTypeProvider {
 	 *             when Mime Type is not valid
 	 */
 	public FixedMimeTypeProvider(String mimetype) throws MimeTypeParseException {
-		this(new MimeType(mimetype));
+		this(new ParsedMimeType(mimetype));
 	}
 
 	/**

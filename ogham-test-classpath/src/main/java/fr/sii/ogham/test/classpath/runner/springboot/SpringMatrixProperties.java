@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +15,7 @@ import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import lombok.Data;
 
 @Data
-@Component
-@ConfigurationProperties("spring-matrix")
+@AllArgsConstructor
 public class SpringMatrixProperties {
 	private List<SingleMatrixProperties> matrix;
 	private List<String> additionalDependencies;

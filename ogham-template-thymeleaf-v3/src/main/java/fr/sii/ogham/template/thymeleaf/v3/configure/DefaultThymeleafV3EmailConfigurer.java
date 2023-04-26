@@ -1,21 +1,20 @@
 package fr.sii.ogham.template.thymeleaf.v3.configure;
 
-import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+import fr.sii.ogham.core.exception.configurer.MissingImplementationException;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiContentBuilder;
 import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafEmailConfigurer;
 import fr.sii.ogham.template.thymeleaf.v3.ThymeleafV3TemplateDetector;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
+
+import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY;
 
 /**
  * Default configurer for Thymeleaf template engine that is automatically
@@ -102,21 +101,22 @@ import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
  *
  */
 public final class DefaultThymeleafV3EmailConfigurer {
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultThymeleafV3EmailConfigurer.class);
 
 	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY)
 	public static class ThymeleafV3EmailConfigurer extends AbstractDefaultThymeleafEmailConfigurer {
 		public ThymeleafV3EmailConfigurer() {
-			super(LOG);
+			super();
 		}
 
 		public ThymeleafV3EmailConfigurer(MessagingConfigurerAdapter delegate) {
-			super(LOG, delegate);
+			super(delegate);
 		}
 
 		@Override
-		protected boolean canUseThymeleaf() {
-			return canUseThymeleafV3();
+		protected void checkCanUseThymeleaf() throws ConfigureException {
+			if (!isThymeleafV3Present()) {
+				throw new MissingImplementationException("Can't parse templates using Thymeleaf v3 engine because Thymeleaf v3 implementation is not present in the classpath", "org.thymeleaf.TemplateEngine", "org.thymeleaf.IEngineConfiguration");
+			}
 		}
 
 		@Override
@@ -124,7 +124,7 @@ public final class DefaultThymeleafV3EmailConfigurer {
 			return ThymeleafV3EmailBuilder.class;
 		}
 
-		private static boolean canUseThymeleafV3() {
+		private static boolean isThymeleafV3Present() {
 			return ClasspathUtils.exists("org.thymeleaf.TemplateEngine") && ClasspathUtils.exists("org.thymeleaf.IEngineConfiguration");
 		}
 	}

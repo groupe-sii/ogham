@@ -13,7 +13,7 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.icegreen.greenmail.junit4.GreenMailRule;
 
@@ -28,7 +28,7 @@ public class SeveralRecipientsTestSample {
 	@Rule
 	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		oghamService = MessagingBuilder.standard()
 				.environment()
@@ -42,7 +42,7 @@ public class SeveralRecipientsTestSample {
 	}
 
 	@Test
-	public void severalRecipients() throws MessagingException, javax.mail.MessagingException {
+	public void severalRecipients() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")

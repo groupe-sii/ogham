@@ -1,23 +1,19 @@
 package oghamcore.ut.core.retry;
 
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+
 import static java.time.Instant.ofEpochMilli;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import fr.sii.ogham.core.retry.FixedIntervalRetry;
-
+@MockitoSettings
 public class FixedIntervalRetryExecutorTest {
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	
 	FixedIntervalRetry retry;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		retry = new FixedIntervalRetry(5, 5000L);
 	}

@@ -1,28 +1,6 @@
 package oghamall.it.retry;
 
-import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThrows;
-
-import java.util.Collection;
-
-import org.hamcrest.Matcher;
-import org.jsmpp.bean.SubmitSm;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.thymeleaf.exceptions.TemplateProcessingException;
-
 import com.cloudhopper.smpp.type.SmppChannelConnectException;
-import com.icegreen.greenmail.junit4.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetup;
-import com.sun.mail.util.MailConnectException;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -41,22 +19,40 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.ConnectionFailedException;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import freemarker.core.InvalidReferenceException;
 import mock.context.SimpleBean;
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
+import ogham.testing.com.icegreen.greenmail.util.ServerSetup;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.eclipse.angus.mail.util.MailConnectException;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.thymeleaf.exceptions.TemplateProcessingException;
 
+import java.util.Collection;
+
+import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@LogTestInformation
 public class AutoRetryTest {
-	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule(64000, ServerSetup.PROTOCOL_SMTP);
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule(new ServerConfig().randomPort(64000));
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension(64000, ServerSetup.PROTOCOL_SMTP);
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension(new ServerConfig().randomPort(64000));
 
 	MessagingBuilder builder;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		builder = MessagingBuilder.standard();
 		// @formatter:off
@@ -82,12 +78,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
 					.body().template("/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(MaximumAttemptsReachedException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(MaximumAttemptsReachedException.class, hasSize(5)));
@@ -105,12 +101,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
 					.body().template("/template/thymeleaf/source/invalid.html", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -130,12 +126,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
 					.body().template("/template/freemarker/source/simple.html.ftl", null));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -155,12 +151,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
 					.body().template("/not-found.html.ftl", null));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -179,12 +175,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
 					.body().template("/template/freemarker/source/invalid-resources.html.ftl", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -203,12 +199,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
 					.body().template("/template/freemarker/source/invalid-image-mimetype.html.ftl", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -226,9 +222,9 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Email().body().template("/template/freemarker/source/simple.html.ftl", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -247,12 +243,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Sms()
 					.from("0102030405")
 					.to("0203040506")
 					.message().template("/template/thymeleaf/source/simple.txt", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(MaximumAttemptsReachedException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(MaximumAttemptsReachedException.class, hasSize(5)));
@@ -271,12 +267,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Sms()
 					.from("0102030405")
 					.to("0203040506")
 					.message().template("/template/thymeleaf/source/invalid.txt", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -296,12 +292,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Sms()
 					.from("0102030405")
 					.to("0203040506")
 					.message().template("/template/freemarker/source/simple.html.ftl", null));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -321,12 +317,12 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Sms()
 					.from("0102030405")
 					.to("0203040506")
 					.message().template("/not-found.txt.ftl", null));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
@@ -344,11 +340,11 @@ public class AutoRetryTest {
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			messagingService.send(new Sms()
 					.to("0102030405")
 					.message().template("/template/freemarker/source/simple.txt.ftl", new SimpleBean("foo", 42)));
-		});
+		}, "should throw");
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));

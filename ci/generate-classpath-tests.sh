@@ -5,7 +5,7 @@ set -e${DEBUG_COMMANDS:+x}
 profile="$1"
 INITIALIZER_ARGS=$([ "$profile" = "" ] && echo ''  || echo '-Polder-versions -Dspring-boot.version=1.5.21.RELEASE -Dspring-initializr.version=0.4.0.RELEASE -Drun.jvmArguments="-Dspring.profiles.active=older-versions"')
 INITIALIZER_NAME=$([ "$profile" = "" ] && echo 'spring-initializr'  || echo 'spring-initializr-older-versions')
-GENERATION_ARGS=$([ "$profile" = "" ] && echo ''  || echo '-Dspring.profiles.active=older-versions')
+GENERATION_ARGS=$([ "$profile" = "" ] && echo '-Dspring.profiles.active=latest-versions'  || echo '-Dspring.profiles.active=older-versions')
 CLASSPATH_TESTS_ROOT_DIR="${CLASSPATH_TESTS_ROOT_DIR:-$HOME/classpath-tests}"
 
 # start Spring Initializr

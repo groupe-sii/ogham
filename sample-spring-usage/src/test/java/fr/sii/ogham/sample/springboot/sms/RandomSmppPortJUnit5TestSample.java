@@ -3,7 +3,7 @@ package fr.sii.ogham.sample.springboot.sms;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;

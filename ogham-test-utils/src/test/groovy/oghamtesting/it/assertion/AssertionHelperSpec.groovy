@@ -5,7 +5,7 @@ import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext
 import static org.hamcrest.Matchers.is
 
-import org.junit.ComparisonFailure
+import org.opentest4j.AssertionFailedError
 
 import fr.sii.ogham.testing.assertion.context.Context
 import fr.sii.ogham.testing.extension.common.LogTestInformation
@@ -26,13 +26,13 @@ class AssertionHelperSpec extends Specification {
 		where:
 			reason				| matcher													|| expectedException	| expectedMessage
 			""					| is("bar")													|| AssertionError		| "\nExpected: is \"bar\"\n     but: was \"foo\""
-			""					| isIdenticalHtml("bar")									|| ComparisonFailure	| "\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1]\n\n\nExpected: \"bar\"\n     but: was \"foo\" expected:<[bar]> but was:<[foo]>"
+			""					| isIdenticalHtml("bar")									|| AssertionFailedError	| "\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1] (DIFFERENT)\n\n\nExpected: \"bar\"\n     but: was \"foo\""
 			""					| usingContext("\${name}", ctx(), is("bar"))				|| AssertionError		| "reason from context\nExpected: is \"bar\"\n     but: was \"foo\""
-			""					| usingContext("\${name}", ctx(), isIdenticalHtml("bar"))	|| ComparisonFailure	| "reason from context\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1]\n\n\nExpected: \"bar\"\n     but: was \"foo\" expected:<[bar]> but was:<[foo]>"
+			""					| usingContext("\${name}", ctx(), isIdenticalHtml("bar"))	|| AssertionFailedError	| "reason from context\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1] (DIFFERENT)\n\n\nExpected: \"bar\"\n     but: was \"foo\""
 			"reason"			| is("bar")													|| AssertionError		| "reason\nExpected: is \"bar\"\n     but: was \"foo\""
-			"reason"			| isIdenticalHtml("bar")									|| ComparisonFailure	| "reason\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1]\n\n\nExpected: \"bar\"\n     but: was \"foo\" expected:<[bar]> but was:<[foo]>"
+			"reason"			| isIdenticalHtml("bar")									|| AssertionFailedError	| "reason\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1] (DIFFERENT)\n\n\nExpected: \"bar\"\n     but: was \"foo\""
 			"reason"			| usingContext("\${name}", ctx(), is("bar"))				|| AssertionError		| "reason\nExpected: is \"bar\"\n     but: was \"foo\""
-			"reason"			| usingContext("\${name}", ctx(), isIdenticalHtml("bar"))	|| ComparisonFailure	| "reason\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1]\n\n\nExpected: \"bar\"\n     but: was \"foo\" expected:<[bar]> but was:<[foo]>"
+			"reason"			| usingContext("\${name}", ctx(), isIdenticalHtml("bar"))	|| AssertionFailedError	| "reason\nThe two HTML documents are not identical.\nHere are the differences found:\n  - Expected text value 'bar' but was 'foo' - comparing <body ...>bar</body> at /html[1]/body[1]/text()[1] to <body ...>foo</body> at /html[1]/body[1]/text()[1] (DIFFERENT)\n\n\nExpected: \"bar\"\n     but: was \"foo\""
 	}
 	
 	def ctx() {

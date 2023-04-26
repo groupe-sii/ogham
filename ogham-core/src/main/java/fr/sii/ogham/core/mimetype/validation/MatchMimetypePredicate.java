@@ -3,7 +3,7 @@ package fr.sii.ogham.core.mimetype.validation;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import javax.activation.MimeType;
+import fr.sii.ogham.core.mimetype.MimeType;
 
 /**
  * Default predicate that checks if the mimetype matches the provided string or

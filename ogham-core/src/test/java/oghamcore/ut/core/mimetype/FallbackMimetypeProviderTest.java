@@ -1,68 +1,64 @@
 package oghamcore.ut.core.mimetype;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.stubbing.answers.AnswerFunctionalInterfaces.toAnswer;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.RawMimeType;
+import fr.sii.ogham.core.mimetype.ParsedMimeType;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.stubbing.answers.AnswerFunctionalInterfaces.toAnswer;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
-import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
-import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-
+@LogTestInformation
+@MockitoSettings
 public class FallbackMimetypeProviderTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final MockitoRule mockito = MockitoJUnit.rule();
-	
+
 	@Mock MimeTypeProvider provider1;
 	@Mock MimeTypeProvider provider2;
 	@Mock File file;
 	InputStream stream;
 	String content;
-	
+
 	MimeTypeProvider fallback;
-	
-	@Before
+
+	@BeforeEach
 	public void setup() {
 		fallback = new FallbackMimeTypeProvider(provider1, provider2);
 		stream = new ByteArrayInputStream(new byte[] {1});
 		content = "a";
 	}
-	
+
 	@Test
-	public void providerFailsShouldUseNextProviderForInputStream() throws MimeTypeDetectionException, MimeTypeParseException {
+	public void providerFailsShouldUseNextProviderForInputStream() throws MimeTypeDetectionException {
 		when(provider1.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
-		when(provider2.detect(any(InputStream.class))).thenReturn(new MimeType("foo/bar"));
+		when(provider2.detect(any(InputStream.class))).thenReturn(new RawMimeType("foo/bar"));
 		assertThat(fallback.detect(stream).toString(), is("foo/bar"));
 	}
-	
-	@Test(expected=MimeTypeDetectionException.class)
+
+	@Test
 	public void noProviderCouldDetectShouldFailForInputStream() throws MimeTypeDetectionException {
 		when(provider1.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
-		fallback.detect(stream);
+		assertThrows(MimeTypeDetectionException.class, () -> {
+			fallback.detect(stream);
+		});
 	}
-	
+
 	@Test
-	public void ensureToAlwaysReadBeginningOfTheFile() throws MimeTypeDetectionException, MimeTypeParseException {
+	public void ensureToAlwaysReadBeginningOfTheFile() throws MimeTypeDetectionException {
 		when(provider1.detect(any(InputStream.class))).then(toAnswer((InputStream stream) -> {
 			int next = stream.read();
 			assertThat("should read first byte", next, is(1));
@@ -71,36 +67,40 @@ public class FallbackMimetypeProviderTest {
 		when(provider2.detect(any(InputStream.class))).then(toAnswer((InputStream stream) -> {
 			int next = stream.read();
 			assertThat("should read first byte", next, is(1));
-			return new MimeType("foo/bar");
+			return new ParsedMimeType("foo/bar");
 		}));
 		assertThat(fallback.detect(stream).toString(), is("foo/bar"));
 	}
-	
+
 	@Test
-	public void providerFailsShouldUseNextProviderForFile() throws MimeTypeDetectionException, MimeTypeParseException {
+	public void providerFailsShouldUseNextProviderForFile() throws MimeTypeDetectionException {
 		when(provider1.getMimeType(any(File.class))).thenThrow(MimeTypeDetectionException.class);
-		when(provider2.getMimeType(any(File.class))).thenReturn(new MimeType("foo/bar"));
+		when(provider2.getMimeType(any(File.class))).thenReturn(new RawMimeType("foo/bar"));
 		assertThat(fallback.getMimeType(file).toString(), is("foo/bar"));
 	}
-	
-	@Test(expected=MimeTypeDetectionException.class)
+
+	@Test
 	public void noProviderCouldDetectShouldFailForFile() throws MimeTypeDetectionException {
 		when(provider1.getMimeType(any(File.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.getMimeType(any(File.class))).thenThrow(MimeTypeDetectionException.class);
-		fallback.getMimeType(file);
+		assertThrows(MimeTypeDetectionException.class, () -> {
+			fallback.getMimeType(file);
+		});
 	}
-	
+
 	@Test
-	public void providerFailsShouldUseNextProviderForContent() throws MimeTypeDetectionException, MimeTypeParseException {
+	public void providerFailsShouldUseNextProviderForContent() throws MimeTypeDetectionException {
 		when(provider1.getMimeType(any(String.class))).thenThrow(MimeTypeDetectionException.class);
-		when(provider2.getMimeType(any(String.class))).thenReturn(new MimeType("foo/bar"));
+		when(provider2.getMimeType(any(String.class))).thenReturn(new RawMimeType("foo/bar"));
 		assertThat(fallback.getMimeType(content).toString(), is("foo/bar"));
 	}
-	
-	@Test(expected=MimeTypeDetectionException.class)
+
+	@Test
 	public void noProviderCouldDetectShouldFailForContent() throws MimeTypeDetectionException {
 		when(provider1.getMimeType(any(String.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.getMimeType(any(String.class))).thenThrow(MimeTypeDetectionException.class);
-		fallback.getMimeType(content);
+		assertThrows(MimeTypeDetectionException.class, () -> {
+			fallback.getMimeType(content);
+		});
 	}
 }

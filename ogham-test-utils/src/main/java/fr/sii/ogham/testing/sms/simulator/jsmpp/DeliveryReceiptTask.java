@@ -2,21 +2,21 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
 import java.util.Date;
 
-import org.jsmpp.bean.DataCodings;
-import org.jsmpp.bean.DeliveryReceipt;
-import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.GSMSpecificFeature;
-import org.jsmpp.bean.MessageMode;
-import org.jsmpp.bean.MessageType;
-import org.jsmpp.bean.NumberingPlanIndicator;
-import org.jsmpp.bean.RegisteredDelivery;
-import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.bean.TypeOfNumber;
-import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.SMPPServerSession;
-import org.jsmpp.util.DeliveryReceiptState;
-import org.jsmpp.util.MessageId;
+import ogham.testing.org.jsmpp.bean.DataCodings;
+import ogham.testing.org.jsmpp.bean.DeliveryReceipt;
+import ogham.testing.org.jsmpp.bean.ESMClass;
+import ogham.testing.org.jsmpp.bean.GSMSpecificFeature;
+import ogham.testing.org.jsmpp.bean.MessageMode;
+import ogham.testing.org.jsmpp.bean.MessageType;
+import ogham.testing.org.jsmpp.bean.NumberingPlanIndicator;
+import ogham.testing.org.jsmpp.bean.RegisteredDelivery;
+import ogham.testing.org.jsmpp.bean.SubmitMulti;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.bean.TypeOfNumber;
+import ogham.testing.org.jsmpp.extra.SessionState;
+import ogham.testing.org.jsmpp.session.SMPPServerSession;
+import ogham.testing.org.jsmpp.util.DeliveryReceiptState;
+import ogham.testing.org.jsmpp.util.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,29 +1,20 @@
 package oghamcore.it.core.builder.env.props
 
-import static fr.sii.ogham.core.util.IOUtils.copy
-import static fr.sii.ogham.testing.util.ResourceUtils.resource
-
-import org.junit.ClassRule
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-
 import fr.sii.ogham.core.builder.env.props.PropsPath
 import fr.sii.ogham.core.exception.builder.BuildException
 import fr.sii.ogham.testing.extension.common.LogTestInformation
-import spock.lang.IgnoreRest
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
+import spock.lang.TempDir
+
+import static fr.sii.ogham.core.util.IOUtils.copy
+import static fr.sii.ogham.testing.util.ResourceUtils.resource
 
 @LogTestInformation
-@Unroll
 class PropsPathSpec extends Specification {
-	@Shared @ClassRule TemporaryFolder temp = new TemporaryFolder();
-	
-	@Shared def confFolder;
+	@TempDir @Shared File confFolder;
 	
 	def setupSpec() {
-		confFolder = temp.newFolder()
 		confFolder.mkdirs();
 		copy(resource("config/props-path.properties"), confFolder.toPath().resolve("props-path.properties").toFile())
 	}

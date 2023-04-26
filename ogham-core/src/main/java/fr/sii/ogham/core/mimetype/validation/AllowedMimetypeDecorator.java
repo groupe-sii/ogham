@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.function.Predicate;
 
-import javax.activation.MimeType;
+import fr.sii.ogham.core.mimetype.MimeType;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.exception.mimetype.UnallowedMimeTypeException;

@@ -3,9 +3,9 @@ package fr.sii.ogham.sample.springboot.sms;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import fr.sii.ogham.testing.extension.spring.JsmppServerInitializer;
 import mock.MockApplication;
 

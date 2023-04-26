@@ -1,10 +1,8 @@
 package oghamtesting.ut.sms.simulator
 
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_UCS_2
-
-import com.cloudhopper.commons.charset.CharsetUtil
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_UCS_2
 
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter

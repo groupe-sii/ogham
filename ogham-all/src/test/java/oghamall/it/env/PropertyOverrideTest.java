@@ -1,36 +1,31 @@
 package oghamall.it.env;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static org.hamcrest.Matchers.is;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.JSmppServer;
+import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.jsmpp.bean.SubmitSm;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.is;
 
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
-
+@LogTestInformation
+@JSmppServer
 public class PropertyOverrideTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-
-	@Rule
-	public final TemporaryFolder temp = new TemporaryFolder();
+	@TempDir
+	File temp;
 
 	// @formatter:off
 	/**
@@ -71,8 +66,8 @@ public class PropertyOverrideTest {
 	 */
 	// @formatter:on
 	@Test
-	public void externalThenPropertiesInCodeThenFile() throws MessagingException, IOException {
-		File extProps = temp.newFile("ext.properties");
+	public void externalThenPropertiesInCodeThenFile(SmppServerSimulator<SubmitSm> smppServer) throws MessagingException, IOException {
+		File extProps = new File(temp, "ext.properties");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(extProps))) {
 			writer.write("ogham.sms.from.default-value=sender-from-ext-file\n");
 			writer.write("ogham.sms.to.default-value=0605040302");
@@ -104,7 +99,7 @@ public class PropertyOverrideTest {
 		// @formatter:on
 	}
 
-	@After
+	@AfterEach
 	public void clearProperties() {
 		System.getProperties().remove("ogham.sms.from.default-value");
 	}

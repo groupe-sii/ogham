@@ -1,14 +1,14 @@
 package fr.sii.ogham.testing.extension.junit.sms.config;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Configuration for local server used to simulate a SMPP server.
@@ -16,7 +16,7 @@ import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
  * This annotation can be used on a test method to configure how the SMPP server
  * should behave.
  * 
- * This annotation is used by {@link SmppServerRule}s.
+ * This annotation is used by {@link SmppServerExtension}s.
  * 
  * @author Aurélien Baudet
  *

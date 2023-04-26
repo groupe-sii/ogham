@@ -2,7 +2,7 @@ package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
 import static fr.sii.ogham.testing.sms.simulator.decode.MessageDecoder.decode;
 import static java.util.Collections.unmodifiableList;
-import static org.jsmpp.bean.SMSCDeliveryReceipt.SUCCESS_FAILURE;
+import static ogham.testing.org.jsmpp.bean.SMSCDeliveryReceipt.SUCCESS_FAILURE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,23 +10,31 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.jsmpp.bean.CancelSm;
-import org.jsmpp.bean.DataSm;
-import org.jsmpp.bean.QuerySm;
-import org.jsmpp.bean.ReplaceSm;
-import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
-import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.extra.ProcessRequestException;
-import org.jsmpp.session.DataSmResult;
-import org.jsmpp.session.QuerySmResult;
-import org.jsmpp.session.SMPPServerSession;
-import org.jsmpp.session.SMPPServerSessionListener;
-import org.jsmpp.session.ServerMessageReceiverListener;
-import org.jsmpp.session.ServerResponseDeliveryAdapter;
-import org.jsmpp.session.Session;
-import org.jsmpp.util.MessageIDGenerator;
-import org.jsmpp.util.MessageId;
+import ogham.testing.org.jsmpp.bean.BroadcastSm;
+import ogham.testing.org.jsmpp.bean.CancelBroadcastSm;
+import ogham.testing.org.jsmpp.bean.CancelSm;
+import ogham.testing.org.jsmpp.bean.DataSm;
+import ogham.testing.org.jsmpp.bean.OptionalParameter;
+import ogham.testing.org.jsmpp.bean.QueryBroadcastSm;
+import ogham.testing.org.jsmpp.bean.QuerySm;
+import ogham.testing.org.jsmpp.bean.ReplaceSm;
+import ogham.testing.org.jsmpp.bean.SubmitMulti;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.bean.UnsuccessDelivery;
+import ogham.testing.org.jsmpp.extra.ProcessRequestException;
+import ogham.testing.org.jsmpp.session.BroadcastSmResult;
+import ogham.testing.org.jsmpp.session.DataSmResult;
+import ogham.testing.org.jsmpp.session.QueryBroadcastSmResult;
+import ogham.testing.org.jsmpp.session.QuerySmResult;
+import ogham.testing.org.jsmpp.session.SMPPServerSession;
+import ogham.testing.org.jsmpp.session.SMPPServerSessionListener;
+import ogham.testing.org.jsmpp.session.ServerMessageReceiverListener;
+import ogham.testing.org.jsmpp.session.ServerResponseDeliveryAdapter;
+import ogham.testing.org.jsmpp.session.Session;
+import ogham.testing.org.jsmpp.session.SubmitMultiResult;
+import ogham.testing.org.jsmpp.session.SubmitSmResult;
+import ogham.testing.org.jsmpp.util.MessageIDGenerator;
+import ogham.testing.org.jsmpp.util.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,16 +169,18 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 		if (!running) {
 			close();
-			throw new ServerStartupException("Server bouldn't be started after "+timeoutInMs+"ms");
+			throw new ServerStartupException("Server shouldn't be started after "+timeoutInMs+"ms");
 		}
 	}
 
+	@Override
 	public QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException {
 		LOG.info("Accepting query sm, but not implemented");
 		return null;
 	}
 
-	public MessageId onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source) throws ProcessRequestException {
+	@Override
+	public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source) throws ProcessRequestException {
 		MessageId messageId = messageIDGenerator.newMessageId();
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Receiving submit_sm '{}', and return message id {}", decode(new SubmitSmAdapter(submitSm)), messageId);
@@ -179,14 +189,10 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		if (SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
 		}
-		return messageId;
+		return new SubmitSmResult(messageId, new OptionalParameter[0]);
 	}
 
 	@Override
-	public void onSubmitSmRespSent(MessageId messageId, SMPPServerSession source) {
-		LOG.debug("submit_sm_resp with message_id {} has been sent", messageId);
-	}
-
 	public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti, SMPPServerSession source) throws ProcessRequestException {
 		MessageId messageId = messageIDGenerator.newMessageId();
 		if (LOG.isDebugEnabled()) {
@@ -196,9 +202,10 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
 		}
 
-		return new SubmitMultiResult(messageId.getValue());
+		return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0], new OptionalParameter[0]);
 	}
 
+	@Override
 	public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
 		LOG.debug("onAcceptDataSm '{}'", dataSm);
 		return null;
@@ -212,6 +219,23 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 	@Override
 	public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source) throws ProcessRequestException {
 		// nothing to do
+	}
+
+	@Override
+	public BroadcastSmResult onAcceptBroadcastSm(BroadcastSm broadcastSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
+		return null;
+	}
+
+	@Override
+	public void onAcceptCancelBroadcastSm(CancelBroadcastSm cancelBroadcastSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
+	}
+
+	@Override
+	public QueryBroadcastSmResult onAcceptQueryBroadcastSm(QueryBroadcastSm queryBroadcastSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
+		return null;
 	}
 
 	public List<SubmitSm> getReceivedMessages() {

@@ -1,14 +1,13 @@
 package oghamsendgridv2.ut.builder;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import fr.sii.ogham.email.sendgrid.v2.builder.sendgrid.SendGridV2Builder;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test campaign for the {@link SendGridV2Builder} class.
@@ -17,7 +16,7 @@ public final class SendGridBuilderTest {
 
 	private SendGridV2Builder instance;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		instance = new SendGridV2Builder()
 				.mimetype()
@@ -34,7 +33,7 @@ public final class SendGridBuilderTest {
 
 		final SendGridV2Sender val = instance.build();
 
-		assertNotNull("The builder returned no sender", val);
+		assertNotNull(val, "The builder returned no sender");
 	}
 
 	@Test
@@ -43,7 +42,7 @@ public final class SendGridBuilderTest {
 
 		final SendGridV2Sender val = instance.build();
 
-		assertNotNull("The builder returned no sender", val);
+		assertNotNull(val, "The builder returned no sender");
 	}
 
 	@Test
@@ -52,7 +51,7 @@ public final class SendGridBuilderTest {
 
 		final SendGridV2Sender val = instance.build();
 
-		assertNotNull("The builder returned no sender", val);
+		assertNotNull(val, "The builder returned no sender");
 	}
 
 }

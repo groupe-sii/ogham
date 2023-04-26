@@ -1,42 +1,33 @@
 package oghamall.it.html.translator;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.IOException;
-import java.util.Properties;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.util.GreenMail;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.GreenMailServer;
 import mock.context.SimpleBean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.*;
+
+@LogTestInformation
+@GreenMailServer
 public class EmailBase64ImageInliningTest {
 	private MessagingService oghamService;
 	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
-	
-	@Before
-	public void setUp() throws IOException {
+
+	@BeforeEach
+	public void setUp(GreenMail greenMail) throws IOException {
 		Properties additionalProperties = new Properties();
 		additionalProperties.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
 		additionalProperties.setProperty("mail.smtp.port", String.valueOf(greenMail.getSmtp().getPort()));
@@ -49,7 +40,7 @@ public class EmailBase64ImageInliningTest {
 	}
 	
 	@Test
-	public void imageFormats() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void imageFormats(GreenMail greenMail) throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.content(new TemplateContent("/inliner/images/jsoup/source/differentImageFormats.html", new SimpleBean("foo", 42)))

@@ -1,5 +1,8 @@
 package fr.sii.ogham.spring.v2.autoconfigure;
 
+import fr.sii.ogham.spring.email.OghamJavaMailClasspathConsistencyCheckConfiguration;
+import fr.sii.ogham.spring.email.OghamJavaxMailConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -7,7 +10,6 @@ import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfigura
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
@@ -19,7 +21,7 @@ import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
 import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
 import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
 import fr.sii.ogham.spring.v2.email.OghamSendGridV4Configuration;
-import fr.sii.ogham.spring.v2.template.OghamThymeleafV3Configuration;
+import fr.sii.ogham.spring.v2.template.OghamThymeleafSpring5Configuration;
 
 /**
  * <p>
@@ -37,7 +39,7 @@ import fr.sii.ogham.spring.v2.template.OghamThymeleafV3Configuration;
  * @author Aurélien Baudet
  */
 // @formatter:off
-@Configuration
+@AutoConfiguration
 @AutoConfigureAfter({ 
 		WebMvcAutoConfiguration.class, 
 		ThymeleafAutoConfiguration.class, 
@@ -52,8 +54,10 @@ import fr.sii.ogham.spring.v2.template.OghamThymeleafV3Configuration;
 		OghamGeneralConfiguration.class,
 		OghamNoTemplateEngineConfiguration.class, 
 		OghamFreemarkerConfiguration.class, 
-		OghamThymeleafV3Configuration.class, 
+		OghamThymeleafSpring5Configuration.class,
+		OghamJavaMailClasspathConsistencyCheckConfiguration.class,
 		OghamJavaMailConfiguration.class,
+		OghamJavaxMailConfiguration.class,
 		OghamSendGridV4Configuration.class,
 		OghamCloudhopperConfiguration.class,
 		OghamOvhSmsConfiguration.class })

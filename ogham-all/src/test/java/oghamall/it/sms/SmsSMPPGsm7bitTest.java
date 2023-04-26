@@ -1,31 +1,31 @@
 package oghamall.it.sms;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.is;
-
-import java.io.IOException;
-
-import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUException;
-import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.extra.NegativeResponseException;
-import org.jsmpp.extra.ResponseTimeoutException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
 import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
 import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+import ogham.testing.org.jsmpp.InvalidResponseException;
+import ogham.testing.org.jsmpp.PDUException;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.extra.NegativeResponseException;
+import ogham.testing.org.jsmpp.extra.ResponseTimeoutException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.is;
+
+@LogTestInformation
 public class SmsSMPPGsm7bitTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
 
@@ -33,13 +33,10 @@ public class SmsSMPPGsm7bitTest {
 
 	private MessagingService oghamService;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException, IllegalArgumentException, PDUException, ResponseTimeoutException, InvalidResponseException, NegativeResponseException {
 		oghamService = MessagingBuilder.standard()
 				.environment()

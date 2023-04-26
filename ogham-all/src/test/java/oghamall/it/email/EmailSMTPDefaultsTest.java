@@ -1,29 +1,6 @@
 package oghamall.it.email;
 
-import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
-import static fr.sii.ogham.testing.assertion.util.EmailUtils.ATTACHMENT_DISPOSITION;
-import static fr.sii.ogham.testing.util.ResourceUtils.resource;
-import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -34,21 +11,36 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
 import mock.context.SimpleBean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@LogTestInformation
 public class EmailSMTPDefaultsTest {
 
 	private MessagingService oghamService;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
-	@Rule
-	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		Properties additionalProps = new Properties();
 		additionalProps.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
@@ -69,7 +61,7 @@ public class EmailSMTPDefaultsTest {
 	}
 	
 	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException {
+	public void simple() throws MessagingException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
@@ -94,7 +86,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleaf() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -115,7 +107,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleafResources() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafResources() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -161,7 +153,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleafResourcesXhtml() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafResourcesXhtml() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Template")
@@ -207,7 +199,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void withThymeleafSubject() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void withThymeleafSubject() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.content(new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)))
@@ -227,7 +219,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void subjectInTextTemplate() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void subjectInTextTemplate() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.content(new TemplateContent("classpath:/template/thymeleaf/source/withSubject.txt", new SimpleBean("foo", 42)))
@@ -247,7 +239,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void multiContent() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void multiContent() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -272,7 +264,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void multiContentShortcut() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void multiContentShortcut() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
@@ -294,18 +286,20 @@ public class EmailSMTPDefaultsTest {
 		// @formatter:on
 	}
 
-	@Test(expected = MessageNotSentException.class)
+	@Test
 	public void invalidTemplate() throws MessagingException, IOException {
 		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Multi")
-								.content(new TemplateContent("classpath:/template/thymeleaf/source/invalid.html", new SimpleBean("bar", 12)))
-								.to("recipient@sii.fr"));
+		assertThrows(MessageNotSentException.class, () -> {
+			oghamService.send(new Email()
+					.subject("Multi")
+					.content(new TemplateContent("classpath:/template/thymeleaf/source/invalid.html", new SimpleBean("bar", 12)))
+					.to("recipient@sii.fr"));
+		});
 		// @formatter:on
 	}
 
 	@Test
-	public void attachmentLookup() throws MessagingException, javax.mail.MessagingException, IOException {
+	public void attachmentLookup() throws MessagingException, jakarta.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -332,7 +326,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void attachmentFile() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachmentFile() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
@@ -359,7 +353,7 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
-	public void attachmentStream() throws MessagingException, IOException, javax.mail.MessagingException {
+	public void attachmentStream() throws MessagingException, IOException, jakarta.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")

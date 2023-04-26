@@ -54,7 +54,7 @@ Hamcrest matchers throw an `AssertionError` when an assertion fails.
 
 Ogham provides some additional matchers (like `isSimilarHtml`) that add
 additional information so a comparison can be easily done and a 
-`org.junit.ComparisonFailure` is thrown instead (so JUnit eclipse plugin can
+`org.junit.AssertionFailedError` is thrown instead (so JUnit eclipse plugin can
 handle it).
 ====
  

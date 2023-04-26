@@ -1,24 +1,6 @@
 package oghamspringbootv1autoconfigure.it;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
-
-import java.nio.charset.StandardCharsets;
-
-import org.jsmpp.bean.SubmitSm;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
-import org.springframework.boot.test.util.EnvironmentTestUtils;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
@@ -26,24 +8,41 @@ import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.assertion.OghamInternalAssertions;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailExtension;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.test.util.EnvironmentTestUtils;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
+import java.nio.charset.StandardCharsets;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
+
+@LogTestInformation
+@ExtendWith(SpringExtension.class)
 public class OghamSpringBoot1ThymeleafAutoConfigurationTests {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new RandomPortGreenMailExtension();
 
-	@Rule
-	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
-
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+	@RegisterExtension
+	public final SmppServerExtension<SubmitSm> smppServer = new JsmppServerExtension();
 
 	private AnnotationConfigApplicationContext context;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		context = new AnnotationConfigApplicationContext();
 		EnvironmentTestUtils.addEnvironment(context, 
@@ -57,7 +56,7 @@ public class OghamSpringBoot1ThymeleafAutoConfigurationTests {
 				"spring.freemarker.charset="+StandardCharsets.UTF_16BE.name());
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (context != null) {
 			context.close();

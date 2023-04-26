@@ -1,6 +1,6 @@
 package oghamcore.ut.core.mimetype.validation
 
-import javax.activation.MimeType
+import fr.sii.ogham.core.mimetype.MimeType
 
 import fr.sii.ogham.core.mimetype.validation.MatchMimetypePredicate
 import fr.sii.ogham.testing.extension.common.LogTestInformation

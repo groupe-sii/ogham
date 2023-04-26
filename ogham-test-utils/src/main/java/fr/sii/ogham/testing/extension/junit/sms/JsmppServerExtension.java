@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.extension.junit.sms;
 
-import org.jsmpp.bean.SubmitSm;
+import ogham.testing.org.jsmpp.bean.SubmitSm;
 
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;

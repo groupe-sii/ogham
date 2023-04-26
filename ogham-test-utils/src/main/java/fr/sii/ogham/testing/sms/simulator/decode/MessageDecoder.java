@@ -2,12 +2,12 @@ package fr.sii.ogham.testing.sms.simulator.decode;
 
 import java.util.Arrays;
 
-import org.jsmpp.bean.Alphabet;
+import ogham.testing.org.jsmpp.bean.Alphabet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cloudhopper.commons.charset.Charset;
-import com.cloudhopper.commons.charset.CharsetUtil;
+import ogham.testing.com.cloudhopper.commons.charset.Charset;
+import ogham.testing.com.cloudhopper.commons.charset.CharsetUtil;
 
 import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;

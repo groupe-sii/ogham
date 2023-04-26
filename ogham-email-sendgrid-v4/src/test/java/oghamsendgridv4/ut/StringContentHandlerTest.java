@@ -1,37 +1,32 @@
 package oghamsendgridv4.ut;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.RETURNS_SMART_NULLS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static testutils.SendGridTestUtils.getHtml;
-import static testutils.SendGridTestUtils.getText;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import com.sendgrid.helpers.mail.Mail;
-
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.mimetype.MimeType;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.RawMimeType;
 import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CorrectPackageNameMailCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+import static testutils.SendGridTestUtils.getHtml;
+import static testutils.SendGridTestUtils.getText;
 
 /**
  * Test campaign for the {@link StringContentHandler} class.
  */
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public final class StringContentHandlerTest {
 
 	private static final String CONTENT_TEXT = "This is a simple text content.";
@@ -48,64 +43,72 @@ public final class StringContentHandlerTest {
 	private SendGridContentHandler instance;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		provider = mock(MimeTypeProvider.class, RETURNS_SMART_NULLS);
 		instance = new StringContentHandler(provider);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void emailParamCannotBeNull() throws ContentHandlerException {
-		instance.setContent(null, null, content);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void contentParamCannotBeNull() throws ContentHandlerException {
-		instance.setContent(null, new CorrectPackageNameMailCompat(), null);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void providerParamCannotBeNull() {
-		new StringContentHandler(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			instance.setContent(null, null, content);
+		});
 	}
 
 	@Test
-	public void setContent_text() throws ContentHandlerException, MimeTypeDetectionException, MimeTypeParseException {
+	public void contentParamCannotBeNull() throws ContentHandlerException {
+		assertThrows(IllegalArgumentException.class, () -> {
+			instance.setContent(null, new CorrectPackageNameMailCompat(), null);
+		});
+	}
+
+	@Test
+	public void providerParamCannotBeNull() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new StringContentHandler(null);
+		});
+	}
+
+	@Test
+	public void setContent_text() throws ContentHandlerException, MimeTypeDetectionException {
 		final Mail email = new Mail();
 		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		final MimeType mime = new MimeType("text/plain");
+		final MimeType mime = new RawMimeType("text/plain");
 		when(provider.detect(CONTENT_TEXT)).thenReturn(mime);
 
 		instance.setContent(null, compat, content);
 
-		assertEquals("The email was not correctly updated", CONTENT_TEXT, getText(email));
+		assertEquals(CONTENT_TEXT, getText(email), "The email was not correctly updated");
 	}
 
 	@Test
-	public void setContent_html() throws ContentHandlerException, MimeTypeDetectionException, MimeTypeParseException {
+	public void setContent_html() throws ContentHandlerException, MimeTypeDetectionException {
 		final Mail email = new Mail();
 		final StringContent content = new StringContent(CONTENT_HTML);
 		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		final MimeType mime = new MimeType("text/html");
+		final MimeType mime = new RawMimeType("text/html");
 		when(provider.detect(CONTENT_HTML)).thenReturn(mime);
 
 		instance.setContent(null, compat, content);
 
-		assertEquals("The email was not correctly updated", CONTENT_HTML, getHtml(email));
+		assertEquals(CONTENT_HTML, getHtml(email), "The email was not correctly updated");
 	}
 
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void setContent_badContentType() throws ContentHandlerException {
 		final Mail email = new Mail();
 		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		instance.setContent(null, compat, testContent);
+		assertThrows(IllegalArgumentException.class, () -> {
+			instance.setContent(null, compat, testContent);
+		});
 	}
 
-	@Test(expected = ContentHandlerException.class)
+	@Test
 	public void setContent_providerFailure() throws ContentHandlerException, MimeTypeDetectionException {
 		final Mail email = new Mail();
 		final Content content = new StringContent(CONTENT_TEXT);
@@ -114,7 +117,9 @@ public final class StringContentHandlerTest {
 		final MimeTypeDetectionException exception = new MimeTypeDetectionException("Sent by mock");
 		when(provider.detect(CONTENT_TEXT)).thenThrow(exception);
 
-		instance.setContent(null, compat, content);
+		assertThrows(ContentHandlerException.class, () -> {
+			instance.setContent(null, compat, content);
+		});
 	}
 
 }

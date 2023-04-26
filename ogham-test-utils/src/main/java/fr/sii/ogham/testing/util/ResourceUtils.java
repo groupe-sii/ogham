@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.io.IOUtils;
+import ogham.testing.org.apache.commons.io.IOUtils;
 
 /**
  * Contains utility methods to load resources in tests.

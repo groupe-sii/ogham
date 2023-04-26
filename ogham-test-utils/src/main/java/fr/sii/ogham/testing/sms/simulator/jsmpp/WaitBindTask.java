@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
-import org.jsmpp.PDUStringException;
-import org.jsmpp.SMPPConstant;
-import org.jsmpp.bean.InterfaceVersion;
-import org.jsmpp.session.BindRequest;
-import org.jsmpp.session.SMPPServerSession;
+import ogham.testing.org.jsmpp.PDUStringException;
+import ogham.testing.org.jsmpp.SMPPConstant;
+import ogham.testing.org.jsmpp.bean.InterfaceVersion;
+import ogham.testing.org.jsmpp.session.BindRequest;
+import ogham.testing.org.jsmpp.session.SMPPServerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

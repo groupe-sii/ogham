@@ -4,7 +4,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.StringDescription;
-import org.junit.ComparisonFailure;
+import org.junit.jupiter.api.AssertionFailureBuilder;
+import org.opentest4j.AssertionFailedError;
 
 import fr.sii.ogham.testing.assertion.context.Context;
 import fr.sii.ogham.testing.assertion.hamcrest.ComparisonAwareMatcher;
@@ -27,7 +28,7 @@ public final class AssertionHelper {
 	 * following additions:
 	 * <ul>
 	 * <li>If the matcher can provide expected value, a
-	 * {@link ComparisonFailure} exception is thrown instead of
+	 * {@link AssertionFailedError} exception is thrown instead of
 	 * {@link AssertionError} in order to display differences between expected
 	 * string and actual string in the IDE.</li>
 	 * <li>If the matcher is a {@link CustomReason} matcher and no reason is
@@ -51,7 +52,7 @@ public final class AssertionHelper {
 	 * the following additions:
 	 * <ul>
 	 * <li>If the matcher can provide expected value, a
-	 * {@link ComparisonFailure} exception is thrown instead of
+	 * {@link AssertionFailedError} exception is thrown instead of
 	 * {@link AssertionError} in order to display differences between expected
 	 * string and actual string in the IDE.</li>
 	 * <li>If the matcher is a {@link CustomReason} matcher and no reason is
@@ -74,7 +75,9 @@ public final class AssertionHelper {
 
 			if (hasExpectedValue(matcher)) {
 				ExpectedValueProvider<T> comparable = getComparable(matcher);
-				throw new ComparisonFailure(description.toString(), String.valueOf(comparable == null ? null : comparable.getExpectedValue()), String.valueOf(actual));
+				AssertionFailureBuilder.assertionFailure()
+						.message(description.toString())
+						.buildAndThrow();
 			} else {
 				throw new AssertionError(description.toString());
 			}

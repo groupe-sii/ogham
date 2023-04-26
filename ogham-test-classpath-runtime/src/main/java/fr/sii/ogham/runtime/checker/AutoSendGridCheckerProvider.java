@@ -1,13 +1,12 @@
 package fr.sii.ogham.runtime.checker;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
+import com.github.tomakehurst.wiremock.client.WireMock;
 import fr.sii.ogham.core.util.ClasspathUtils;
 
 public class AutoSendGridCheckerProvider implements SendGridCheckerProvider {
 
 	@Override
-	public SendGridChecker get(WireMockServer server) {
+	public SendGridChecker get(WireMock server) {
 		if (ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.SendGridAPI")) {
 			return new SendGridV4CheckerProvider().get(server);
 		}

@@ -1,17 +1,13 @@
 package oghamsendgridv2.ut;
 
-import static org.mockito.Mockito.RETURNS_SMART_NULLS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridException;
-
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.DelegateSendGridClient;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 public final class SendGridClientTest {
 
@@ -22,20 +18,24 @@ public final class SendGridClientTest {
 		super();
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		delegate = mock(SendGrid.class, RETURNS_SMART_NULLS);
 		instance = new DelegateSendGridClient(delegate);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sendEmailParamCannotBeNull() throws SendGridException {
-		instance.send(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			instance.send(null);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void constructorDelegateParamCannotBeNull() {
-		new DelegateSendGridClient((SendGrid) null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			new DelegateSendGridClient((SendGrid) null);
+		});
 	}
 
 	@Test
@@ -50,14 +50,16 @@ public final class SendGridClientTest {
 		verify(delegate).send(exp);
 	}
 
-	@Test(expected = SendGridException.class)
+	@Test
 	public void send_errorResponse() throws SendGridException {
 		final SendGrid.Response response = new SendGrid.Response(403, "FORBIDDEN");
 		final SendGrid.Email exp = new SendGrid.Email();
 
 		when(delegate.send(exp)).thenReturn(response);
 
-		instance.send(exp);
+		assertThrows(SendGridException.class, () -> {
+			instance.send(exp);
+		});
 	}
 
 }

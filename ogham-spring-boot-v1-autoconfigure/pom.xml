@@ -16,8 +16,14 @@
 	<properties>
 		<spring-boot.version>${spring-boot-v1.version}</spring-boot.version>
 		<sendgrid-java.version>${sendgrid-java-v2.version}</sendgrid-java.version>
-		<thymeleaf.version>${thymeleaf-v2.version}</thymeleaf.version>
+		<thymeleaf.version>${thymeleaf-spring4.version}</thymeleaf.version>
+		<sun-mail.version>1.6.7</sun-mail.version>
+		<sun-activation.version>1.2.1</sun-activation.version>
 		<mockito.version>1.10.19</mockito.version>
+		<spring-test-junit5.version>1.5.0</spring-test-junit5.version>
+		<logback.version>1.1.11</logback.version>
+		<slf4j.version>1.7.26</slf4j.version>
+
 		<maven.site.skip>true</maven.site.skip>
 	</properties>
 
@@ -48,6 +54,16 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
@@ -63,28 +79,23 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Compatibility -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Tests -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham.internal</groupId>
 			<artifactId>ogham-test-utils-internal</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -104,6 +115,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Compatibility for JUnit 5 -->
+		<dependency>
+			<groupId>com.github.sbrannen</groupId>
+			<artifactId>spring-test-junit5</artifactId>
+			<version>${spring-test-junit5.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -128,4 +146,11 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 </project>

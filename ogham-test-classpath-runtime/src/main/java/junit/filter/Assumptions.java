@@ -1,6 +1,6 @@
 package junit.filter;
 
-import static org.junit.Assume.assumeTrue;		
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class Assumptions {
 	public static void requires(String... requiredFacets) {

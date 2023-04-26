@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.sii.ogham.test.classpath.core.Project;
@@ -20,16 +21,22 @@ import fr.sii.ogham.test.classpath.ogham.OghamDependency;
 import fr.sii.ogham.test.classpath.ogham.OghamProperties;
 import fr.sii.ogham.test.classpath.runner.common.SingleProjectCreationException;
 import fr.sii.ogham.test.classpath.runner.common.SingleProjectCreator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class StandaloneSingleProjectCreator implements SingleProjectCreator<StandaloneProjectParams, OghamDependency> {
 	private final ProjectInitializer<StandaloneProjectParams> projectInitializer;
 	private final DependencyAdder dependencyAdder;
 	private final OghamProperties oghamProperties;
+
+	public StandaloneSingleProjectCreator(ProjectInitializer<StandaloneProjectParams> projectInitializer,
+										  @Qualifier("dependencyAdder") DependencyAdder dependencyAdder,
+										  OghamProperties oghamProperties) {
+		this.projectInitializer = projectInitializer;
+		this.dependencyAdder = dependencyAdder;
+		this.oghamProperties = oghamProperties;
+	}
 
 	public String createProject(Path parentFolder, boolean override, StandaloneProjectParams params, List<OghamDependency> exclude) throws SingleProjectCreationException {
 		String identifier = generateIdentifier(params);

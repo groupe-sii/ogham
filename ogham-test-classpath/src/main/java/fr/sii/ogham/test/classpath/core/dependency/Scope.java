@@ -10,7 +10,8 @@ public enum Scope {
 	PROVIDED("provided"),
 	RUNTIME("runtime"),
 	TEST("test"),
-	SYSTEM("system");
+	SYSTEM("system"),
+	IMPORT("import");
 	
 	private final String value;
 }

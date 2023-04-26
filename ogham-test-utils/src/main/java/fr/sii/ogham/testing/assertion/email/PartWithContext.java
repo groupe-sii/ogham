@@ -3,7 +3,7 @@ package fr.sii.ogham.testing.assertion.email;
 import static java.util.regex.Matcher.quoteReplacement;
 import static java.util.regex.Pattern.quote;
 
-import javax.mail.Part;
+import ogham.testing.jakarta.mail.Part;
 
 import fr.sii.ogham.testing.assertion.context.Context;
 

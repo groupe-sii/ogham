@@ -1,13 +1,12 @@
 package fr.sii.ogham.template.thymeleaf.common.configure;
 
-import org.slf4j.Logger;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
 import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiContentBuilder;
 
@@ -96,26 +95,21 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiConte
  *
  */
 public abstract class AbstractDefaultThymeleafEmailConfigurer implements MessagingConfigurer {
-	private final Logger log;
 	private final MessagingConfigurerAdapter delegate;
 
-	public AbstractDefaultThymeleafEmailConfigurer(Logger log) {
-		this(log, new DefaultMessagingConfigurer());
+	public AbstractDefaultThymeleafEmailConfigurer() {
+		this(new DefaultMessagingConfigurer());
 	}
 
-	public AbstractDefaultThymeleafEmailConfigurer(Logger log, MessagingConfigurerAdapter delegate) {
+	public AbstractDefaultThymeleafEmailConfigurer(MessagingConfigurerAdapter delegate) {
 		super();
-		this.log = log;
 		this.delegate = delegate;
 	}
 
 	@Override
-	public void configure(MessagingBuilder msgBuilder) {
-		if (!canUseThymeleaf()) {
-			log.debug("[{}] skip configuration", this);
-			return;
-		}
-		log.debug("[{}] apply configuration", this);
+	public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+		checkCanUseThymeleaf();
+
 		AbstractThymeleafMultiContentBuilder<?, ?, ?> builder = msgBuilder.email().template(getBuilderClass());
 		// apply default resource resolution configuration
 		if (delegate != null) {
@@ -169,6 +163,6 @@ public abstract class AbstractDefaultThymeleafEmailConfigurer implements Messagi
 
 	protected abstract Class<? extends AbstractThymeleafMultiContentBuilder<?, ?, ?>> getBuilderClass();
 
-	protected abstract boolean canUseThymeleaf();
+	protected abstract void checkCanUseThymeleaf() throws ConfigureException;
 
 }

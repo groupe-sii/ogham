@@ -6,6 +6,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.sii.ogham.spring.util.compat.HttpServletRequestWrapper;
+import fr.sii.ogham.spring.util.compat.HttpServletResponseWrapper;
+import fr.sii.ogham.spring.util.compat.ServletContextWrapper;
 import org.springframework.web.servlet.support.RequestContext;
 import org.thymeleaf.spring5.context.IThymeleafRequestContext;
 import org.thymeleaf.spring5.context.webmvc.SpringWebMvcThymeleafRequestContext;
@@ -17,19 +20,19 @@ import fr.sii.ogham.spring.template.thymeleaf.ThymeleafRequestContextWrapper;
 /**
  * Wraps the {@link RequestContext} into a {@link IThymeleafRequestContext} and
  * registers it into the model as a variable.
- * 
+ *
  * This is used to mimic the behavior of {@link ThymeleafView} in order to give
  * access to {@link HttpServletRequest}, {@link HttpServletResponse} and
  * {@link ServletContext} from templates.
- * 
+ *
  * @author Aurélien Baudet
  *
  */
 public class SpringWebMvcThymeleafRequestContextWrapper implements ThymeleafRequestContextWrapper {
 
 	@Override
-	public void wrapAndRegister(RequestContext requestContext, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext, Map<String, Object> springModel) {
-		final SpringWebMvcThymeleafRequestContext thymeleafRequestContext = new SpringWebMvcThymeleafRequestContext(requestContext, request);
+	public void wrapAndRegister(RequestContext requestContext, HttpServletRequestWrapper request, HttpServletResponseWrapper response, ServletContextWrapper servletContext, Map<String, Object> springModel) {
+		final SpringWebMvcThymeleafRequestContext thymeleafRequestContext = new SpringWebMvcThymeleafRequestContext(requestContext, request.get());
 		// Add the Thymeleaf RequestContext wrapper that we will be using in
 		// this dialect (the bare RequestContext
 		// stays in the context to for compatibility with other dialects)

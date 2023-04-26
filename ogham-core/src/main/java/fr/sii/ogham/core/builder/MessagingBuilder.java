@@ -1,24 +1,5 @@
 package fr.sii.ogham.core.builder;
 
-import static java.util.Arrays.asList;
-
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.function.Supplier;
-
-import javax.activation.MimetypesFileTypeMap;
-
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
@@ -38,6 +19,7 @@ import fr.sii.ogham.core.builder.resolution.StandaloneResourceResolutionBuilder;
 import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.service.CleanableMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
@@ -48,6 +30,17 @@ import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.message.Sms;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.function.Supplier;
+
+import static java.util.Arrays.asList;
 
 /**
  * Ogham provides many useful behaviors to focus on the message content and not
@@ -381,8 +374,15 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		}
 		for (ConfigurerWithPhase configurerWithPhase : configurers.getOrdered()) {
 			if (phase == configurerWithPhase.getPhase()) {
-				LOG.debug("[{}] configuring for phase {}...", configurerWithPhase.getConfigurer(), phase);
-				configurerWithPhase.getConfigurer().configure(this);
+				MessagingConfigurer configurer = configurerWithPhase.getConfigurer();
+				LOG.debug("[{}] configuring for phase {}...", configurer, phase);
+				try {
+					configurer.configure(this);
+					LOG.info("[{}] configuration applied", configurer.getClass());
+				} catch (ConfigureException e) {
+					LOG.info("[{}] configuration skipped: "+e.getMessage(), configurer.getClass());
+					LOG.trace("[{}] Details:", e);
+				}
 			}
 		}
 		alreadyConfigured.put(phase, true);
@@ -510,7 +510,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * 
 	 * There exists several implementations to provide the mimetype:
 	 * <ul>
-	 * <li>Using Java {@link MimetypesFileTypeMap}</li>
+	 * <li>Using Java activation</li>
 	 * <li>Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}</li>
 	 * <li>Using <a href="http://tika.apache.org/">Apache Tika</a></li>
 	 * <li>Using

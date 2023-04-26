@@ -1,23 +1,7 @@
 package oghamspringbootautoconfigure.it;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.sameInstance;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.cloudhopper.smpp.SmppConstants;
 import com.sendgrid.SendGrid;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
@@ -27,21 +11,29 @@ import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
 import mock.MockApplication;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import utils.SendGridUtils;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = MockApplication.class, webEnvironment = NONE, 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
+
+@LogTestInformation
+@SpringBootTest(classes = MockApplication.class, webEnvironment = NONE,
 	properties = { "ogham.sms.cloudhopper.host=localhost", 
 				   "ogham.sms.ovh.password=bar",
 				   "greenmail.smtp.port=3025",
 				   "jsmpp.server.port=2775"})
 @ActiveProfiles("ogham-only")
 public class OghamPropertiesOnlyTest {
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-
 	@Autowired
 	MessagingBuilder builder;
 	

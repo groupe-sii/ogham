@@ -12,7 +12,6 @@ import fr.sii.ogham.testing.extension.common.LogTestInformation
 import spock.lang.Specification
 import spock.lang.Unroll
 
-@Unroll
 @LogTestInformation
 class RetryBuilderSpec extends Specification {
 	def "FixedDelay[#delay|#maxRetries] should #desc"() {
@@ -154,7 +153,7 @@ class RetryBuilderSpec extends Specification {
 			"be enabled"		| [9L, 8L]		| 5				|| PerExecutionDelayRetry
 	}
 	
-	def "FixedDelay[#fixedDelay|#fixedDelayMaxRetries] & FixedInterval[#fixedInterval|#fixedIntervalMaxRetries] & ExponentialDelay[#exponentialDelay|#exponentialDelayMaxRetries] & PerExecutionDelay[#perExecutionDelay|#perExecutionDelayMaxRetries] should use #expected"() {
+	def "FixedDelay[#fixedDelay|#fixedDelayMaxRetries] & FixedInterval[#fixedInterval|#fixedIntervalMaxRetries] & ExponentialDelay[#exponentialDelay|#exponentialDelayMaxRetries] & PerExecutionDelay[#perExecutionDelays|#perExecutionDelayMaxRetries] should use #expected"() {
 		given:
 			def strategy
 			def factory = Mock(RetryExecutorFactory)

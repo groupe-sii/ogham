@@ -16,24 +16,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-core</artifactId>
+			<artifactId>ogham-email-javamail-jakarta</artifactId>
 		</dependency>
-
-		<!-- Mail -->
-		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>jakarta.mail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.mail</groupId>
-			<artifactId>jakarta.mail-api</artifactId>
-		</dependency>
-
-		<!-- Tests -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-test-utils</artifactId>
-			<scope>test</scope>
+			<artifactId>ogham-email-javamail-javax</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -2,10 +2,10 @@ package fr.sii.ogham.testing.assertion.filter;
 
 import java.util.function.Predicate;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.internet.MimePart;
+import ogham.testing.jakarta.mail.Message;
+import ogham.testing.jakarta.mail.MessagingException;
+import ogham.testing.jakarta.mail.Part;
+import ogham.testing.jakarta.mail.internet.MimePart;
 
 import fr.sii.ogham.testing.assertion.exception.FilterException;
 import fr.sii.ogham.testing.assertion.util.EmailUtils;

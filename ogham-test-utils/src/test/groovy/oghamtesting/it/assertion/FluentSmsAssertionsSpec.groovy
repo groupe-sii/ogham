@@ -1,7 +1,21 @@
 package oghamtesting.it.assertion
 
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
-import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
+import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
+import fr.sii.ogham.testing.extension.common.LogTestInformation
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension
+import fr.sii.ogham.testing.sms.simulator.bean.Alphabet
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm
+import fr.sii.ogham.testing.sms.simulator.decode.CloudhopperCharsetAdapter
+import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter
+import ogham.testing.org.jsmpp.bean.OptionalParameter.Number_of_messages
+import ogham.testing.org.jsmpp.bean.OptionalParameter.Tag
+import spock.lang.Specification
+import spock.lang.Unroll
+
+import java.util.function.Consumer
+
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
+import static ogham.testing.com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat
 import static fr.sii.ogham.testing.sms.simulator.bean.Alphabet.ALPHA_8_BIT
@@ -11,41 +25,7 @@ import static fr.sii.ogham.testing.sms.simulator.bean.Tag.CALLBACK_NUM
 import static fr.sii.ogham.testing.sms.simulator.bean.Tag.NUMBER_OF_MESSAGES
 import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.ALPHANUMERIC
 import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.INTERNATIONAL
-import static org.hamcrest.CoreMatchers.is
-import static org.hamcrest.CoreMatchers.nullValue
-import static org.hamcrest.Matchers.array
-import static org.hamcrest.Matchers.arrayWithSize
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.greaterThan
-import static org.hamcrest.Matchers.hasProperty
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.Matchers.lessThan
-import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.Matchers.nullValue
-import static org.hamcrest.Matchers.startsWith
-
-import java.util.function.Consumer
-
-import org.jsmpp.bean.OptionalParameter
-import org.jsmpp.bean.OptionalParameter.Number_of_messages
-import org.jsmpp.bean.OptionalParameter.Tag
-
-import com.cloudhopper.commons.charset.CharsetUtil
-
-import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
-import fr.sii.ogham.testing.extension.common.LogTestInformation
-import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule
-import fr.sii.ogham.testing.sms.simulator.bean.Address
-import fr.sii.ogham.testing.sms.simulator.bean.Alphabet
-import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator
-import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm
-import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber
-import fr.sii.ogham.testing.sms.simulator.decode.CloudhopperCharsetAdapter
-import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter
-import spock.lang.Specification
-import spock.lang.Unroll
+import static org.hamcrest.Matchers.*
 
 @LogTestInformation
 @Unroll
@@ -60,16 +40,16 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "from(#matcher) & from().number(#numberMatcher) & from().numeringPlanIndicator(#npiMatcher) & from().typeOfNumber(#tonMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getSourceAddr() >> "0102030405"
-					getSourceAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getSourceAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getSourceAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getSourceAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getSourceAddr() >> "0106050403"
-					getSourceAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getSourceAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getSourceAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getSourceAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			}
@@ -140,16 +120,16 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "to(#matcher) & to().number(#numberMatcher) & to().numeringPlanIndicator(#npiMatcher) & to().typeOfNumber(#tonMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getDestAddress() >> "0102030405"
-					getDestAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getDestAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getDestAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getDestAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getDestAddress() >> "0106050403"
-					getDestAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getDestAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getDestAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getDestAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			}
@@ -222,12 +202,12 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "content(#matcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms1")
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms2")
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
@@ -271,11 +251,11 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "content(#charset, #matcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms1")
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms2")
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -318,11 +298,11 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "shortMessage(#matcher) & shortMessage().header(#headerMatcher) & shortMessage().payload(#payloadMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms1")
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms2")
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -389,12 +369,12 @@ class FluentSmsAssertionsSpec extends Specification {
 	def "udhi | shortMessage(#matcher) & shortMessage().header(#headerMatcher) & shortMessage().payload(#payloadMatcher) #desc"() {
 		given:
 			def header = [0x05, 0, 0, 0, 0, 0]
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> ((header + (CHARSET_GSM8.encode("sms1") as List)) as byte[])
 					isUdhi() >> true
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> ((header + (CHARSET_GSM8.encode("sms2") as List)) as byte[])
 					isUdhi() >> true
 				}
@@ -462,11 +442,11 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "encoding(#encodingMatcher) & alphabet(#alphabetMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -506,11 +486,11 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "optionalParameter(#tag).parameter(#paramMatcher) & optionalParameter(#tag).value(#valueMatcher) & optionalParameter(#tag).length(#lengthMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getOptionalParameter(Tag.NUMBER_OF_MESSAGES.code()) >> new Number_of_messages((byte) 2)
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getOptionalParameter(Tag.NUMBER_OF_MESSAGES.code()) >> new Number_of_messages((byte) 3)
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -565,16 +545,16 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "every() | from(#matcher) & from().number(#numberMatcher) & from().numeringPlanIndicator(#npiMatcher) & from().typeOfNumber(#tonMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getSourceAddr() >> "0102030405"
-					getSourceAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getSourceAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getSourceAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getSourceAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getSourceAddr() >> "0106050403"
-					getSourceAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getSourceAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getSourceAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getSourceAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			}
@@ -614,16 +594,16 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "every() | to(#matcher) & to().number(#numberMatcher) & to().numeringPlanIndicator(#npiMatcher) & to().typeOfNumber(#tonMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getDestAddress() >> "0102030405"
-					getDestAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getDestAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getDestAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getDestAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getDestAddress() >> "0106050403"
-					getDestAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
-					getDestAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
+					getDestAddrNpi() >> ogham.testing.org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
+					getDestAddrTon() >> ogham.testing.org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			}
@@ -663,12 +643,12 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "every() | content(#matcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms1")
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms2")
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
@@ -700,11 +680,11 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "every() | content(#charset, #matcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms1")
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms2")
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -734,11 +714,11 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "every() | shortMessage(#matcher) & shortMessage().header(#headerMatcher) & shortMessage().payload(#payloadMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms1")
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getShortMessage() >> CHARSET_GSM8.encode("sms2")
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -778,11 +758,11 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "every() | encoding(#encodingMatcher) & alphabet(#alphabetMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getDataCoding() >> ALPHA_8_BIT.value()
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -816,11 +796,11 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "every() | optionalParameter(#tag).parameter(#paramMatcher) & optionalParameter(#tag).value(#valueMatcher) & optionalParameter(#tag).length(#lengthMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
-				org.jsmpp.bean.SubmitSm sms1 = Mock {
+			SmppServerExtension smpp = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 					getOptionalParameter(Tag.NUMBER_OF_MESSAGES.code()) >> new Number_of_messages((byte) 2)
 				}
-				org.jsmpp.bean.SubmitSm sms2 = Mock {
+				ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 					getOptionalParameter(Tag.NUMBER_OF_MESSAGES.code()) >> new Number_of_messages((byte) 3)
 				}
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
@@ -866,7 +846,7 @@ class FluentSmsAssertionsSpec extends Specification {
 	
 	def "assertions on message #index but only #messages.size() messages received"() {
 		given:
-			SmppServerRule smpp = Mock {
+			SmppServerExtension smpp = Mock {
 				getReceivedMessages() >> messages
 			}
 		
@@ -903,7 +883,7 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "#messages.size() messages received & receivedMessages(#matcher) & count(#countMatcher) #desc"() {
 		given:
-			SmppServerRule smpp = Mock {
+			SmppServerExtension smpp = Mock {
 				getReceivedMessages() >> messages
 			}
 		
@@ -929,13 +909,13 @@ class FluentSmsAssertionsSpec extends Specification {
 
 	def "fail immediately | from(#matcher) & from().number(#numberMatcher) #desc"() {
 		given:
-			org.jsmpp.bean.SubmitSm sms1 = Mock {
+			ogham.testing.org.jsmpp.bean.SubmitSm sms1 = Mock {
 				getSourceAddr() >> "0102030405"
 			}
-			org.jsmpp.bean.SubmitSm sms2 = Mock {
+			ogham.testing.org.jsmpp.bean.SubmitSm sms2 = Mock {
 				getSourceAddr() >> "0106050403"
 			}
-			SmppServerRule smpp = Mock {
+			SmppServerExtension smpp = Mock {
 				getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			}
 		

@@ -6,6 +6,8 @@ import fr.sii.ogham.test.classpath.core.BuildTool;
 import fr.sii.ogham.test.classpath.core.JavaVersion;
 import fr.sii.ogham.test.classpath.core.ProjectVariables;
 import fr.sii.ogham.test.classpath.core.dependency.Dependency;
+import fr.sii.ogham.test.classpath.core.property.Property;
+import fr.sii.ogham.test.classpath.core.repository.Repository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,4 +26,7 @@ public class SpringBootProjectParams implements ProjectVariables {
 	private List<SpringBootDependency> springBootDependencies;
 	private List<OghamResolvedDependency> oghamDependencies;
 	private List<Dependency> additionalDependencies;
+	private List<Property> buildProperties;
+	private List<Dependency> dependencyManagementDependencies;
+	private List<Repository> repositories;
 }

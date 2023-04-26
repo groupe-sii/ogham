@@ -1,43 +1,34 @@
 package oghamcore.ut.core.sender;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MultipleCauseExceptionWrapper;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.FallbackSender;
 import fr.sii.ogham.core.sender.MessageSender;
-import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@LogTestInformation
+@MockitoSettings
 public class FallbackSenderTest {
-	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
 
-	
 	@Mock MessageSender sender1;
 	@Mock MessageSender sender2;
 	@Mock Message message;
 	
 	FallbackSender sender;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		sender = new FallbackSender(sender1, sender2);
 	}
@@ -61,7 +52,7 @@ public class FallbackSenderTest {
 		doThrow(new IllegalArgumentException("invalid message")).when(sender1).send(any());
 		doThrow(new MessageException("failed to send", message)).when(sender2).send(any());
 
-		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+		MessageNotSentException e = assertThrows(MessageNotSentException.class, () -> {
 			sender.send(message);
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(MultipleCauseExceptionWrapper.class));

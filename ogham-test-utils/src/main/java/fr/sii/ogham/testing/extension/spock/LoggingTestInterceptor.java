@@ -26,7 +26,7 @@ public class LoggingTestInterceptor implements IMethodInterceptor {
 
 	@Override
 	public void intercept(IMethodInvocation invocation) throws Throwable {
-		String testName = invocation.getIteration().getName();
+		String testName = invocation.getIteration().getDisplayName();
 		try {
 			logger.writeStart(testName);
 			invocation.proceed();

@@ -1,11 +1,5 @@
 package fr.sii.ogham.template.freemarker.configurer;
 
-import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -13,10 +7,15 @@ import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.exception.configurer.ConfigureException;
+import fr.sii.ogham.core.exception.configurer.MissingImplementationException;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.TemplateExceptionHandler;
+
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
 
 /**
  * Default configurer for Freemarker template engine that is automatically
@@ -113,8 +112,6 @@ import freemarker.template.TemplateExceptionHandler;
  *
  */
 public final class DefaultFreemarkerSmsConfigurer {
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);
-
 	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
 	public static class FreemakerConfigurer implements MessagingConfigurer {
 		private final MessagingConfigurerAdapter delegate;
@@ -129,12 +126,9 @@ public final class DefaultFreemarkerSmsConfigurer {
 		}
 
 		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (!canUseFreemaker()) {
-				LOG.debug("[{}] skip configuration", this);
-				return;
-			}
-			LOG.debug("[{}] apply configuration", this);
+		public void configure(MessagingBuilder msgBuilder) throws ConfigureException {
+			checkCanUseFreemarker();
+
 			FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
 			// apply default resource resolution configuration
 			if (delegate != null) {
@@ -182,7 +176,13 @@ public final class DefaultFreemarkerSmsConfigurer {
 			// @formatter:on
 		}
 
-		private static boolean canUseFreemaker() {
+		private static void checkCanUseFreemarker() throws ConfigureException {
+			if (!isFreemarkerPresent()) {
+				throw new MissingImplementationException("Can't parse FreeMarker templates because FreeMarker implementation is not present in the classpath", "freemarker.template.Configuration", "freemarker.template.Template");
+			}
+		}
+
+		private static boolean isFreemarkerPresent() {
 			return ClasspathUtils.exists("freemarker.template.Configuration") && ClasspathUtils.exists("freemarker.template.Template");
 		}
 	}

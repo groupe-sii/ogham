@@ -22,7 +22,6 @@ import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
 
 @LogTestInformation
-@ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
 class FirstSupportingResolverAdapterTest {
 	@Mock ResourceResolver resolver;

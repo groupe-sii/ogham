@@ -3,14 +3,14 @@ package fr.sii.ogham.testing.sms.simulator.cloudhopper;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.cloudhopper.smpp.SmppConstants;
-import com.cloudhopper.smpp.SmppServerHandler;
-import com.cloudhopper.smpp.SmppServerSession;
-import com.cloudhopper.smpp.SmppSessionConfiguration;
-import com.cloudhopper.smpp.impl.PollableSmppSessionHandler;
-import com.cloudhopper.smpp.pdu.BaseBind;
-import com.cloudhopper.smpp.pdu.BaseBindResp;
-import com.cloudhopper.smpp.type.SmppProcessingException;
+import ogham.testing.com.cloudhopper.smpp.SmppConstants;
+import ogham.testing.com.cloudhopper.smpp.SmppServerHandler;
+import ogham.testing.com.cloudhopper.smpp.SmppServerSession;
+import ogham.testing.com.cloudhopper.smpp.SmppSessionConfiguration;
+import ogham.testing.com.cloudhopper.smpp.impl.PollableSmppSessionHandler;
+import ogham.testing.com.cloudhopper.smpp.pdu.BaseBind;
+import ogham.testing.com.cloudhopper.smpp.pdu.BaseBindResp;
+import ogham.testing.com.cloudhopper.smpp.type.SmppProcessingException;
 
 public class TestSmppServerHandler implements SmppServerHandler {
 	private Set<SmppServerSession> sessions = new HashSet<>();
