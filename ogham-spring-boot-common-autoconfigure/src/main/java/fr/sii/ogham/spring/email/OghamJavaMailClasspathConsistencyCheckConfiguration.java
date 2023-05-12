@@ -84,9 +84,8 @@ public class OghamJavaMailClasspathConsistencyCheckConfiguration {
 
     @PostConstruct
     public void explainPossibleIssueIfUsingJavaMail() {
-        // TODO: different message for Spring Boot 1
-        String version = env.getProperty("spring.version");
-        LOG.warn("/!\\ You may experience classpath issues while sending emails with Ogham using Java Mail and Spring Boot <= 2.\n" +
+        LOG.warn("\n" +
+                "/!\\ You may experience classpath issues while sending emails with Ogham using Java Mail and Spring Boot >= 2.2.x < 3.0.x.\n" +
                 "Explanation:\n" +
                 "------------\n" +
                 "\n" +
@@ -123,8 +122,8 @@ public class OghamJavaMailClasspathConsistencyCheckConfiguration {
                 "----------\n" +
                 "\n" +
                 " - If you prefer using Javax mail in order to avoid possible classpath clashes by mixing both javax and jakarta, you can:\n" +
-                "   - either adding 'org.springframework.boot:spring-boot-starter-mail' dependency  BEFORE 'fr.sii.ogham:ogham-email-javamail' dependency.\n" +
-                "   - or adding explicitly the dependency 'com.sun.mail:jakarta-mail' BEFORE 'fr.sii.ogham:ogham-email-javamail' dependency\n" +
+                "   - either add 'org.springframework.boot:spring-boot-starter-mail' dependency  BEFORE 'fr.sii.ogham:ogham-email-javamail' dependency.\n" +
+                "   - or add explicitly the dependency 'com.sun.mail:jakarta.mail' BEFORE 'fr.sii.ogham:ogham-email-javamail' dependency\n" +
                 "\n" +
                 "   /!\\ Order is important in order to let Java pick the service configuration of the 'com.sun.mail:jakarta-mail' dependency first.\n" +
                 "       You can also exclude 'org.eclipse.angus:angus-mail' from 'fr.sii.ogham:ogham-email-javamail' (so that order doesn't matter).\n" +

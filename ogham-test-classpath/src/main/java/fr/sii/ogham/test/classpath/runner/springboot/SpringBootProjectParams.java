@@ -29,4 +29,5 @@ public class SpringBootProjectParams implements ProjectVariables {
 	private List<Property> buildProperties;
 	private List<Dependency> dependencyManagementDependencies;
 	private List<Repository> repositories;
+	private String identifierSuffix;
 }

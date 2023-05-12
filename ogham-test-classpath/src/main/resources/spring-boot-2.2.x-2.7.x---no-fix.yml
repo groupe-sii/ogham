@@ -1,6 +1,8 @@
 classpath-tests:
   spring-matrices:
-    "[spring-boot-2.2.x-2.7.x--explicit-dependencies]":
+    "[spring-boot-2.2.x-2.7.x---no-fix]":
+      # TODO: allow this case (disable JavaMail tests) + add test to ensure that the message is logged ?
+      identifier-suffix: no-fix
       java:
         - 1.8
         - 11
@@ -45,5 +47,4 @@ classpath-tests:
         - spring-boot-starter-sms
         - spring-boot-starter-all
       additional-dependencies:
-        - jakarta.mail:jakarta.mail-api:2.1.1
-        - jakarta.activation:jakarta.activation-api:2.1.1
+        - org.springframework.boot:spring-boot-starter-test::test

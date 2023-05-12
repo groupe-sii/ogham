@@ -1,7 +1,7 @@
 package fr.sii.ogham.test.classpath.runner.standalone;
 
-import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.generateIdentifier;
-import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.getGroupName;
+import static fr.sii.ogham.test.classpath.runner.common.IdentifierGenerator.generateIdentifier;
+import static fr.sii.ogham.test.classpath.runner.common.IdentifierGenerator.getGroupName;
 import static fr.sii.ogham.test.classpath.runner.util.RunnerUtils.isSkip;
 
 import java.nio.file.Path;

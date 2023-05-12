@@ -28,7 +28,7 @@ public class JakartaActivationDataHandlersAvailable extends SpringBootCondition 
                             .map(DataContentHandler::getClass)
                             .map(Class::getName)
                             .toArray()));
-        } catch(Exception e) {
+        } catch(Exception | NoClassDefFoundError e) {
             return noMatch(forCondition("jakarta.activation.DataHandler implementations available ?")
                     .because(e.getMessage()));
         }
@@ -46,7 +46,7 @@ public class JakartaActivationDataHandlersAvailable extends SpringBootCondition 
                 }
             }
             return found;
-        } catch(Exception e) {
+        } catch(Exception | NoClassDefFoundError e) {
             throw new JavaDataHandlersLoadFailed(e);
         }
     }

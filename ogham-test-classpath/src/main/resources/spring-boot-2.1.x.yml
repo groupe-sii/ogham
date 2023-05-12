@@ -36,3 +36,7 @@ classpath-tests:
         - spring-boot-starter-email
         - spring-boot-starter-sms
         - spring-boot-starter-all
+      additional-dependencies:
+        - org.springframework.boot:spring-boot-starter-test::test
+      dependency-management:
+        - org.junit:junit-bom:5.9.3:import:pom

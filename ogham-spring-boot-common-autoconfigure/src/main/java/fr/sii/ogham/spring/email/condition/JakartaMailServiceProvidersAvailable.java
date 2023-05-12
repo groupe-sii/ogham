@@ -28,7 +28,7 @@ public class JakartaMailServiceProvidersAvailable extends SpringBootCondition {
                             .filter(Objects::nonNull)
                             .map(Provider::getClassName)
                             .toArray()));
-        } catch(Exception e) {
+        } catch(Exception | NoClassDefFoundError e) {
             return noMatch(forCondition("jakarta.mail.Provider implementations available ?")
                     .because(e.getMessage()));
         }
@@ -39,7 +39,7 @@ public class JakartaMailServiceProvidersAvailable extends SpringBootCondition {
         try {
             Provider[] providers = Session.getInstance(new Properties()).getProviders();
             return asList(providers);
-        } catch(Exception e) {
+        } catch(Exception | NoClassDefFoundError e) {
             throw new JavaMailProvidersLoadFailed(e);
         }
     }

@@ -1,6 +1,6 @@
 package fr.sii.ogham.test.classpath.runner.util;
 
-import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.isIdentifierForJavaVersion;
+import static fr.sii.ogham.test.classpath.runner.common.IdentifierGenerator.isIdentifierForJavaVersion;
 import static java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE;
 import static java.nio.file.attribute.PosixFilePermission.GROUP_READ;
 import static java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE;
@@ -27,7 +27,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import fr.sii.ogham.test.classpath.core.JavaVersion;
-import fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator;
+import fr.sii.ogham.test.classpath.runner.common.IdentifierGenerator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

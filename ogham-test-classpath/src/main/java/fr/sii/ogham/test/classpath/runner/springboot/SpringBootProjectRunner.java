@@ -94,7 +94,8 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 										merge(matrix.getAdditionalDependencies(), matricesProperties.getSpringMatrix().getAdditionalDependencies()),
 										matrix.getBuildProperties(),
 										matrix.getDependencyManagementDependencies(),
-										matrix.getRepositories()));
+										matrix.getRepositories(),
+										matrix.getIdentifierSuffix()));
 							}
 						}
 					}

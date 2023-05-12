@@ -18,8 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import static fr.sii.ogham.test.classpath.maven.MavenDependencyUtil.convert;
-import static fr.sii.ogham.test.classpath.maven.MavenDependencyUtil.isSameDependency;
+import static fr.sii.ogham.test.classpath.maven.MavenDependencyUtil.*;
 
 @Data
 @Service
@@ -34,7 +33,10 @@ public class AddMavenDependencyManagementDependency implements DependencyAdder {
 	public void addDependencies(Project<?> project, List<Dependency> dependencies, boolean skipSameDepWithDifferentScope) throws AddDependencyException {
 		Model model = read(project);
 		for(Dependency dep : dependencies) {
-			if (skipSameDepWithDifferentScope && alreadyContainsDependency(model, dep)) {
+			if (alreadyContainsExactSameDependency(model, dep)) {
+				continue;
+			}
+			if (skipSameDepWithDifferentScope && alreadyContainsDependencyWitDifferentScope(model, dep)) {
 				continue;
 			}
 			getDependencyManagement(model).addDependency(convert(dep));
@@ -69,7 +71,11 @@ public class AddMavenDependencyManagementDependency implements DependencyAdder {
 		}
 	}
 
-	private boolean alreadyContainsDependency(Model model, Dependency dep) {
+	private boolean alreadyContainsExactSameDependency(Model model, Dependency dep) {
 		return model.getDependencies().stream().anyMatch(mavenDep -> isSameDependency(mavenDep, dep));
+	}
+
+	private boolean alreadyContainsDependencyWitDifferentScope(Model model, Dependency dep) {
+		return model.getDependencies().stream().anyMatch(mavenDep -> isSameDependencyIgnoringScope(mavenDep, dep));
 	}
 }

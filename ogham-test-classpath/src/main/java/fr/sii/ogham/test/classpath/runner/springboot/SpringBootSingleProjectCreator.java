@@ -23,8 +23,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.generateIdentifier;
-import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.getGroupName;
+import static fr.sii.ogham.test.classpath.runner.common.IdentifierGenerator.generateIdentifier;
+import static fr.sii.ogham.test.classpath.runner.common.IdentifierGenerator.getGroupName;
 import static fr.sii.ogham.test.classpath.runner.util.RunnerUtils.isSkip;
 import static fr.sii.ogham.test.classpath.runner.util.SourceUtils.copy;
 import static java.util.Arrays.asList;

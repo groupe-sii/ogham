@@ -17,7 +17,7 @@ public class JavaMailConsistencyChecker {
         try {
             Provider[] providers = Session.getInstance(new Properties()).getProviders();
             return asList(providers);
-        } catch(Exception e) {
+        } catch(Exception | NoClassDefFoundError e) {
             throw new JavaMailProvidersLoadFailed(e);
         }
     }
@@ -33,7 +33,7 @@ public class JavaMailConsistencyChecker {
                 }
             }
             return found;
-        } catch(Exception e) {
+        } catch(Exception | NoClassDefFoundError e) {
             throw new JavaDataHandlersLoadFailed(e);
         }
     }

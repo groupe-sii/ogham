@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static junit.filter.Assumptions.requires;
 
 @ExtendWith(SpringExtension.class) // required for old Spring Boot versions
-@SpringBootTest({
+@SpringBootTest(classes = Application.class, properties = {
 	"ogham.email.sendgrid.api-key=foobar",
 	"ogham.email.sendgrid.url=http://localhost:${wiremock.server.port}"
 })

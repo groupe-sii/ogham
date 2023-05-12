@@ -1,6 +1,7 @@
 classpath-tests:
   spring-matrices:
-    "[spring-boot-2.2.x-2.7.x--no-fix]":
+    "[spring-boot-2.2.x-2.7.x---properties+dependency-management]":
+      identifier-suffix: dependency-management-fix
       java:
         - 1.8
         - 11
@@ -44,3 +45,12 @@ classpath-tests:
         - spring-boot-starter-email
         - spring-boot-starter-sms
         - spring-boot-starter-all
+      build-tool-properties:
+        jakarta-mail.version: 2.1.1
+        jakarta-activation.version: 2.1.1
+        sun-mail.version: 2.0.1
+        sun-activation.version: 2.0.1
+      dependency-management:
+        - com.sun.activation:jakarta.activation:${sun-activation.version}
+      additional-dependencies:
+        - org.springframework.boot:spring-boot-starter-test::test

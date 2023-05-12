@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static junit.filter.Assumptions.requires;
 
 @ExtendWith(SpringExtension.class) // required for old Spring Boot versions
-@SpringBootTest({
+@SpringBootTest(classes = Application.class, properties = {
 	"ogham.sms.smpp.host=127.0.0.1",
 	"ogham.sms.smpp.port=${jsmpp.server.port}"
 })

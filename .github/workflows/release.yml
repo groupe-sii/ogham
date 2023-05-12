@@ -61,7 +61,7 @@ jobs:
         with:
           java-version: 17
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -116,7 +116,7 @@ jobs:
         with:
           java-version: 17
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -158,7 +158,7 @@ jobs:
         with:
           java-version: 17
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -201,7 +201,7 @@ jobs:
         with:
           java-version: 17
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository

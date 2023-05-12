@@ -16,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static junit.filter.Assumptions.requires;
 
 @ExtendWith(SpringExtension.class) // required for old Spring Boot versions
-@SpringBootTest({
+@SpringBootTest(classes = Application.class, properties = {
 	"mail.smtp.host=127.0.0.1",
 	"mail.smtp.port=${greenmail.smtp.port}"
 })

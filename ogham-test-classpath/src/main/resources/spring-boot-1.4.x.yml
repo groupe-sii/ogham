@@ -34,5 +34,10 @@ classpath-tests:
         - spring-boot-starter-email
         - spring-boot-starter-sms
         - spring-boot-starter-all
-#  additional-dependencies:
-#    - com.github.tomakehurst:wiremock-jre8:2.23.2:test
+      additional-dependencies:
+        - org.springframework.boot:spring-boot-starter-test::test
+        - com.github.sbrannen:spring-test-junit5:1.5.0:test
+      repositories:
+        - https://jitpack.io
+      dependency-management:
+        - org.junit:junit-bom:5.9.3:import:pom

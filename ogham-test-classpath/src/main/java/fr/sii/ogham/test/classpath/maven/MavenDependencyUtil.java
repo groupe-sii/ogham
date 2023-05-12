@@ -15,6 +15,16 @@ public class MavenDependencyUtil {
     }
 
     public static boolean isSameDependency(org.apache.maven.model.Dependency mavenDep, Dependency newDep) {
+        return isSameDependencyIgnoringScope(mavenDep, newDep)
+                && isSameScope(mavenDep, newDep);
+    }
+
+    private static boolean isSameScope(org.apache.maven.model.Dependency mavenDep, Dependency newDep) {
+        String scope = mavenDep.getScope()==null ? "compile" : mavenDep.getScope();
+        return scope.equals(newDep.getScope().getValue());
+    }
+
+    public static boolean isSameDependencyIgnoringScope(org.apache.maven.model.Dependency mavenDep, Dependency newDep) {
         return mavenDep.getArtifactId().equals(newDep.getArtifactId())
                 && mavenDep.getGroupId().equals(newDep.getGroupId())
                 && isSameVersion(mavenDep, newDep)
@@ -29,8 +39,8 @@ public class MavenDependencyUtil {
     }
 
     public static boolean isSameType(org.apache.maven.model.Dependency mavenDep, Dependency newDep) {
-        if (mavenDep.getType()==null) {
-            return newDep.getType()==null;
+        if ("jar".equals(mavenDep.getType())) {
+            return newDep.getType()==null || "jar".equals(newDep.getType());
         }
         return mavenDep.getType().equals(newDep.getType());
     }
