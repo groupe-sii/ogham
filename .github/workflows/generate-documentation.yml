@@ -28,7 +28,7 @@ jobs:
           - ogham-spring-boot-v2-autoconfigure
     name: "Mutation testing [${{ matrix.module }}]"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-18.04
     name: "Generate documentation and site"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-18.04
     name: "Deploy documentation"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: "Restore generated documentation - download"
@@ -122,7 +122,7 @@ jobs:
           mkdir target
           tar -xzf /tmp/generated-documentation.tar.gz -C target
       - name: "Clone ogham-dev-reports"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: aurelien-baudet/ogham-dev-reports
           path: ogham-dev-reports

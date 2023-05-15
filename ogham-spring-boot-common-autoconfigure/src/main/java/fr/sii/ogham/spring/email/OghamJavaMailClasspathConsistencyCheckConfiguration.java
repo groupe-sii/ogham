@@ -30,7 +30,7 @@ import javax.annotation.PostConstruct;
  *         <li>{@code org.eclipse.angus:angus-activation:2.0.0+}</li>
  *     </ul>
  *     </li>
- *     <li>Spring Boot <= 2 dependency management has these rules:
+ *     <li>Spring Boot 2 dependency management has these rules:
  *     <ul>
  *         <li>{@code jakarta.mail:jakarta.mail-api:1.6.7-}</li>
  *         <li>{@code jakarta.activation:jakarta.activation-api:1.2.2-}</li>
@@ -42,7 +42,7 @@ import javax.annotation.PostConstruct;
  * declares classes in package {@code javax.mail} while {@code jakarta.mail:jakarta.mail-api:1.6.7+}
  * declares classes in package {@code jakarta.mail}.
  * <p>
- * So, when using Ogham with Spring Boot <= 2, we try:
+ * So, when using Ogham with Spring Boot 2, we try:
  * <ul>
  *     <li>either to use Jakarta mail using {@code org.eclipse.angus:angus-mail:2.0.1+} but it fails
  *     because it doesn't find {@code jakarta.activation.DataHandler} (since in the classpath the
