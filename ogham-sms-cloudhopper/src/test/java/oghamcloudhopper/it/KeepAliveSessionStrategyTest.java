@@ -628,6 +628,7 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		sender = builder
 					.port(manualServer.getPort())
 					.session()
+						.connectTimeout(100L)
 						.responseTimeout(200L)
 						.keepAlive()
 							.enable(true)
