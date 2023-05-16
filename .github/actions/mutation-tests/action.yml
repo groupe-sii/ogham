@@ -1,0 +1,29 @@
+name: Mutation tests
+description: "Run mutation tests"
+inputs:
+  module:
+    required: true
+    description: "The module to test"
+  cache-version:
+    description: "The version of the cache to use"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Cache Pitest history
+      uses: actions/cache@v3
+      with:
+        path: /tmp/*_pitest_history.bin
+        key: ${{ runner.os }}-pitest-${{ inputs.module }}-${{ inputs.cache-version }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-pitest-${{ inputs.module }}-${{ inputs.cache-version }}
+#    - name: "Build custom Pitest version"
+#      shell: bash
+#      run: ci/./build-pitest.sh
+    - name: "Run mutation tests"
+      shell: bash
+      run: ci/./run-single-module-mutation-tests.sh ${{ inputs.module }} gregor
+    - name: "Save Pitest reports"
+      uses: ./.github/actions/archive-and-upload
+      with:
+        file-pattern: "${{ inputs.module }}/target/pit-reports/**.*"
+        artifact-name: pit-reports-${{ inputs.module }}

@@ -1,0 +1,38 @@
+name: Archive and upload
+description: "Archive and upload files to artifacts"
+inputs:
+  artifact-name:
+    required: true
+    description: The name of the artifact
+  file-pattern:
+    required: true
+    description: The pattern for the files/directories to upload
+  working-directory:
+    required: false
+    description: The directory to package files from. Default is the working directory.
+    default: ${{ github.workspace }}
+runs:
+  using: "composite"
+  steps:
+    - name: "Evaluate path"
+      id: evaluate-path
+      shell: python
+      run: |
+        import os
+        working_dir = os.path.expanduser(r'${{ inputs.working-directory }}')
+        f = open(os.environ['GITHUB_OUTPUT'], "a")
+        f.write(r'working-directory='+working_dir + '\n')
+        f.close()
+    - name: "Archive"
+      id: archive
+      uses: ksm2/archive-action@v1
+      with:
+        format: "tar.gz"
+        name: ${{ inputs.artifact-name }}
+        include: ${{ inputs.file-pattern }}
+        root-directory: ${{ steps.evaluate-path.outputs.working-directory }}
+    - name: "Upload"
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ steps.archive.outputs.name }}
+        path: ${{ steps.archive.outputs.path }}

@@ -8,7 +8,11 @@ mutators=$([ -z "$3" ] && echo ''  || echo "-Dmutators=$3")
 features=$([ "$engine" = "gregor" ] && echo '-Dfeatures=+EXPORT'  || echo '')
 history_dir="${4:-/tmp}"
 
+# need to build fat JAR before
+./mvnw install -pl ogham-test-utils-dependencies --also-make -B
+
 ./mvnw install post-site \
+	-rf :ogham-test-utils \
 	-DtargetModules="$module" \
 	-Dpit.mutation-engine="$engine" \
 	$features \

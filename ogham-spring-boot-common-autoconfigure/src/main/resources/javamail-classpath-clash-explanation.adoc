@@ -1,0 +1,106 @@
+[CAUTION]
+====
+/!\ You may experience classpath issues while sending emails with Ogham using Java Mail and Spring Boot >= 2.2.x < 3.0.x.
+====
+
+
+== Explanation:
+
+There can be a mess in the classpath due to Spring Boot dependency management
+that forces versions:
+
+* Ogham uses the dependency `org.eclipse.angus:angus-mail >= 2.0.1`, which imports:
+  - `jakarta.mail:jakarta.mail-api >= 2.1.0`
+  - `jakarta.activation:jakarta.activation-api >= 2.1.1`
+  - `org.eclipse.angus:angus-activation >= 2.0.0`
+* Spring Boot 2 dependency management forces these versions:
+  - `jakarta.mail:jakarta.mail-api <= 1.6.7`
+  - `jakarta.activation:jakarta.activation-api <= 1.2.2`
+
+But, there is a mess in the packages. The dependency `jakarta.mail:jakarta.mail-api <= 1.6.7`
+declares classes in package `javax.mail` while `jakarta.mail:jakarta.mail-api > 1.6.7`
+declares classes in package `jakarta.mail`.
+So, when using Ogham with Spring Boot 2, Ogham tries to adapt to what is present in the classpath:
+
+* either Ogham tries to use Jakarta mail using `org.eclipse.angus:angus-mail >= 2.0.1` but it fails
+  because it doesn't find `jakarta.activation.DataHandler` (since in the classpath the
+  `jakarta.activation:jakarta.activation-api` version is `<= 1.2.2` which defines
+  `javax.activation.DataHandler` instead).
+* or Ogham tries to use Javax mail using `jakarta.mail:jakarta.mail-api <= 1.6.7`, but it may fail
+  because Ogham doesn't bring Javax mail implementation dependencies to avoid classpath
+  mess and issues at runtime. So when trying to send en email using Javax mail, there is no implementation
+  available. But it is even worse than no implementation available. In the sources of
+  `jakarta.mail:jakarta.mail-api <= 1.6.7`, there is a direct link to the Sun implementation
+  (at least `com.sun.mail.util.MailLogger`) which may not be present in the classpath.
+  So, instead of indicating that there is no Javax mail implementation present, it
+  fails with `java.lang.NoClassDefFoundError: com/sun/mail/util/MailLogger` which
+  is not really developer friendly and hard to understand why it happens.
+
+== Solutions:
+
+=== Either prefer use of old Javax mail
+
+If you prefer using Javax mail in order to avoid possible classpath clashes by mixing both javax and jakarta, you can:
+
+* Either add `org.springframework.boot:spring-boot-starter-mail` dependency  BEFORE `fr.sii.ogham:ogham-email-javamail` dependency.
+* Or add explicitly the dependency `com.sun.mail:jakarta.mail` BEFORE `fr.sii.ogham:ogham-email-javamail` dependency
+
+[NOTE]
+====
+Order is important in order to let Java pick the service configuration of the `com.sun.mail:jakarta-mail` dependency first.
+You can also exclude `org.eclipse.angus:angus-mail` from `fr.sii.ogham:ogham-email-javamail` (so that order doesn't matter).
+====
+
+=== Or prefer use of new Jakarta mail
+
+If you prefer using the new Jakarta mail, you can:
+
+* Either force Spring Boot dependency management to use newer versions by setting properties:
++
+[source, xml]
+----
+<properties>
+    ...
+    <jakarta-mail.version>2.1.1</jakarta-mail.version>
+    <jakarta-activation.version>2.1.1</jakarta-activation.version>
+    <sun-mail.version>2.0.1</sun-mail.version>
+    <sun-activation.version>2.0.1</sun-activation.version>
+    ...
+</properties>
+----
++
+Spring Boot dependency management uses the same property `${jakarta-activation.version}`
+for both `jakarta.activation:jakarta.activation-api` and `com.sun.activation:jakarta.activation`.
+So you also have to override dependency management by adding:
++
+[source, xml]
+----
+<dependencyManagement>
+ <dependencies>
+   <dependency>
+     <groupId>com.sun.activation</groupId>
+     <artifactId>jakarta.activation</artifactId>
+     <version>${sun-activation.version}</version>
+   </dependency>
+ </dependencies>
+</dependencyManagement>
+----
++
+Therefore, the property `${sun-activation.version}` has effect.
+
+* Or explicitly add dependencies to override Spring Boot inherited dependency management:
+     - `jakarta.activation:jakarta.mail-api:2.1.1`
+     - `jakarta.activation:jakarta.activation-api:2.1.1`
+
+
+[WARNING]
+====
+Be careful yet, other Spring Boot modules may require `javax.activation` packages.
+====
+
+[TIP]
+====
+You can disable this message by setting the property `ogham.email.javamail.check-classpath-consistency=false`
+====
+
+

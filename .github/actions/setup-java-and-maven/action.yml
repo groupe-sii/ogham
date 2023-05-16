@@ -1,0 +1,36 @@
+name: Setup Java and Maven
+description: "Setup Java and Maven"
+inputs:
+  cache-version:
+    description: "The version of the cache to use"
+    required: true
+  include-ogham:
+    description: "Include ogham dependencies in cache"
+    required: false
+    default: "false"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: |
+          8
+          17
+    - name: Cache Maven packages
+      if: inputs.include-ogham == 'true'
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.m2/repository
+        key: ${{ runner.os }}-m2-${{ inputs.cache-version }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-${{ inputs.cache-version }}
+    - name: Cache Maven packages
+      if: inputs.include-ogham != 'true'
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.m2/repository
+          !~/.m2/repository/fr/sii/
+        key: ${{ runner.os }}-m2-${{ inputs.cache-version }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-${{ inputs.cache-version }}

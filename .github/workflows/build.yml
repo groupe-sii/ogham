@@ -21,20 +21,10 @@ jobs:
     name: "Build [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
         with:
-          distribution: temurin
-          java-version: |
-            8
-            17
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Build"
         uses: nick-fields/retry@v2
         with:
@@ -45,24 +35,19 @@ jobs:
               '-DskipTests=true'
               '-Dmaven.javadoc.skip=true'
               -B
-#      - name: "Save Maven repository for analysis - archive"
-#        if: always()
-#        run: tar -czf ${{ runner.temp }}/maven-repository.tar.gz ~/.m2/repository
-#      - name: "Save Maven repository for analysis - upload"
-#        if: always()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: build-maven-repository-${{ matrix.os }}
-#          path: ${{ runner.temp }}/maven-repository.tar.gz
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: tar -czf ${{ runner.temp }}/maven-output.tar.gz $( find -name "target" -type d )
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
+      - name: "Save maven repository for analysis"
+        if: always()
+        uses: ./.github/actions/archive-and-upload
         with:
-          name: build-maven-output-${{ matrix.os }}
-          path: ${{ runner.temp }}/maven-output.tar.gz
+          working-directory: ~/.m2/repository
+          file-pattern: "**"
+          artifact-name: build--maven-repository--${{ matrix.os }}
+      - name: "Save maven output for analysis"
+        if: always()
+        uses: ./.github/actions/archive-and-upload
+        with:
+          file-pattern: "**/target/**"
+          artifact-name: build--maven-output--${{ matrix.os }}
 
   unit-tests:
     needs: build
@@ -74,20 +59,10 @@ jobs:
     name: "Unit Tests [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
         with:
-          distribution: temurin
-          java-version: |
-            8
-            17
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Unit Tests"
         uses: nick-fields/retry@v2
         with:
@@ -99,18 +74,12 @@ jobs:
               '-Dmaven.test.redirectTestOutputToFile=true'
               -fae
               -B
-      - name: "Save Maven output for analysis - archive"
+      - name: "Save maven output for analysis"
         if: failure()
-        run: |
-          find -name "target" -type d
-          tar -czf ${{ runner.temp }}/maven-output.tar.gz $( find -name "target" -type d )
-          ls -l ${{ runner.temp }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
+        uses: ./.github/actions/archive-and-upload
         with:
-          name: unit-tests-maven-output-${{ matrix.os }}
-          path: ${{ runner.temp }}/maven-output.tar.gz
+          file-pattern: "**/target/**"
+          artifact-name: unit-tests--maven-output--${{ matrix.os }}
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -130,20 +99,10 @@ jobs:
     name: "Integration Tests [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
         with:
-          distribution: temurin
-          java-version: |
-            8
-            17
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Integration Tests"
         uses: nick-fields/retry@v2
         with:
@@ -156,18 +115,12 @@ jobs:
               '-Dmaven.test.redirectTestOutputToFile=true'
               -fae
               -B
-      - name: "Save Maven output for analysis - archive"
+      - name: "Save maven output for analysis"
         if: failure()
-        run: |
-          find -name "target" -type d
-          tar -czf ${{ runner.temp }}/maven-output.tar.gz $( find -name "target" -type d )
-          ls -l ${{ runner.temp }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
+        uses: ./.github/actions/archive-and-upload
         with:
-          name: integration-tests-maven-output-${{ matrix.os }}
-          path: ${{ runner.temp }}/maven-output.tar.gz
+          file-pattern: "**/target/**"
+          artifact-name: integration-tests--maven-output--${{ matrix.os }}
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -187,20 +140,10 @@ jobs:
     name: "Javadoc [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
         with:
-          distribution: temurin
-          java-version: |
-            8
-            17
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Build"
         uses: nick-fields/retry@v2
         with:
@@ -215,36 +158,23 @@ jobs:
           ./mvnw javadoc:javadoc
           -fae
           -B
-      - name: "Save Maven output for analysis - archive"
+      - name: "Save maven output for analysis"
         if: failure()
-        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
+        uses: ./.github/actions/archive-and-upload
         with:
-          name: javadoc-maven-output-${{ matrix.os }}
-          path: /tmp/maven-output.tar.gz
+          file-pattern: "**/target/**"
+          artifact-name: javadoc--maven-output--${{ matrix.os }}
 
   analyze-sonar:
     needs: [unit-tests, integration-tests]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: "Sonar"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
         with:
-          distribution: temurin
-          java-version: |
-            8
-            17
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Analyze"
         uses: nick-fields/retry@v2
         with:
@@ -261,22 +191,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: "Save Maven output for analysis - archive"
+      - name: "Save maven output for analysis"
         if: failure()
-        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
+        uses: ./.github/actions/archive-and-upload
         with:
-          name: analyze-sonar-maven-output
-          path: /tmp/maven-output.tar.gz
+          file-pattern: "**/target/**"
+          artifact-name: analyze-sonar--maven-output--${{ matrix.os }}
 
   analyze-codecov:
     needs: [unit-tests, integration-tests]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: "Codecov"
     steps:
       - uses: actions/checkout@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
+        with:
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Build and test"
         uses: nick-fields/retry@v2
         with:
@@ -290,15 +221,12 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: "Save Maven output for analysis - archive"
+      - name: "Save maven output for analysis"
         if: failure()
-        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
+        uses: ./.github/actions/archive-and-upload
         with:
-          name: analyze-codecov-maven-output
-          path: /tmp/maven-output.tar.gz
+          file-pattern: "**/target/**"
+          artifact-name: analyze-codecov--maven-output--${{ matrix.os }}
 
 
   classpath-tests-standalone:
@@ -307,50 +235,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [8, 9, 10, 11, 12, 13, 14, 15, 17]
-        os: [ubuntu-18.04]
+        java: [8, 11, 17]
+        os: [ubuntu-latest]
     name: "Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Generate and run classpath tests
+        uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-      - name: "Generate projects"
-        run: TEST_FOLDER=JAVA_${{ matrix.java }} INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-      - name: "Run tests"
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command: TEST_FOLDER=JAVA_${{ matrix.java }}/standalone ci/./run-classpath-tests.sh
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: |
-          cd ~/classpath-tests/JAVA_${{ matrix.java }}/standalone
-          find -name "target" -type d
-          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: classpath-tests-maven-output-${{ matrix.os }}-java-${{ matrix.java }}-standalone
-          path: /tmp/maven-output.tar.gz
-      - name: "Publish Tests Results"
-        uses: scacap/action-surefire-report@v1.0.5
-        if: always()
-        with:
-          check_name: "Report - Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }}]"
-          report_paths: ~/classpath-tests/**/TEST-*.xml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
+          run-tests-directory-name: standalone
+          report-name: "Report - Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }}]"
+          cache-version: ${{ secrets.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-1-4-x:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
@@ -360,60 +257,23 @@ jobs:
       fail-fast: false
       matrix:
         java: [8]
-        os: [ubuntu-18.04]
+        os: [ubuntu-latest]
         spring-boot: [1.4.x]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Generate and run classpath tests
+        uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-      - name: "Generate projects"
-        id: generate-projects
-        run: |
-          TEST_FOLDER=JAVA_${{ matrix.java }} INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions || { sleep 10s; exit 1; }
-          PROJECT_LIST=$(ci/./generate-project-list.sh JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ${{ matrix.part }})
-          echo "::set-output name=PROJECT_LIST::$PROJECT_LIST"
-      - name: "Run tests"
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: |
-          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}
-          find -name "target" -type d
-          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - run: |
-          ESCAPED_PART="${PART/\//-}"
-          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
-        env:
-          PART: ${{ matrix.part }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: classpath-tests-maven-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}-${{ env.ESCAPED_PART }}
-          path: /tmp/maven-output.tar.gz
-      - name: "Publish Tests Results"
-        uses: scacap/action-surefire-report@v1.0.5
-        if: always()
-        with:
-          check_name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          report_paths: ~/classpath-tests/**/TEST-*.xml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
+          generation-profile: older-versions
+          initializr-port: 8052
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ secrets.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-1-5-x:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
@@ -423,60 +283,21 @@ jobs:
       fail-fast: false
       matrix:
         java: [8]
-        os: [ubuntu-18.04]
+        os: [ubuntu-latest]
         spring-boot: [1.5.x]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Generate and run classpath tests
+        uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-      - name: "Generate projects"
-        id: generate-projects
-        run: |
-          TEST_FOLDER=JAVA_${{ matrix.java }} INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-          PROJECT_LIST=$(ci/./generate-project-list.sh JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ${{ matrix.part }})
-          echo "::set-output name=PROJECT_LIST::$PROJECT_LIST"
-      - name: "Run tests"
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: |
-          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}
-          find -name "target" -type d
-          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - run: |
-          ESCAPED_PART="${PART/\//-}"
-          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
-        env:
-          PART: ${{ matrix.part }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: classpath-tests-spring-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}-${{ env.ESCAPED_PART }}
-          path: /tmp/maven-output.tar.gz
-      - name: "Publish Tests Results"
-        uses: scacap/action-surefire-report@v1.0.5
-        if: always()
-        with:
-          check_name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          report_paths: ~/classpath-tests/**/TEST-*.xml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ secrets.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-1-x:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
@@ -485,61 +306,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [8, 11, 12]
-        os: [ubuntu-18.04]
+        java: [8, 11]
+        os: [ubuntu-latest]
         spring-boot: [2.1.x]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Generate and run classpath tests
+        uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-      - name: "Generate projects"
-        id: generate-projects
-        run: |
-          TEST_FOLDER=JAVA_${{ matrix.java }} INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-          PROJECT_LIST=$(ci/./generate-project-list.sh JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ${{ matrix.part }})
-          echo "::set-output name=PROJECT_LIST::$PROJECT_LIST"
-      - name: "Run tests"
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: |
-          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}
-          find -name "target" -type d
-          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - run: |
-          ESCAPED_PART="${PART/\//-}"
-          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
-        env:
-          PART: ${{ matrix.part }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: classpath-tests-spring-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}-${{ env.ESCAPED_PART }}
-          path: /tmp/maven-output.tar.gz
-      - name: "Publish Tests Results"
-        uses: scacap/action-surefire-report@v1.0.5
-        if: always()
-        with:
-          check_name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          report_paths: ~/classpath-tests/**/TEST-*.xml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ secrets.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-x-x:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
@@ -548,62 +330,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [8, 11, 12, 13, 14, 15, 17]
-        os: [ubuntu-18.04]
+        java: [8, 11, 17]
+        os: [ubuntu-latest]
         spring-boot: [2.2.x, 2.3.x, 2.4.x, 2.5.x, 2.6.x, 2.7.x]
         variant: [dependency-management, explicit-dependencies]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} ({{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Generate and run classpath tests
+        uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-      - name: "Generate projects"
-        id: generate-projects
-        run: |
-          TEST_FOLDER=JAVA_${{ matrix.java }} INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-          PROJECT_LIST=$(ci/./generate-project-list.sh JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}---{{ matrix.variant }} ${{ matrix.part }})
-          echo "::set-output name=PROJECT_LIST::$PROJECT_LIST"
-      - name: "Run tests"
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}---{{ matrix.variant }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: |
-          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}---{{ matrix.variant }}
-          find -name "target" -type d
-          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - run: |
-          ESCAPED_PART="${PART/\//-}"
-          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
-        env:
-          PART: ${{ matrix.part }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: classpath-tests-spring-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}---{{ matrix.variant }}-${{ env.ESCAPED_PART }}
-          path: /tmp/maven-output.tar.gz
-      - name: "Publish Tests Results"
-        uses: scacap/action-surefire-report@v1.0.5
-        if: always()
-        with:
-          check_name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} ({{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          report_paths: ~/classpath-tests/**/TEST-*.xml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---{{ matrix.variant }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} ({{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ secrets.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-3-0-x:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
@@ -613,60 +356,21 @@ jobs:
       fail-fast: false
       matrix:
         java: [17]
-        os: [ubuntu-18.04]
+        os: [ubuntu-latest]
         spring-boot: [3.0.x]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Generate and run classpath tests
+        uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-      - name: "Generate projects"
-        id: generate-projects
-        run: |
-          TEST_FOLDER=JAVA_${{ matrix.java }} INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-          PROJECT_LIST=$(ci/./generate-project-list.sh JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ${{ matrix.part }})
-          echo "::set-output name=PROJECT_LIST::$PROJECT_LIST"
-      - name: "Run tests"
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
-      - name: "Save Maven output for analysis - archive"
-        if: failure()
-        run: |
-          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}
-          find -name "target" -type d
-          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
-      - run: |
-          ESCAPED_PART="${PART/\//-}"
-          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
-        env:
-          PART: ${{ matrix.part }}
-      - name: "Save Maven output for analysis - upload"
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: classpath-tests-spring-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}-${{ env.ESCAPED_PART }}
-          path: /tmp/maven-output.tar.gz
-      - name: "Publish Tests Results"
-        uses: scacap/action-surefire-report@v1.0.5
-        if: always()
-        with:
-          check_name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          report_paths: ~/classpath-tests/**/TEST-*.xml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ secrets.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     if: (github.event_name == 'push' && github.ref == 'refs/heads/master') || (github.event_name == 'workflow_dispatch' && fromJson(github.event.inputs.deploy))
@@ -680,21 +384,14 @@ jobs:
       - javadoc
       - analyze-sonar
       - analyze-codecov
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: "Deploy"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - name: Setup Java and Maven
+        uses: ./.github/actions/setup-java-and-maven
         with:
-          java-version: 17
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/fr/sii/
-          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Deploy on OSS"
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
@@ -708,7 +405,7 @@ jobs:
   slack:
     if: always()
     needs: [deploy]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: "Slack"
     steps:
       - uses: technote-space/workflow-conclusion-action@v2

@@ -1,0 +1,86 @@
+name: Classpath tests
+description: "Generate and run classpath tests"
+inputs:
+  java-version:
+    required: true
+    description: "The version of java"
+  run-tests-directory-name:
+    required: true
+    description: "The name of the base directory to launch classpath tests (example: 'standalone' or 'spring-boot-xxx')"
+  report-name:
+    required: true
+    description: "The name to use for the published report"
+  cache-version:
+    description: "The version of the cache to use"
+    required: true
+  github-token:
+    description: "The github token used to publish reports"
+    required: true
+  part:
+    required: false
+    description: "The part of the classpath tests to run (example: 1/5)"
+    default: ""
+  generation-profile:
+    required: false
+    description: "The profile for project generation"
+    default: ""
+  initializr-port:
+    required: false
+    description: "The port used by Spring initializr app"
+    default: "8050"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.m2/repository
+          !~/.m2/repository/fr/sii/
+        key: ${{ runner.os }}-m2-${{ inputs.cache-version }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-${{ inputs.cache-version }}
+    - name: "Generate projects"
+      id: generate-projects
+      shell: bash
+      run: |
+        TEST_FOLDER=JAVA_${{ inputs.java-version }} INITIALIZER_PORT=${{ inputs.initializr-port }} ci/./generate-classpath-tests.sh ${{ inputs.generation-profile }} || { sleep 10s; exit 1; }
+    - name: "Generate variables"
+      id: generate-variables
+      shell: bash
+      run: |
+        if [[ -z "$PART" ]]
+        then
+          echo "maven-pl=''" >> $GITHUB_OUTPUT
+          echo "escaped-part=''" >> $GITHUB_OUTPUT
+        else
+          PROJECT_LIST=$(ci/./generate-project-list.sh JAVA_${{ inputs.java-version }}/${{ inputs.run-tests-directory-name }} ${{ inputs.part }})
+          echo "maven-pl=\"-pl $PROJECT_LIST\"" >> $GITHUB_OUTPUT
+          echo "escaped-part=${PART/\//-}" >> $GITHUB_OUTPUT
+        fi
+      env:
+        PART: ${{ inputs.part }}
+    - name: "Run tests"
+      uses: nick-fields/retry@v2
+      with:
+        timeout_minutes: 60
+        max_attempts: 3
+        command: TEST_FOLDER=JAVA_${{ inputs.java-version }}/${{ inputs.run-tests-directory-name }} ci/./run-classpath-tests.sh ${{ steps.generate-variables.outputs.maven-pl }}
+    - name: "Save Maven output for analysis"
+      if: failure()
+      uses: ./.github/actions/archive-and-upload
+      with:
+        working-directory: ~/classpath-tests/JAVA_${{ inputs.java-version }}/${{ inputs.run-tests-directory-name }}
+        file-pattern: "**/target/**.*"
+        artifact-name: classpath-tests--maven-output--${{ runner.os }}-java-${{ inputs.java-version }}-${{ inputs.run-tests-directory-name }}-${{ steps.generate-variables.outputs.escaped-part }}
+    - name: "Publish Tests Results"
+      uses: scacap/action-surefire-report@v1.0.5
+      if: always()
+      with:
+        check_name: "${{ inputs.report-name }}"
+        report_paths: ~/classpath-tests/**/TEST-*.xml
+        github_token: ${{ inputs.github-token }}
+        fail_on_test_failures: true
