@@ -34,5 +34,5 @@ runs:
     - name: "Upload"
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ steps.archive.outputs.name }}
+        name: ${{ inputs.artifact-name }}
         path: ${{ steps.archive.outputs.path }}

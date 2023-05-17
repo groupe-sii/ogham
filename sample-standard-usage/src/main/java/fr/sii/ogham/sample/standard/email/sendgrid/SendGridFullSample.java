@@ -39,36 +39,36 @@ import fr.sii.ogham.email.message.Email;
  *
  */
 public class SendGridFullSample {
-	public static void main(String[] args) throws MessagingException, IOException {
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties("/sendgrid-template.properties")                // <1>
-					.and()
-				.build();
-		// send the email using fluent API
-		// @formatter:off
-		service.send(new Email()
-						.body().template("full", new SimpleBean("foo", 42))     // <2>
-						.to("ogham-test@yopmail.com")
-						.attach().resource("/attachment/test.pdf"));
-		// @formatter:on
-	}
+  public static void main(String[] args) throws MessagingException, IOException {
+    // Instantiate the messaging service using default behavior and
+    // provided properties
+    MessagingService service = MessagingBuilder.standard()
+        .environment()
+          .properties("/sendgrid-template.properties")          // <1>
+          .and()
+        .build();
+    // send the email using fluent API
+    // @formatter:off
+    service.send(new Email()
+        .body().template("full", new SimpleBean("foo", 42))     // <2>
+        .to("ogham-test@yopmail.com")
+        .attach().resource("/attachment/test.pdf"));
+    // @formatter:on
+  }
 
-	public static class SimpleBean {
-		private String name;
-		private int value;
-		public SimpleBean(String name, int value) {
-			super();
-			this.name = name;
-			this.value = value;
-		}
-		public String getName() {
-			return name;
-		}
-		public int getValue() {
-			return value;
-		}
-	}
+  public static class SimpleBean {
+    private String name;
+    private int value;
+    public SimpleBean(String name, int value) {
+      super();
+      this.name = name;
+      this.value = value;
+    }
+    public String getName() {
+      return name;
+    }
+    public int getValue() {
+      return value;
+    }
+  }
 }

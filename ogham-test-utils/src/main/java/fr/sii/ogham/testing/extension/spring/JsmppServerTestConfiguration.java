@@ -1,18 +1,20 @@
 package fr.sii.ogham.testing.extension.spring;
 
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-
-import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
-import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
+import org.springframework.context.annotation.Import;
 
 /**
  * Test configuration that registers:
  * <ul>
+ * <li>{@link JsmppServerRule} bean for JUnit 4</li>
  * <li>{@link JsmppServerExtension} bean for JUnit 5</li>
  * <li>Configure port defined by {@code jsmpp.server.port} property.</li>
  * </ul>
@@ -21,6 +23,7 @@ import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
  *
  */
 @TestConfiguration
+@Import(JsmppServerRuleTestConfiguration.class)
 public class JsmppServerTestConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(JsmppServerExtension.class)

@@ -15,45 +15,45 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
-@PropertySource("application-sms-template.properties")	// just needed to be able to run the sample
+@PropertySource("application-sms-template.properties")  // just needed to be able to run the sample
 public class TemplateSample {
 
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(TemplateSample.class, args);
-	}
-	
-	@RestController
-	public static class SmsController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-sms-template.properties
-		// The configuration files are stored into src/main/resources
-		@Autowired
-		MessagingService messagingService;                                              // <1>
-		
-		@PostMapping(value="api/sms/template")
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
-			// send the SMS using fluent API
-			messagingService.send(new Sms()                                             // <2>
-									.message().template("register",                     // <3>
-														new SimpleBean(name, value))    // <4>
-									.to(to));                                           // <5>
-		}
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(TemplateSample.class, args);
+  }
+  
+  @RestController
+  public static class SmsController {
+    // Messaging service is automatically created using Spring Boot features
+    // The configuration can be set into application-sms-template.properties
+    // The configuration files are stored into src/main/resources
+    @Autowired
+    MessagingService messagingService;                                         // <1>
+    
+    @PostMapping(value="api/sms/template")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
+      // send the SMS using fluent API
+      messagingService.send(new Sms()                                          // <2>
+           .message().template("register",                                     // <3>
+                               new SimpleBean(name, value))                    // <4>
+           .to(to));                                                           // <5>
+    }
+  }
 
-	public static class SimpleBean {
-		private String name;
-		private int value;
-		public SimpleBean(String name, int value) {
-			super();
-			this.name = name;
-			this.value = value;
-		}
-		public String getName() {
-			return name;
-		}
-		public int getValue() {
-			return value;
-		}
-	}
+  public static class SimpleBean {
+    private String name;
+    private int value;
+    public SimpleBean(String name, int value) {
+      super();
+      this.name = name;
+      this.value = value;
+    }
+    public String getName() {
+      return name;
+    }
+    public int getValue() {
+      return value;
+    }
+  }
 }

@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Email clients doesn't handle external CSS files at all. Styles can be included in 
 a `style` tag but some email clients like Gmail doesn't support it. So all rules 

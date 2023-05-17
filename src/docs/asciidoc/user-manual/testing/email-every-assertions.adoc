@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 
 When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `every` method to apply defined assertions on all messages.

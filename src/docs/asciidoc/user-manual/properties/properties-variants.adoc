@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Property configuration is a good way to separate code from configuration. Ogham allows you to configure values using builders. For example, you can configure the SMTP host and port like this:
 

@@ -75,6 +75,7 @@
         <cloning.group>${cloning-jdk8.group}</cloning.group>
         <cloning.version>${cloning-jdk8.version}</cloning.version>
         <greenmail.version>2.0.0</greenmail.version>
+        <greenmail-junit4.version>${greenmail.version}</greenmail-junit4.version>
         <jsmpp.version>3.0.0</jsmpp.version>
         <equalsverifier.version>3.14.1</equalsverifier.version>
         <wiremock.version>2.35.0</wiremock.version>
@@ -86,10 +87,10 @@
         <awaitility.version>4.0.3</awaitility.version>
         <resilience4j-retry.version>1.7.1</resilience4j-retry.version>
         <!-- Dependencies - documentation -->
-        <asciidoctorj-diagram.version>2.0.2</asciidoctorj-diagram.version>
-        <asciidoctorj.version>2.3.0</asciidoctorj.version>
+        <asciidoctorj.version>2.5.8</asciidoctorj.version>
+        <asciidoctorj-diagram.version>2.2.8</asciidoctorj-diagram.version>
         <asciidoctorj-monotree.version>0.0.1</asciidoctorj-monotree.version>
-        <asciidoctorj-revealjs.version>4.0.1</asciidoctorj-revealjs.version>
+        <asciidoctorj-revealjs.version>4.1.0</asciidoctorj-revealjs.version>
         <bootstrap.version>4.3.1</bootstrap.version>
         <bootswatch.version>4.2.1</bootswatch.version>
         <!-- Dependencies - compatibility -->
@@ -123,12 +124,9 @@
         </pit.history.file>
 
         <!-- Code coverage -->
-        <jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec
-        </jacoco.it.execution.data.file>
-        <jacoco.ut.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-ut.exec
-        </jacoco.ut.execution.data.file>
-        <jacoco.all.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-all.exec
-        </jacoco.all.execution.data.file>
+        <jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
+        <jacoco.ut.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+        <jacoco.all.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-all.exec</jacoco.all.execution.data.file>
         <jacoco.report.path>${project.basedir}/../target/site/jacoco-aggregate</jacoco.report.path>
 
         <!-- Sonar properties -->
@@ -175,6 +173,7 @@
         <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+        <javahome-resolver-maven-plugin.version>1.0.2</javahome-resolver-maven-plugin.version>
         <!-- Plugins - tests -->
         <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
@@ -183,17 +182,17 @@
         <pit.version>1.13.1</pit.version>
         <pitest-maven.version>${pit.version}</pitest-maven.version>
         <pitest-junit5-plugin.version>1.1.2</pitest-junit5-plugin.version>
-        <pitmp-maven-plugin.version>1.3.7</pitmp-maven-plugin.version>
-        <descartes.version>1.3.2</descartes.version>    <!-- TODO: 1.3 not compatible with pitmp 1.3.7 -->
+        <pitmp-maven-plugin.version>OGHAM</pitmp-maven-plugin.version>
+        <descartes.version>OGHAM</descartes.version>
         <!-- Plugins - documentation -->
-        <maven-site-plugin.version>3.9.0</maven-site-plugin.version>
-        <maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
-        <reflow-skin.version>2.3.0</reflow-skin.version>
+        <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
+        <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
+        <reflow-skin.version>2.3.3</reflow-skin.version>
         <velocity.version>1.7</velocity.version>
-        <asciidoctor-plugin.version>2.0.0</asciidoctor-plugin.version>
+        <asciidoctor-plugin.version>2.2.3</asciidoctor-plugin.version>
         <sass-maven-plugin.version>3.7.2</sass-maven-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <!-- Plugins - code quality -->
@@ -810,14 +809,6 @@
                 <artifactId>greenmail</artifactId>
                 <version>${greenmail.version}</version>
                 <exclusions>
-                    <!--					<exclusion>-->
-                    <!--						<groupId>jakarta.activation</groupId>-->
-                    <!--						<artifactId>jakarta.activation-api</artifactId>-->
-                    <!--					</exclusion>-->
-                    <!--					<exclusion>-->
-                    <!--						<groupId>com.sun.mail</groupId>-->
-                    <!--						<artifactId>jakarta.mail</artifactId>-->
-                    <!--					</exclusion>-->
                     <exclusion>
                         <groupId>junit</groupId>
                         <artifactId>junit</artifactId>
@@ -840,6 +831,21 @@
                     <exclusion>
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.icegreen</groupId>
+                <artifactId>greenmail-junit4</artifactId>
+                <version>${greenmail-junit4.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1142,6 +1148,18 @@
                     </toolchains>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.diamondq.maven</groupId>
+                <artifactId>javahome-resolver-maven-plugin</artifactId>
+                <version>${javahome-resolver-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- Generate sources and javadoc -->
             <plugin>
@@ -1298,6 +1316,7 @@
                         <imagesdir/>
                         <ogham-version>${doc.ogham.version}</ogham-version>
                         <docdir>${basedir}/src/docs/asciidoc</docdir>
+                        <doc-base-dir>${basedir}/src/docs/asciidoc</doc-base-dir>
                         <templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
                         <sourcedir-url>${github.code.url}</sourcedir-url>
                         <sourcedir>${basedir}</sourcedir>
@@ -1459,6 +1478,7 @@
                             <imagesdir/>
                             <ogham-version>${doc.ogham.version}</ogham-version>
                             <docdir>${basedir}/src/docs/asciidoc</docdir>
+                            <doc-base-dir>${basedir}/src/docs/asciidoc</doc-base-dir>
                             <templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
                             <sourcedir-url>${github.code.url}</sourcedir-url>
                             <sourcedir>${basedir}</sourcedir>
@@ -1708,17 +1728,17 @@
                             <additionalDependency>
                                 <groupId>org.springframework.boot</groupId>
                                 <artifactId>spring-boot</artifactId>
-                                <version>${spring-boot.version}</version>
+                                <version>${spring-boot-v2.version}</version>
                             </additionalDependency>
                             <additionalDependency>
                                 <groupId>org.springframework.boot</groupId>
                                 <artifactId>spring-boot-autoconfigure</artifactId>
-                                <version>${spring-boot.version}</version>
+                                <version>${spring-boot-v2.version}</version>
                             </additionalDependency>
                             <additionalDependency>
                                 <groupId>org.springframework.boot</groupId>
                                 <artifactId>spring-boot-configuration-processor</artifactId>
-                                <version>${spring-boot.version}</version>
+                                <version>${spring-boot-v2.version}</version>
                             </additionalDependency>
                             <additionalDependency>
                                 <groupId>org.springframework.boot</groupId>
@@ -1728,11 +1748,6 @@
                             <additionalDependency>
                                 <groupId>org.springframework.boot</groupId>
                                 <artifactId>spring-boot-autoconfigure</artifactId>
-                                <version>${spring-boot-v1.version}</version>
-                            </additionalDependency>
-                            <additionalDependency>
-                                <groupId>org.springframework.boot</groupId>
-                                <artifactId>spring-boot-configuration-processor</artifactId>
                                 <version>${spring-boot-v1.version}</version>
                             </additionalDependency>
                             <additionalDependency>
@@ -1798,6 +1813,7 @@
                                     <param>ogham-test-utils-dependencies</param>
                                     <param>ogham-test-utils-internal</param>
                                     <param>ogham-test-classpath</param>
+                                    <param>ogham-all</param> <!-- TODO: since pitest upgrade, ogham-all mutation testing fails because there is no source classes. See: https://github.com/hcoles/pitest/issues/323, https://github.com/hcoles/pitest/issues/224, https://github.com/STAMP-project/pitmp-maven-plugin/issues/59 -->
                                     <param>reporting</param>
                                     <param>maven-shade-plugin-resource-relocation</param>
                                 </skippedModules>
@@ -1810,6 +1826,7 @@
                                     <outputFormat>XML</outputFormat>
                                 </outputFormats>
                                 <exportLineCoverage>true</exportLineCoverage>
+                                <timestampedReports>false</timestampedReports>
                                 <historyOutputFile>${pit.history.file}</historyOutputFile>
                                 <historyInputFile>${pit.history.file}</historyInputFile>
                                 <avoidCallsTo>
@@ -1824,6 +1841,7 @@
                                     <excludedClasse>com.github.tomakehurst.wiremock.*</excludedClasse>
                                     <excludedClasse>ogham.testing.com.github.tomakehurst.wiremock.*</excludedClasse>
                                 </excludedClasses>
+                                <jvm>${javaHome}/bin/java</jvm>
                             </configuration>
                         </execution>
                     </executions>
@@ -1831,6 +1849,11 @@
                         <dependency>
                             <groupId>org.pitest</groupId>
                             <artifactId>pitest-maven</artifactId>
+                            <version>${pit.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
+                            <artifactId>pitest</artifactId>
                             <version>${pit.version}</version>
                         </dependency>
                         <dependency>
@@ -1862,6 +1885,11 @@
                     <dependencies>
                         <dependency>
                             <groupId>org.pitest</groupId>
+                            <artifactId>pitest</artifactId>
+                            <version>${pit.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
                             <artifactId>pitest-junit5-plugin</artifactId>
                             <version>${pitest-junit5-plugin.version}</version>
                         </dependency>
@@ -1884,6 +1912,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc-no-fork</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <!-- Tests -->
             <plugin>
@@ -1891,16 +1926,16 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <reportSets>
-                        <reportSet>
-                            <reports>
-                                <report>report-only</report>
-                                <report>failsafe-report-only</report>
-                            </reports>
-                        </reportSet>
-                    </reportSets>
                     <aggregate>true</aggregate>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report-only</report>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <!-- Coverage -->
             <plugin>

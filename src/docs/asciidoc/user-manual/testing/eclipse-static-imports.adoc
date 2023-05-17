@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 
 Ogham uses Hamcrest, Mockito and also provides test utilities. Those utilities provide many static methods. Static methods are convenient for code readability. However, Eclipse needs some configuration to help you to import static methods with autocompletion.

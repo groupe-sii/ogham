@@ -51,12 +51,14 @@ public class GenerateReadme implements ApplicationRunner {
 		// load and override variables
 		Variables variables = variablesHelper.loadVariables(variablesFile);
 		variables.add("docdir", asciidocDirectory.toString());
+		variables.add("doc-base-dir", asciidocDirectory.toString());
 		variables.add("sourcedir", rootDirectory.toString());
 		variables.add("images-dir", rootDirectory.relativize(imagesDirectory).toString());
 		variables.add("sourcedir-url", githubProperties.getCodeBaseUrl()+githubProperties.getCurrentBranch());
 		variables.add("site-url", githubProperties.getSiteUrl());
 		variables.add("ogham-version", oghamProperties.getCurrentVersion());
 		variables.add("git-branch", githubProperties.getCurrentBranch());
+		log.debug("Variables {}", variables);
 		// load content, merge includes and rewrite some parts
 		String content = reader.getContent(sourceFile);
 		String out = merger.include(asciidocDirectory, content, variables, 0);

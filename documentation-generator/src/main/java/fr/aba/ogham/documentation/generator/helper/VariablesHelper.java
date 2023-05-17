@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ public class VariablesHelper {
 		Path asciidocDirectory = rootDirectory.resolve(documentationProperties.getAsciidocDirectory());
 		Variables loadVars = new Variables();
 		loadVars.add("docdir", asciidocDirectory.toString());
+		loadVars.add("doc-base-dir", asciidocDirectory.toString());
 		String content = reader.getContent(variablesFile);
 		return merger.include(asciidocDirectory, content, loadVars, 0);
 	}
@@ -67,5 +69,15 @@ public class VariablesHelper {
 			return sb.toString();
 		}
 
+		@Override
+		public String toString() {
+			StringJoiner joiner = new StringJoiner("\n  * ", "\n  * ", "\n");
+			for (Map.Entry<String, String> entry : vars.entrySet()) {
+				joiner.add(entry.getKey()+"\n" +
+						"        original="+entry.getValue()+"\n" +
+						"       evaluated="+evaluate(entry.getValue()));
+			}
+			return joiner.toString();
+		}
 	}
 }

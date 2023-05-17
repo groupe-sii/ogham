@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Importing `ogham-all` dependency is easy but may import dependencies that you
 don't need. For example, you may only need FreeMarker but not Thymeleaf. Or

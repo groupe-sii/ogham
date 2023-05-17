@@ -1,0 +1,30 @@
+name: "Build Ogham"
+description: "Build Ogham"
+inputs:
+  cache-version:
+    description: "The version of the cache to use"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup Java and Maven"
+      uses: ./.github/actions/setup-java-and-maven
+      with:
+        cache-version: ${{ inputs.cache-version }}
+    - name: "Build"
+      uses: nick-fields/retry@v2
+      with:
+        timeout_minutes: 60
+        max_attempts: 3
+        command:
+          ./mvnw clean install
+              '-DskipTests=true'
+              '-Dmaven.javadoc.skip=true'
+              -B
+    - name: "Save generated repository artifacts"
+      if: always()
+      uses: ./.github/actions/archive-and-upload
+      with:
+        working-directory: ~/.m2/repository
+        file-pattern: "fr/sii/**"
+        artifact-name: maven-repository--ogham--${{ runner.os }}

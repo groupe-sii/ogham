@@ -1,12 +1,13 @@
 classpath-tests:
   spring-matrices:
-    "[spring-boot-3.0.x]":
+    "[spring-boot-3.0.x-3.1.x]":
       java:
         - 17
       build:
         - maven
       spring-boot-version:
-        - 3.0.6
+        - 3.0.7
+        - 3.1.0
       spring-boot-dependencies:
         -
         - web

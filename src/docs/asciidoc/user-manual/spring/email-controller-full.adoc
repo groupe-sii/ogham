@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Usage of `MessagingService` is exactly the same as standalone usage. The only difference is that `MessagingService` is automatically created and injectable.
 The following sample shows a Spring Web that exposes one simple endpoint for sending email using Ogham. The sample shows several Ogham features at once:

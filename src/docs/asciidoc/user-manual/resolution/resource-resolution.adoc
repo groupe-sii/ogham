@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Resource resolution is used to locate files using a simple path. For example, the 
 path of a file you want to use (template, image, CSS, attachment...) could be 

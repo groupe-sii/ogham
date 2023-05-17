@@ -17,25 +17,25 @@ import fr.sii.ogham.testing.extension.spring.GreenMailInitializer;
 import mock.MockApplication;
 
 @SpringBootTest(classes = MockApplication.class, properties = {
-	"mail.smtp.host=127.0.0.1",
-	"mail.smtp.port=${greenmail.smtp.port}"                              // <1>
+  "mail.smtp.host=127.0.0.1",
+  "mail.smtp.port=${greenmail.smtp.port}"                              // <1>
 })
-@ContextConfiguration(initializers = GreenMailInitializer.class)         // <2>
+@ContextConfiguration(initializers = GreenMailInitializer.class)       // <2>
 public class RandomSmtpPortJUnit5TestSample {
-	@RegisterExtension @Autowired public GreenMailExtension greenMail;   // <3>
-	@Autowired MessagingService messagingService;
-	
-	@Test
-	public void foo() throws Exception {
-		// some code to test your application here 
-		// that sends email through SMTP
-		messagingService.send(new Email()
-				.subject("Random port")
-				.from("foo@yopmail.com")
-				.to("bar@yopmail.com")
-				.body().string("Random port sample"));
-		// make assertions
-		assertThat(greenMail).receivedMessages()                         // <4>
-			.count(is(1));
-	}
+  @RegisterExtension @Autowired public GreenMailExtension greenMail;   // <3>
+  @Autowired MessagingService messagingService;
+  
+  @Test
+  public void foo() throws Exception {
+    // some code to test your application here 
+    // that sends email through SMTP
+    messagingService.send(new Email()
+        .subject("Random port")
+        .from("foo@yopmail.com")
+        .to("bar@yopmail.com")
+        .body().string("Random port sample"));
+    // make assertions
+    assertThat(greenMail).receivedMessages()                           // <4>
+      .count(is(1));
+  }
 }

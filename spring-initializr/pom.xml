@@ -1,125 +1,187 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.sii.ogham.internal</groupId>
-	<artifactId>spring-initializr</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>fr.sii.ogham.internal</groupId>
+    <artifactId>spring-initializr</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<name>spring-initializr</name>
-	<description></description>
+    <name>spring-initializr</name>
+    <description></description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<!--
-		<spring-initializr.version>0.9.2</spring-initializr.version>
-		<spring-boot.version>2.1.9.RELEASE</spring-boot.version>
-		-->
-		<spring-initializr.version>0.13.0</spring-initializr.version>
-		<!-- TODO: not compatible with Spring Boot 3 -->
-		<spring-boot.version>2.7.11</spring-boot.version>
-	</properties>
-
-	<profiles>
-		<profile>
-			<id>older-versions</id>
-			<properties>
-				<spring-initializr.version>0.4.0.RELEASE</spring-initializr.version>
-				<spring-boot.version>1.5.21.RELEASE</spring-boot.version>
-			</properties>
-		</profile>
-		<profile>
-			<id>latest-versions</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>io.spring.initializr</groupId>
-					<artifactId>initializr-generator-spring</artifactId>
-				</dependency>
-			</dependencies>
-			<dependencyManagement>
-				<dependencies>
-					<!-- Import dependency management for Spring Initializr -->
-					<dependency>
-						<groupId>io.spring.initializr</groupId>
-						<artifactId>initializr-bom</artifactId>
-						<version>${spring-initializr.version}</version>
-						<type>pom</type>
-						<scope>import</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
-	</profiles>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!--
+        <spring-initializr.version>0.9.2</spring-initializr.version>
+        <spring-boot.version>2.1.9.RELEASE</spring-boot.version>
+        -->
+        <spring-initializr.version>0.13.0</spring-initializr.version>
+        <!-- TODO: not compatible with Spring Boot 3 -->
+        <spring-boot.version>2.7.11</spring-boot.version>
+    </properties>
 
 
-	<dependencies>
-		<dependency>
-			<groupId>io.spring.initializr</groupId>
-			<artifactId>initializr-web</artifactId>
-			<version>${spring-initializr.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<!-- Import dependency management from Spring Boot -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.spring.initializr</groupId>
+            <artifactId>initializr-web</artifactId>
+            <version>${spring-initializr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Import dependency management from Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
 
-	<repositories>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-		</repository>
-		<repository>
-			<id>spring-releases</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
-		</repository>
-	</repositories>
+    <profiles>
+        <profile>
+            <id>latest-versions</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.spring.initializr</groupId>
+                    <artifactId>initializr-generator-spring</artifactId>
+                </dependency>
+            </dependencies>
+            <dependencyManagement>
+                <dependencies>
+                    <!-- Import dependency management for Spring Initializr -->
+                    <dependency>
+                        <groupId>io.spring.initializr</groupId>
+                        <artifactId>initializr-bom</artifactId>
+                        <version>${spring-initializr.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>older-versions</id>
+            <properties>
+                <spring-initializr.version>0.4.0.RELEASE</spring-initializr.version>
+                <spring-boot.version>1.5.21.RELEASE</spring-boot.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>io.spring.initializr</groupId>
+                    <artifactId>initializr-web</artifactId>
+                    <version>${spring-initializr.version}</version>
+                    <scope>system</scope>
+                    <systemPath>${project.basedir}/archived-deps/initializr-web-0.4.0.RELEASE.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>io.spring.initializr</groupId>
+                    <artifactId>initializr-generator</artifactId>
+                    <version>${spring-initializr.version}</version>
+                    <scope>system</scope>
+                    <systemPath>${project.basedir}/archived-deps/initializr-generator-0.4.0.RELEASE.jar</systemPath>
+                </dependency>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-releases</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
-		</pluginRepository>
-	</pluginRepositories>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.samskivert</groupId>
+                    <artifactId>jmustache</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-mustache</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-cache</artifactId>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.hateoas</groupId>
+                    <artifactId>spring-hateoas</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant</artifactId>
+                    <version>1.10.1</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-launcher</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+        </repository>
+        <repository>
+            <id>spring-releases</id>
+            <name>Spring Releases</name>
+            <url>https://repo.spring.io/release</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <name>Spring Releases</name>
+            <url>https://repo.spring.io/release</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

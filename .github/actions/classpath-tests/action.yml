@@ -16,6 +16,10 @@ inputs:
   github-token:
     description: "The github token used to publish reports"
     required: true
+  java-distribution:
+    description: "The distribution of Java to use"
+    required: false
+    default: temurin
   part:
     required: false
     description: "The part of the classpath tests to run (example: 1/5)"
@@ -31,23 +35,24 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-java@v3
+    - name: "Setup Java and Maven"
+      uses: ./.github/actions/setup-java-and-maven
       with:
-        distribution: temurin
         java-version: ${{ inputs.java-version }}
-    - name: Cache Maven packages
-      uses: actions/cache@v3
+        java-distribution: ${{ inputs.java-distribution }}
+        cache-version: ${{ inputs.cache-version }}
+    - name: "Download Ogham built artifacts"
+      uses: ./.github/actions/download-and-extract
       with:
-        path: |
-          ~/.m2/repository
-          !~/.m2/repository/fr/sii/
-        key: ${{ runner.os }}-m2-${{ inputs.cache-version }}-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2-${{ inputs.cache-version }}
+        artifact-name: maven-repository--ogham--Linux
+        to-directory: ~/.m2/repository
     - name: "Generate projects"
       id: generate-projects
       shell: bash
       run: |
         TEST_FOLDER=JAVA_${{ inputs.java-version }} INITIALIZER_PORT=${{ inputs.initializr-port }} ci/./generate-classpath-tests.sh ${{ inputs.generation-profile }} || { sleep 10s; exit 1; }
+      env:
+        DEBUG_COMMANDS: ${{ runner.debug }}
     - name: "Generate variables"
       id: generate-variables
       shell: bash
@@ -63,12 +68,15 @@ runs:
         fi
       env:
         PART: ${{ inputs.part }}
+        DEBUG_COMMANDS: ${{ runner.debug }}
     - name: "Run tests"
       uses: nick-fields/retry@v2
       with:
         timeout_minutes: 60
         max_attempts: 3
         command: TEST_FOLDER=JAVA_${{ inputs.java-version }}/${{ inputs.run-tests-directory-name }} ci/./run-classpath-tests.sh ${{ steps.generate-variables.outputs.maven-pl }}
+      env:
+        DEBUG_COMMANDS: ${{ runner.debug }}
     - name: "Save Maven output for analysis"
       if: failure()
       uses: ./.github/actions/archive-and-upload

@@ -40,6 +40,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target({METHOD, TYPE})
 @ExtendWith(JsmppServerExtension.class)
-public @interface JSmppServer {
+public @interface JsmppServer {
 
 }

@@ -1,0 +1,49 @@
+name: Download artifacts archive and extract
+description: "Download artifacts archive and extract"
+inputs:
+  artifact-name:
+    required: false
+    description: The name of the artifact to download. Empty or not set to download all artifacts
+    default: ""
+  to-directory:
+    required: false
+    description: The directory to extract files. Default is the working directory.
+    default: ${{ github.workspace }}
+  download-directory:
+    required: false
+    description: The directory to download files. Default is runner temp dir.
+    default: ""
+runs:
+  using: "composite"
+  steps:
+    - name: "Download"
+      id: download
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.download-directory || runner.temp }}
+    - name: "Extract"
+      shell: bash
+      # TODO: extract several artifacts if no artifact-name
+      run: |
+        set -ex
+        
+        if [[ ! -z "${{ runner.debug }}" ]]
+        then
+          echo "::group::${{ steps.download.outputs.download-path }} directory content (before extract)"
+          tree "${{ inputs.download-directory }}" || echo ""
+          echo "::endgroup::"
+          echo "::group::${{ inputs.to-directory }} directory content (before extract)"
+          tree "${{ inputs.to-directory }}" || echo ""
+          echo "::endgroup::"
+        fi
+        
+        mkdir -p "${{ inputs.to-directory }}" || echo "Directory creation failed. Skipping"
+        tar -xzf "${{ steps.download.outputs.download-path }}/${{ inputs.artifact-name }}.tar.gz" -C ${{ inputs.to-directory }}
+        
+        if [[ ! -z "${{ runner.debug }}" ]]
+        then
+          echo "::group::${{ inputs.to-directory }} directory content (after extract)"
+          tree "${{ inputs.to-directory }}" || echo ""
+          echo "::endgroup::"
+        fi

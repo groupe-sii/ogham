@@ -1,0 +1,241 @@
+:relative-path: ../../
+include::{doc-base-dir}/variables.adoc[]
+
+
+This is a major release that brings support for Spring Boot 3 (and Java 17+).
+Dependencies have been upgraded to be up-to-date with latest library, tools and Spring versions.
+
+Spring Boot 3 forces use of Java 17. However, Ogham can still be used with Java 8+
+either standalone or with Spring Boot 1 and Spring Boot 2.
+
+
+== Updates
+
+=== Java support
+
+Ogham now supports all Java versions from 8 and up to 20.
+
+.Newer Java versions
+[NOTE]
+====
+Ogham should support newer Java versions in the future without any changes.
+Currently, the latest tested version through compatibility checks is Java 20.
+====
+
+=== Javax mail and Jakarta mail support
+
+There is a big change in Java community that has many side effects. The "simple" renaming of Javax to Jakarta can produce big mess in the classpath.
+
+Now by default, Ogham brings transitive dependencies to Jakarta mail through `org.eclipse.angus:angus-mail` and doesn't bring `com.sun.mail:javax.mail` anymore. Ogham is still able to support both Javax mail and Jakarta mail because it adapts to what is present in the classpath.
+
+.Mix of Javax mail and Jakarta mail is not recommended
+[CAUTION]
+====
+Be careful if you mix dependencies that bring Javax mail implementation such as `com.sun.mail:javax.mail` (or `com.sun.mail:jakarta.mail` <= 1.6.7 that still uses package name `javax.mail`) and new implementations that bring Jakarta mail (package `jakarta.mail`).
+
+There can be a big mess and it is very complicated. So a diagram can explain better than a long explanation:
+
+[plantuml, subs="attributes", role="text-center"]
+....
+
+node "com.sun.mail:jakarta.mail <= 1.6.7" as javaxMailJar {
+
+    file javaxServicesProvider [
+        META-INF/services/javax.mail.Provider
+        ----
+        com.sun.mail.imap.IMAPProvider
+        com.sun.mail.imap.IMAPSSLProvider
+        ...
+    ]
+
+    package "javax.mail" as javaxMailPackage {
+        [javax.mail.Session] as javaxSession
+        interface javax.mail.Provider as javaxProvider
+    }
+
+    package "com.sun.mail" as javaxSunPackage {
+        [com.sun.mail.imap.IMAPProvider] as javaxProviderImplImap
+        [com.sun.mail.imap.IMAPSSLProvider] as javaxProviderImplImapSsl
+        [... other implementations ...] as javaxOthers
+    }
+
+}
+
+javaxSession -> javaxServicesProvider            : load
+
+javaxSession -> javaxProviderImplImap            : instantiate
+javaxSession -> javaxProviderImplImapSsl         : instantiate
+
+javaxProviderImplImap    .up.> javaxProvider     : implements
+javaxProviderImplImapSsl .up.> javaxProvider     : implements
+javaxOthers              -left[hidden]-> javaxProviderImplImapSsl
+
+node "com.sun.mail:jakarta.mail > 1.6.7" as jakartaMailJar {
+
+    file jakartaServicesProvider [
+        META-INF/services/jakarta.mail.Provider
+        ----
+        com.sun.mail.imap.IMAPProvider
+        com.sun.mail.imap.IMAPSSLProvider
+        ...
+    ]
+
+    package "jakarta.mail" as jakartaMailPackage {
+        [jakarta.mail.Session] as jakartaSession
+        interface jakarta.mail.Provider as jakartaProvider
+    }
+
+    package "com.sun.mail" as jakartaSunPackage {
+        [com.sun.mail.imap.IMAPProvider] as jakartaProviderImplImap
+        [com.sun.mail.imap.IMAPSSLProvider] as jakartaProviderImplImapSsl
+        [... other implementations ...] as jakartaOthers
+    }
+
+}
+
+jakartaSession -> jakartaServicesProvider           : load
+
+jakartaSession -> jakartaProviderImplImap           : instantiate
+jakartaSession -> jakartaProviderImplImapSsl        : instantiate
+
+jakartaProviderImplImap    .up.> jakartaProvider    : implements
+jakartaProviderImplImapSsl .up.> jakartaProvider    : implements
+jakartaOthers              -left[hidden]-> jakartaProviderImplImapSsl
+
+
+jakartaServicesProvider -up[hidden]-> javaxProviderImplImap
+....
+
+As you can notice, both JARs define the classes `com.sun.mail.imap.IMAPProvider` and `com.sun.mail.imap.IMAPSSLProvider`. However, `com.sun.mail.imap.IMAPProvider` and `com.sun.mail.imap.IMAPSSLProvider` from `com.sun.mail:jakarta.mail` <= 1.6.7 implements `javax.mail.Provider` while `com.sun.mail.imap.IMAPProvider` and `com.sun.mail.imap.IMAPSSLProvider` from `com.sun.mail:jakarta.mail` > 1.6.7 implements `jakarta.mail.Provider`. So loading of the class may fail according to the classpath declaration order.
+
+For example, if the classpath order is `com.sun.mail:jakarta.mail:1.6.7;com.sun.mail:jakarta.mail:2.0.0`, using `javax.mail.Session` will load `META-INF/services/javax.mail.Provider` which in turn will load `com.sun.mail.imap.IMAPProvider`. As `com.sun.mail:jakarta.mail:1.6.7` is the first declared JAR, it will be used first so the class `com.sun.mail.imap.IMAPProvider` from `com.sun.mail:jakarta.mail:1.6.7` is loaded which is good since it implements `javax.mail.Provider`.
+
+However, if the classpath order is `com.sun.mail:jakarta.mail:2.0.0;com.sun.mail:jakarta.mail:1.6.7`, using `javax.mail.Session` will load `META-INF/services/javax.mail.Provider` which in turn will load `com.sun.mail.imap.IMAPProvider`. As `com.sun.mail:jakarta.mail:2.0.0` is the first declared JAR, it will be used first so the class `com.sun.mail.imap.IMAPProvider` from `com.sun.mail:jakarta.mail:2.0.0` is loaded which *will fail* since it implements `jakarta.mail.Provider` (and `javax.mail.Provider` is required).
+
+You may think that is not a big issue since it seems that trying to use `javax.mail.Session` first and then `jakarta.mail.Session` if it fails will work. But it is not the case. There are other configuration files in the JARs that define implementations for other interfaces:
+
+* `META-INF/javamail.default.providers`
+* `META-INF/mailcap`
+
+There are conflicting with Javax/Jakarta activation too...
+
+Ogham still tries to use one of Javax or Jakarta mail but check classpath consistency. If classpath is not consistent, a message is logged to indicate why emails can't be sent with the implementation.
+====
+
+
+=== Spring Boot support
+
+Ogham 4.0.x is compatible with Spring Boot 1.4.x+ and up to 3.1.x.
+
+.Newer versions of Spring Boot
+[NOTE]
+====
+New Spring Boot versions may be supported. As no tests are made, it is not
+possible to guarantee that you don't experience a classpath issue due to
+upgrade of Spring Boot dependencies and code.
+====
+
+
+.Spring Boot 2.2.x - 2.7.x
+include::{sourcedir}/ogham-spring-boot-common-autoconfigure/src/main/resources/javamail-classpath-clash-explanation.adoc[leveloffset=+2]
+
+
+== Testing
+
+=== Test utilities dependencies
+
+Ogham provides test utilities in order to simplify the code of your tests.
+Internally, it uses libraries for internal code and also to provide Email
+and SMS servers that can be started in your tests.
+
+Before `v4.0.0`, those libraries for internal purpose were available as transitive dependencies of `ogham-test-utils`.
+Now, those internal dependencies are not available as transitive dependencies anymore. Instead, the internal dependencies have been incorporated in Fat JAR with renaming of package names (prefixed by `ogham.testing`).
+
+The benefits of a Fat JAR are:
+
+* When you use `ogham-test-utils` for testing your code, it doesn't pollute your classpath anymore with many transitive dependencies
+* It ensures that your runtime classpath is consistent which may not be the case with previous versions. For example, in previous versions, if you wrote a test with GreenMail server, it was bringing the `javax.mail` dependency so `javax.mail.internet.MimeMessage` was present in the test classpath. Therefore, your test could pass because `ogham-email-javamail` could use that class. But, at runtime, it was possible (if you explicitly exclude `javax.mail` dependencies) that your code couldn't work because `ogham-email-javamail` could not find the required classes. Now, there is a clear separation of runtime classpath and test classpath thanks to renaming of internal test dependencies packages.
+* Ogham can better control required transitive dependencies
+* You can still use the same libraries on your own if you want, it won't conflict. For example, Ogham internally uses `com.icegreen:greenmail:2.0.0` (but the package is renamed). But you may want to use another version of GreenMail. You can still add the dependency `com.icegreen:greenmail:<version you want>` and use GreenMail as you want.
+* Ogham won't fail due to classpath issue between `javax.mail` and `jakarta.mail` or between `javax.activation` and `jakarta.activation`. There was a package renaming from `javax.` to `jakarta.`. However, according to the version of the dependencies, the package was renamed or not...
+
+The drawback of Fat JAR is that if you need to upgrade a test dependency due to a bug, you can't without a new Ogham version.
+
+=== JUnit 4
+
+Internally, all tests have been updated to use JUnit 5. Almost all samples are using JUnit 5 (except specific tests showing how to use JUnit 4 rules).
+
+JUnit 4 is still supported meaning that you can still use it with Ogham. However, Ogham doesn't bring it for you anymore. So, you hate to add explicit dependencies to JUnit 4.
+
+
+== Compatibility check
+
+CI automatically performs many compatibility checks to ensure
+that Ogham is compatible with Java and Spring Boot versions:
+
+* Include (or not) some Ogham features
+  - Sender implementations (Jakarta Mail, SendGrid, Cloudhopper, ...)
+  - Template engine integrations (Thymeleaf, FreeMarker, ...)
+* Include (or not) some Spring Boot features
+  - Web application
+  - Template engine (Thymeleaf, FreeMarker, ...)
+  - Spring Mail (Jakarta Mail)
+* Spring Boot versions (from 1.4.x to 3.1.x)
+* Java versions (from 8 to 20)
+
+
+.Ogham standalone compatibility matrix check
+|===
+|Java distribution |Tested Java versions
+
+|Eclipse Temurin | 8, 11, 16, 17, 18, 19, 20
+
+|Azul Zulu OpenJDK | 8, 11, 13, 15, 19, 20
+
+|AdoptOpenJDK Hotspot | 8, 11, 17
+
+|AdoptOpenJDK OpenJ9 | 8, 11, 17
+
+|Liberica JDK | 8, 11, 17, 20
+
+|Microsoft Build of OpenJDK | 11, 17
+
+|Amazon Corretto Build of OpenJDK | 8, 11, 17, 20
+
+|IBM Semeru Runtime Open Edition | 8, 11, 16, 17, 18, 19
+
+|Oracle JDK | 17, 20
+|===
+
+[NOTE]
+====
+Other versions and distributions are not tested since they
+are not available on Github Actions using `actions/setup-java` action.
+====
+
+.Spring Boot compatibility matrix check
+|===
+|Supported Spring Boot version | Tested Spring Boot version | Tested Java versions
+
+|1.4.x | 1.4.7.RELEASE | 8 (Eclipse Temurin)
+
+|1.5.x | 1.5.22.RELEASE | 8 (Eclipse Temurin)
+
+|2.1.x | 2.1.18.RELEASE | 8, 11 (Eclipse Temurin)
+
+|2.2.x | 2.2.13.RELEASE | 8, 11, 17 (Eclipse Temurin)
+
+|2.3.x | 2.3.12.RELEASE | 8, 11, 17 (Eclipse Temurin)
+
+|2.4.x | 2.4.13 | 8, 11, 17 (Eclipse Temurin)
+
+|2.5.x | 2.5.15 | 8, 11, 17 (Eclipse Temurin)
+
+|2.6.x | 2.6.15 | 8, 11, 17 (Eclipse Temurin)
+
+|2.7.x | 2.7.12 | 8, 11, 17 (Eclipse Temurin)
+
+|3.0.x | 3.0.7 | 17 (Eclipse Temurin)
+
+|3.1.x | 3.1.0 | 17 (Eclipse Temurin)
+|===

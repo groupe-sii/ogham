@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 To test your application SMS, you can start a local SMPP server. You can then use Ogham to make assertions on you SMS (recipient phone number, sender phone number and message). Ogham uses https://jsmpp.org/[jSMPP] as local SMPP server.
 
@@ -9,19 +9,21 @@ To test your application SMS, you can start a local SMPP server. You can then us
 [role=tab]
 --
 
-[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19"]
+[source, java, role="collapse-lines:1-20 irrelevant-lines:1-20"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SmsTestSample.java[]
 ----
-<1> Declare and initialize the JUnit rule that encapsulates jSMPP for starting a local SMPP server in tests (you can set a different port than the default one)
-<2> Configure Ogham to use `localhost` for SMPP host
-<3> Get the local SMPP server port and configure Ogham to use this value
-<4> Entry point for declaring assertion on received SMS using a fluent API
-<5> Assert that one and only one SMS has been received
-<6> Access the first received message for declaring assertions for that message using fluent API
-<7> Assert that the received message text is exactly `sms content`
-<8> Assert that the sender phone number is `+33603040506`
-<9> Assert that the recipient phone number is `0601020304`
+<1> Declare and initialize the JUnit extension that encapsulates jSMPP for starting a local SMPP server in tests
+<2> Use JUnit 5 feature to inject the started SMPP server instance
+<3> Configure Ogham to use `localhost` for SMPP host
+<4> Get the local SMPP server port and configure Ogham to use this value
+<5> Use JUnit 5 feature to inject the started SMPP server instance
+<6> Entry point for declaring assertion on received SMS using a fluent API
+<7> Assert that one and only one SMS has been received
+<8> Access the first received message for declaring assertions for that message using fluent API
+<9> Assert that the received message text is exactly `sms content`
+<10> Assert that the sender phone number is `+33603040506`
+<11> Assert that the recipient phone number is `0601020304`
 
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SmsTestSample.java?ts={tabsize}[Source code of the sample].

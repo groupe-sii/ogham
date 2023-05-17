@@ -9,12 +9,12 @@
 
 	<properties>
 		<!-- Java version -->
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring version -->
-		<spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+		<spring-boot.version>3.1.0</spring-boot.version>
 		
 		<!-- Skip Sonar analysis -->
 		<sonar.skip>true</sonar.skip>
@@ -54,12 +54,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>${spring-boot.version}</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- Ogham helpers for testing -->
@@ -67,6 +61,14 @@
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
 			<version>${ogham.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Just for samples that use JUnit 4 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 This strategy is the simplest one. It is useful when your application only sends some SMS sometimes.
 For each SMS, a session is created, the message is sent and the session is closed.

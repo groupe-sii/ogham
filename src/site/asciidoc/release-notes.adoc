@@ -1,8 +1,8 @@
 :relative-path: ./
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 :toclevels: 3
 
 = Release notes
 
-include::{docdir}/general/release-notes.adoc[]
+include::{doc-base-dir}/general/release-notes.adoc[]
 

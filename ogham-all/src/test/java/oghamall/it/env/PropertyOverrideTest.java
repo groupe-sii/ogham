@@ -5,7 +5,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
-import fr.sii.ogham.testing.extension.junit.sms.JSmppServer;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServer;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
 import ogham.testing.org.jsmpp.bean.SubmitSm;
 import org.junit.jupiter.api.AfterEach;
@@ -21,7 +21,7 @@ import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @LogTestInformation
-@JSmppServer
+@JsmppServer
 public class PropertyOverrideTest {
 
 	@TempDir

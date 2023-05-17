@@ -24,29 +24,29 @@ jobs:
           - ogham-template-thymeleaf-v2
           - ogham-template-thymeleaf-v3
           - ogham-template-freemarker
-          - ogham-email-javamail
+          - ogham-email-javamail-jakarta
+          - ogham-email-javamail-javax
           - ogham-email-sendgrid-v2
           - ogham-email-sendgrid-v4
           - ogham-sms-cloudhopper
           - ogham-sms-ovh
           - ogham-sms-smsglobal
-          - ogham-all
+#          - ogham-all
           - ogham-spring-boot-v1-autoconfigure
           - ogham-spring-boot-v2-autoconfigure
+          - ogham-spring-boot-v3-autoconfigure
     name: "Mutation testing [${{ matrix.module }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
-          include-ogham: true
-      - name: Run mutation tests
+          cache-version: ${{ vars.CACHE_VERSION }}
+      - name: "Run mutation tests"
         uses: ./.github/actions/mutation-tests
         with:
           module: ${{ matrix.module }}
-          cache-version: ${{ secrets.PITEST_CACHE_VERSION }}
-          include-ogham: true
+          cache-version: ${{ vars.PITEST_CACHE_VERSION }}
 
   generate-documentation:
     needs: [mutation-tests]
@@ -54,10 +54,10 @@ jobs:
     name: "Generate documentation and site"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Generate documentation"
         uses: ./.github/actions/generate-documentation
         with:
@@ -71,19 +71,14 @@ jobs:
     name: "Update site"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
-          include-ogham: true
-      - name: "Restore generated documentation - download"
-        uses: actions/download-artifact@v3
+          cache-version: ${{ vars.CACHE_VERSION }}
+      - name: "Restore generated documentation"
+        uses: ./.github/actions/download-and-extract
         with:
-          name: maven-build
-          path: /tmp
-      - name: "Restore generated documentation - extract"
-        run: |
-          tar -xzf /tmp/maven-build.tar.gz
+          artifact-name: maven-build
       - name: "Clone gh-pages"
         uses: actions/checkout@v3
         with:

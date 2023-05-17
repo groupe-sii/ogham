@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 
 [role="tab-container no-max-height"]
@@ -65,9 +65,9 @@ dependencies {
 
 This will include:
 
-* Sending email through SMTP server (using https://eclipse-ee4j.github.io/mail/[Jakarta Mail], formely JavaMail)
+* Sending email through SMTP server (using https://jakarta.ee/specifications/mail/2.0/jakarta-mail-spec-2.0.html[Jakarta Mail], formely JavaMail)
 * Sending email through https://sendgrid.com/[SendGrid]
-* Sending SMS through SMPP server (using https://github.com/fizzed/cloudhopper-smpp[Cloudhopper])
+* Sending SMS through SMPP server (using https://github.com/RestComm/cloudhopper-smpp[Cloudhopper])
 * Sending SMS through https://www.ovhtelecom.fr/sms/api-sms.xml[OVH SMS API]
 * http://freemarker.org/[FreeMarker] template engine available for building message contents
 * http://www.thymeleaf.org/[ThymeLeaf] template engine available for building message contents
@@ -77,7 +77,7 @@ This will include:
 .Java version compatibility
 [NOTE]
 ====
-Ogham is compatible with Java 8 and up to Java 15 (included).
+Ogham is compatible with Java 8 and up to Java 20 (included).
 ====
 
 

@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 This is a simple implementation that runs in the current thread (no thread is created).
 It executes the action and if it fails, it suspends the current thread (using an `Awaiter` implementation)

@@ -16,6 +16,6 @@ public class ReadHelper {
 	}
 	
 	private boolean skipHeaderLine(String line) {
-		return !(line.startsWith(":relative-path:") || line.startsWith("include::{docdir}/variables.adoc[]"));
+		return !(line.startsWith(":relative-path:") || line.startsWith("include::{doc-base-dir}/variables.adoc[]"));
 	}
 }

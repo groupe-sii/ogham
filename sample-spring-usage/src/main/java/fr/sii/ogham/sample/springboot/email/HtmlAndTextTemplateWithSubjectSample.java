@@ -15,45 +15,45 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
-@PropertySource("application-email-template.properties")	// just needed to be able to run the sample
+@PropertySource({"application-email-template.properties", "application-email-thymeleaf-auto-suffix-disabled.properties"})  // just needed to be able to run the sample
 public class HtmlAndTextTemplateWithSubjectSample {
 
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(HtmlAndTextTemplateWithSubjectSample.class, args);
-	}
-	
-	@RestController
-	public static class EmailController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-email-template.properties
-		// The configuration files are stored into src/main/resources
-		// The configuration file set the prefix for templates into email folder available in src/main/resources
-		@Autowired
-		MessagingService messagingService;
-		
-		@PostMapping(value="api/email/multitemplate")
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
-			// send the email using fluent API
-			messagingService.send(new Email()
-									.body().template("register", new SimpleBean(name, value))
-									.to(to));
-		}
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(HtmlAndTextTemplateWithSubjectSample.class, args);
+  }
+  
+  @RestController
+  public static class EmailController {
+    // Messaging service is automatically created using Spring Boot features
+    // The configuration can be set into application-email-template.properties
+    // The configuration files are stored into src/main/resources
+    // The configuration file set the prefix for templates into email folder available in src/main/resources
+    @Autowired
+    MessagingService messagingService;
+    
+    @PostMapping(value="api/email/multitemplate")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
+      // send the email using fluent API
+      messagingService.send(new Email()
+          .body().template("register", new SimpleBean(name, value))
+          .to(to));
+    }
+  }
 
-	public static class SimpleBean {
-		private String name;
-		private int value;
-		public SimpleBean(String name, int value) {
-			super();
-			this.name = name;
-			this.value = value;
-		}
-		public String getName() {
-			return name;
-		}
-		public int getValue() {
-			return value;
-		}
-	}
+  public static class SimpleBean {
+    private String name;
+    private int value;
+    public SimpleBean(String name, int value) {
+      super();
+      this.name = name;
+      this.value = value;
+    }
+    public String getName() {
+      return name;
+    }
+    public int getValue() {
+      return value;
+    }
+  }
 }

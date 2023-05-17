@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum 
 of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases 

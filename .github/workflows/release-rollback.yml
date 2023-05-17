@@ -17,11 +17,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
-      - name: Prepare git
+          cache-version: ${{ vars.CACHE_VERSION }}
+      - name: "Prepare git"
         run: |
           git config user.email github-actions@github.com
           git config user.name github-actions

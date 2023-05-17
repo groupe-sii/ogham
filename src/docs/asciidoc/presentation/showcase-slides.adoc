@@ -1,5 +1,5 @@
 :relative-path: ../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 // FIX: <revealjs_controls> defined in pom.xml does not work...
 ifeval::["{mode}" == "video"]
@@ -60,7 +60,7 @@ dependencies {
 ----
 
 :delay: 1500
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 [transition="fade", role="stretch vcenter"]
 === {objective-1} [.subobjective]#{objective-1a}#
@@ -75,7 +75,7 @@ MessagingService service = MessagingBuilder.standard()
 ----
 
 :delay: 2000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -93,7 +93,7 @@ service.send(new Email()
 ----
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -110,7 +110,7 @@ service.send(new Sms()
 ----
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -119,7 +119,7 @@ include::{docdir}/presentation/delay.adoc[]
 That's it
 
 :delay: 1000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -142,7 +142,7 @@ dependencies {
 ----
 
 :delay: 1500
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -159,7 +159,7 @@ public class YourBusinessService {
 ----
 
 :delay: 2000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade-in slide-out", role="stretch vcenter"]
@@ -168,7 +168,7 @@ include::{docdir}/presentation/delay.adoc[]
 It's even easier
 
 :delay: 1000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 == {objective-2}
@@ -208,13 +208,13 @@ service.send(new Email()
 Use any of *your* object as model
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 [.fragment.move-subject-in-template]
 Externalize whole message related content by moving subject in template
 
 :delay: 5000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -245,7 +245,7 @@ h1 {
 ----
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -254,7 +254,7 @@ include::{docdir}/presentation/delay.adoc[]
 Keep your best practices
 
 :delay: 1000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -299,13 +299,13 @@ body {
 Styles are inlined for you
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 [.fragment.image-is-attached-to-the-email-and-referenced]
 Image is attached to the email and referenced by a Content-ID
 
 :delay: 6000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -342,7 +342,7 @@ Hello ${name} !!
 ====
 
 :delay: 4000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 '''
 
@@ -364,7 +364,7 @@ yourModel.setName("Hôtel");
 --
 
 :delay: 5000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -386,7 +386,7 @@ ${i}) Hello world !!
 --
 
 :delay: 2000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 '''
 
@@ -401,7 +401,7 @@ Number of characters per SMS depends on message encoding.
 ====
 
 :delay: 5000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -410,7 +410,7 @@ include::{docdir}/presentation/delay.adoc[]
 Don't waste time on technical concerns anymore !!
 
 :delay: 1000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -419,14 +419,14 @@ include::{docdir}/presentation/delay.adoc[]
 [.fragment]
 ==== Start a SMTP server on a random port
 
-[source, java, role="fragment"]
+[source, java, role="fragment irrelevant-lines:2"]
 ----
-@Rule
-public GreenMailRule greenMail = new RandomPortGreenMailRule();
+@GreenMailServer
+class YourIntegrationTest {}
 ----
 
 :delay: 500
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -438,7 +438,7 @@ include::{docdir}/presentation/delay.adoc[]
 [source, java, role="fragment irrelevant-lines:1-2,4,17"]
 ----
 @Test
-public void userShouldReceiveConfirmationEmail() {
+public void userShouldReceiveConfirmationEmail(GreenMail greenMail) {
 	// test your business code here that sends an email
 	String code = yourAccountService.newAccount(someAccount);
 	
@@ -457,7 +457,7 @@ public void userShouldReceiveConfirmationEmail() {
 ----
 
 :delay: 7000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -465,14 +465,14 @@ include::{docdir}/presentation/delay.adoc[]
 
 ==== Start a SMPP server on a random port
 
-[source, java, role="fragment"]
+[source, java, role="fragment irrelevant-lines:2"]
 ----
-@Rule
-public SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+@JsmppServer
+class YourIntegrationTest {}
 ----
 
 :delay: 500
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -483,7 +483,7 @@ include::{docdir}/presentation/delay.adoc[]
 [source, java, role="fragment irrelevant-lines:1-2,4,14"]
 ----
 @Test
-public void userShouldReceiveConfirmationCode() {
+public void userShouldReceiveConfirmationCode(SmppServerSimulator<SubmitSm> smppServer) {
 	// test your business code here that sends a SMS
 	String code = yourAccountService.newAccount(someAccount);
 	
@@ -499,7 +499,7 @@ public void userShouldReceiveConfirmationCode() {
 ----
 
 :delay: 7000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade-in slide-out", role="stretch vcenter"]
@@ -508,7 +508,7 @@ include::{docdir}/presentation/delay.adoc[]
 Use testing tools to focus on testing your code !
 
 :delay: 1000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 == {objective-3}
@@ -539,7 +539,7 @@ External file relative to current running directory:
 --
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -556,7 +556,7 @@ $ java \
 ----
 
 :delay: 2000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 '''
 
@@ -571,7 +571,7 @@ Ogham also handle configuration profiles, such as:
 ====
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -588,7 +588,7 @@ mail.smtp.port=25
 ----
 
 :delay: 3000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -638,7 +638,7 @@ ogham.email.sendgrid.api-key=your-api-key
 --
 
 :delay: 4000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -654,7 +654,7 @@ ogham.sms.smpp.port=2775
 ----
 
 :delay: 2000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -706,7 +706,7 @@ ogham.sms.smpp.password=your-smsglobal-password
 --
 
 :delay: 4000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="fade-in slide-out", role="stretch vcenter"]
@@ -717,7 +717,7 @@ Don't change your code, don't code twice !!
 Just update external configuration !!!
 
 :delay: 2000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 
 [transition="slide", role="stretch vcenter"]
@@ -734,7 +734,7 @@ include::{docdir}/presentation/delay.adoc[]
 
 
 :delay: 4000
-include::{docdir}/presentation/delay.adoc[]
+include::{doc-base-dir}/presentation/delay.adoc[]
 
 [.fragment.the-end]
 -

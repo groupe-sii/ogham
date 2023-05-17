@@ -6,7 +6,7 @@ spring:
       - spring-boot-2.2.x-2.7.x---properties+dependency-management.yml
       - spring-boot-2.2.x-2.7.x---explicit-dependencies.yml
       - spring-boot-2.2.x-2.7.x---no-fix.yml
-      - spring-boot-3.0.x.yml
+      - spring-boot-3.0.x-3.1.x.yml
       - standalone.yml
 
 spring.initializer.url: http://localhost:8050/starter.zip

@@ -26,7 +26,7 @@ import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
 import fr.sii.ogham.testing.extension.junit.email.GreenMailServer;
-import fr.sii.ogham.testing.extension.junit.sms.JSmppServer;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServer;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
 import mock.context.SimpleBean;
 import ogham.testing.org.jsmpp.bean.SubmitSm;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @LogTestInformation
 @GreenMailServer
-@JSmppServer
+@JsmppServer
 public class EmptyBuilderTest {
 	MessagingBuilder builder;
 	

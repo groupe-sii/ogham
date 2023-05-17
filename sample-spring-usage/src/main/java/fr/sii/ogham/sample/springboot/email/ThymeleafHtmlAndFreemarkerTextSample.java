@@ -15,46 +15,46 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
-@PropertySource("application-email-template.properties")	// just needed to be able to run the sample
+@PropertySource("application-email-template.properties")  // just needed to be able to run the sample
 public class ThymeleafHtmlAndFreemarkerTextSample {
 
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(ThymeleafHtmlAndFreemarkerTextSample.class, args);
-	}
-	
-	@RestController
-	public static class EmailController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-email-template.properties
-		// The configuration files are stored into src/main/resources
-		// The configuration file set the prefix for templates into email folder available in src/main/resources
-		@Autowired
-		MessagingService messagingService;                                              // <1>
-		
-		@PostMapping(value="api/email/multitemplate/mixed")
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
-			// using fluent API
-			messagingService.send(new Email()                                           // <2>
-									.body().template("mixed",                           // <3>
-														new SimpleBean(name, value))    // <4>
-									.to(to));                                           // <5>
-		}
-	}
+  public static void main(String[] args) throws MessagingException {
+    SpringApplication.run(ThymeleafHtmlAndFreemarkerTextSample.class, args);
+  }
+  
+  @RestController
+  public static class EmailController {
+    // Messaging service is automatically created using Spring Boot features
+    // The configuration can be set into application-email-template.properties
+    // The configuration files are stored into src/main/resources
+    // The configuration file set the prefix for templates into email folder available in src/main/resources
+    @Autowired
+    MessagingService messagingService;                                         // <1>
+    
+    @PostMapping(value="api/email/multitemplate/mixed")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
+      // using fluent API
+      messagingService.send(new Email()                                        // <2>
+          .body().template("mixed",                                            // <3>
+                           new SimpleBean(name, value))                        // <4>
+          .to(to));                                                            // <5>
+    }
+  }
 
-	public static class SimpleBean {
-		private String name;
-		private int value;
-		public SimpleBean(String name, int value) {
-			super();
-			this.name = name;
-			this.value = value;
-		}
-		public String getName() {
-			return name;
-		}
-		public int getValue() {
-			return value;
-		}
-	}
+  public static class SimpleBean {
+    private String name;
+    private int value;
+    public SimpleBean(String name, int value) {
+      super();
+      this.name = name;
+      this.value = value;
+    }
+    public String getName() {
+      return name;
+    }
+    public int getValue() {
+      return value;
+    }
+  }
 }

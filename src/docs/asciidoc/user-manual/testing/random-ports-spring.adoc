@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Ogham provides Spring Boot extensions that can be used in tests
 to benefit from random ports easily.

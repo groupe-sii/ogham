@@ -3,7 +3,7 @@
   <parent>
     <artifactId>ogham-parent</artifactId>
     <groupId>fr.sii.ogham</groupId>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ogham-test-utils-dependencies</artifactId>
@@ -142,6 +142,5 @@
     <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
     <skip.unit.tests>true</skip.unit.tests>
     <maven.javadoc.skip>true</maven.javadoc.skip>
-    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 </project>

@@ -10,13 +10,13 @@ services:
       - docs
 
   selenoid-recorder:
-    image: selenoid/video-recorder:latest-release
+    image: selenoid/video-recorder:7.1
     network_mode: bridge
     entrypoint: echo "video-recorder ready"
     tty: true
   
   selenoid:
-    image: aerokube/selenoid
+    image: aerokube/selenoid:1.9.3
     network_mode: bridge
     depends_on:
       - selenoid-recorder
@@ -30,10 +30,10 @@ services:
       - "${OUTPUT_DIR}:/opt/selenoid/video"
     environment:
       - OVERRIDE_VIDEO_OUTPUT_DIR=${OUTPUT_DIR}
-    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video"]
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-video-recorder-image", "selenoid/video-recorder:7.1"]
   
   selenoid-ui:
-    image: aerokube/selenoid-ui
+    image: aerokube/selenoid-ui:1.10.10
     network_mode: bridge
     links:
       - selenoid

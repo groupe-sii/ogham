@@ -21,20 +21,10 @@ jobs:
     name: "Build [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
-        uses: ./.github/actions/setup-java-and-maven
-        with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
       - name: "Build"
-        uses: nick-fields/retry@v2
+        uses: ./.github/actions/build
         with:
-          timeout_minutes: 60
-          max_attempts: 3
-          command:
-            ./mvnw clean install
-              '-DskipTests=true'
-              '-Dmaven.javadoc.skip=true'
-              -B
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Save maven repository for analysis"
         if: always()
         uses: ./.github/actions/archive-and-upload
@@ -59,10 +49,10 @@ jobs:
     name: "Unit Tests [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Unit Tests"
         uses: nick-fields/retry@v2
         with:
@@ -99,10 +89,10 @@ jobs:
     name: "Integration Tests [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Integration Tests"
         uses: nick-fields/retry@v2
         with:
@@ -140,10 +130,10 @@ jobs:
     name: "Javadoc [${{ matrix.os }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Build"
         uses: nick-fields/retry@v2
         with:
@@ -171,10 +161,10 @@ jobs:
     name: "Sonar"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Analyze"
         uses: nick-fields/retry@v2
         with:
@@ -204,10 +194,10 @@ jobs:
     name: "Codecov"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Build and test"
         uses: nick-fields/retry@v2
         with:
@@ -236,21 +226,41 @@ jobs:
       fail-fast: false
       matrix:
         java: [8, 11, 17]
+        java-distribution: [temurin, zulu, adopt, adopt-openj9, liberica, corretto, semeru]
         os: [ubuntu-latest]
-    name: "Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }}]"
+        include:
+          - { java: 16, java-distribution: temurin, os: ubuntu-latest }
+          - { java: 18, java-distribution: temurin, os: ubuntu-latest }
+          - { java: 19, java-distribution: temurin, os: ubuntu-latest }
+          - { java: 20, java-distribution: temurin, os: ubuntu-latest }
+          - { java: 13, java-distribution: zulu, os: ubuntu-latest }
+          - { java: 15, java-distribution: zulu, os: ubuntu-latest }
+          - { java: 19, java-distribution: zulu, os: ubuntu-latest }
+          - { java: 20, java-distribution: zulu, os: ubuntu-latest }
+          - { java: 20, java-distribution: liberica, os: ubuntu-latest }
+          - { java: 11, java-distribution: microsoft, os: ubuntu-latest }
+          - { java: 17, java-distribution: microsoft, os: ubuntu-latest }
+          - { java: 20, java-distribution: corretto, os: ubuntu-latest }
+          - { java: 16, java-distribution: semeru, os: ubuntu-latest }
+          - { java: 18, java-distribution: semeru, os: ubuntu-latest }
+          - { java: 19, java-distribution: semeru, os: ubuntu-latest }
+          - { java: 17, java-distribution: oracle, os: ubuntu-latest }
+          - { java: 20, java-distribution: oracle, os: ubuntu-latest }
+    name: "Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }} ${{ matrix.java-distribution }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Generate and run classpath tests
+      - name: "Generate and run classpath tests"
         uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
+          java-distribution: ${{ matrix.java-distribution }}
           run-tests-directory-name: standalone
-          report-name: "Report - Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }}]"
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          report-name: "Report - Classpath Tests [Standalone - ${{ matrix.os }} - Java ${{ matrix.java }} ${{ matrix.java-distribution }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-1-4-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -263,7 +273,7 @@ jobs:
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Generate and run classpath tests
+      - name: "Generate and run classpath tests"
         uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
@@ -272,11 +282,11 @@ jobs:
           initializr-port: 8052
           part: ${{ matrix.part }}
           report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-1-5-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -289,18 +299,18 @@ jobs:
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Generate and run classpath tests
+      - name: "Generate and run classpath tests"
         uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
           run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
           part: ${{ matrix.part }}
           report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-1-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -313,18 +323,143 @@ jobs:
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Generate and run classpath tests
+      - name: "Generate and run classpath tests"
         uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
           run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
           part: ${{ matrix.part }}
           report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  classpath-tests-spring-boot-2-x-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+  classpath-tests-spring-boot-2-2-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    needs: [unit-tests, integration-tests]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 11]
+        os: [ubuntu-latest]
+        spring-boot: [2.2.x]
+        variant: [dependency-management-fix, explicit-dependencies-fix]
+        part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
+    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Generate and run classpath tests"
+        uses: ./.github/actions/classpath-tests
+        with:
+          java-version: ${{ matrix.java }}
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---${{ matrix.variant }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  classpath-tests-spring-boot-2-3-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    needs: [unit-tests, integration-tests]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 11]
+        os: [ubuntu-latest]
+        spring-boot: [2.3.x]
+        variant: [dependency-management-fix, explicit-dependencies-fix]
+        part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
+    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Generate and run classpath tests"
+        uses: ./.github/actions/classpath-tests
+        with:
+          java-version: ${{ matrix.java }}
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---${{ matrix.variant }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  classpath-tests-spring-boot-2-4-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    needs: [unit-tests, integration-tests]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 11]
+        os: [ubuntu-latest]
+        spring-boot: [2.4.x]
+        variant: [dependency-management-fix, explicit-dependencies-fix]
+        part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
+    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Generate and run classpath tests"
+        uses: ./.github/actions/classpath-tests
+        with:
+          java-version: ${{ matrix.java }}
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---${{ matrix.variant }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  classpath-tests-spring-boot-2-5-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    needs: [unit-tests, integration-tests]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 11]
+        os: [ubuntu-latest]
+        spring-boot: [2.5.x]
+        variant: [dependency-management-fix, explicit-dependencies-fix]
+        part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
+    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Generate and run classpath tests"
+        uses: ./.github/actions/classpath-tests
+        with:
+          java-version: ${{ matrix.java }}
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---${{ matrix.variant }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  classpath-tests-spring-boot-2-6-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    needs: [unit-tests, integration-tests]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 11]
+        os: [ubuntu-latest]
+        spring-boot: [2.6.x]
+        variant: [dependency-management-fix, explicit-dependencies-fix]
+        part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
+    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} ({{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Generate and run classpath tests"
+        uses: ./.github/actions/classpath-tests
+        with:
+          java-version: ${{ matrix.java }}
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---${{ matrix.variant }}
+          part: ${{ matrix.part }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  classpath-tests-spring-boot-2-7-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -332,24 +467,24 @@ jobs:
       matrix:
         java: [8, 11, 17]
         os: [ubuntu-latest]
-        spring-boot: [2.2.x, 2.3.x, 2.4.x, 2.5.x, 2.6.x, 2.7.x]
-        variant: [dependency-management, explicit-dependencies]
+        spring-boot: [2.7.x]
+        variant: [dependency-management-fix, explicit-dependencies-fix]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
-    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} ({{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+    name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Generate and run classpath tests
+      - name: "Generate and run classpath tests"
         uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
-          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---{{ matrix.variant }}
+          run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}---${{ matrix.variant }}
           part: ${{ matrix.part }}
-          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} ({{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} (${{ matrix.variant }}) - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
+          cache-version: ${{ vars.CACHE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  classpath-tests-spring-boot-3-0-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+  classpath-tests-spring-boot-3-x-x:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -357,19 +492,19 @@ jobs:
       matrix:
         java: [17]
         os: [ubuntu-latest]
-        spring-boot: [3.0.x]
+        spring-boot: [3.0.x, 3.1.x]
         part: [1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 10/10]
     name: "Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
     steps:
       - uses: actions/checkout@v3
-      - name: Generate and run classpath tests
+      - name: "Generate and run classpath tests"
         uses: ./.github/actions/classpath-tests
         with:
           java-version: ${{ matrix.java }}
           run-tests-directory-name: spring-boot-${{ matrix.spring-boot }}
           part: ${{ matrix.part }}
           report-name: "Report - Classpath Tests [Spring Boot ${{ matrix.spring-boot }} - ${{ matrix.os }} - Java ${{ matrix.java }}] [${{ matrix.part }}]"
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
@@ -379,8 +514,13 @@ jobs:
       - classpath-tests-spring-boot-1-4-x
       - classpath-tests-spring-boot-1-5-x
       - classpath-tests-spring-boot-2-1-x
-      - classpath-tests-spring-boot-2-x-x
-      - classpath-tests-spring-boot-3-0-x
+      - classpath-tests-spring-boot-2-2-x
+      - classpath-tests-spring-boot-2-3-x
+      - classpath-tests-spring-boot-2-4-x
+      - classpath-tests-spring-boot-2-5-x
+      - classpath-tests-spring-boot-2-6-x
+      - classpath-tests-spring-boot-2-7-x
+      - classpath-tests-spring-boot-3-x-x
       - javadoc
       - analyze-sonar
       - analyze-codecov
@@ -388,10 +528,10 @@ jobs:
     name: "Deploy"
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java and Maven
+      - name: "Setup Java and Maven"
         uses: ./.github/actions/setup-java-and-maven
         with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+          cache-version: ${{ vars.CACHE_VERSION }}
       - name: "Deploy on OSS"
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}

@@ -1,10 +1,11 @@
 [CAUTION]
-====
+=====
 /!\ You may experience classpath issues while sending emails with Ogham using Java Mail and Spring Boot >= 2.2.x < 3.0.x.
-====
 
 
-== Explanation:
+.Explanation
+[%collapsible]
+==========
 
 There can be a mess in the classpath due to Spring Boot dependency management
 that forces versions:
@@ -35,23 +36,28 @@ So, when using Ogham with Spring Boot 2, Ogham tries to adapt to what is present
   So, instead of indicating that there is no Javax mail implementation present, it
   fails with `java.lang.NoClassDefFoundError: com/sun/mail/util/MailLogger` which
   is not really developer friendly and hard to understand why it happens.
+==========
 
-== Solutions:
 
-=== Either prefer use of old Javax mail
+.Solutions
+[%collapsible]
+==========
+
+*Solution 1: Prefer use of old Javax mail*
 
 If you prefer using Javax mail in order to avoid possible classpath clashes by mixing both javax and jakarta, you can:
 
 * Either add `org.springframework.boot:spring-boot-starter-mail` dependency  BEFORE `fr.sii.ogham:ogham-email-javamail` dependency.
 * Or add explicitly the dependency `com.sun.mail:jakarta.mail` BEFORE `fr.sii.ogham:ogham-email-javamail` dependency
+* Or exclude `org.eclipse.angus:angus-mail` from `fr.sii.ogham:ogham-email-javamail` (so that order doesn't matter)
 
 [NOTE]
 ====
 Order is important in order to let Java pick the service configuration of the `com.sun.mail:jakarta-mail` dependency first.
-You can also exclude `org.eclipse.angus:angus-mail` from `fr.sii.ogham:ogham-email-javamail` (so that order doesn't matter).
 ====
 
-=== Or prefer use of new Jakarta mail
+
+*Solution 2: Prefer use of new Jakarta mail*
 
 If you prefer using the new Jakarta mail, you can:
 
@@ -97,10 +103,13 @@ Therefore, the property `${sun-activation.version}` has effect.
 ====
 Be careful yet, other Spring Boot modules may require `javax.activation` packages.
 ====
+==========
+
+=====
+
 
 [TIP]
 ====
-You can disable this message by setting the property `ogham.email.javamail.check-classpath-consistency=false`
+You can disable the warning message by setting the property `ogham.email.javamail.check-classpath-consistency=false`
 ====
-
 

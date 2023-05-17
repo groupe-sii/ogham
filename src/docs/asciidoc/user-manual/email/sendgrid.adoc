@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Sending an email using SendGrid HTTP API is exactly the same in term of code. The only 
 difference is the configuration of Ogham.

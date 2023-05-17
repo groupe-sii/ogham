@@ -1,33 +1,27 @@
 package fr.sii.ogham.sample.test;
 
-import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.jupiter.api.Test;
-
-import com.icegreen.greenmail.junit4.GreenMailRule;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import ogham.testing.com.icegreen.greenmail.junit5.GreenMailExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import java.io.IOException;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static ogham.testing.com.icegreen.greenmail.util.ServerSetupTest.SMTP;
+import static org.hamcrest.Matchers.*;
 
 public class AssertAllEmailTestSample {
 	private MessagingService oghamService;
 	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+	@RegisterExtension
+	public final GreenMailExtension greenMail = new GreenMailExtension(SMTP);
 
 	@BeforeEach
 	public void setUp() throws IOException {
@@ -43,7 +37,7 @@ public class AssertAllEmailTestSample {
 	}
 
 	@Test
-	public void simple() throws MessagingException, jakarta.mail.MessagingException {
+	public void simple() throws MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple (assertAll)")

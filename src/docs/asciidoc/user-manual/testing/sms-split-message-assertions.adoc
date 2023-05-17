@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 
 When a long message is sent, it must be split. Each part of the message is received by the SMPP server as distinct messages. The first message doesn't have any additional information indicating that it is split. Successive messages have an additional header (contained in the body). Ogham hides this protocol specific complexity. So you can test your SMS without needing to know about the header. Ogham provides `message` method to access a particular message for doing assertions on it. Ogham also provides `every` to apply same assertions on all received messages.
@@ -12,7 +12,7 @@ Sending a SMS to several recipients is the same as sending several distinct SMS.
 [role=tab]
 --
 
-[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
+[source, java, role="collapse-lines:1-20 irrelevant-lines:1-20,23-37 highlight-lines:55"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/LongSmsTestSample.java[]
 ----

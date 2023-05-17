@@ -15,29 +15,29 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
-@PropertySource("application-sms-basic.properties")	// just needed to be able to run the sample
+@PropertySource("application-sms-basic.properties")  // just needed to be able to run the sample
 public class BasicSample {
 
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(BasicSample.class, args);
-	}
-	
-	@RestController
-	public static class SmsController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-sms-basic.properties
-		// The configuration files are stored into src/main/resources
-		@Autowired
-		MessagingService messagingService;
-		
-		@PostMapping(value="api/sms/basic")
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendSms(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
-			// send the SMS using fluent API
-			messagingService.send(new Sms()
-									.message().string(content)
-									.to(to));
-		}
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(BasicSample.class, args);
+  }
+  
+  @RestController
+  public static class SmsController {
+    // Messaging service is automatically created using Spring Boot features
+    // The configuration can be set into application-sms-basic.properties
+    // The configuration files are stored into src/main/resources
+    @Autowired
+    MessagingService messagingService;
+    
+    @PostMapping(value="api/sms/basic")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendSms(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+      // send the SMS using fluent API
+      messagingService.send(new Sms()
+          .message().string(content)
+          .to(to));
+    }
+  }
 
 }

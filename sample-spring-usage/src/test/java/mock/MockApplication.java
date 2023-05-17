@@ -7,8 +7,8 @@ import fr.sii.ogham.core.exception.MessagingException;
 
 @SpringBootApplication
 public class MockApplication {
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(MockApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(MockApplication.class, args);
+  }
 
 }

@@ -5,20 +5,21 @@ ifndef::images-dir[]
 :images-dir: {relative-path}images/
 endif::[]
 ifndef::user-manual-dir[]
-:user-manual-dir: {docdir}/user-manual/
+:user-manual-dir: {doc-base-dir}/user-manual/
 endif::[]
 ifndef::general-dir[]
-:general-dir: {docdir}/general/
+:general-dir: {doc-base-dir}/general/
 endif::[]
 ifndef::resourcesdir[]
-:resourcesdir: {docdir}/../resources/
+:resourcesdir: {doc-base-dir}/../resources/
 endif::[]
 ifndef::presentation-dir[]
-:presentation-dir: {docdir}/presentation/
+:presentation-dir: {doc-base-dir}/presentation/
 endif::[]
 ifndef::presentation-relative-dir[]
 :presentation-relative-dir: {relative-path}presentation/
 endif::[]
+
 
 :github-url: https://github.com/groupe-sii/ogham
 :github-branch-url: {github-url}/tree
@@ -85,4 +86,4 @@ endif::[]
 
 :tabsize: 2
 
-include::{docdir}/theme.adoc[]
+include::{doc-base-dir}/theme.adoc[]

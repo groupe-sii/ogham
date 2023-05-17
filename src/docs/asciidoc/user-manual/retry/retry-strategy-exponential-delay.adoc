@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 Retry several times with an initial delay to wait after the last execution
 failure. The following delays are doubled until the maximum attempts is

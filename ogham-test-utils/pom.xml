@@ -76,7 +76,19 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 		</dependency>
-		
+
+		<!-- For JUnit 4 support but don't bring it -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Dependency convergence -->
 		<!-- This is needed to enforce right versions in projects that use ogham -->
 		<dependency>

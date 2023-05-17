@@ -1,5 +1,5 @@
 :relative-path: ../../
-include::{docdir}/variables.adoc[]
+include::{doc-base-dir}/variables.adoc[]
 
 
 Testing an email sent with two main parts (HTML and text fallback) is straightforward.

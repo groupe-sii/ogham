@@ -68,6 +68,15 @@
 			<artifactId>jakarta.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<!--
+			FIXME: hack for Pitest because it complains that javax.mail.MessagingException class doesn't exist. Which is true but
+				   why it searches for this class ???
+		-->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 
 		<!-- Tests -->
