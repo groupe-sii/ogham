@@ -16,6 +16,7 @@
 	<properties>
 		<sun-mail.version>1.6.7</sun-mail.version>
 		<sun-activation.version>1.2.1</sun-activation.version>
+		<sonar.cpd.exclusions>src/**,test/**</sonar.cpd.exclusions>
 	</properties>
 
 	<dependencies>

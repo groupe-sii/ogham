@@ -66,7 +66,7 @@ public class ParsedMimeType implements MimeType {
     @Override
     public String getParameter(String name) {
         return parameters.stream()
-                .filter((p) -> p.getName().equals(name))
+                .filter(p -> p.getName().equals(name))
                 .map(MimeTypeParameter::getValue)
                 .findFirst()
                 .orElse(null);

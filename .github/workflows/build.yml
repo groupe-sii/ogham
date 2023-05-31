@@ -260,7 +260,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-1-4-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -286,7 +286,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-1-5-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -310,7 +310,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-1-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -334,7 +334,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-2-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -359,7 +359,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-3-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -384,7 +384,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-4-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -409,7 +409,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-5-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -434,7 +434,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-6-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -459,7 +459,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-2-7-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -484,7 +484,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   classpath-tests-spring-boot-3-x-x:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/') || !!vars.RUN_SPRING_BOOT_CLASSPATH_TESTS
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:

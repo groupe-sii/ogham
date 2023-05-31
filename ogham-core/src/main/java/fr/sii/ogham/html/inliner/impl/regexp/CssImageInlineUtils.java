@@ -33,7 +33,7 @@ public final class CssImageInlineUtils {
 	private static final Pattern RULE_START = Pattern.compile("(?<rulestart>[{])|(?<style>(?<quote>['\"])\\s*=\\s*elyts)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 	private static final Pattern INLINE_PROPERTY_PATTERN = Pattern.compile("(?<property>(?<propertyname>" + Pattern.quote(INLINE_MODE_PROPERTY) + ")\\s*:)(?<value>[^;}>]+)\\s*;?",
 			Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
-	private static final Pattern INLINE_PROPERTY_MODE_PATTERN = Pattern.compile("\\s*((?<imageurl>[^=]+)=(?<specificmode>[^=\"';\\s]+))|(?<globalmode>[^=;\"'\\s]+)");
+	private static final Pattern INLINE_PROPERTY_MODE_PATTERN = Pattern.compile("\\s*+((?<imageurl>[^=]+)=(?<specificmode>[^=\"';\\s]+))|(?<globalmode>[^=;\"'\\s]+)");
 	private static final Pattern INLINED_URL_PATTERN = Pattern.compile(Pattern.quote(INLINED_URL_FUNC));
 
 	/**

@@ -44,10 +44,10 @@ class ParseEmailAddressSpec extends Specification {
 			"<foo@bar.com>"                   || "<foo@bar.com>"
 			"  __ 123 ABC def ^^ <a@b.c> 56"  || "  __ 123 ABC def ^^ <a@b.c> 56"
 	}
-	
+
 	def "#rawAddress should fail"() {
 		when:
-			def address = new EmailAddress(rawAddress);
+			new EmailAddress(rawAddress);
 			
 		then:
 			thrown(expected)

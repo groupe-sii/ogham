@@ -15,10 +15,11 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  *
  */
 public class EmailAddress {
-	private static final String QUOTED = "([\"](?<personal1>[^\"]+)[\"])";
-	private static final String UNQUOTED = "(?<personal2>.+)";
+	private static final String QUOTED = "(\"(?<personal1>[^\"]+)\")";
+	private static final String UNQUOTED = "(?<personal2>[^\"]+)";
 	private static final String ADDRESS_WITH_TAG = "<(?<address>[^>]+)>";
-	private static final Pattern SIMPLE_ADDRESS_WITH_PERSONAL = Pattern.compile("\\s*("+QUOTED+"|"+UNQUOTED+")\\s* "+ADDRESS_WITH_TAG);
+	private static final Pattern SIMPLE_ADDRESS_WITH_PERSONAL = Pattern.compile("\\s*+("+QUOTED+"|"+UNQUOTED+")\\s++"+ADDRESS_WITH_TAG);
+	private static final int MAX_SIZE = 320;
 
 	/**
 	 * The email address part (is of the form "user@domain.host")
@@ -108,6 +109,9 @@ public class EmailAddress {
 	public static EmailAddress parse(String rawAddress) {
 		if(rawAddress == null) {
 			throw new IllegalArgumentException("Address can't be null");
+		}
+		if(rawAddress.length() > MAX_SIZE) {
+			throw new IllegalArgumentException("Address maximum length is " + MAX_SIZE);
 		}
 		Matcher matcher = SIMPLE_ADDRESS_WITH_PERSONAL.matcher(rawAddress);
 		if(matcher.matches()) {
